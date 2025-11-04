@@ -6,13 +6,26 @@ ProLoan is a multi-language professional loan management platform designed for b
 
 **Key Features:**
 - Multi-language support (French, English, Spanish)
-- Professional loan management and tracking
-- Transfer request processing with multi-step workflows
+- Professional loan management with interactive amortization calculator
+- Transfer request processing with multi-step workflows and real-time status tracking
+- External bank account management (add, view, delete IBAN accounts)
+- KYC document upload for first-time loan requests
+- Auto-applied interest rates based on loan product type
 - Financial analytics and data visualization
 - Real-time balance and borrowing capacity monitoring
 - Responsive design with light/dark theme support
 
 **Target Users:** Business professionals and enterprises seeking loan financing and financial management tools.
+
+## Recent Changes (November 2025)
+
+1. **Dashboard Streamlining**: Removed duplicate amortization table from dashboard; kept single instance in dedicated loans section for better organization
+2. **Transfer Status Enhancement**: Updated pending transfers display to show real validation code progress instead of mock data
+3. **Smart Loan Application**: 
+   - Added loan type selector with auto-applied interest rates matching Products page offers
+   - Implemented conditional KYC document upload (required only for first-time users)
+   - Interest rates: Personal (7.5%), Mortgage (3.2%), Auto (5.8%), Student (4.9%), Green (3.5%), Renovation (6.2%)
+4. **Bank Account Management**: Created dedicated page (`/accounts`) for managing external bank accounts with IBAN/BIC validation and CRUD operations
 
 ## User Preferences
 
