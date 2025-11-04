@@ -6,6 +6,7 @@ import FeeSection from '@/components/FeeSection';
 import PendingTransfers from '@/components/PendingTransfers';
 import AvailableFundsChart from '@/components/AvailableFundsChart';
 import UpcomingRepaymentsChart from '@/components/UpcomingRepaymentsChart';
+import NotificationsBox from '@/components/NotificationsBox';
 import { useTranslations } from '@/lib/i18n';
 import { useDashboard, useAvailableFundsChart, useUpcomingRepaymentsChart } from '@/hooks/use-dashboard';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -66,8 +67,12 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <NotificationsBox />
         <QuickActions />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ActiveLoans loans={dashboardData.loans} />
         <FeeSection fees={dashboardData.fees} />
       </div>
