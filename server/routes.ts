@@ -5,14 +5,40 @@ import { insertLoanSchema, insertTransferSchema, insertUserSchema } from "@share
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { sendVerificationEmail, sendWelcomeEmail } from "./email";
+import rateLimit from "express-rate-limit";
+import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  const ADMIN_ID = "admin-001";
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: { error: 'Trop de tentatives. Veuillez réessayer dans 15 minutes.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+
+  const loginSchema = z.object({
+    email: z.string().email('Email invalide'),
+    password: z.string().min(1, 'Mot de passe requis'),
+  });
 
   const requireAuth = (req: any, res: any, next: any) => {
     if (!req.session || !req.session.userId) {
       return res.status(401).json({ error: 'Authentification requise' });
     }
+    next();
+  };
+
+  const requireAdmin = async (req: any, res: any, next: any) => {
+    if (!req.session || !req.session.userId) {
+      return res.status(401).json({ error: 'Authentification requise' });
+    }
+
+    const user = await storage.getUser(req.session.userId);
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ error: 'Accès refusé. Privilèges administrateur requis.' });
+    }
+
     next();
   };
 
@@ -40,17 +66,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return tier ? tier.rate : 4.0;
   };
 
-  const requireAdmin = (req: any, res: any, next: any) => {
-    const adminToken = req.headers['x-admin-token'];
-    if (adminToken !== ADMIN_ID) {
-      return res.status(403).json({ error: 'Forbidden: Admin access required' });
-    }
-    next();
-  };
 
-  app.post("/api/auth/signup", async (req, res) => {
+  app.post("/api/auth/signup", authLimiter, async (req, res) => {
     try {
-      const { email, password, fullName, phone, accountType, companyName, siret } = req.body;
+      const signupSchema = z.object({
+        email: z.string().email('Email invalide'),
+        password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
+        fullName: z.string().min(1, 'Nom complet requis'),
+        phone: z.string().optional(),
+        accountType: z.enum(['personal', 'business', 'professional']).optional(),
+        companyName: z.string().optional(),
+        siret: z.string().optional(),
+      });
+
+      const validatedInput = signupSchema.parse(req.body);
+      const { email, password, fullName, phone, accountType, companyName, siret } = validatedInput;
       
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
@@ -84,21 +114,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedUser = insertUserSchema.parse(userData);
       const user = await storage.createUser(validatedUser);
       
-      await sendVerificationEmail(email, fullName, verificationToken, accountType);
+      await sendVerificationEmail(email, fullName, verificationToken, accountType || 'personal');
       
       res.status(201).json({
         message: 'Inscription réussie ! Veuillez vérifier votre email pour activer votre compte.',
         userId: user.id
       });
     } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       console.error('Signup error:', error);
       res.status(400).json({ error: error.message || 'Erreur lors de l\'inscription' });
     }
   });
 
-  app.post("/api/auth/login", async (req, res) => {
+  app.post("/api/auth/login", authLimiter, async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const validatedInput = loginSchema.parse(req.body);
+      const { email, password } = validatedInput;
       
       const user = await storage.getUserByEmail(email);
       if (!user) {
@@ -116,8 +151,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           needsVerification: true
         });
       }
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.regenerate((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
       
       req.session.userId = user.id;
+      req.session.userRole = user.role;
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
       
       const { password: _, verificationToken: __, ...userWithoutSensitive } = user;
       
@@ -126,6 +176,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         user: userWithoutSensitive
       });
     } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       console.error('Login error:', error);
       res.status(500).json({ error: 'Erreur lors de la connexion' });
     }
@@ -137,7 +191,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (err) {
           return res.status(500).json({ error: 'Erreur lors de la déconnexion' });
         }
-        res.clearCookie('connect.sid');
+        res.clearCookie('sessionId');
         res.json({ message: 'Déconnexion réussie' });
       });
     } catch (error: any) {
@@ -754,7 +808,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       await storage.createAuditLog({
-        actorId: 'admin-001',
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'update_user',
         entityType: 'user',
@@ -776,7 +830,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       await storage.createAuditLog({
-        actorId: 'admin-001',
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'delete_user',
         entityType: 'user',
@@ -820,7 +874,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                      req.body.approvedAt ? 'approve_transfer' : 'update_transfer';
       
       await storage.createAuditLog({
-        actorId: 'admin-001',
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action,
         entityType: 'transfer',
@@ -846,10 +900,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/admin/settings/:key", requireAdmin, async (req, res) => {
     try {
       const { value } = req.body;
-      const updated = await storage.updateAdminSetting(req.params.key, value, 'admin-001');
+      const updated = await storage.updateAdminSetting(req.params.key, value, req.session.userId!);
       
       await storage.createAuditLog({
-        actorId: 'admin-001',
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'update_settings',
         entityType: 'admin_setting',
@@ -876,7 +930,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createAuditLog({
-        actorId: 'admin-001',
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'send_message',
         entityType: 'admin_message',
@@ -938,7 +992,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updated = await storage.updateLoan(req.params.id, {
         status: 'active',
         approvedAt: new Date(),
-        approvedBy: ADMIN_ID,
+        approvedBy: req.session.userId!,
       });
 
       await storage.createAdminMessage({
@@ -950,7 +1004,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'approve_loan',
         entityType: 'loan',
@@ -987,7 +1041,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'reject_loan',
         entityType: 'loan',
@@ -1009,10 +1063,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: 'Loan not found' });
       }
 
-      const deleted = await storage.deleteLoan(req.params.id, ADMIN_ID, reason || 'Deleted by admin');
+      const deleted = await storage.deleteLoan(req.params.id, req.session.userId!, reason || 'Deleted by admin');
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'delete_loan',
         entityType: 'loan',
@@ -1035,7 +1089,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'update_borrowing_capacity',
         entityType: 'user',
@@ -1066,7 +1120,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'suspend_user',
         entityType: 'user',
@@ -1097,7 +1151,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'block_user',
         entityType: 'user',
@@ -1127,7 +1181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'unblock_user',
         entityType: 'user',
@@ -1158,7 +1212,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'block_transfers',
         entityType: 'user',
@@ -1188,7 +1242,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'unblock_transfers',
         entityType: 'user',
@@ -1221,7 +1275,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'issue_validation_code',
         entityType: 'transfer',
@@ -1249,7 +1303,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       await storage.createAuditLog({
-        actorId: ADMIN_ID,
+        actorId: req.session.userId!,
         actorRole: 'admin',
         action: 'send_notification_with_fee',
         entityType: 'user',

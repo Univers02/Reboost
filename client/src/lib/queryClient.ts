@@ -13,10 +13,6 @@ export async function apiRequest(
   data?: unknown | undefined,
 ): Promise<Response> {
   const headers: Record<string, string> = data ? { "Content-Type": "application/json" } : {};
-  
-  if (url.startsWith('/api/admin')) {
-    headers['x-admin-token'] = 'admin-001';
-  }
 
   const res = await fetch(url, {
     method,
@@ -36,15 +32,9 @@ export const getQueryFn: <T>(options: {
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const url = queryKey.join("/") as string;
-    const headers: Record<string, string> = {};
-    
-    if (url.startsWith('/api/admin')) {
-      headers['x-admin-token'] = 'admin-001';
-    }
 
     const res = await fetch(url, {
       credentials: "include",
-      headers,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

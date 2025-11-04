@@ -1,5 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
+import helmet from "helmet";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -8,6 +9,7 @@ const app = express();
 declare module 'express-session' {
   interface SessionData {
     userId: string;
+    userRole?: string;
   }
 }
 
@@ -17,15 +19,31 @@ declare module 'http' {
   }
 }
 
+if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+  console.error('FATAL: SESSION_SECRET environment variable must be set in production');
+  process.exit(1);
+}
+
+if (!process.env.SESSION_SECRET) {
+  console.warn('WARNING: Using default SESSION_SECRET. Set SESSION_SECRET environment variable for production.');
+}
+
+app.use(helmet({
+  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
+  crossOriginEmbedderPolicy: false,
+}));
+
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'altus-group-secret-key-change-in-production',
+  secret: process.env.SESSION_SECRET || 'altus-group-secret-key-dev-only',
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
-  }
+    sameSite: 'lax',
+  },
+  name: 'sessionId',
 }));
 
 app.use(express.json({
@@ -50,8 +68,12 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      if (capturedJsonResponse && process.env.NODE_ENV !== 'production') {
+        const safeResponse = { ...capturedJsonResponse };
+        delete safeResponse.password;
+        delete safeResponse.verificationToken;
+        delete safeResponse.sessionId;
+        logLine += ` :: ${JSON.stringify(safeResponse)}`;
       }
 
       if (logLine.length > 80) {
