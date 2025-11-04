@@ -1,12 +1,13 @@
 import { db } from "./db";
 import { users, loans, transfers, fees, transactions, adminSettings } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 async function seed() {
   console.log("🌱 Seeding database...");
 
   const demoUserId = "demo-user-001";
   
-  const existingUser = await db.select().from(users).where((u) => u.id === demoUserId);
+  const existingUser = await db.select().from(users).where(eq(users.id, demoUserId));
   
   if (existingUser.length > 0) {
     console.log("✅ Database already seeded");
