@@ -1,7 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertLoanSchema, insertTransferSchema } from "@shared/schema";
+import { insertLoanSchema, insertTransferSchema, insertUserSchema } from "@shared/schema";
+import bcrypt from "bcrypt";
+import { randomUUID } from "crypto";
+import { sendVerificationEmail, sendWelcomeEmail } from "./email";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const DEMO_USER_ID = "demo-user-001";
@@ -38,6 +41,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     next();
   };
+
+  app.post("/api/auth/signup", async (req, res) => {
+    try {
+      const { email, password, fullName, phone, accountType, companyName, siret } = req.body;
+      
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ error: 'Un compte avec cet email existe déjà' });
+      }
+      
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const verificationToken = randomUUID();
+      
+      const username = email.split('@')[0] + '_' + Math.random().toString(36).substring(7);
+      
+      const userData: any = {
+        username,
+        password: hashedPassword,
+        email,
+        fullName,
+        phone: phone || null,
+        accountType: accountType || 'personal',
+        emailVerified: false,
+        verificationToken,
+        role: 'user',
+        status: 'pending',
+        kycStatus: 'pending',
+      };
+
+      if (accountType === 'business' || accountType === 'professional') {
+        userData.companyName = companyName || null;
+        userData.siret = siret || null;
+      }
+      
+      const validatedUser = insertUserSchema.parse(userData);
+      const user = await storage.createUser(validatedUser);
+      
+      await sendVerificationEmail(email, fullName, verificationToken, accountType);
+      
+      res.status(201).json({
+        message: 'Inscription réussie ! Veuillez vérifier votre email pour activer votre compte.',
+        userId: user.id
+      });
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      res.status(400).json({ error: error.message || 'Erreur lors de l\'inscription' });
+    }
+  });
+
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+      }
+      
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+      }
+      
+      if (!user.emailVerified) {
+        return res.status(403).json({ 
+          error: 'Veuillez vérifier votre email avant de vous connecter',
+          needsVerification: true
+        });
+      }
+      
+      const { password: _, verificationToken: __, ...userWithoutSensitive } = user;
+      
+      res.json({
+        message: 'Connexion réussie',
+        user: userWithoutSensitive
+      });
+    } catch (error: any) {
+      console.error('Login error:', error);
+      res.status(500).json({ error: 'Erreur lors de la connexion' });
+    }
+  });
+
+  app.get("/api/auth/verify/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      
+      const user = await storage.getUserByVerificationToken(token);
+      if (!user) {
+        return res.status(400).json({ error: 'Token de vérification invalide ou expiré' });
+      }
+      
+      if (user.emailVerified) {
+        return res.status(400).json({ error: 'Cet email a déjà été vérifié' });
+      }
+      
+      const verifiedUser = await storage.verifyUserEmail(user.id);
+      
+      await sendWelcomeEmail(user.email, user.fullName, user.accountType);
+      
+      res.json({
+        message: 'Email vérifié avec succès ! Vous pouvez maintenant vous connecter.',
+        success: true
+      });
+    } catch (error: any) {
+      console.error('Verification error:', error);
+      res.status(500).json({ error: 'Erreur lors de la vérification' });
+    }
+  });
+
+  app.post("/api/auth/resend-verification", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ error: 'Aucun compte trouvé avec cet email' });
+      }
+      
+      if (user.emailVerified) {
+        return res.status(400).json({ error: 'Cet email a déjà été vérifié' });
+      }
+      
+      const newToken = randomUUID();
+      await storage.updateUser(user.id, { verificationToken: newToken });
+      
+      await sendVerificationEmail(user.email, user.fullName, newToken, user.accountType);
+      
+      res.json({ message: 'Email de vérification renvoyé avec succès' });
+    } catch (error: any) {
+      console.error('Resend verification error:', error);
+      res.status(500).json({ error: 'Erreur lors du renvoi de l\'email' });
+    }
+  });
 
   app.get("/api/dashboard", async (req, res) => {
     try {
