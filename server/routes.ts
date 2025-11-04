@@ -118,11 +118,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     feeReason: z.string().min(1, 'Raison requise'),
   }).strict();
 
-  const requireAuth = (req: any, res: any, next: any) => {
+  const requireAuth = async (req: any, res: any, next: any) => {
     if (!req.session || !req.session.userId) {
       return res.status(401).json({ error: 'Authentification requise' });
     }
-    next();
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user) {
+        req.session.destroy(() => {});
+        return res.status(401).json({ error: 'Session invalide' });
+      }
+
+      if (user.status === 'blocked') {
+        return res.status(403).json({ 
+          error: 'Compte bloqué. Veuillez contacter le support.'
+        });
+      }
+
+      if (user.status === 'suspended') {
+        if (!user.suspendedUntil || new Date() < user.suspendedUntil) {
+          return res.status(403).json({ 
+            error: 'Compte suspendu',
+            suspendedUntil: user.suspendedUntil,
+            reason: user.suspensionReason
+          });
+        }
+      }
+
+      if (user.status === 'inactive') {
+        return res.status(403).json({ error: 'Compte inactif' });
+      }
+
+      if (!user.emailVerified) {
+        return res.status(403).json({ 
+          error: 'Email non vérifié. Veuillez vérifier votre email avant de continuer.' 
+        });
+      }
+
+      next();
+    } catch (error) {
+      console.error('Error in requireAuth:', error);
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
   };
 
   const requireAdmin = async (req: any, res: any, next: any) => {
