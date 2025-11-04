@@ -204,3 +204,9 @@ export type AdminMessage = typeof adminMessages.$inferSelect;
 export type InsertAdminMessage = z.infer<typeof insertAdminMessageSchema>;
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
+
+export type TransferDetailsResponse = {
+  transfer: Transfer;
+  events: TransferEvent[];
+  codes?: TransferValidationCode[];
+};

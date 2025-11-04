@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { ArrowLeft, CheckCircle2, Clock, Send, Shield, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import type { TransferDetailsResponse, ExternalAccount } from '@shared/schema';
 
 export default function TransferFlow() {
   const [, params] = useRoute('/transfer/:id');
@@ -26,11 +27,11 @@ export default function TransferFlow() {
   const [currentSequence, setCurrentSequence] = useState(1);
   const [demoCode, setDemoCode] = useState('');
 
-  const { data: externalAccounts } = useQuery<any[]>({
+  const { data: externalAccounts } = useQuery<ExternalAccount[]>({
     queryKey: ['/api/external-accounts'],
   });
 
-  const { data: transferData, refetch: refetchTransfer } = useQuery({
+  const { data: transferData, refetch: refetchTransfer } = useQuery<TransferDetailsResponse>({
     queryKey: [`/api/transfers/${transferId}`],
     enabled: !!transferId,
     refetchInterval: step === 'progress' ? 2000 : false,
@@ -393,7 +394,10 @@ export default function TransferFlow() {
               <div className="flex justify-between">
                 <span className="text-sm font-medium">Date</span>
                 <span className="text-sm">
-                  {new Date(transferData?.transfer?.completedAt).toLocaleString('fr-FR')}
+                  {transferData?.transfer?.completedAt 
+                    ? new Date(transferData.transfer.completedAt).toLocaleString('fr-FR')
+                    : 'N/A'
+                  }
                 </span>
               </div>
             </div>
