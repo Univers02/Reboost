@@ -2,6 +2,15 @@ import sgMail from '@sendgrid/mail';
 
 let connectionSettings: any;
 
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 async function getCredentials() {
   const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME;
   const xReplitToken = process.env.REPL_IDENTITY
@@ -73,8 +82,8 @@ export async function sendVerificationEmail(toEmail: string, fullName: string, t
               <p style="margin: 10px 0 0 0; opacity: 0.9;">Solutions de financement</p>
             </div>
             <div class="content">
-              <h2 style="color: #1f2937; margin-top: 0;">Bonjour ${fullName},</h2>
-              <p>Merci de vous être inscrit sur ALTUS en tant que <strong>${accountTypeText}</strong>.</p>
+              <h2 style="color: #1f2937; margin-top: 0;">Bonjour ${escapeHtml(fullName)},</h2>
+              <p>Merci de vous être inscrit sur ALTUS en tant que <strong>${escapeHtml(accountTypeText)}</strong>.</p>
               <p>Pour activer votre compte et accéder à nos services de financement, veuillez vérifier votre adresse email en cliquant sur le bouton ci-dessous :</p>
               <div style="text-align: center;">
                 <a href="${verificationUrl}" class="button">Vérifier mon email</a>
@@ -145,8 +154,8 @@ export async function sendWelcomeEmail(toEmail: string, fullName: string, accoun
               <h1 style="margin: 0; font-size: 28px;">🎉 Bienvenue sur ALTUS !</h1>
             </div>
             <div class="content">
-              <h2 style="color: #1f2937; margin-top: 0;">Bonjour ${fullName},</h2>
-              <p>Votre email a été vérifié avec succès ! Votre compte <strong>${accountTypeText}</strong> est maintenant actif.</p>
+              <h2 style="color: #1f2937; margin-top: 0;">Bonjour ${escapeHtml(fullName)},</h2>
+              <p>Votre email a été vérifié avec succès ! Votre compte <strong>${escapeHtml(accountTypeText)}</strong> est maintenant actif.</p>
               <p>Vous pouvez dès à présent accéder à toutes nos fonctionnalités :</p>
               <ul>
                 <li>Demander un prêt personnel ou professionnel</li>

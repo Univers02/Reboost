@@ -71,7 +71,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const signupSchema = z.object({
         email: z.string().email('Email invalide'),
-        password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
+        password: z.string()
+          .min(12, 'Le mot de passe doit contenir au moins 12 caractères')
+          .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
+          .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
+          .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre')
+          .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins un caractère spécial'),
         fullName: z.string().min(1, 'Nom complet requis'),
         phone: z.string().optional(),
         accountType: z.enum(['personal', 'business', 'professional']).optional(),
@@ -84,13 +89,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
-        return res.status(400).json({ error: 'Un compte avec cet email existe déjà' });
+        return res.status(400).json({ error: 'Impossible de créer le compte. Veuillez vérifier vos informations.' });
       }
       
       const hashedPassword = await bcrypt.hash(password, 10);
       const verificationToken = randomUUID();
       
-      const username = email.split('@')[0] + '_' + Math.random().toString(36).substring(7);
+      const username = email.split('@')[0] + '_' + randomUUID().substring(0, 8);
       
       const userData: any = {
         username,
@@ -137,12 +142,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const user = await storage.getUserByEmail(email);
       if (!user) {
-        return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+        return res.status(401).json({ error: 'Identifiants invalides' });
       }
       
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (!isValidPassword) {
-        return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+        return res.status(401).json({ error: 'Identifiants invalides' });
       }
       
       if (!user.emailVerified) {
