@@ -8,7 +8,7 @@ interface Transfer {
   id: string;
   amount: number;
   recipient: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'suspended';
+  status: 'pending' | 'in-progress' | 'approved' | 'rejected' | 'completed' | 'suspended';
   currentStep: number;
   updatedAt: string;
 }
@@ -30,10 +30,12 @@ export default function PendingTransfers({ transfers }: PendingTransfersProps) {
   const getStatusInfo = (status: Transfer['status']) => {
     switch (status) {
       case 'completed':
+      case 'approved':
         return { label: 'Complété', variant: 'default' as const, icon: CheckCircle2 };
       case 'in-progress':
         return { label: 'En traitement', variant: 'secondary' as const, icon: Shield };
       case 'suspended':
+      case 'rejected':
         return { label: 'Suspendu', variant: 'destructive' as const, icon: Clock };
       default:
         return { label: 'En attente de validation', variant: 'outline' as const, icon: Clock };
@@ -41,15 +43,16 @@ export default function PendingTransfers({ transfers }: PendingTransfersProps) {
   };
 
   const getProgressPercentage = (transfer: Transfer) => {
-    if (transfer.status === 'completed') return 100;
+    if (transfer.status === 'completed' || transfer.status === 'approved') return 100;
     if (transfer.status === 'in-progress') return 90;
+    if (transfer.status === 'suspended' || transfer.status === 'rejected') return 0;
     return Math.min(transfer.currentStep * 30, 70);
   };
 
   const getStepLabel = (transfer: Transfer) => {
-    if (transfer.status === 'completed') return 'Transfert complété';
+    if (transfer.status === 'completed' || transfer.status === 'approved') return 'Transfert complété';
     if (transfer.status === 'in-progress') return 'Traitement en cours';
-    if (transfer.status === 'suspended') return 'Transfert suspendu';
+    if (transfer.status === 'suspended' || transfer.status === 'rejected') return 'Transfert suspendu';
     return `Validation en cours (étape ${transfer.currentStep})`;
   };
 

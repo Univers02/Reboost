@@ -10,6 +10,7 @@ import NotificationsBox from '@/components/NotificationsBox';
 import { useTranslations } from '@/lib/i18n';
 import { useDashboard, useAvailableFundsChart, useUpcomingRepaymentsChart } from '@/hooks/use-dashboard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useUser } from '@/hooks/use-user';
 
 function DashboardSkeleton() {
   return (
@@ -31,6 +32,15 @@ export default function Dashboard() {
   const { data: dashboardData, isLoading: isDashboardLoading } = useDashboard();
   const { data: fundsData, isLoading: isFundsLoading } = useAvailableFundsChart();
   const { data: repaymentsData, isLoading: isRepaymentsLoading } = useUpcomingRepaymentsChart();
+  const { data: user } = useUser();
+  
+  const getGreeting = () => {
+    if (user) {
+      const firstName = user.fullName.split(' ')[0];
+      return `${t.dashboard.welcome}, ${firstName}`;
+    }
+    return t.dashboard.welcome;
+  };
 
   if (isDashboardLoading) {
     return <DashboardSkeleton />;
@@ -47,7 +57,7 @@ export default function Dashboard() {
   return (
     <div className="p-6 md:p-8 space-y-8">
       <div>
-        <h1 className="text-3xl md:text-4xl font-semibold mb-2">{t.dashboard.welcome}</h1>
+        <h1 className="text-3xl md:text-4xl font-semibold mb-2" data-testid="text-welcome">{getGreeting()}</h1>
         <p className="text-muted-foreground">Vue d'ensemble de votre compte professionnel</p>
       </div>
 
