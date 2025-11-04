@@ -19,13 +19,39 @@ ProLoan is a multi-language professional loan management platform designed for b
 
 ## Recent Changes (November 2025)
 
-1. **Dashboard Streamlining**: Removed duplicate amortization table from dashboard; kept single instance in dedicated loans section for better organization
-2. **Transfer Status Enhancement**: Updated pending transfers display to show real validation code progress instead of mock data
-3. **Smart Loan Application**: 
+1. **Database Migration to PostgreSQL** (Latest):
+   - Migrated from in-memory storage (`MemStorage`) to persistent PostgreSQL database (`DatabaseStorage`)
+   - All data now persists across application restarts
+   - Implemented using Drizzle ORM with Neon serverless PostgreSQL
+   - Database initialization with comprehensive seed data for demo user
+   
+2. **Comprehensive Admin Management Features**:
+   - **Loan Management**: Approve, reject, and delete loan requests with audit logging
+   - **User Account Control**: Suspend accounts, block users, adjust borrowing capacity dynamically
+   - **Transfer Validation**: Issue validation codes for multi-step transfer workflows
+   - **Admin Notifications**: Send notifications to users with automatic fee generation
+   - **External Transfer Control**: Block/unblock external transfers per user
+   - All admin actions logged in audit trail with timestamps and admin identifiers
+
+3. **Enhanced Fee Management System**:
+   - Auto-updating fees section with real-time display after admin notifications
+   - Visual indicators for unpaid fees (badges, alerts, color coding)
+   - "Marquer payé" functionality with TanStack Query cache invalidation
+   - Fee payment tracking with isPaid status and paidAt timestamps
+   - Admin ability to attach fees to notifications automatically
+
+4. **Dashboard Enhancements**:
+   - Streamlined amortization table (single instance in loans section)
+   - Transfer status showing real validation code progress
+   - Borrowing capacity now reflects user-specific maxLoanAmount settings
+   - Auto-updating charts for available funds and upcoming repayments
+
+5. **Smart Loan Application**: 
    - Added loan type selector with auto-applied interest rates matching Products page offers
    - Implemented conditional KYC document upload (required only for first-time users)
    - Interest rates: Personal (7.5%), Mortgage (3.2%), Auto (5.8%), Student (4.9%), Green (3.5%), Renovation (6.2%)
-4. **Bank Account Management**: Created dedicated page (`/accounts`) for managing external bank accounts with IBAN/BIC validation and CRUD operations
+
+6. **Bank Account Management**: Created dedicated page (`/accounts`) for managing external bank accounts with IBAN/BIC validation and CRUD operations
 
 ## User Preferences
 
@@ -90,17 +116,26 @@ Preferred communication style: Simple, everyday language.
 - Migration support via drizzle-kit
 
 **Storage Strategy:**
-- In-memory storage implementation (`MemStorage`) for development/demo
-- Storage interface abstraction (`IStorage`) allowing easy swap to database implementation
-- Prepared for PostgreSQL integration with existing schema definitions
+- **Production Implementation**: PostgreSQL database via `DatabaseStorage` class (server/storage.ts)
+- **Database Connection**: Neon serverless PostgreSQL accessed through `server/db.ts`
+- **Legacy Reference**: In-memory storage implementation (`MemStorage`) preserved as commented code for reference
+- **Interface Abstraction**: `IStorage` interface ensures consistent API across storage implementations
+- **Automatic Seeding**: Demo data automatically initialized on first database connection
+- **Migration Management**: Database schema updates via `npm run db:push` using Drizzle Kit
 
 **Database Schema:**
 ```
-users (id, username, password, email, fullName, accountType)
-loans (id, userId, amount, interestRate, duration, status, nextPaymentDate, totalRepaid, createdAt)
-transfers (id, userId, amount, recipient, status, currentStep, createdAt, updatedAt)
-fees (id, userId, feeType, reason, amount, createdAt)
+users (id, username, password, email, fullName, accountType, role, status, kycStatus, maxLoanAmount, suspendedUntil, suspensionReason, externalTransfersBlocked, transferBlockReason, createdAt, updatedAt)
+loans (id, userId, loanType, amount, interestRate, duration, status, approvedAt, approvedBy, rejectedAt, rejectionReason, nextPaymentDate, totalRepaid, deletedAt, deletedBy, deletionReason, createdAt)
+transfers (id, userId, amount, recipient, status, currentStep, validationMethod, createdAt, updatedAt)
+fees (id, userId, feeType, reason, amount, relatedMessageId, isPaid, paidAt, createdAt)
 transactions (id, userId, type, amount, description, createdAt)
+adminSettings (id, settingKey, settingValue, description, updatedBy, updatedAt)
+auditLogs (id, adminId, action, targetType, targetId, details, createdAt)
+transferValidationCodes (id, transferId, sequence, code, expiresAt, usedAt, createdAt)
+transferEvents (id, transferId, eventType, eventData, createdAt)
+adminMessages (id, userId, subject, content, isRead, readAt, createdAt)
+externalAccounts (id, userId, accountType, accountName, iban, bic, createdAt)
 ```
 
 **Key Architectural Decisions:**
