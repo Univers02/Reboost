@@ -102,8 +102,21 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeToggle />
-            <Link href="/dashboard">
-              <Button variant={scrolled ? "default" : "secondary"}>{t.hero.cta2}</Button>
+            <Link href="/login">
+              <Button 
+                variant={scrolled ? "outline" : "secondary"} 
+                data-testid="button-login"
+              >
+                Se connecter
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button 
+                variant={scrolled ? "default" : "secondary"}
+                data-testid="button-signup"
+              >
+                S'inscrire
+              </Button>
             </Link>
           </div>
 
@@ -186,11 +199,22 @@ export default function Header() {
                 <ThemeToggle />
               </div>
               <Link 
-                href="/dashboard" 
+                href="/login" 
                 onClick={() => setMobileMenuOpen(false)}
-                data-testid="link-dashboard-mobile"
+                data-testid="link-login-mobile"
               >
-                <Button className="w-full" variant={scrolled ? "default" : "secondary"}>{t.hero.cta2}</Button>
+                <Button className="w-full" variant={scrolled ? "outline" : "secondary"}>
+                  Se connecter
+                </Button>
+              </Link>
+              <Link 
+                href="/signup" 
+                onClick={() => setMobileMenuOpen(false)}
+                data-testid="link-signup-mobile"
+              >
+                <Button className="w-full" variant={scrolled ? "default" : "secondary"}>
+                  S'inscrire
+                </Button>
               </Link>
             </nav>
           </div>
