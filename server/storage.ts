@@ -106,6 +106,7 @@ export interface IStorage {
   getTransferEvents(transferId: string): Promise<TransferEvent[]>;
   
   getUserMessages(userId: string): Promise<AdminMessage[]>;
+  getMessage(id: string): Promise<AdminMessage | undefined>;
   createAdminMessage(message: InsertAdminMessage): Promise<AdminMessage>;
   markMessageAsRead(id: string): Promise<AdminMessage | undefined>;
   
@@ -1721,6 +1722,11 @@ export class DatabaseStorage implements IStorage {
 
   async getUserMessages(userId: string): Promise<AdminMessage[]> {
     return await db.select().from(adminMessages).where(eq(adminMessages.userId, userId)).orderBy(desc(adminMessages.deliveredAt));
+  }
+
+  async getMessage(id: string): Promise<AdminMessage | undefined> {
+    const result = await db.select().from(adminMessages).where(eq(adminMessages.id, id)).limit(1);
+    return result[0];
   }
 
   async createAdminMessage(insertMessage: InsertAdminMessage): Promise<AdminMessage> {

@@ -22,6 +22,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     password: z.string().min(1, 'Mot de passe requis'),
   });
 
+  const adminUpdateUserSchema = z.object({
+    fullName: z.string().optional(),
+    email: z.string().email().optional(),
+    status: z.enum(['pending', 'active', 'suspended', 'blocked']).optional(),
+    kycStatus: z.enum(['pending', 'verified', 'rejected']).optional(),
+    maxLoanAmount: z.string().optional(),
+  }).strict();
+
+  const adminUpdateTransferSchema = z.object({
+    status: z.enum(['pending', 'in-progress', 'completed', 'failed', 'suspended']).optional(),
+    approvedAt: z.coerce.date().optional(),
+  }).strict();
+
+  const adminUpdateSettingSchema = z.object({
+    value: z.any(),
+  }).strict();
+
+  const adminSendMessageSchema = z.object({
+    userId: z.string().min(1),
+    transferId: z.string().optional().nullable(),
+    subject: z.string().min(1, 'Sujet requis'),
+    content: z.string().min(1, 'Contenu requis'),
+    severity: z.enum(['info', 'success', 'warning', 'error']).optional(),
+  }).strict();
+
+  const adminRejectLoanSchema = z.object({
+    reason: z.string().min(1, 'Raison requise'),
+  }).strict();
+
+  const adminBorrowingCapacitySchema = z.object({
+    maxLoanAmount: z.string().min(1, 'Montant requis'),
+  }).strict();
+
+  const adminSuspendUserSchema = z.object({
+    until: z.string().datetime('Date invalide'),
+    reason: z.string().min(1, 'Raison requise'),
+  }).strict();
+
+  const adminBlockUserSchema = z.object({
+    reason: z.string().min(1, 'Raison requise'),
+  }).strict();
+
+  const adminBlockTransfersSchema = z.object({
+    reason: z.string().min(1, 'Raison requise'),
+  }).strict();
+
+  const adminIssueCodeSchema = z.object({
+    sequence: z.number().int().positive().optional().default(1),
+    method: z.enum(['email', 'sms']).optional(),
+  }).strict();
+
+  const adminSendNotificationWithFeeSchema = z.object({
+    userId: z.string().min(1),
+    subject: z.string().min(1, 'Sujet requis'),
+    content: z.string().min(1, 'Contenu requis'),
+    feeType: z.string().min(1, 'Type de frais requis'),
+    feeAmount: z.string().min(1, 'Montant requis'),
+    feeReason: z.string().min(1, 'Raison requise'),
+  }).strict();
+
   const requireAuth = (req: any, res: any, next: any) => {
     if (!req.session || !req.session.userId) {
       return res.status(401).json({ error: 'Authentification requise' });
@@ -478,7 +538,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json({ 
         transfer,
         message: 'Code de validation envoyé à votre email',
-        codeForDemo: code.code,
       });
     } catch (error) {
       console.error('Transfer initiation error:', error);
@@ -491,6 +550,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const transfer = await storage.getTransfer(req.params.id);
       if (!transfer) {
         return res.status(404).json({ error: 'Transfer not found' });
+      }
+
+      if (transfer.userId !== req.session.userId) {
+        return res.status(403).json({ error: 'Accès refusé' });
       }
 
       const events = await storage.getTransferEvents(req.params.id);
@@ -507,6 +570,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const transfer = await storage.getTransfer(req.params.id);
       if (!transfer) {
         return res.status(404).json({ error: 'Transfer not found' });
+      }
+
+      if (transfer.userId !== req.session.userId) {
+        return res.status(403).json({ error: 'Accès refusé' });
       }
 
       const nextSequence = transfer.codesValidated + 1;
@@ -542,7 +609,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ 
         message: 'Code envoyé',
-        codeForDemo: code.code,
         sequence: nextSequence,
       });
     } catch (error) {
@@ -557,6 +623,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!transfer) {
         return res.status(404).json({ error: 'Transfer not found' });
+      }
+
+      if (transfer.userId !== req.session.userId) {
+        return res.status(403).json({ error: 'Accès refusé' });
       }
 
       const validatedCode = await storage.validateCode(transfer.id, code, sequence);
@@ -655,6 +725,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/external-accounts/:id", requireAuth, async (req, res) => {
     try {
+      const account = await storage.getExternalAccount(req.params.id);
+      if (!account) {
+        return res.status(404).json({ error: 'External account not found' });
+      }
+
+      if (account.userId !== req.session.userId) {
+        return res.status(403).json({ error: 'Accès refusé' });
+      }
+
       const deleted = await storage.deleteExternalAccount(req.params.id);
       if (!deleted) {
         return res.status(404).json({ error: 'External account not found' });
@@ -676,11 +755,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/messages/:id/read", requireAuth, async (req, res) => {
     try {
-      const message = await storage.markMessageAsRead(req.params.id);
+      const message = await storage.getMessage(req.params.id);
       if (!message) {
         return res.status(404).json({ error: 'Message not found' });
       }
-      res.json(message);
+
+      if (message.userId !== req.session.userId) {
+        return res.status(403).json({ error: 'Accès refusé' });
+      }
+
+      const updatedMessage = await storage.markMessageAsRead(req.params.id);
+      res.json(updatedMessage);
     } catch (error) {
       res.status(500).json({ error: 'Failed to mark message as read' });
     }
@@ -807,7 +892,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/admin/users/:id", requireAdmin, async (req, res) => {
     try {
-      const updated = await storage.updateUser(req.params.id, req.body);
+      const validatedData = adminUpdateUserSchema.parse(req.body);
+      
+      const updated = await storage.updateUser(req.params.id, validatedData);
       if (!updated) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -818,11 +905,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'update_user',
         entityType: 'user',
         entityId: req.params.id,
-        metadata: req.body,
+        metadata: validatedData,
       });
       
       res.json(updated);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to update user' });
     }
   });
@@ -870,13 +961,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/admin/transfers/:id", requireAdmin, async (req, res) => {
     try {
-      const updated = await storage.updateTransfer(req.params.id, req.body);
+      const validatedData = adminUpdateTransferSchema.parse(req.body);
+      
+      const updated = await storage.updateTransfer(req.params.id, validatedData);
       if (!updated) {
         return res.status(404).json({ error: 'Transfer not found' });
       }
       
-      const action = req.body.status === 'suspended' ? 'suspend_transfer' : 
-                     req.body.approvedAt ? 'approve_transfer' : 'update_transfer';
+      const action = validatedData.status === 'suspended' ? 'suspend_transfer' : 
+                     validatedData.approvedAt ? 'approve_transfer' : 'update_transfer';
       
       await storage.createAuditLog({
         actorId: req.session.userId!,
@@ -884,11 +977,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action,
         entityType: 'transfer',
         entityId: req.params.id,
-        metadata: req.body,
+        metadata: validatedData,
       });
       
       res.json(updated);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to update transfer' });
     }
   });
@@ -904,8 +1001,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/admin/settings/:key", requireAdmin, async (req, res) => {
     try {
-      const { value } = req.body;
-      const updated = await storage.updateAdminSetting(req.params.key, value, req.session.userId!);
+      const validatedData = adminUpdateSettingSchema.parse(req.body);
+      const updated = await storage.updateAdminSetting(req.params.key, validatedData.value, req.session.userId!);
       
       await storage.createAuditLog({
         actorId: req.session.userId!,
@@ -913,25 +1010,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'update_settings',
         entityType: 'admin_setting',
         entityId: updated.id,
-        metadata: { settingKey: req.params.key, value },
+        metadata: { settingKey: req.params.key, value: validatedData.value },
       });
       
       res.json(updated);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to update setting' });
     }
   });
 
   app.post("/api/admin/messages", requireAdmin, async (req, res) => {
     try {
-      const { userId, transferId, subject, content, severity } = req.body;
+      const validatedData = adminSendMessageSchema.parse(req.body);
       
       const message = await storage.createAdminMessage({
-        userId,
-        transferId: transferId || null,
-        subject,
-        content,
-        severity: severity || 'info',
+        userId: validatedData.userId,
+        transferId: validatedData.transferId || null,
+        subject: validatedData.subject,
+        content: validatedData.content,
+        severity: validatedData.severity || 'info',
       });
 
       await storage.createAuditLog({
@@ -940,11 +1041,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'send_message',
         entityType: 'admin_message',
         entityId: message.id,
-        metadata: { userId, subject },
+        metadata: { userId: validatedData.userId, subject: validatedData.subject },
       });
 
       res.status(201).json(message);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to send message' });
     }
   });
@@ -1025,7 +1130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/loans/:id/reject", requireAdmin, async (req, res) => {
     try {
-      const { reason } = req.body;
+      const validatedData = adminRejectLoanSchema.parse(req.body);
       const loan = await storage.getLoan(req.params.id);
       if (!loan) {
         return res.status(404).json({ error: 'Loan not found' });
@@ -1034,14 +1139,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updated = await storage.updateLoan(req.params.id, {
         status: 'rejected',
         rejectedAt: new Date(),
-        rejectionReason: reason,
+        rejectionReason: validatedData.reason,
       });
 
       await storage.createAdminMessage({
         userId: loan.userId,
         transferId: null,
         subject: 'Demande de prêt refusée',
-        content: `Nous sommes désolés de vous informer que votre demande de prêt de ${loan.amount} EUR a été refusée. Raison: ${reason}`,
+        content: `Nous sommes désolés de vous informer que votre demande de prêt de ${loan.amount} EUR a été refusée. Raison: ${validatedData.reason}`,
         severity: 'warning',
       });
 
@@ -1051,11 +1156,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'reject_loan',
         entityType: 'loan',
         entityId: req.params.id,
-        metadata: { amount: loan.amount, loanType: loan.loanType, reason },
+        metadata: { amount: loan.amount, loanType: loan.loanType, reason: validatedData.reason },
       });
 
       res.json(updated);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to reject loan' });
     }
   });
@@ -1087,8 +1196,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/admin/users/:id/borrowing-capacity", requireAdmin, async (req, res) => {
     try {
-      const { maxAmount } = req.body;
-      const updated = await storage.updateUserBorrowingCapacity(req.params.id, maxAmount);
+      const validatedData = adminBorrowingCapacitySchema.parse(req.body);
+      const updated = await storage.updateUserBorrowingCapacity(req.params.id, validatedData.maxLoanAmount);
       if (!updated) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -1099,19 +1208,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'update_borrowing_capacity',
         entityType: 'user',
         entityId: req.params.id,
-        metadata: { maxAmount },
+        metadata: { maxAmount: validatedData.maxLoanAmount },
       });
 
       res.json(updated);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to update borrowing capacity' });
     }
   });
 
   app.post("/api/admin/users/:id/suspend", requireAdmin, async (req, res) => {
     try {
-      const { until, reason } = req.body;
-      const updated = await storage.suspendUser(req.params.id, new Date(until), reason);
+      const validatedData = adminSuspendUserSchema.parse(req.body);
+      const updated = await storage.suspendUser(req.params.id, new Date(validatedData.until), validatedData.reason);
       if (!updated) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -1120,7 +1233,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: req.params.id,
         transferId: null,
         subject: 'Compte suspendu temporairement',
-        content: `Votre compte a été suspendu jusqu'au ${new Date(until).toLocaleDateString('fr-FR')}. Raison: ${reason}`,
+        content: `Votre compte a été suspendu jusqu'au ${new Date(validatedData.until).toLocaleDateString('fr-FR')}. Raison: ${validatedData.reason}`,
         severity: 'error',
       });
 
@@ -1130,19 +1243,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'suspend_user',
         entityType: 'user',
         entityId: req.params.id,
-        metadata: { until, reason },
+        metadata: { until: validatedData.until, reason: validatedData.reason },
       });
 
       res.json(updated);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to suspend user' });
     }
   });
 
   app.post("/api/admin/users/:id/block", requireAdmin, async (req, res) => {
     try {
-      const { reason } = req.body;
-      const updated = await storage.blockUser(req.params.id, reason);
+      const validatedData = adminBlockUserSchema.parse(req.body);
+      const updated = await storage.blockUser(req.params.id, validatedData.reason);
       if (!updated) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -1151,7 +1268,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: req.params.id,
         transferId: null,
         subject: 'Compte bloqué définitivement',
-        content: `Votre compte a été bloqué définitivement. Raison: ${reason}`,
+        content: `Votre compte a été bloqué définitivement. Raison: ${validatedData.reason}`,
         severity: 'error',
       });
 
@@ -1161,11 +1278,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'block_user',
         entityType: 'user',
         entityId: req.params.id,
-        metadata: { reason },
+        metadata: { reason: validatedData.reason },
       });
 
       res.json(updated);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to block user' });
     }
   });
@@ -1202,8 +1323,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/users/:id/block-transfers", requireAdmin, async (req, res) => {
     try {
-      const { reason } = req.body;
-      const updated = await storage.blockExternalTransfers(req.params.id, reason);
+      const validatedData = adminBlockTransfersSchema.parse(req.body);
+      const updated = await storage.blockExternalTransfers(req.params.id, validatedData.reason);
       if (!updated) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -1212,7 +1333,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: req.params.id,
         transferId: null,
         subject: 'Transferts externes bloqués',
-        content: `Vos transferts vers des comptes externes ont été bloqués. Raison: ${reason}`,
+        content: `Vos transferts vers des comptes externes ont été bloqués. Raison: ${validatedData.reason}`,
         severity: 'warning',
       });
 
@@ -1222,11 +1343,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'block_transfers',
         entityType: 'user',
         entityId: req.params.id,
-        metadata: { reason },
+        metadata: { reason: validatedData.reason },
       });
 
       res.json(updated);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to block transfers' });
     }
   });
@@ -1263,19 +1388,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/transfers/:id/issue-code", requireAdmin, async (req, res) => {
     try {
-      const { sequence } = req.body;
+      const validatedData = adminIssueCodeSchema.parse(req.body);
       const transfer = await storage.getTransfer(req.params.id);
       if (!transfer) {
         return res.status(404).json({ error: 'Transfer not found' });
       }
 
-      const code = await storage.issueTransferValidationCode(req.params.id, sequence || 1);
+      const code = await storage.issueTransferValidationCode(req.params.id, validatedData.sequence);
 
       await storage.createAdminMessage({
         userId: transfer.userId,
         transferId: req.params.id,
-        subject: `Code de validation pour transfert #${sequence || 1}`,
-        content: `Votre code de validation pour l'étape ${sequence || 1} est: ${code.code}. Ce code expire dans 30 minutes.`,
+        subject: `Code de validation pour transfert #${validatedData.sequence}`,
+        content: `Votre code de validation pour l'étape ${validatedData.sequence} est: ${code.code}. Ce code expire dans 30 minutes.`,
         severity: 'info',
       });
 
@@ -1285,26 +1410,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'issue_validation_code',
         entityType: 'transfer',
         entityId: req.params.id,
-        metadata: { sequence },
+        metadata: { sequence: validatedData.sequence },
       });
 
       res.json(code);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to issue validation code' });
     }
   });
 
   app.post("/api/admin/notifications/send-with-fee", requireAdmin, async (req, res) => {
     try {
-      const { userId, subject, content, feeType, feeAmount, feeReason } = req.body;
+      const validatedData = adminSendNotificationWithFeeSchema.parse(req.body);
       
       const result = await storage.sendNotificationWithFee(
-        userId,
-        subject,
-        content,
-        feeType,
-        feeAmount,
-        feeReason
+        validatedData.userId,
+        validatedData.subject,
+        validatedData.content,
+        validatedData.feeType,
+        validatedData.feeAmount,
+        validatedData.feeReason
       );
 
       await storage.createAuditLog({
@@ -1312,12 +1441,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         actorRole: 'admin',
         action: 'send_notification_with_fee',
         entityType: 'user',
-        entityId: userId,
-        metadata: { subject, feeType, feeAmount },
+        entityId: validatedData.userId,
+        metadata: { subject: validatedData.subject, feeType: validatedData.feeType, feeAmount: validatedData.feeAmount },
       });
 
       res.json(result);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
       res.status(500).json({ error: 'Failed to send notification with fee' });
     }
   });
