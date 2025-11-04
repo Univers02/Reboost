@@ -10,13 +10,15 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Home, CreditCard, ArrowRightLeft, History, Settings, LogOut } from 'lucide-react';
+import { Home, CreditCard, ArrowRightLeft, History, Settings, LogOut, ShieldCheck, Users, FileText, BarChart } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { useLocation } from 'wouter';
 
 export default function AppSidebar() {
   const t = useTranslations();
   const [location, setLocation] = useLocation();
+
+  const isAdminPath = location.startsWith('/admin');
 
   const menuItems = [
     { title: t.nav.dashboard, url: '/dashboard', icon: Home },
@@ -26,16 +28,26 @@ export default function AppSidebar() {
     { title: t.nav.settings, url: '/settings', icon: Settings },
   ];
 
+  const adminMenuItems = [
+    { title: 'Tableau de Bord', url: '/admin', icon: ShieldCheck },
+    { title: 'Utilisateurs', url: '/admin/users', icon: Users },
+    { title: 'Transferts', url: '/admin/transfers', icon: ArrowRightLeft },
+    { title: 'Paramètres', url: '/admin/settings', icon: Settings },
+    { title: 'Rapports', url: '/admin/reports', icon: BarChart },
+  ];
+
+  const currentMenuItems = isAdminPath ? adminMenuItems : menuItems;
+
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-lg font-bold px-4 py-6">
-            ProLoan
+            {isAdminPath ? 'Admin Console' : 'ProLoan'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
+              {currentMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild

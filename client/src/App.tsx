@@ -14,6 +14,11 @@ import Contact from '@/pages/Contact';
 import Resources from '@/pages/Resources';
 import Terms from '@/pages/Terms';
 import Privacy from '@/pages/Privacy';
+import AdminDashboard from '@/pages/AdminDashboard';
+import AdminUsers from '@/pages/AdminUsers';
+import AdminTransfers from '@/pages/AdminTransfers';
+import AdminSettings from '@/pages/AdminSettings';
+import AdminReports from '@/pages/AdminReports';
 import AppSidebar from '@/components/AppSidebar';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -34,6 +39,11 @@ function Router() {
       <Route path="/transfers" component={Dashboard} />
       <Route path="/history" component={Dashboard} />
       <Route path="/settings" component={Dashboard} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/users" component={AdminUsers} />
+      <Route path="/admin/transfers" component={AdminTransfers} />
+      <Route path="/admin/settings" component={AdminSettings} />
+      <Route path="/admin/reports" component={AdminReports} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -5,6 +5,15 @@ import { insertLoanSchema, insertTransferSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const DEMO_USER_ID = "demo-user-001";
+  const ADMIN_ID = "admin-001";
+
+  const requireAdmin = (req: any, res: any, next: any) => {
+    const adminToken = req.headers['x-admin-token'];
+    if (adminToken !== ADMIN_ID) {
+      return res.status(403).json({ error: 'Forbidden: Admin access required' });
+    }
+    next();
+  };
 
   app.get("/api/dashboard", async (req, res) => {
     try {
@@ -176,7 +185,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/users", async (req, res) => {
+  app.get("/api/admin/users", requireAdmin, async (req, res) => {
     try {
       const users = await storage.getAllUsers();
       const usersWithLoans = await Promise.all(
@@ -199,7 +208,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/users/:id", async (req, res) => {
+  app.get("/api/admin/users/:id", requireAdmin, async (req, res) => {
     try {
       const user = await storage.getUser(req.params.id);
       if (!user) {
@@ -214,7 +223,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/admin/users/:id", async (req, res) => {
+  app.patch("/api/admin/users/:id", requireAdmin, async (req, res) => {
     try {
       const updated = await storage.updateUser(req.params.id, req.body);
       if (!updated) {
@@ -236,7 +245,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/users/:id", async (req, res) => {
+  app.delete("/api/admin/users/:id", requireAdmin, async (req, res) => {
     try {
       const deleted = await storage.deleteUser(req.params.id);
       if (!deleted) {
@@ -258,7 +267,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/transfers", async (req, res) => {
+  app.get("/api/admin/transfers", requireAdmin, async (req, res) => {
     try {
       const transfers = await storage.getAllTransfers();
       const transfersWithUser = await Promise.all(
@@ -277,7 +286,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/admin/transfers/:id", async (req, res) => {
+  app.patch("/api/admin/transfers/:id", requireAdmin, async (req, res) => {
     try {
       const updated = await storage.updateTransfer(req.params.id, req.body);
       if (!updated) {
@@ -302,7 +311,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/settings", async (req, res) => {
+  app.get("/api/admin/settings", requireAdmin, async (req, res) => {
     try {
       const settings = await storage.getAdminSettings();
       res.json(settings);
@@ -311,7 +320,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/settings/:key", async (req, res) => {
+  app.put("/api/admin/settings/:key", requireAdmin, async (req, res) => {
     try {
       const { value } = req.body;
       const updated = await storage.updateAdminSetting(req.params.key, value, 'admin-001');
@@ -331,7 +340,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/stats", async (req, res) => {
+  app.get("/api/admin/stats", requireAdmin, async (req, res) => {
     try {
       const stats = await storage.getActivityStats();
       res.json(stats);
@@ -340,7 +349,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/audit-logs", async (req, res) => {
+  app.get("/api/admin/audit-logs", requireAdmin, async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
       const logs = await storage.getAuditLogs(limit);
