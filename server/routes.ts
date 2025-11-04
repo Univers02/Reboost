@@ -176,6 +176,180 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/admin/users", async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      const usersWithLoans = await Promise.all(
+        users.map(async (user) => {
+          const loans = await storage.getUserLoans(user.id);
+          const transfers = await storage.getUserTransfers(user.id);
+          const totalBorrowed = loans.reduce((sum, loan) => sum + parseFloat(loan.amount), 0);
+          const totalRepaid = loans.reduce((sum, loan) => sum + parseFloat(loan.totalRepaid), 0);
+          return {
+            ...user,
+            balance: totalBorrowed - totalRepaid,
+            loansCount: loans.length,
+            transfersCount: transfers.length,
+          };
+        })
+      );
+      res.json(usersWithLoans);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch users' });
+    }
+  });
+
+  app.get("/api/admin/users/:id", async (req, res) => {
+    try {
+      const user = await storage.getUser(req.params.id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      const loans = await storage.getUserLoans(req.params.id);
+      const transfers = await storage.getUserTransfers(req.params.id);
+      const fees = await storage.getUserFees(req.params.id);
+      res.json({ user, loans, transfers, fees });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch user details' });
+    }
+  });
+
+  app.patch("/api/admin/users/:id", async (req, res) => {
+    try {
+      const updated = await storage.updateUser(req.params.id, req.body);
+      if (!updated) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      
+      await storage.createAuditLog({
+        actorId: 'admin-001',
+        actorRole: 'admin',
+        action: 'update_user',
+        entityType: 'user',
+        entityId: req.params.id,
+        metadata: req.body,
+      });
+      
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to update user' });
+    }
+  });
+
+  app.delete("/api/admin/users/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteUser(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      
+      await storage.createAuditLog({
+        actorId: 'admin-001',
+        actorRole: 'admin',
+        action: 'delete_user',
+        entityType: 'user',
+        entityId: req.params.id,
+        metadata: null,
+      });
+      
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to delete user' });
+    }
+  });
+
+  app.get("/api/admin/transfers", async (req, res) => {
+    try {
+      const transfers = await storage.getAllTransfers();
+      const transfersWithUser = await Promise.all(
+        transfers.map(async (transfer) => {
+          const user = await storage.getUser(transfer.userId);
+          return {
+            ...transfer,
+            userName: user?.fullName || 'Unknown',
+            userEmail: user?.email || '',
+          };
+        })
+      );
+      res.json(transfersWithUser);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch transfers' });
+    }
+  });
+
+  app.patch("/api/admin/transfers/:id", async (req, res) => {
+    try {
+      const updated = await storage.updateTransfer(req.params.id, req.body);
+      if (!updated) {
+        return res.status(404).json({ error: 'Transfer not found' });
+      }
+      
+      const action = req.body.status === 'suspended' ? 'suspend_transfer' : 
+                     req.body.approvedAt ? 'approve_transfer' : 'update_transfer';
+      
+      await storage.createAuditLog({
+        actorId: 'admin-001',
+        actorRole: 'admin',
+        action,
+        entityType: 'transfer',
+        entityId: req.params.id,
+        metadata: req.body,
+      });
+      
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to update transfer' });
+    }
+  });
+
+  app.get("/api/admin/settings", async (req, res) => {
+    try {
+      const settings = await storage.getAdminSettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch settings' });
+    }
+  });
+
+  app.put("/api/admin/settings/:key", async (req, res) => {
+    try {
+      const { value } = req.body;
+      const updated = await storage.updateAdminSetting(req.params.key, value, 'admin-001');
+      
+      await storage.createAuditLog({
+        actorId: 'admin-001',
+        actorRole: 'admin',
+        action: 'update_settings',
+        entityType: 'admin_setting',
+        entityId: updated.id,
+        metadata: { settingKey: req.params.key, value },
+      });
+      
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to update setting' });
+    }
+  });
+
+  app.get("/api/admin/stats", async (req, res) => {
+    try {
+      const stats = await storage.getActivityStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch stats' });
+    }
+  });
+
+  app.get("/api/admin/audit-logs", async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
+      const logs = await storage.getAuditLogs(limit);
+      res.json(logs);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch audit logs' });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
