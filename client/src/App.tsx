@@ -46,7 +46,6 @@ function Router() {
       <Route path="/privacy" component={Privacy} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/loans" component={IndividualLoans} />
-      <Route path="/loan-request" component={LoanRequest} />
       <Route path="/transfer/new" component={TransferFlow} />
       <Route path="/transfer/:id" component={TransferFlow} />
       <Route path="/transfers" component={Transfers} />
@@ -83,6 +82,7 @@ function App() {
           <Route path="/login" component={Auth} />
           <Route path="/signup" component={Auth} />
           <Route path="/verify/:token" component={Verify} />
+          <Route path="/loan-request" component={LoanRequest} />
           <Route>
             <SidebarProvider style={style as React.CSSProperties}>
               <div className="flex h-screen w-full">
