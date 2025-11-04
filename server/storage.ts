@@ -104,6 +104,23 @@ export interface IStorage {
   getUserMessages(userId: string): Promise<AdminMessage[]>;
   createAdminMessage(message: InsertAdminMessage): Promise<AdminMessage>;
   markMessageAsRead(id: string): Promise<AdminMessage | undefined>;
+  
+  approveLoan(id: string, approvedBy: string): Promise<Loan | undefined>;
+  rejectLoan(id: string, rejectedBy: string, reason: string): Promise<Loan | undefined>;
+  deleteLoan(id: string, deletedBy: string, reason: string): Promise<boolean>;
+  
+  updateUserBorrowingCapacity(userId: string, maxAmount: string): Promise<User | undefined>;
+  suspendUser(userId: string, until: Date, reason: string): Promise<User | undefined>;
+  blockUser(userId: string, reason: string): Promise<User | undefined>;
+  unblockUser(userId: string): Promise<User | undefined>;
+  blockExternalTransfers(userId: string, reason: string): Promise<User | undefined>;
+  unblockExternalTransfers(userId: string): Promise<User | undefined>;
+  
+  issueTransferValidationCode(transferId: string, sequence: number): Promise<TransferValidationCode>;
+  sendNotificationWithFee(userId: string, subject: string, content: string, feeType: string, feeAmount: string, feeReason: string): Promise<{ message: AdminMessage; fee: Fee }>;
+  
+  getUnpaidFees(userId: string): Promise<Fee[]>;
+  markFeeAsPaid(feeId: string): Promise<Fee | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -149,6 +166,11 @@ export class MemStorage implements IStorage {
       kycStatus: "approved",
       kycSubmittedAt: new Date("2023-01-01"),
       kycApprovedAt: new Date("2023-01-05"),
+      maxLoanAmount: "500000.00",
+      suspendedUntil: null,
+      suspensionReason: null,
+      externalTransfersBlocked: false,
+      transferBlockReason: null,
       createdAt: new Date("2023-01-01"),
       updatedAt: new Date("2023-01-01"),
     };
@@ -168,6 +190,9 @@ export class MemStorage implements IStorage {
       rejectionReason: null,
       nextPaymentDate: new Date("2025-12-15"),
       totalRepaid: "75000",
+      deletedAt: null,
+      deletedBy: null,
+      deletionReason: null,
       createdAt: new Date("2023-01-15"),
     };
     this.loans.set(loan1.id, loan1);
@@ -186,6 +211,9 @@ export class MemStorage implements IStorage {
       rejectionReason: null,
       nextPaymentDate: new Date("2025-12-20"),
       totalRepaid: "50000",
+      deletedAt: null,
+      deletedBy: null,
+      deletionReason: null,
       createdAt: new Date("2023-06-10"),
     };
     this.loans.set(loan2.id, loan2);
@@ -204,6 +232,9 @@ export class MemStorage implements IStorage {
       rejectionReason: null,
       nextPaymentDate: new Date("2025-12-28"),
       totalRepaid: "30000",
+      deletedAt: null,
+      deletedBy: null,
+      deletionReason: null,
       createdAt: new Date("2024-02-20"),
     };
     this.loans.set(loan3.id, loan3);
@@ -255,6 +286,9 @@ export class MemStorage implements IStorage {
         feeType: "Frais de dossier",
         reason: "Traitement de la demande de prêt #12345",
         amount: "150",
+        isPaid: true,
+        paidAt: new Date("2025-11-02"),
+        relatedMessageId: null,
         createdAt: new Date("2025-11-01"),
       },
       {
@@ -263,6 +297,9 @@ export class MemStorage implements IStorage {
         feeType: "Frais de transfert international",
         reason: "Transfert vers compte étranger",
         amount: "25",
+        isPaid: false,
+        paidAt: null,
+        relatedMessageId: null,
         createdAt: new Date("2025-11-05"),
       },
       {
@@ -271,6 +308,9 @@ export class MemStorage implements IStorage {
         feeType: "Frais de gestion mensuel",
         reason: "Gestion de compte professionnel",
         amount: "15",
+        isPaid: false,
+        paidAt: null,
+        relatedMessageId: null,
         createdAt: new Date("2025-11-01"),
       },
       {
@@ -279,6 +319,9 @@ export class MemStorage implements IStorage {
         feeType: "Frais de garantie",
         reason: "Assurance sur prêt #12346",
         amount: "200",
+        isPaid: false,
+        paidAt: null,
+        relatedMessageId: null,
         createdAt: new Date("2025-11-10"),
       },
     ];
@@ -419,6 +462,11 @@ export class MemStorage implements IStorage {
       kycStatus: "approved",
       kycSubmittedAt: new Date("2024-03-01"),
       kycApprovedAt: new Date("2024-03-05"),
+      maxLoanAmount: "300000.00",
+      suspendedUntil: null,
+      suspensionReason: null,
+      externalTransfersBlocked: false,
+      transferBlockReason: null,
       createdAt: new Date("2024-03-01"),
       updatedAt: new Date("2024-03-01"),
     };
@@ -437,6 +485,11 @@ export class MemStorage implements IStorage {
       kycStatus: "pending",
       kycSubmittedAt: new Date("2025-11-01"),
       kycApprovedAt: null,
+      maxLoanAmount: "100000.00",
+      suspendedUntil: null,
+      suspensionReason: null,
+      externalTransfersBlocked: false,
+      transferBlockReason: null,
       createdAt: new Date("2025-11-01"),
       updatedAt: new Date("2025-11-01"),
     };
@@ -513,6 +566,11 @@ export class MemStorage implements IStorage {
       kycStatus: insertUser.kycStatus || 'pending',
       kycSubmittedAt: insertUser.kycSubmittedAt || null,
       kycApprovedAt: insertUser.kycApprovedAt || null,
+      maxLoanAmount: insertUser.maxLoanAmount || "50000.00",
+      suspendedUntil: insertUser.suspendedUntil || null,
+      suspensionReason: insertUser.suspensionReason || null,
+      externalTransfersBlocked: insertUser.externalTransfersBlocked || false,
+      transferBlockReason: insertUser.transferBlockReason || null,
       createdAt: now,
       updatedAt: now,
     };
@@ -542,6 +600,9 @@ export class MemStorage implements IStorage {
       rejectionReason: insertLoan.rejectionReason || null,
       totalRepaid: insertLoan.totalRepaid || '0',
       nextPaymentDate: insertLoan.nextPaymentDate || null,
+      deletedAt: insertLoan.deletedAt || null,
+      deletedBy: insertLoan.deletedBy || null,
+      deletionReason: insertLoan.deletionReason || null,
       createdAt: new Date(),
     };
     this.loans.set(id, loan);
@@ -608,6 +669,9 @@ export class MemStorage implements IStorage {
     const fee: Fee = {
       ...insertFee,
       id,
+      isPaid: insertFee.isPaid || false,
+      paidAt: insertFee.paidAt || null,
+      relatedMessageId: insertFee.relatedMessageId || null,
       createdAt: new Date(),
     };
     this.fees.set(id, fee);
@@ -842,6 +906,197 @@ export class MemStorage implements IStorage {
     if (!message) return undefined;
     const updated = { ...message, isRead: true, readAt: new Date() };
     this.adminMessages.set(id, updated);
+    return updated;
+  }
+
+  async approveLoan(id: string, approvedBy: string): Promise<Loan | undefined> {
+    const loan = this.loans.get(id);
+    if (!loan) return undefined;
+    const updated = { 
+      ...loan, 
+      status: "approved", 
+      approvedAt: new Date(), 
+      approvedBy 
+    };
+    this.loans.set(id, updated);
+    return updated;
+  }
+
+  async rejectLoan(id: string, rejectedBy: string, reason: string): Promise<Loan | undefined> {
+    const loan = this.loans.get(id);
+    if (!loan) return undefined;
+    const updated = { 
+      ...loan, 
+      status: "rejected", 
+      rejectedAt: new Date(), 
+      approvedBy: rejectedBy,
+      rejectionReason: reason 
+    };
+    this.loans.set(id, updated);
+    return updated;
+  }
+
+  async deleteLoan(id: string, deletedBy: string, reason: string): Promise<boolean> {
+    const loan = this.loans.get(id);
+    if (!loan) return false;
+    const updated = { 
+      ...loan, 
+      deletedAt: new Date(), 
+      deletedBy,
+      deletionReason: reason 
+    };
+    this.loans.set(id, updated);
+    return true;
+  }
+
+  async updateUserBorrowingCapacity(userId: string, maxAmount: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    const updated = { ...user, maxLoanAmount: maxAmount, updatedAt: new Date() };
+    this.users.set(userId, updated);
+    return updated;
+  }
+
+  async suspendUser(userId: string, until: Date, reason: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    const updated = { 
+      ...user, 
+      status: "suspended", 
+      suspendedUntil: until, 
+      suspensionReason: reason,
+      updatedAt: new Date() 
+    };
+    this.users.set(userId, updated);
+    return updated;
+  }
+
+  async blockUser(userId: string, reason: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    const updated = { 
+      ...user, 
+      status: "blocked", 
+      suspendedUntil: null,
+      suspensionReason: reason,
+      updatedAt: new Date() 
+    };
+    this.users.set(userId, updated);
+    return updated;
+  }
+
+  async unblockUser(userId: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    const updated = { 
+      ...user, 
+      status: "active", 
+      suspendedUntil: null,
+      suspensionReason: null,
+      updatedAt: new Date() 
+    };
+    this.users.set(userId, updated);
+    return updated;
+  }
+
+  async blockExternalTransfers(userId: string, reason: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    const updated = { 
+      ...user, 
+      externalTransfersBlocked: true,
+      transferBlockReason: reason,
+      updatedAt: new Date() 
+    };
+    this.users.set(userId, updated);
+    return updated;
+  }
+
+  async unblockExternalTransfers(userId: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    const updated = { 
+      ...user, 
+      externalTransfersBlocked: false,
+      transferBlockReason: null,
+      updatedAt: new Date() 
+    };
+    this.users.set(userId, updated);
+    return updated;
+  }
+
+  async issueTransferValidationCode(transferId: string, sequence: number): Promise<TransferValidationCode> {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const id = randomUUID();
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + 30 * 60 * 1000);
+    
+    const validationCode: TransferValidationCode = {
+      id,
+      transferId,
+      code,
+      deliveryMethod: "email",
+      sequence,
+      issuedAt: now,
+      expiresAt,
+      consumedAt: null,
+    };
+    this.validationCodes.set(id, validationCode);
+    return validationCode;
+  }
+
+  async sendNotificationWithFee(
+    userId: string, 
+    subject: string, 
+    content: string, 
+    feeType: string, 
+    feeAmount: string, 
+    feeReason: string
+  ): Promise<{ message: AdminMessage; fee: Fee }> {
+    const messageId = randomUUID();
+    const feeId = randomUUID();
+    const now = new Date();
+    
+    const fee: Fee = {
+      id: feeId,
+      userId,
+      feeType,
+      reason: feeReason,
+      amount: feeAmount,
+      isPaid: false,
+      paidAt: null,
+      relatedMessageId: messageId,
+      createdAt: now,
+    };
+    this.fees.set(feeId, fee);
+    
+    const message: AdminMessage = {
+      id: messageId,
+      userId,
+      transferId: null,
+      subject,
+      content,
+      severity: "warning",
+      isRead: false,
+      deliveredAt: now,
+      readAt: null,
+    };
+    this.adminMessages.set(messageId, message);
+    
+    return { message, fee };
+  }
+
+  async getUnpaidFees(userId: string): Promise<Fee[]> {
+    return Array.from(this.fees.values()).filter(
+      (fee) => fee.userId === userId && !fee.isPaid
+    );
+  }
+
+  async markFeeAsPaid(feeId: string): Promise<Fee | undefined> {
+    const fee = this.fees.get(feeId);
+    if (!fee) return undefined;
+    const updated = { ...fee, isPaid: true, paidAt: new Date() };
+    this.fees.set(feeId, updated);
     return updated;
   }
 }

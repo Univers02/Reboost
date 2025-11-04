@@ -90,6 +90,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           reason: fee.reason,
           amount: parseFloat(fee.amount),
           createdAt: formatDate(fee.createdAt),
+          isPaid: fee.isPaid || false,
+          paidAt: formatDate(fee.paidAt),
           category: fee.feeType.toLowerCase().includes('prêt') || fee.feeType.toLowerCase().includes('loan') || fee.feeType.toLowerCase().includes('dossier') || fee.feeType.toLowerCase().includes('garantie')
             ? 'loan'
             : fee.feeType.toLowerCase().includes('transfer')
@@ -97,8 +99,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             : 'account',
         })),
         borrowingCapacity: {
-          maxCapacity: 500000,
-          currentCapacity: 500000 - data.balance,
+          maxCapacity: parseFloat(data.user.maxLoanAmount || "500000"),
+          currentCapacity: parseFloat(data.user.maxLoanAmount || "500000") - data.balance,
         },
       };
 
@@ -812,6 +814,289 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updated);
     } catch (error) {
       res.status(500).json({ error: 'Failed to reject loan' });
+    }
+  });
+
+  app.delete("/api/admin/loans/:id", requireAdmin, async (req, res) => {
+    try {
+      const { reason } = req.body;
+      const loan = await storage.getLoan(req.params.id);
+      if (!loan) {
+        return res.status(404).json({ error: 'Loan not found' });
+      }
+
+      const deleted = await storage.deleteLoan(req.params.id, ADMIN_ID, reason || 'Deleted by admin');
+
+      await storage.createAuditLog({
+        actorId: ADMIN_ID,
+        actorRole: 'admin',
+        action: 'delete_loan',
+        entityType: 'loan',
+        entityId: req.params.id,
+        metadata: { amount: loan.amount, loanType: loan.loanType, reason },
+      });
+
+      res.json({ success: deleted });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to delete loan' });
+    }
+  });
+
+  app.patch("/api/admin/users/:id/borrowing-capacity", requireAdmin, async (req, res) => {
+    try {
+      const { maxAmount } = req.body;
+      const updated = await storage.updateUserBorrowingCapacity(req.params.id, maxAmount);
+      if (!updated) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      await storage.createAuditLog({
+        actorId: ADMIN_ID,
+        actorRole: 'admin',
+        action: 'update_borrowing_capacity',
+        entityType: 'user',
+        entityId: req.params.id,
+        metadata: { maxAmount },
+      });
+
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to update borrowing capacity' });
+    }
+  });
+
+  app.post("/api/admin/users/:id/suspend", requireAdmin, async (req, res) => {
+    try {
+      const { until, reason } = req.body;
+      const updated = await storage.suspendUser(req.params.id, new Date(until), reason);
+      if (!updated) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      await storage.createAdminMessage({
+        userId: req.params.id,
+        transferId: null,
+        subject: 'Compte suspendu temporairement',
+        content: `Votre compte a été suspendu jusqu'au ${new Date(until).toLocaleDateString('fr-FR')}. Raison: ${reason}`,
+        severity: 'error',
+      });
+
+      await storage.createAuditLog({
+        actorId: ADMIN_ID,
+        actorRole: 'admin',
+        action: 'suspend_user',
+        entityType: 'user',
+        entityId: req.params.id,
+        metadata: { until, reason },
+      });
+
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to suspend user' });
+    }
+  });
+
+  app.post("/api/admin/users/:id/block", requireAdmin, async (req, res) => {
+    try {
+      const { reason } = req.body;
+      const updated = await storage.blockUser(req.params.id, reason);
+      if (!updated) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      await storage.createAdminMessage({
+        userId: req.params.id,
+        transferId: null,
+        subject: 'Compte bloqué définitivement',
+        content: `Votre compte a été bloqué définitivement. Raison: ${reason}`,
+        severity: 'error',
+      });
+
+      await storage.createAuditLog({
+        actorId: ADMIN_ID,
+        actorRole: 'admin',
+        action: 'block_user',
+        entityType: 'user',
+        entityId: req.params.id,
+        metadata: { reason },
+      });
+
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to block user' });
+    }
+  });
+
+  app.post("/api/admin/users/:id/unblock", requireAdmin, async (req, res) => {
+    try {
+      const updated = await storage.unblockUser(req.params.id);
+      if (!updated) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      await storage.createAdminMessage({
+        userId: req.params.id,
+        transferId: null,
+        subject: 'Compte débloqué',
+        content: `Votre compte a été débloqué et est maintenant actif.`,
+        severity: 'success',
+      });
+
+      await storage.createAuditLog({
+        actorId: ADMIN_ID,
+        actorRole: 'admin',
+        action: 'unblock_user',
+        entityType: 'user',
+        entityId: req.params.id,
+        metadata: null,
+      });
+
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to unblock user' });
+    }
+  });
+
+  app.post("/api/admin/users/:id/block-transfers", requireAdmin, async (req, res) => {
+    try {
+      const { reason } = req.body;
+      const updated = await storage.blockExternalTransfers(req.params.id, reason);
+      if (!updated) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      await storage.createAdminMessage({
+        userId: req.params.id,
+        transferId: null,
+        subject: 'Transferts externes bloqués',
+        content: `Vos transferts vers des comptes externes ont été bloqués. Raison: ${reason}`,
+        severity: 'warning',
+      });
+
+      await storage.createAuditLog({
+        actorId: ADMIN_ID,
+        actorRole: 'admin',
+        action: 'block_transfers',
+        entityType: 'user',
+        entityId: req.params.id,
+        metadata: { reason },
+      });
+
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to block transfers' });
+    }
+  });
+
+  app.post("/api/admin/users/:id/unblock-transfers", requireAdmin, async (req, res) => {
+    try {
+      const updated = await storage.unblockExternalTransfers(req.params.id);
+      if (!updated) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      await storage.createAdminMessage({
+        userId: req.params.id,
+        transferId: null,
+        subject: 'Transferts externes débloqués',
+        content: `Vos transferts vers des comptes externes ont été débloqués.`,
+        severity: 'success',
+      });
+
+      await storage.createAuditLog({
+        actorId: ADMIN_ID,
+        actorRole: 'admin',
+        action: 'unblock_transfers',
+        entityType: 'user',
+        entityId: req.params.id,
+        metadata: null,
+      });
+
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to unblock transfers' });
+    }
+  });
+
+  app.post("/api/admin/transfers/:id/issue-code", requireAdmin, async (req, res) => {
+    try {
+      const { sequence } = req.body;
+      const transfer = await storage.getTransfer(req.params.id);
+      if (!transfer) {
+        return res.status(404).json({ error: 'Transfer not found' });
+      }
+
+      const code = await storage.issueTransferValidationCode(req.params.id, sequence || 1);
+
+      await storage.createAdminMessage({
+        userId: transfer.userId,
+        transferId: req.params.id,
+        subject: `Code de validation pour transfert #${sequence || 1}`,
+        content: `Votre code de validation pour l'étape ${sequence || 1} est: ${code.code}. Ce code expire dans 30 minutes.`,
+        severity: 'info',
+      });
+
+      await storage.createAuditLog({
+        actorId: ADMIN_ID,
+        actorRole: 'admin',
+        action: 'issue_validation_code',
+        entityType: 'transfer',
+        entityId: req.params.id,
+        metadata: { sequence },
+      });
+
+      res.json(code);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to issue validation code' });
+    }
+  });
+
+  app.post("/api/admin/notifications/send-with-fee", requireAdmin, async (req, res) => {
+    try {
+      const { userId, subject, content, feeType, feeAmount, feeReason } = req.body;
+      
+      const result = await storage.sendNotificationWithFee(
+        userId,
+        subject,
+        content,
+        feeType,
+        feeAmount,
+        feeReason
+      );
+
+      await storage.createAuditLog({
+        actorId: ADMIN_ID,
+        actorRole: 'admin',
+        action: 'send_notification_with_fee',
+        entityType: 'user',
+        entityId: userId,
+        metadata: { subject, feeType, feeAmount },
+      });
+
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to send notification with fee' });
+    }
+  });
+
+  app.get("/api/fees/unpaid", async (req, res) => {
+    try {
+      const fees = await storage.getUnpaidFees(DEMO_USER_ID);
+      res.json(fees);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch unpaid fees' });
+    }
+  });
+
+  app.post("/api/fees/:id/pay", async (req, res) => {
+    try {
+      const updated = await storage.markFeeAsPaid(req.params.id);
+      if (!updated) {
+        return res.status(404).json({ error: 'Fee not found' });
+      }
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to mark fee as paid' });
     }
   });
 

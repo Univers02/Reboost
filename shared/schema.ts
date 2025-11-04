@@ -16,6 +16,11 @@ export const users = pgTable("users", {
   kycStatus: text("kyc_status").notNull().default("pending"),
   kycSubmittedAt: timestamp("kyc_submitted_at"),
   kycApprovedAt: timestamp("kyc_approved_at"),
+  maxLoanAmount: decimal("max_loan_amount", { precision: 12, scale: 2 }).default("50000.00"),
+  suspendedUntil: timestamp("suspended_until"),
+  suspensionReason: text("suspension_reason"),
+  externalTransfersBlocked: boolean("external_transfers_blocked").notNull().default(false),
+  transferBlockReason: text("transfer_block_reason"),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
   updatedAt: timestamp("updated_at").notNull().default(sql`now()`),
 });
@@ -34,6 +39,9 @@ export const loans = pgTable("loans", {
   rejectionReason: text("rejection_reason"),
   nextPaymentDate: timestamp("next_payment_date"),
   totalRepaid: decimal("total_repaid", { precision: 12, scale: 2 }).notNull().default("0"),
+  deletedAt: timestamp("deleted_at"),
+  deletedBy: varchar("deleted_by"),
+  deletionReason: text("deletion_reason"),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
@@ -93,6 +101,9 @@ export const fees = pgTable("fees", {
   feeType: text("fee_type").notNull(),
   reason: text("reason").notNull(),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  isPaid: boolean("is_paid").notNull().default(false),
+  paidAt: timestamp("paid_at"),
+  relatedMessageId: varchar("related_message_id"),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 

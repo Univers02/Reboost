@@ -1,8 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useTranslations } from '@/lib/i18n';
-import { Download, ChevronDown } from 'lucide-react';
+import { Download, ChevronDown, AlertCircle, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { queryClient } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,6 +21,8 @@ interface Fee {
   amount: number;
   createdAt: string | null;
   category: 'loan' | 'transfer' | 'account';
+  isPaid?: boolean;
+  paidAt?: string | null;
 }
 
 interface FeeSectionProps {
@@ -24,11 +31,37 @@ interface FeeSectionProps {
 
 export default function FeeSection({ fees }: FeeSectionProps) {
   const t = useTranslations();
+  const { toast } = useToast();
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
     loan: true,
     transfer: true,
     account: true,
   });
+
+  const payFeeMutation = useMutation({
+    mutationFn: async (feeId: string) => {
+      return await apiRequest(`/api/fees/${feeId}/pay`, {
+        method: 'POST',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
+      toast({
+        title: "Frais payé",
+        description: "Le frais a été marqué comme payé avec succès.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de marquer le frais comme payé.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const unpaidFees = fees.filter(f => !f.isPaid);
+  const paidFees = fees.filter(f => f.isPaid);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -38,11 +71,12 @@ export default function FeeSection({ fees }: FeeSectionProps) {
   };
 
   const categorizedFees = {
-    loan: fees.filter((f) => f.category === 'loan'),
-    transfer: fees.filter((f) => f.category === 'transfer'),
-    account: fees.filter((f) => f.category === 'account'),
+    loan: unpaidFees.filter((f) => f.category === 'loan'),
+    transfer: unpaidFees.filter((f) => f.category === 'transfer'),
+    account: unpaidFees.filter((f) => f.category === 'account'),
   };
 
+  const totalUnpaidFees = unpaidFees.reduce((sum, fee) => sum + fee.amount, 0);
   const totalFees = fees.reduce((sum, fee) => sum + fee.amount, 0);
 
   const categoryLabels = {
@@ -82,7 +116,15 @@ export default function FeeSection({ fees }: FeeSectionProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-        <CardTitle className="text-xl md:text-2xl">{t.dashboard.fees}</CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle className="text-xl md:text-2xl">{t.dashboard.fees}</CardTitle>
+          {unpaidFees.length > 0 && (
+            <Badge variant="destructive" className="flex items-center gap-1">
+              <AlertCircle className="h-3 w-3" />
+              {unpaidFees.length} impayé{unpaidFees.length > 1 ? 's' : ''}
+            </Badge>
+          )}
+        </div>
         <Button 
           variant="outline" 
           size="sm" 
@@ -94,6 +136,19 @@ export default function FeeSection({ fees }: FeeSectionProps) {
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
+        {unpaidFees.length > 0 && (
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+            <div className="flex items-start gap-2 mb-3">
+              <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-destructive">Frais à payer</h3>
+                <p className="text-sm text-muted-foreground">
+                  Vous avez {unpaidFees.length} frais impayé{unpaidFees.length > 1 ? 's' : ''} pour un total de {formatCurrency(totalUnpaidFees)}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         {(['loan', 'transfer', 'account'] as const).map((category) => {
           if (categorizedFees[category].length === 0) return null;
 
@@ -117,15 +172,34 @@ export default function FeeSection({ fees }: FeeSectionProps) {
                 {categorizedFees[category].map((fee) => (
                   <div
                     key={fee.id}
-                    className="flex justify-between items-start border rounded-md p-3 text-sm"
+                    className="flex justify-between items-start border rounded-md p-3 text-sm gap-3"
                     data-testid={`fee-${fee.id}`}
                   >
                     <div className="flex-1">
-                      <p className="font-medium">{fee.feeType}</p>
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-medium">{fee.feeType}</p>
+                        {!fee.isPaid && (
+                          <Badge variant="outline" className="text-xs">Non payé</Badge>
+                        )}
+                      </div>
                       <p className="text-muted-foreground text-xs">{fee.reason}</p>
                       <p className="text-muted-foreground text-xs mt-1">{fee.createdAt}</p>
                     </div>
-                    <p className="font-mono font-semibold">{formatCurrency(fee.amount)}</p>
+                    <div className="flex flex-col items-end gap-2">
+                      <p className="font-mono font-semibold">{formatCurrency(fee.amount)}</p>
+                      {!fee.isPaid && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => payFeeMutation.mutate(fee.id)}
+                          disabled={payFeeMutation.isPending}
+                          data-testid={`button-pay-fee-${fee.id}`}
+                        >
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Marquer payé
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </CollapsibleContent>
@@ -133,11 +207,19 @@ export default function FeeSection({ fees }: FeeSectionProps) {
           );
         })}
 
-        <div className="flex justify-between items-center pt-4 border-t">
-          <span className="font-semibold">Total</span>
-          <span className="text-2xl font-mono font-bold" data-testid="text-total-fees">
-            {formatCurrency(totalFees)}
-          </span>
+        <div className="space-y-2 pt-4 border-t">
+          <div className="flex justify-between items-center">
+            <span className="font-semibold text-destructive">Total impayé</span>
+            <span className="text-2xl font-mono font-bold text-destructive" data-testid="text-unpaid-fees">
+              {formatCurrency(totalUnpaidFees)}
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-sm text-muted-foreground">
+            <span>Total général</span>
+            <span className="font-mono" data-testid="text-total-fees">
+              {formatCurrency(totalFees)}
+            </span>
+          </div>
         </div>
       </CardContent>
     </Card>
