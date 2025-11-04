@@ -19,7 +19,16 @@ ALTUS is a multi-language professional loan management platform designed for bus
 
 ## Recent Changes (November 2025)
 
-1. **Complete Authentication System** (Latest):
+1. **Unified Authentication Experience & UI Refinements** (Latest):
+   - **Unified Auth Page**: Merged separate login and signup pages into a single Auth component with tabbed interface
+   - **Smart Routing**: Both `/login` and `/signup` routes work seamlessly, auto-displaying the appropriate tab
+   - **Header Redesign**: Replaced "Se connecter" and "S'inscrire" buttons with single "Mon espace" button
+   - **Visual Enhancement**: Header now features violet-purple-blue gradient instead of solid blue background
+   - **Legacy File Cleanup**: Removed obsolete Login.tsx and Signup.tsx after architect approval
+   - **User Experience**: Improved navigation flow with consistent branding and simplified access points
+   - **Architect Validated**: Routing, UI changes, and branding updates all reviewed and approved
+
+2. **Complete Authentication System**:
    - **Differentiated Signup Flows**: Separate account types for individuals (particuliers) and professionals (entreprises)
    - **Email Verification**: SendGrid integration for transactional email verification during signup
    - **Business-Specific Fields**: Professional accounts collect companyName, SIRET, businessType during registration
@@ -29,7 +38,7 @@ ALTUS is a multi-language professional loan management platform designed for bus
    - **Database Schema**: Extended users table with emailVerified, verificationToken, and business fields
    - **Architect Validated**: Security, validation, error handling, and SendGrid integration all reviewed and approved
 
-2. **Automatic Fee Payment Validation System**:
+3. **Automatic Fee Payment Validation System**:
    - **Atomic Transaction Architecture**: All fee creation and payment operations wrapped in database transactions
    - **Auto-Payment on Code Usage**: Fees are automatically marked as paid when users successfully use validation codes
    - **Concurrency Protection**: Race condition guards prevent duplicate fee payments from simultaneous code validations
@@ -38,13 +47,13 @@ ALTUS is a multi-language professional loan management platform designed for bus
    - **UI Simplification**: Removed manual "Marquer payé" button; fees now auto-validate via code consumption
    - **Production-Ready**: Architect-approved implementation with full data integrity guarantees
 
-2. **Database Migration to PostgreSQL**:
+4. **Database Migration to PostgreSQL**:
    - Migrated from in-memory storage (`MemStorage`) to persistent PostgreSQL database (`DatabaseStorage`)
    - All data now persists across application restarts
    - Implemented using Drizzle ORM with Neon serverless PostgreSQL
    - Database initialization with comprehensive seed data for demo user
    
-3. **Comprehensive Admin Management Features**:
+5. **Comprehensive Admin Management Features**:
    - **Loan Management**: Approve, reject, and delete loan requests with audit logging
    - **User Account Control**: Suspend accounts, block users, adjust borrowing capacity dynamically
    - **Transfer Validation**: Issue validation codes for multi-step transfer workflows
@@ -52,25 +61,25 @@ ALTUS is a multi-language professional loan management platform designed for bus
    - **External Transfer Control**: Block/unblock external transfers per user
    - All admin actions logged in audit trail with timestamps and admin identifiers
 
-4. **Enhanced Fee Management System**:
+6. **Enhanced Fee Management System**:
    - Auto-updating fees section with real-time display after admin notifications
    - Visual indicators for unpaid fees (badges, alerts, color coding)
    - Fee payment tracking with isPaid status and paidAt timestamps
    - Admin ability to attach fees to notifications automatically
    - Automatic fee validation upon successful code usage (no manual payment required)
 
-5. **Dashboard Enhancements**:
+7. **Dashboard Enhancements**:
    - Streamlined amortization table (single instance in loans section)
    - Transfer status showing real validation code progress
    - Borrowing capacity now reflects user-specific maxLoanAmount settings
    - Auto-updating charts for available funds and upcoming repayments
 
-6. **Smart Loan Application**: 
+8. **Smart Loan Application**: 
    - Added loan type selector with auto-applied interest rates matching Products page offers
    - Implemented conditional KYC document upload (required only for first-time users)
    - Interest rates: Personal (7.5%), Mortgage (3.2%), Auto (5.8%), Student (4.9%), Green (3.5%), Renovation (6.2%)
 
-7. **Bank Account Management**: Created dedicated page (`/accounts`) for managing external bank accounts with IBAN/BIC validation and CRUD operations
+9. **Bank Account Management**: Created dedicated page (`/accounts`) for managing external bank accounts with IBAN/BIC validation and CRUD operations
 
 ## User Preferences
 
