@@ -10,7 +10,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const calculateInterestRate = async (loanType: string, amount: number): Promise<number> => {
     const rateTiersSetting = await storage.getAdminSetting('interest_rate_tiers');
     if (!rateTiersSetting) {
-      return loanType === 'business' ? 3.5 : loanType === 'personal' ? 4.5 : 3.0;
+      if (loanType === 'business') {
+        if (amount < 10000) return 4.5;
+        if (amount < 50000) return 3.5;
+        return 2.5;
+      } else if (loanType === 'personal') {
+        if (amount < 10000) return 6.5;
+        if (amount < 30000) return 5.0;
+        return 3.5;
+      } else if (loanType === 'real_estate') {
+        if (amount < 50000) return 3.5;
+        if (amount < 200000) return 2.5;
+        return 2.0;
+      }
+      return 4.0;
     }
 
     const tiers = (rateTiersSetting.settingValue as any)[loanType] || [];

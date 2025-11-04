@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import {
   LineChart,
   Line,
@@ -19,7 +24,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { Calculator, TrendingUp, PieChart as PieChartIcon } from 'lucide-react';
+import { Calculator, TrendingUp, PieChart as PieChartIcon, Info } from 'lucide-react';
 
 interface PaymentSchedule {
   month: number;
@@ -82,16 +87,65 @@ function calculateAmortization(
   };
 }
 
+function calculateInterestRate(amount: number, loanType: string): number {
+  if (loanType === 'business') {
+    if (amount < 10000) return 4.5;
+    if (amount < 50000) return 3.5;
+    return 2.5;
+  } else if (loanType === 'personal') {
+    if (amount < 10000) return 6.5;
+    if (amount < 30000) return 5.0;
+    return 3.5;
+  } else if (loanType === 'real_estate') {
+    if (amount < 50000) return 3.5;
+    if (amount < 200000) return 2.5;
+    return 2.0;
+  }
+  return 4.5;
+}
+
 export default function AmortizationCalculator() {
+  const { toast } = useToast();
   const [loanAmount, setLoanAmount] = useState(100000);
+  const [loanType, setLoanType] = useState<string>('personal');
   const [interestRate, setInterestRate] = useState(4.5);
   const [loanTerm, setLoanTerm] = useState(20);
   const [amortization, setAmortization] = useState<AmortizationData | null>(null);
+
+  useEffect(() => {
+    const calculatedRate = calculateInterestRate(loanAmount, loanType);
+    setInterestRate(calculatedRate);
+  }, [loanAmount, loanType]);
 
   const handleCalculate = () => {
     const result = calculateAmortization(loanAmount, interestRate, loanTerm);
     setAmortization(result);
   };
+
+  const requestLoanMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/loans', {
+        amount: loanAmount.toString(),
+        duration: loanTerm * 12,
+        loanType,
+      });
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Demande de prêt soumise',
+        description: 'Votre demande est en attente d\'approbation par un administrateur. Vous recevrez une notification dès qu\'elle sera traitée.',
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/loans'] });
+    },
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Échec de la soumission de la demande de prêt',
+      });
+    },
+  });
 
   const chartData = amortization?.schedule.filter((_, index) => index % 6 === 0 || index === amortization.schedule.length - 1) || [];
 
@@ -115,7 +169,20 @@ export default function AmortizationCalculator() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-2">
+              <Label htmlFor="loan-type">Type de prêt</Label>
+              <Select value={loanType} onValueChange={setLoanType}>
+                <SelectTrigger data-testid="select-loan-type">
+                  <SelectValue placeholder="Sélectionnez le type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="personal">Personnel</SelectItem>
+                  <SelectItem value="business">Professionnel</SelectItem>
+                  <SelectItem value="real_estate">Immobilier</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="loan-amount">Montant du prêt (€)</Label>
               <Input
@@ -138,8 +205,11 @@ export default function AmortizationCalculator() {
                 min="0.1"
                 max="20"
                 step="0.1"
+                disabled
+                className="bg-muted"
                 data-testid="input-interest-rate"
               />
+              <p className="text-xs text-muted-foreground">Calculé automatiquement</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="loan-term">Durée (années)</Label>
@@ -156,9 +226,28 @@ export default function AmortizationCalculator() {
             </div>
           </div>
 
-          <Button onClick={handleCalculate} className="w-full md:w-auto" data-testid="button-calculate">
-            Calculer le plan d'amortissement
-          </Button>
+          <Alert data-testid="alert-info">
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              Le taux d'intérêt est calculé automatiquement en fonction du montant et du type de prêt.
+              Toutes les demandes de prêt nécessitent une approbation administrative.
+            </AlertDescription>
+          </Alert>
+
+          <div className="flex gap-3">
+            <Button onClick={handleCalculate} className="flex-1" data-testid="button-calculate">
+              Calculer le plan d'amortissement
+            </Button>
+            <Button 
+              onClick={() => requestLoanMutation.mutate()}
+              disabled={requestLoanMutation.isPending}
+              variant="default"
+              className="flex-1"
+              data-testid="button-request-loan"
+            >
+              {requestLoanMutation.isPending ? 'Envoi...' : 'Demander ce prêt'}
+            </Button>
+          </div>
 
           {amortization && (
             <div className="space-y-6 pt-6 border-t">
