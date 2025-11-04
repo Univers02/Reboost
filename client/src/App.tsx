@@ -7,6 +7,13 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import NotFound from '@/pages/not-found';
 import Home from '@/pages/Home';
 import Dashboard from '@/pages/Dashboard';
+import About from '@/pages/About';
+import HowItWorks from '@/pages/HowItWorks';
+import Products from '@/pages/Products';
+import Contact from '@/pages/Contact';
+import Resources from '@/pages/Resources';
+import Terms from '@/pages/Terms';
+import Privacy from '@/pages/Privacy';
 import AppSidebar from '@/components/AppSidebar';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -15,6 +22,13 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/about" component={About} />
+      <Route path="/how-it-works" component={HowItWorks} />
+      <Route path="/products" component={Products} />
+      <Route path="/contact" component={Contact} />
+      <Route path="/resources" component={Resources} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/privacy" component={Privacy} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/loans" component={Dashboard} />
       <Route path="/transfers" component={Dashboard} />
@@ -34,9 +48,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Switch>
-          <Route path="/">
-            <Home />
-          </Route>
+          <Route path="/" component={Home} />
+          <Route path="/about" component={About} />
+          <Route path="/how-it-works" component={HowItWorks} />
+          <Route path="/products" component={Products} />
+          <Route path="/contact" component={Contact} />
+          <Route path="/resources" component={Resources} />
+          <Route path="/terms" component={Terms} />
+          <Route path="/privacy" component={Privacy} />
           <Route>
             <SidebarProvider style={style as React.CSSProperties}>
               <div className="flex h-screen w-full">

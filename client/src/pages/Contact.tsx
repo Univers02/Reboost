@@ -1,0 +1,127 @@
+import Header from '@/components/Header';
+import { useTranslations } from '@/lib/i18n';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { Mail, Phone, MapPin } from 'lucide-react';
+
+export default function Contact() {
+  const t = useTranslations();
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: t.contact.success,
+      description: t.common.success,
+    });
+    setFormData({ name: '', email: '', phone: '', message: '' });
+  };
+
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <main className="pt-24 pb-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t.contact.title}</h1>
+            <p className="text-xl text-muted-foreground">{t.contact.subtitle}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <Card className="p-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Label htmlFor="name">{t.contact.name}</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">{t.contact.email}</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="phone">{t.contact.phone}</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="message">{t.contact.message}</Label>
+                  <Textarea
+                    id="message"
+                    rows={5}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full">
+                  {t.contact.send}
+                </Button>
+              </form>
+            </Card>
+
+            <div className="space-y-6">
+              <Card className="p-6">
+                <div className="flex items-start gap-4">
+                  <Mail className="w-6 h-6 text-primary mt-1" />
+                  <div>
+                    <h3 className="font-semibold mb-1">Email</h3>
+                    <p className="text-muted-foreground">contact@proloan.com</p>
+                    <p className="text-muted-foreground">support@proloan.com</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-6">
+                <div className="flex items-start gap-4">
+                  <Phone className="w-6 h-6 text-primary mt-1" />
+                  <div>
+                    <h3 className="font-semibold mb-1">{t.contact.phone}</h3>
+                    <p className="text-muted-foreground">+33 1 23 45 67 89</p>
+                    <p className="text-sm text-muted-foreground">Lun-Ven 9h-18h</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-6">
+                <div className="flex items-start gap-4">
+                  <MapPin className="w-6 h-6 text-primary mt-1" />
+                  <div>
+                    <h3 className="font-semibold mb-1">Adresse</h3>
+                    <p className="text-muted-foreground">123 Avenue des Champs-Élysées</p>
+                    <p className="text-muted-foreground">75008 Paris, France</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
