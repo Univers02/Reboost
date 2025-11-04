@@ -81,6 +81,7 @@ export const transferValidationCodes = pgTable("transfer_validation_codes", {
   code: text("code").notNull(),
   deliveryMethod: text("delivery_method").notNull(),
   sequence: integer("sequence").notNull().default(1),
+  feeId: varchar("fee_id"),
   issuedAt: timestamp("issued_at").notNull().default(sql`now()`),
   expiresAt: timestamp("expires_at").notNull(),
   consumedAt: timestamp("consumed_at"),

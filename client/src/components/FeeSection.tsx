@@ -2,12 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations } from '@/lib/i18n';
-import { Download, ChevronDown, AlertCircle, CheckCircle } from 'lucide-react';
+import { Download, ChevronDown, AlertCircle, Info } from 'lucide-react';
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import { queryClient } from '@/lib/queryClient';
-import { useToast } from '@/hooks/use-toast';
 import {
   Collapsible,
   CollapsibleContent,
@@ -31,33 +27,10 @@ interface FeeSectionProps {
 
 export default function FeeSection({ fees }: FeeSectionProps) {
   const t = useTranslations();
-  const { toast } = useToast();
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
     loan: true,
     transfer: true,
     account: true,
-  });
-
-  const payFeeMutation = useMutation({
-    mutationFn: async (feeId: string) => {
-      return await apiRequest(`/api/fees/${feeId}/pay`, {
-        method: 'POST',
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
-      toast({
-        title: "Frais payé",
-        description: "Le frais a été marqué comme payé avec succès.",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Erreur",
-        description: "Impossible de marquer le frais comme payé.",
-        variant: "destructive",
-      });
-    },
   });
 
   const unpaidFees = fees.filter(f => !f.isPaid);
@@ -137,17 +110,30 @@ export default function FeeSection({ fees }: FeeSectionProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         {unpaidFees.length > 0 && (
-          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
-            <div className="flex items-start gap-2 mb-3">
-              <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
-              <div className="flex-1">
-                <h3 className="font-semibold text-destructive">Frais à payer</h3>
-                <p className="text-sm text-muted-foreground">
-                  Vous avez {unpaidFees.length} frais impayé{unpaidFees.length > 1 ? 's' : ''} pour un total de {formatCurrency(totalUnpaidFees)}
-                </p>
+          <>
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+              <div className="flex items-start gap-2 mb-3">
+                <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-destructive">Frais à payer</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Vous avez {unpaidFees.length} frais impayé{unpaidFees.length > 1 ? 's' : ''} pour un total de {formatCurrency(totalUnpaidFees)}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+            <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <div className="flex items-start gap-2">
+                <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-blue-900 dark:text-blue-100">Validation automatique</h3>
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    Les frais sont automatiquement validés lorsque vous utilisez les codes de validation envoyés par notification. Vous n'avez pas besoin de les marquer manuellement comme payés.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </>
         )}
         {(['loan', 'transfer', 'account'] as const).map((category) => {
           if (categorizedFees[category].length === 0) return null;
@@ -179,7 +165,7 @@ export default function FeeSection({ fees }: FeeSectionProps) {
                       <div className="flex items-center gap-2 mb-1">
                         <p className="font-medium">{fee.feeType}</p>
                         {!fee.isPaid && (
-                          <Badge variant="outline" className="text-xs">Non payé</Badge>
+                          <Badge variant="outline" className="text-xs">En attente de validation</Badge>
                         )}
                       </div>
                       <p className="text-muted-foreground text-xs">{fee.reason}</p>
@@ -188,16 +174,9 @@ export default function FeeSection({ fees }: FeeSectionProps) {
                     <div className="flex flex-col items-end gap-2">
                       <p className="font-mono font-semibold">{formatCurrency(fee.amount)}</p>
                       {!fee.isPaid && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => payFeeMutation.mutate(fee.id)}
-                          disabled={payFeeMutation.isPending}
-                          data-testid={`button-pay-fee-${fee.id}`}
-                        >
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          Marquer payé
-                        </Button>
+                        <Badge variant="secondary" className="text-xs">
+                          Auto-validé via code
+                        </Badge>
                       )}
                     </div>
                   </div>

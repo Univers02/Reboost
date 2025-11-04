@@ -119,6 +119,19 @@ export interface IStorage {
   issueTransferValidationCode(transferId: string, sequence: number): Promise<TransferValidationCode>;
   sendNotificationWithFee(userId: string, subject: string, content: string, feeType: string, feeAmount: string, feeReason: string): Promise<{ message: AdminMessage; fee: Fee }>;
   
+  issueCodeWithNotificationAndFee(params: {
+    transferId: string;
+    userId: string;
+    sequence: number;
+    expiresAt: Date;
+    deliveryMethod: string;
+    subject: string;
+    content: string;
+    feeType: string;
+    feeAmount: string;
+    feeReason: string;
+  }): Promise<{ code: TransferValidationCode; notification: AdminMessage; fee: Fee }>;
+  
   getUnpaidFees(userId: string): Promise<Fee[]>;
   markFeeAsPaid(feeId: string): Promise<Fee | undefined>;
 }
@@ -1630,25 +1643,43 @@ export class DatabaseStorage implements IStorage {
   }
 
   async validateCode(transferId: string, code: string, sequence: number): Promise<TransferValidationCode | undefined> {
-    const result = await db.select()
-      .from(transferValidationCodes)
-      .where(
-        eq(transferValidationCodes.transferId, transferId)
+    return await db.transaction(async (tx) => {
+      const result = await tx.select()
+        .from(transferValidationCodes)
+        .where(
+          eq(transferValidationCodes.transferId, transferId)
+        );
+      
+      const validationCode = result.find(
+        (vc) => vc.code === code && vc.sequence === sequence && !vc.consumedAt
       );
-    
-    const validationCode = result.find(
-      (vc) => vc.code === code && vc.sequence === sequence && !vc.consumedAt
-    );
-    
-    if (validationCode && new Date() <= validationCode.expiresAt) {
-      const updated = await db.update(transferValidationCodes)
+      
+      if (!validationCode || new Date() > validationCode.expiresAt) {
+        return undefined;
+      }
+      
+      const updated = await tx.update(transferValidationCodes)
         .set({ consumedAt: new Date() })
-        .where(eq(transferValidationCodes.id, validationCode.id))
+        .where(
+          and(
+            eq(transferValidationCodes.id, validationCode.id),
+            isNull(transferValidationCodes.consumedAt)
+          )
+        )
         .returning();
+      
+      if (updated.length === 0) {
+        return undefined;
+      }
+      
+      if (validationCode.feeId) {
+        await tx.update(fees)
+          .set({ isPaid: true, paidAt: new Date() })
+          .where(eq(fees.id, validationCode.feeId));
+      }
+      
       return updated[0];
-    }
-    
-    return undefined;
+    });
   }
 
   async createTransferEvent(insertEvent: InsertTransferEvent): Promise<TransferEvent> {
@@ -1800,6 +1831,65 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return result[0];
+  }
+
+  async issueCodeWithNotificationAndFee(params: {
+    transferId: string;
+    userId: string;
+    sequence: number;
+    expiresAt: Date;
+    deliveryMethod: string;
+    subject: string;
+    content: string;
+    feeType: string;
+    feeAmount: string;
+    feeReason: string;
+  }): Promise<{ code: TransferValidationCode; notification: AdminMessage; fee: Fee }> {
+    return await db.transaction(async (tx) => {
+      const codeValue = Math.floor(100000 + Math.random() * 900000).toString();
+      const messageId = randomUUID();
+      
+      const feeResult = await tx.insert(fees)
+        .values({
+          userId: params.userId,
+          feeType: params.feeType,
+          reason: params.feeReason,
+          amount: params.feeAmount,
+          isPaid: false,
+          relatedMessageId: messageId,
+        })
+        .returning();
+      const fee = feeResult[0];
+      
+      const codeResult = await tx.insert(transferValidationCodes)
+        .values({
+          transferId: params.transferId,
+          code: codeValue,
+          deliveryMethod: params.deliveryMethod,
+          sequence: params.sequence,
+          expiresAt: params.expiresAt,
+          feeId: fee.id,
+        })
+        .returning();
+      const code = codeResult[0];
+      
+      const notificationContent = params.content.replace('{CODE}', codeValue);
+      
+      const messageResult = await tx.insert(adminMessages)
+        .values({
+          id: messageId,
+          userId: params.userId,
+          transferId: params.transferId,
+          subject: params.subject,
+          content: notificationContent,
+          severity: "info",
+          isRead: false,
+        })
+        .returning();
+      const notification = messageResult[0];
+      
+      return { code, notification, fee };
+    });
   }
 
   async sendNotificationWithFee(

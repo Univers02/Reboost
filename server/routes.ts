@@ -220,29 +220,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         codesValidated: 0,
       });
 
-      const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
       const expiresAt = new Date();
       expiresAt.setMinutes(expiresAt.getMinutes() + 15);
 
-      await storage.createValidationCode({
+      const { code, notification, fee } = await storage.issueCodeWithNotificationAndFee({
         transferId: transfer.id,
-        code: validationCode,
-        deliveryMethod: 'email',
+        userId: DEMO_USER_ID,
         sequence: 1,
         expiresAt,
+        deliveryMethod: 'email',
+        subject: `Code de validation pour votre transfert`,
+        content: `Votre code de validation pour le transfert de ${amount}€ vers ${recipient} est: {CODE}. Ce code expire dans 15 minutes. Un frais de ${feeAmount}€ sera automatiquement validé lors de l'utilisation de ce code.`,
+        feeType: 'Frais de validation',
+        feeAmount: feeAmount.toString(),
+        feeReason: `Frais de validation pour transfert vers ${recipient}`,
       });
 
       await storage.createTransferEvent({
         transferId: transfer.id,
         eventType: 'initiated',
-        message: 'Transfert initié - Code de validation envoyé',
-        metadata: { method: 'email', sequence: 1 },
+        message: 'Transfert initié - Code de validation et frais créés',
+        metadata: { method: 'email', sequence: 1, feeId: fee.id },
       });
 
       res.status(201).json({ 
         transfer,
         message: 'Code de validation envoyé à votre email',
-        codeForDemo: validationCode,
+        codeForDemo: code.code,
       });
     } catch (error) {
       console.error('Transfer initiation error:', error);
@@ -278,28 +282,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'All codes already validated' });
       }
 
-      const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
       const expiresAt = new Date();
       expiresAt.setMinutes(expiresAt.getMinutes() + 15);
 
-      await storage.createValidationCode({
+      const settingFee = await storage.getAdminSetting('default_transfer_fee');
+      const feeAmount = (settingFee?.settingValue as any)?.amount || 25;
+
+      const { code, notification, fee } = await storage.issueCodeWithNotificationAndFee({
         transferId: transfer.id,
-        code: validationCode,
-        deliveryMethod: req.body.method || 'email',
+        userId: DEMO_USER_ID,
         sequence: nextSequence,
         expiresAt,
+        deliveryMethod: req.body.method || 'email',
+        subject: `Code de validation ${nextSequence}/${transfer.requiredCodes}`,
+        content: `Votre code de validation ${nextSequence} sur ${transfer.requiredCodes} est: {CODE}. Ce code expire dans 15 minutes. Un frais de ${feeAmount}€ sera automatiquement validé lors de l'utilisation de ce code.`,
+        feeType: 'Frais de validation',
+        feeAmount: feeAmount.toString(),
+        feeReason: `Frais de validation ${nextSequence}/${transfer.requiredCodes} pour transfert vers ${transfer.recipient}`,
       });
 
       await storage.createTransferEvent({
         transferId: transfer.id,
         eventType: 'code_sent',
-        message: `Code de validation ${nextSequence}/${transfer.requiredCodes} envoyé`,
-        metadata: { method: req.body.method || 'email', sequence: nextSequence },
+        message: `Code de validation ${nextSequence}/${transfer.requiredCodes} envoyé avec frais associé`,
+        metadata: { method: req.body.method || 'email', sequence: nextSequence, feeId: fee.id },
       });
 
       res.json({ 
         message: 'Code envoyé',
-        codeForDemo: validationCode,
+        codeForDemo: code.code,
         sequence: nextSequence,
       });
     } catch (error) {
@@ -1088,17 +1099,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/fees/:id/pay", async (req, res) => {
-    try {
-      const updated = await storage.markFeeAsPaid(req.params.id);
-      if (!updated) {
-        return res.status(404).json({ error: 'Fee not found' });
-      }
-      res.json(updated);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to mark fee as paid' });
-    }
-  });
 
   const httpServer = createServer(app);
 
