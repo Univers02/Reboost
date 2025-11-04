@@ -14,7 +14,7 @@ interface Fee {
   feeType: string;
   reason: string;
   amount: number;
-  createdAt: string;
+  createdAt: string | null;
   category: 'loan' | 'transfer' | 'account';
 }
 

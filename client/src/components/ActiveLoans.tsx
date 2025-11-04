@@ -8,7 +8,7 @@ interface Loan {
   id: string;
   amount: number;
   interestRate: number;
-  nextPaymentDate: string;
+  nextPaymentDate: string | null;
   totalRepaid: number;
 }
 
