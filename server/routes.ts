@@ -212,6 +212,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const hashedPassword = await bcrypt.hash(password, 10);
       const verificationToken = randomUUID();
+      const verificationTokenExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000);
       
       const username = email.split('@')[0] + '_' + randomUUID().substring(0, 8);
       
@@ -224,6 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         accountType: accountType || 'personal',
         emailVerified: false,
         verificationToken,
+        verificationTokenExpiry,
         role: 'user',
         status: 'pending',
         kycStatus: 'pending',
@@ -335,6 +337,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (user.emailVerified) {
         return res.status(400).json({ error: 'Cet email a déjà été vérifié' });
       }
+
+      if (user.verificationTokenExpiry && new Date() > user.verificationTokenExpiry) {
+        return res.status(400).json({ 
+          error: 'Le token de vérification a expiré. Veuillez demander un nouveau lien de vérification.' 
+        });
+      }
       
       const verifiedUser = await storage.verifyUserEmail(user.id);
       
@@ -364,7 +372,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const newToken = randomUUID();
-      await storage.updateUser(user.id, { verificationToken: newToken });
+      const newExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000);
+      await storage.updateUser(user.id, { 
+        verificationToken: newToken,
+        verificationTokenExpiry: newExpiry
+      });
       
       await sendVerificationEmail(user.email, user.fullName, newToken, user.accountType);
       
