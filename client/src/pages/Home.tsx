@@ -4,7 +4,7 @@ import IndividualLoans from '@/components/IndividualLoans';
 import BusinessLoans from '@/components/BusinessLoans';
 import FeaturesSection from '@/components/FeaturesSection';
 import StatsSection from '@/components/StatsSection';
-import Testimonials from '@/components/Testimonials';
+import ScrollingTestimonials from '@/components/ScrollingTestimonials';
 import FAQ from '@/components/FAQ';
 import Footer from '@/components/Footer';
 import NotificationBanner from '@/components/NotificationBanner';
@@ -23,7 +23,7 @@ export default function Home() {
       <IndividualLoans />
       <BusinessLoans />
       <FeaturesSection />
-      <Testimonials />
+      <ScrollingTestimonials />
       <FAQ />
       <Footer />
     </div>

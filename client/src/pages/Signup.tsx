@@ -87,7 +87,7 @@ export default function Signup() {
       <Card className="w-full max-w-2xl shadow-2xl">
         <CardHeader className="text-center space-y-2">
           <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-            Créer un compte ProLoan
+            Créer un compte Altus Group
           </CardTitle>
           <CardDescription className="text-base">
             Solutions de financement pour particuliers et professionnels
@@ -219,7 +219,7 @@ export default function Signup() {
                             <FileText className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                             <Input
                               {...field}
-                              placeholder="SARL ProLoan"
+                              placeholder="SARL Altus Group"
                               className="pl-10 bg-white dark:bg-gray-800"
                               data-testid="input-companyName"
                             />

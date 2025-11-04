@@ -38,7 +38,7 @@ export default function Login() {
     onSuccess: (data) => {
       toast({
         title: 'Connexion réussie !',
-        description: 'Bienvenue sur ProLoan',
+        description: 'Bienvenue sur Altus Group',
       });
       setLocation('/dashboard');
     },
@@ -80,7 +80,7 @@ export default function Login() {
             Connexion
           </CardTitle>
           <CardDescription className="text-base">
-            Accédez à votre espace ProLoan
+            Accédez à votre espace Altus Group
           </CardDescription>
         </CardHeader>
         <CardContent>

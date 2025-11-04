@@ -9,7 +9,7 @@ export default function Testimonials() {
       company: 'Boutique Bio Paris',
       avatar: 'SM',
       rating: 5,
-      text: 'ProLoan m\'a permis d\'obtenir un financement rapide pour développer mon commerce. Le processus était simple et transparent, j\'ai reçu les fonds en moins d\'une semaine.',
+      text: 'Altus Group m\'a permis d\'obtenir un financement rapide pour développer mon commerce. Le processus était simple et transparent, j\'ai reçu les fonds en moins d\'une semaine.',
     },
     {
       name: 'Thomas Dubois',
@@ -25,7 +25,7 @@ export default function Testimonials() {
       company: 'Tech Solutions SARL',
       avatar: 'ML',
       rating: 5,
-      text: 'Grâce à ProLoan, nous avons pu financer l\'achat de nouveaux équipements. La flexibilité de remboursement et le taux compétitif ont fait la différence.',
+      text: 'Grâce à Altus Group, nous avons pu financer l\'achat de nouveaux équipements. La flexibilité de remboursement et le taux compétitif ont fait la différence.',
     },
     {
       name: 'Pierre Moreau',
@@ -41,7 +41,7 @@ export default function Testimonials() {
       company: 'Mode & Accessoires',
       avatar: 'IR',
       rating: 5,
-      text: 'Je suis très satisfaite du financement obtenu pour l\'expansion de ma boutique. ProLoan comprend vraiment les besoins des entrepreneurs.',
+      text: 'Je suis très satisfaite du financement obtenu pour l\'expansion de ma boutique. Altus Group comprend vraiment les besoins des entrepreneurs.',
     },
     {
       name: 'Jean Petit',

@@ -13,6 +13,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
+import logoUrl from '@assets/Logo_1762278146504.jpeg';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,11 +37,14 @@ export default function Header() {
     }`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Link href="/" className={`text-2xl font-bold hover:opacity-90 transition-all ${
-              scrolled ? 'text-primary' : 'text-white dark:text-white'
-            }`}>
-              ProLoan
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-all">
+              <img src={logoUrl} alt="Altus Group" className="h-10 w-auto" />
+              <span className={`text-xl font-bold ${
+                scrolled ? 'text-primary' : 'text-white dark:text-white'
+              }`}>
+                Altus Group
+              </span>
             </Link>
           </div>
 

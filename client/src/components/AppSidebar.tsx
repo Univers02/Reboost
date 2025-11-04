@@ -51,7 +51,7 @@ export default function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-lg font-bold px-4 py-6 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-            {isAdminPath ? 'Admin Console' : 'ProLoan'}
+            {isAdminPath ? 'Admin Console' : 'Altus Group'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
