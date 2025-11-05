@@ -51,8 +51,23 @@ export default function AppSidebar() {
     <Sidebar className="border-r-2 border-blue-100 dark:border-blue-900 bg-gradient-to-b from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-lg font-bold px-4 py-6 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-            {isAdminPath ? 'Admin Console' : 'Altus Group'}
+          <div className="px-4 py-4 mb-2 flex items-center gap-3" data-testid="sidebar-logo">
+            <img 
+              src="/logo.png" 
+              alt="Altus Logo" 
+              className="w-12 h-12 object-contain"
+            />
+            <div>
+              <div className="text-base font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                ALTUS
+              </div>
+              <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                FINANCE GROUP
+              </div>
+            </div>
+          </div>
+          <SidebarGroupLabel className="text-sm font-semibold px-4 py-2 text-blue-700 dark:text-blue-300">
+            {isAdminPath ? 'Admin Console' : 'Tableau de bord'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>

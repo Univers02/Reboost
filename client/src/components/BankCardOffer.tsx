@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useTranslations } from '@/lib/i18n';
+import VirtualBankCard from './VirtualBankCard';
 import cardImage1 from '@assets/WhatsApp Image 2025-11-05 at 13.16.36_1762345203268.jpeg';
 import cardImage2 from '@assets/WhatsApp Image 2025-11-05 at 13.16.36 (1)_1762345210880.jpeg';
 
@@ -33,23 +34,8 @@ export default function BankCardOffer() {
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="relative rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition-transform">
-              <img 
-                src={cardImage1} 
-                alt="Carte bancaire Altus - Face" 
-                className="w-full h-auto object-cover"
-                data-testid="img-card-front"
-              />
-            </div>
-            <div className="relative rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition-transform">
-              <img 
-                src={cardImage2} 
-                alt="Carte bancaire Altus - Dos" 
-                className="w-full h-auto object-cover"
-                data-testid="img-card-back"
-              />
-            </div>
+          <div className="flex justify-center">
+            <VirtualBankCard />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
