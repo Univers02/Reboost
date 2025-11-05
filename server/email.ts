@@ -48,75 +48,30 @@ async function getUncachableSendGridClient() {
   };
 }
 
-export async function sendVerificationEmail(toEmail: string, fullName: string, token: string, accountType: string) {
+export async function sendVerificationEmail(toEmail: string, fullName: string, token: string, accountType: string, language: string = 'fr') {
   try {
     const { client, fromEmail } = await getUncachableSendGridClient();
+    const { getEmailTemplate } = await import('./emailTemplates');
     
     const verificationUrl = `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/verify/${token}`;
+    const accountTypeText = accountType === 'personal' ? 'personal' : 'business';
     
-    const accountTypeText = accountType === 'personal' ? 'particulier' : 'professionnel';
+    const template = getEmailTemplate('verification', language as any, {
+      fullName,
+      verificationUrl,
+      accountTypeText,
+    });
     
     const msg = {
       to: toEmail,
       from: fromEmail,
-      subject: 'Vérifiez votre adresse email - ALTUS',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-            .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-            .button { display: inline-block; background: #2563eb; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: bold; }
-            .footer { text-align: center; margin-top: 20px; color: #6b7280; font-size: 14px; }
-            .link { color: #2563eb; word-break: break-all; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1 style="margin: 0; font-size: 28px;">ALTUS</h1>
-              <p style="margin: 10px 0 0 0; opacity: 0.9;">Solutions de financement</p>
-            </div>
-            <div class="content">
-              <h2 style="color: #1f2937; margin-top: 0;">Bonjour ${escapeHtml(fullName)},</h2>
-              <p>Merci de vous être inscrit sur ALTUS en tant que <strong>${escapeHtml(accountTypeText)}</strong>.</p>
-              <p>Pour activer votre compte et accéder à nos services de financement, veuillez vérifier votre adresse email en cliquant sur le bouton ci-dessous :</p>
-              <div style="text-align: center;">
-                <a href="${verificationUrl}" class="button">Vérifier mon email</a>
-              </div>
-              <p style="margin-top: 20px;">Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :</p>
-              <p class="link">${verificationUrl}</p>
-              <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 14px;">
-                Si vous n'avez pas créé de compte sur ALTUS, vous pouvez ignorer cet email.
-              </p>
-            </div>
-            <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} ALTUS. Tous droits réservés.</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `,
-      text: `
-        Bonjour ${fullName},
-        
-        Merci de vous être inscrit sur ALTUS en tant que ${accountTypeText}.
-        
-        Pour activer votre compte, veuillez vérifier votre adresse email en visitant ce lien :
-        ${verificationUrl}
-        
-        Si vous n'avez pas créé de compte sur ALTUS, vous pouvez ignorer cet email.
-        
-        ALTUS - Solutions de financement
-      `
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
     };
 
     await client.send(msg);
-    console.log(`Verification email sent to ${toEmail}`);
+    console.log(`Verification email sent to ${toEmail} in ${language}`);
     return true;
   } catch (error) {
     console.error('Error sending verification email:', error);

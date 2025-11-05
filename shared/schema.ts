@@ -13,6 +13,7 @@ export const users = pgTable("users", {
   verificationTokenExpiry: timestamp("verification_token_expiry"),
   fullName: text("full_name").notNull(),
   phone: text("phone"),
+  preferredLanguage: text("preferred_language").notNull().default("fr"),
   accountType: text("account_type").notNull().default("business"),
   companyName: text("company_name"),
   siret: text("siret"),

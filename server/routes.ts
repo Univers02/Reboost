@@ -325,13 +325,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins un caractère spécial'),
         fullName: z.string().min(1, 'Nom complet requis'),
         phone: z.string().optional(),
+        preferredLanguage: z.enum(['fr', 'en', 'es', 'pt', 'it', 'de', 'nl']).optional(),
         accountType: z.enum(['personal', 'business', 'professional']).optional(),
         companyName: z.string().optional(),
         siret: z.string().optional(),
       });
 
       const validatedInput = signupSchema.parse(req.body);
-      const { email, password, fullName, phone, accountType, companyName, siret } = validatedInput;
+      const { email, password, fullName, phone, preferredLanguage, accountType, companyName, siret } = validatedInput;
       
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
@@ -350,6 +351,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email,
         fullName,
         phone: phone || null,
+        preferredLanguage: preferredLanguage || 'fr',
         accountType: accountType || 'personal',
         emailVerified: false,
         verificationToken,
@@ -367,7 +369,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedUser = insertUserSchema.parse(userData);
       const user = await storage.createUser(validatedUser);
       
-      await sendVerificationEmail(email, fullName, verificationToken, accountType || 'personal');
+      await sendVerificationEmail(email, fullName, verificationToken, accountType || 'personal', preferredLanguage || 'fr');
       
       res.status(201).json({
         message: 'Inscription réussie ! Veuillez vérifier votre email pour activer votre compte.',
