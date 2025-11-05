@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AlertCircle, Upload, FileText, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { apiRequest } from '@/lib/queryClient';
 import type { User } from '@shared/schema';
 
 interface NewLoanDialogProps {
@@ -117,14 +118,9 @@ export default function NewLoanDialog({ open, onOpenChange }: NewLoanDialogProps
   };
 
   const createLoanMutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
-      const response = await fetch('/api/loans', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error('Failed to create loan');
-      return response.json();
+    mutationFn: async (data: typeof formData & { loanType: string }) => {
+      const response = await apiRequest('POST', '/api/loans', data);
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
@@ -148,7 +144,10 @@ export default function NewLoanDialog({ open, onOpenChange }: NewLoanDialogProps
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      createLoanMutation.mutate(formData);
+      createLoanMutation.mutate({
+        ...formData,
+        loanType: loanType as string,
+      });
     }
   };
 

@@ -223,18 +223,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const calculateInterestRate = async (loanType: string, amount: number): Promise<number> => {
     const rateTiersSetting = await storage.getAdminSetting('interest_rate_tiers');
     if (!rateTiersSetting) {
-      if (loanType === 'business') {
-        if (amount < 10000) return 4.5;
-        if (amount < 50000) return 3.5;
+      if (loanType === 'auto') {
+        if (amount < 10000) return 3.9;
+        if (amount < 30000) return 2.9;
+        return 1.9;
+      } else if (loanType === 'mortgage' || loanType === 'commercialProperty') {
+        if (amount < 50000) return 4.5;
+        if (amount < 200000) return 3.5;
         return 2.5;
+      } else if (loanType === 'green') {
+        if (amount < 20000) return 2.5;
+        if (amount < 50000) return 1.5;
+        return 0.5;
+      } else if (loanType === 'renovation') {
+        if (amount < 20000) return 5.9;
+        if (amount < 50000) return 3.9;
+        return 2.5;
+      } else if (loanType === 'student') {
+        if (amount < 10000) return 2.5;
+        if (amount < 30000) return 2.0;
+        return 1.5;
+      } else if (loanType === 'business' || loanType === 'cashFlow' || loanType === 'lineOfCredit') {
+        if (amount < 10000) return 7.5;
+        if (amount < 50000) return 5.5;
+        return 3.5;
+      } else if (loanType === 'equipment' || loanType === 'vehicleFleet') {
+        if (amount < 20000) return 6.5;
+        if (amount < 100000) return 4.9;
+        return 3.9;
       } else if (loanType === 'personal') {
         if (amount < 10000) return 6.5;
         if (amount < 30000) return 5.0;
         return 3.5;
-      } else if (loanType === 'real_estate') {
-        if (amount < 50000) return 3.5;
-        if (amount < 200000) return 2.5;
-        return 2.0;
       }
       return 4.0;
     }
@@ -742,7 +762,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/loans", requireAuth, requireCSRF, loanLimiter, async (req, res) => {
     try {
       const loanRequestSchema = z.object({
-        loanType: z.enum(['business', 'personal', 'real_estate']),
+        loanType: z.enum([
+          'personal', 'auto', 'mortgage', 'green', 'renovation', 'student',
+          'business', 'cashFlow', 'equipment', 'commercialProperty', 'lineOfCredit', 'vehicleFleet'
+        ]),
         amount: z.string().refine((val) => {
           const num = parseFloat(val);
           return !isNaN(num) && num > 0 && num <= 500000;
