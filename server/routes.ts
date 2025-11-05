@@ -945,22 +945,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const updated = await storage.updateLoan(req.params.id, {
         signedContractUrl,
-        status: 'active',
-      });
-
-      await storage.createTransaction({
-        userId: loan.userId,
-        type: 'credit',
-        amount: loan.amount,
-        description: `Déblocage des fonds - Prêt ${loan.loanType} approuvé`,
+        status: 'signed',
       });
 
       await storage.createAdminMessage({
         userId: loan.userId,
         transferId: null,
-        subject: 'Fonds débloqués - Prêt actif',
-        content: `Votre contrat signé a été validé. Les fonds de ${loan.amount} EUR ont été débloqués et sont maintenant disponibles sur votre compte. Vous pouvez effectuer des transferts.`,
-        severity: 'success',
+        subject: 'Contrat signé reçu - En attente de validation',
+        content: `Votre contrat signé pour le prêt de ${loan.amount} EUR a été reçu avec succès. Il est maintenant en cours de vérification par notre service. Vous serez notifié dès que les fonds seront débloqués.`,
+        severity: 'info',
       });
 
       await storage.createAuditLog({
@@ -1798,6 +1791,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: firstError.message });
       }
       res.status(500).json({ error: 'Failed to reject loan' });
+    }
+  });
+
+  app.post("/api/admin/loans/:id/disburse", requireAdmin, requireCSRF, adminLimiter, async (req, res) => {
+    try {
+      const loan = await storage.getLoan(req.params.id);
+      if (!loan) {
+        return res.status(404).json({ error: 'Loan not found' });
+      }
+
+      if (loan.status !== 'signed') {
+        return res.status(400).json({ 
+          error: 'Cannot disburse funds: Loan must be in signed status. Current status: ' + loan.status 
+        });
+      }
+
+      if (!loan.signedContractUrl) {
+        return res.status(400).json({ 
+          error: 'Cannot disburse funds: No signed contract found' 
+        });
+      }
+
+      const updated = await storage.updateLoan(req.params.id, {
+        status: 'active',
+      });
+
+      await storage.createTransaction({
+        userId: loan.userId,
+        type: 'credit',
+        amount: loan.amount,
+        description: `Déblocage des fonds - Prêt ${loan.loanType} approuvé`,
+      });
+
+      await storage.createAdminMessage({
+        userId: loan.userId,
+        transferId: null,
+        subject: 'Fonds débloqués - Prêt actif',
+        content: `Votre contrat signé a été validé. Les fonds de ${loan.amount} EUR ont été débloqués et sont maintenant disponibles sur votre compte. Vous pouvez effectuer des transferts.`,
+        severity: 'success',
+      });
+
+      await storage.createAuditLog({
+        actorId: req.session.userId!,
+        actorRole: 'admin',
+        action: 'disburse_loan_funds',
+        entityType: 'loan',
+        entityId: req.params.id,
+        metadata: { amount: loan.amount, loanType: loan.loanType },
+      });
+
+      res.json(updated);
+    } catch (error) {
+      console.error('Failed to disburse loan funds:', error);
+      res.status(500).json({ error: 'Failed to disburse loan funds' });
     }
   });
 

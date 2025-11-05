@@ -111,8 +111,19 @@ export default function IndividualLoans() {
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <CardTitle className="text-lg">Prêt {loan.id.substring(0, 8)}</CardTitle>
-                      <Badge variant={loan.status === 'active' ? 'default' : 'secondary'}>
-                        {loan.status === 'active' ? 'Actif' : loan.status}
+                      <Badge variant={
+                        loan.status === 'active' ? 'default' :
+                        loan.status === 'signed' ? 'default' :
+                        loan.status === 'approved' ? 'secondary' :
+                        loan.status === 'rejected' ? 'destructive' :
+                        'outline'
+                      }>
+                        {loan.status === 'active' ? 'Actif' :
+                         loan.status === 'signed' ? 'Signé' :
+                         loan.status === 'approved' ? 'Approuvé' :
+                         loan.status === 'pending' ? 'En attente' :
+                         loan.status === 'rejected' ? 'Refusé' :
+                         loan.status}
                       </Badge>
                     </div>
                   </CardHeader>

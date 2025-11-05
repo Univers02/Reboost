@@ -20,6 +20,7 @@ import Auth from '@/pages/Auth';
 import Verify from '@/pages/Verify';
 import AdminDashboard from '@/pages/AdminDashboard';
 import AdminUsers from '@/pages/AdminUsers';
+import AdminLoans from '@/pages/AdminLoans';
 import AdminTransfers from '@/pages/AdminTransfers';
 import AdminSettings from '@/pages/AdminSettings';
 import AdminReports from '@/pages/AdminReports';
@@ -56,6 +57,7 @@ function Router() {
       <Route path="/settings" component={Settings} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/users" component={AdminUsers} />
+      <Route path="/admin/loans" component={AdminLoans} />
       <Route path="/admin/transfers" component={AdminTransfers} />
       <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin/reports" component={AdminReports} />
