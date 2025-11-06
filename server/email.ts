@@ -1,7 +1,5 @@
 import sgMail from '@sendgrid/mail';
 
-let connectionSettings: any;
-
 function escapeHtml(unsafe: string): string {
   return unsafe
     .replace(/&/g, "&amp;")
@@ -12,31 +10,14 @@ function escapeHtml(unsafe: string): string {
 }
 
 async function getCredentials() {
-  const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME;
-  const xReplitToken = process.env.REPL_IDENTITY
-    ? 'repl ' + process.env.REPL_IDENTITY
-    : process.env.WEB_REPL_RENEWAL
-    ? 'depl ' + process.env.WEB_REPL_RENEWAL
-    : null;
+  const apiKey = process.env.SENDGRID_API_KEY;
+  const email = process.env.SENDGRID_FROM_EMAIL;
 
-  if (!xReplitToken) {
-    throw new Error('X_REPLIT_TOKEN not found for repl/depl');
+  if (!apiKey || !email) {
+    throw new Error('SendGrid configuration missing: SENDGRID_API_KEY and SENDGRID_FROM_EMAIL must be set');
   }
 
-  connectionSettings = await fetch(
-    'https://' + hostname + '/api/v2/connection?include_secrets=true&connector_names=sendgrid',
-    {
-      headers: {
-        'Accept': 'application/json',
-        'X_REPLIT_TOKEN': xReplitToken
-      }
-    }
-  ).then(res => res.json()).then(data => data.items?.[0]);
-
-  if (!connectionSettings || (!connectionSettings.settings.api_key || !connectionSettings.settings.from_email)) {
-    throw new Error('SendGrid not connected');
-  }
-  return { apiKey: connectionSettings.settings.api_key, email: connectionSettings.settings.from_email };
+  return { apiKey, email };
 }
 
 async function getUncachableSendGridClient() {
