@@ -33,7 +33,7 @@ export default function BorrowingCapacity({
           <p className="text-2xl font-bold" data-testid="text-borrowing-capacity">
             {formatCurrency(currentCapacity)}
           </p>
-          <p className="text-xs text-muted-foreground mt-1">disponible sur {formatCurrency(maxCapacity)}</p>
+          <p className="text-xs text-muted-foreground mt-1">{t.dashboard.available} sur {formatCurrency(maxCapacity)}</p>
         </div>
         <div className="w-full bg-muted rounded-full h-2">
           <div 
@@ -41,7 +41,7 @@ export default function BorrowingCapacity({
             style={{ width: `${percentage}%` }}
           />
         </div>
-        <p className="text-xs text-center text-muted-foreground">{Math.round(percentage)}% disponible</p>
+        <p className="text-xs text-center text-muted-foreground">{Math.round(percentage)}% {t.dashboard.available}</p>
       </CardContent>
     </Card>
   );

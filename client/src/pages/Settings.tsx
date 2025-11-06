@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Bell, Shield, Palette, Globe, Camera, Mail, Phone, Building2, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/lib/i18n';
+import { useLanguage, useTranslations } from '@/lib/i18n';
 import { useTheme } from '@/hooks/use-theme';
 import { useUser, getUserInitials } from '@/hooks/use-user';
 import { useMutation } from '@tanstack/react-query';
@@ -18,9 +18,12 @@ import type { User as UserType } from '@shared/schema';
 
 export default function Settings() {
   const { toast } = useToast();
+  const t = useTranslations();
   const { language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
   const { data: user, isLoading } = useUser();
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   
   const [profileData, setProfileData] = useState({
     fullName: '',
@@ -67,15 +70,15 @@ export default function Settings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
       toast({
-        title: 'Profil mis à jour',
-        description: 'Vos informations ont été enregistrées avec succès.',
+        title: t.messages.profileUpdated,
+        description: t.messages.profileUpdatedDesc,
       });
     },
     onError: (error: any) => {
       toast({
         variant: 'destructive',
-        title: 'Erreur',
-        description: error.message || 'Erreur lors de la mise à jour du profil',
+        title: t.common.error,
+        description: error.message || t.messages.errorUpdatingProfile,
       });
     },
   });
@@ -93,15 +96,15 @@ export default function Settings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
       toast({
-        title: 'Préférences enregistrées',
-        description: 'Vos préférences de notification ont été mises à jour.',
+        title: t.messages.preferencesUpdated,
+        description: t.messages.preferencesUpdatedDesc,
       });
     },
     onError: (error: any) => {
       toast({
         variant: 'destructive',
-        title: 'Erreur',
-        description: error.message || 'Erreur lors de la mise à jour des préférences',
+        title: t.common.error,
+        description: error.message || t.messages.errorUpdatingPreferences,
       });
     },
   });
@@ -118,15 +121,15 @@ export default function Settings() {
         confirmPassword: '',
       });
       toast({
-        title: 'Mot de passe modifié',
-        description: 'Votre mot de passe a été modifié avec succès.',
+        title: t.messages.passwordChanged,
+        description: t.messages.passwordChangedDesc,
       });
     },
     onError: (error: any) => {
       toast({
         variant: 'destructive',
-        title: 'Erreur',
-        description: error.message || 'Erreur lors du changement de mot de passe',
+        title: t.common.error,
+        description: error.message || t.messages.errorChangingPassword,
       });
     },
   });
@@ -148,12 +151,72 @@ export default function Settings() {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       toast({
         variant: 'destructive',
-        title: 'Erreur',
-        description: 'Les mots de passe ne correspondent pas',
+        title: t.common.error,
+        description: t.messages.passwordMismatch,
       });
       return;
     }
     changePasswordMutation.mutate(passwordData);
+  };
+
+  const handleAvatarClick = () => {
+    avatarInputRef.current?.click();
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast({
+        variant: 'destructive',
+        title: t.common.error,
+        description: t.messages.invalidFileType,
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        variant: 'destructive',
+        title: t.common.error,
+        description: t.messages.fileTooLarge,
+      });
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    try {
+      const response = await fetch('/api/user/profile-photo', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+      toast({
+        title: t.messages.avatarUpdated,
+        description: t.messages.avatarUpdatedDesc,
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: t.common.error,
+        description: t.messages.errorUploadingAvatar,
+      });
+    } finally {
+      setIsUploadingAvatar(false);
+      if (e.target) {
+        e.target.value = '';
+      }
+    }
   };
 
   if (isLoading || !user) {
@@ -161,7 +224,7 @@ export default function Settings() {
       <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-violet-950/30 dark:to-blue-950/30 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-          <p className="mt-4 text-muted-foreground">Chargement...</p>
+          <p className="mt-4 text-muted-foreground">{t.common.loading}</p>
         </div>
       </div>
     );
@@ -186,8 +249,18 @@ export default function Settings() {
                       {getUserInitials(user.fullName)}
                     </AvatarFallback>
                   </Avatar>
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleAvatarChange}
+                    data-testid="input-avatar-upload"
+                  />
                   <button 
-                    className="absolute bottom-0 right-0 p-2 bg-gradient-to-br from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white rounded-full shadow-xl transition-all transform hover:scale-110 ring-4 ring-white dark:ring-slate-900"
+                    onClick={handleAvatarClick}
+                    disabled={isUploadingAvatar}
+                    className="absolute bottom-0 right-0 p-2 bg-gradient-to-br from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full shadow-xl transition-all transform hover:scale-110 ring-4 ring-white dark:ring-slate-900"
                     data-testid="button-change-avatar"
                   >
                     <Camera className="h-4 w-4" />
@@ -202,7 +275,7 @@ export default function Settings() {
                     {user.kycStatus === 'approved' && (
                       <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-green-500/20 to-emerald-500/20 dark:from-green-500/30 dark:to-emerald-500/30 border border-green-500/30 dark:border-green-400/30 text-green-700 dark:text-green-400 rounded-full text-sm font-semibold shadow-lg shadow-green-500/10">
                         <CheckCircle2 className="h-3.5 w-3.5" />
-                        Vérifié
+                        {t.settings.verified}
                       </div>
                     )}
                   </div>
@@ -238,7 +311,7 @@ export default function Settings() {
               data-testid="tab-profile"
             >
               <User className="h-4 w-4" />
-              <span>Profil</span>
+              <span>{t.settings.profile}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="notifications" 
@@ -246,7 +319,7 @@ export default function Settings() {
               data-testid="tab-notifications"
             >
               <Bell className="h-4 w-4" />
-              <span>Notifications</span>
+              <span>{t.settings.notifications}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="security" 
@@ -254,7 +327,7 @@ export default function Settings() {
               data-testid="tab-security"
             >
               <Shield className="h-4 w-4" />
-              <span>Sécurité</span>
+              <span>{t.settings.security}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="appearance" 
@@ -262,7 +335,7 @@ export default function Settings() {
               data-testid="tab-appearance"
             >
               <Palette className="h-4 w-4" />
-              <span>Apparence</span>
+              <span>{t.settings.appearance}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -275,17 +348,17 @@ export default function Settings() {
                   <User className="h-5 w-5" />
                 </div>
                 <CardTitle className="text-2xl bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">
-                  Informations personnelles
+                  {t.settings.personalInfo}
                 </CardTitle>
               </div>
               <CardDescription className="text-base">
-                Mettez à jour vos informations de profil
+                {t.settings.updateInfo}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-sm font-medium">Nom complet</Label>
+                  <Label htmlFor="fullName" className="text-sm font-medium">{t.settings.fullName}</Label>
                   <Input
                     id="fullName"
                     value={profileData.fullName}
@@ -295,7 +368,7 @@ export default function Settings() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                  <Label htmlFor="email" className="text-sm font-medium">{t.settings.email}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -306,7 +379,7 @@ export default function Settings() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-sm font-medium">Téléphone</Label>
+                  <Label htmlFor="phone" className="text-sm font-medium">{t.settings.phone}</Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -317,7 +390,7 @@ export default function Settings() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="company" className="text-sm font-medium">Entreprise</Label>
+                  <Label htmlFor="company" className="text-sm font-medium">{t.settings.company}</Label>
                   <Input
                     id="company"
                     value={profileData.companyName}
@@ -334,7 +407,7 @@ export default function Settings() {
                   className="px-8 h-11 shadow-md hover:shadow-lg transition-all"
                   data-testid="button-save-profile"
                 >
-                  {updateProfileMutation.isPending ? 'Enregistrement...' : 'Enregistrer les modifications'}
+                  {updateProfileMutation.isPending ? t.common.saving : t.settings.saveChanges}
                 </Button>
               </div>
             </CardContent>
@@ -344,26 +417,26 @@ export default function Settings() {
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-purple-500/5 to-transparent dark:from-violet-500/10 dark:via-purple-500/10 pointer-events-none" />
             <CardHeader className="relative space-y-1 pb-6">
               <CardTitle className="text-2xl bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-                Type de compte
+                {t.settings.accountType}
               </CardTitle>
               <CardDescription className="text-base">
-                Votre compte {user.accountType === 'business' ? 'professionnel' : 'particulier'} ALTUS
+                {t.settings.yourAccountType} {user.accountType === 'business' ? t.settings.businessAccount : t.settings.individualAccount}
               </CardDescription>
             </CardHeader>
             <CardContent className="relative">
               <div className="flex items-center justify-between p-6 bg-gradient-to-br from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20 backdrop-blur-sm rounded-xl border-2 border-violet-300/30 dark:border-violet-500/30 shadow-lg">
                 <div className="space-y-1">
                   <p className="text-lg font-semibold">
-                    {user.accountType === 'business' ? 'Compte Professionnel' : 'Compte Particulier'}
+                    {user.accountType === 'business' ? t.settings.businessAccount : t.settings.individualAccount}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {user.accountType === 'business' 
-                      ? 'Accès complet aux services de financement d\'entreprise'
-                      : 'Accès aux services de financement personnel'}
+                      ? t.settings.businessAccess
+                      : t.settings.individualAccess}
                   </p>
                 </div>
                 <div className="px-4 py-2 bg-gradient-to-r from-violet-600 via-purple-600 to-blue-600 text-white rounded-full text-sm font-semibold shadow-xl shadow-violet-500/30">
-                  {user.status === 'active' ? 'Actif' : user.status === 'pending' ? 'En attente' : user.status}
+                  {user.status === 'active' ? t.common.active : user.status === 'pending' ? t.common.pending : user.status}
                 </div>
               </div>
             </CardContent>
@@ -379,19 +452,19 @@ export default function Settings() {
                   <Bell className="h-5 w-5" />
                 </div>
                 <CardTitle className="text-2xl bg-gradient-to-r from-amber-600 to-yellow-600 dark:from-amber-400 dark:to-yellow-400 bg-clip-text text-transparent">
-                  Préférences de notification
+                  {t.settings.notificationPreferences}
                 </CardTitle>
               </div>
               <CardDescription className="text-base">
-                Choisissez comment vous souhaitez être notifié
+                {t.settings.chooseNotifications}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 transition-colors">
                 <div className="space-y-0.5">
-                  <Label htmlFor="emailAlerts" className="text-base font-medium cursor-pointer">Alertes par email</Label>
+                  <Label htmlFor="emailAlerts" className="text-base font-medium cursor-pointer">{t.settings.emailAlerts}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Recevez des alertes importantes par email
+                    {t.settings.emailAlertsDesc}
                   </p>
                 </div>
                 <Switch
@@ -406,9 +479,9 @@ export default function Settings() {
               <Separator className="my-2" />
               <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 transition-colors">
                 <div className="space-y-0.5">
-                  <Label htmlFor="transferUpdates" className="text-base font-medium cursor-pointer">Mises à jour de transfert</Label>
+                  <Label htmlFor="transferUpdates" className="text-base font-medium cursor-pointer">{t.settings.transferUpdates}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Notifications sur l'état de vos transferts
+                    {t.settings.transferUpdatesDesc}
                   </p>
                 </div>
                 <Switch
@@ -423,9 +496,9 @@ export default function Settings() {
               <Separator className="my-2" />
               <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 transition-colors">
                 <div className="space-y-0.5">
-                  <Label htmlFor="loanReminders" className="text-base font-medium cursor-pointer">Rappels de paiement</Label>
+                  <Label htmlFor="loanReminders" className="text-base font-medium cursor-pointer">{t.settings.loanReminders}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Rappels pour vos échéances de prêt
+                    {t.settings.loanRemindersDesc}
                   </p>
                 </div>
                 <Switch
@@ -440,9 +513,9 @@ export default function Settings() {
               <Separator className="my-2" />
               <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 transition-colors">
                 <div className="space-y-0.5">
-                  <Label htmlFor="marketingEmails" className="text-base font-medium cursor-pointer">Emails marketing</Label>
+                  <Label htmlFor="marketingEmails" className="text-base font-medium cursor-pointer">{t.settings.marketingEmails}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Recevez des nouvelles et des offres spéciales
+                    {t.settings.marketingEmailsDesc}
                   </p>
                 </div>
                 <Switch
@@ -461,7 +534,7 @@ export default function Settings() {
                   className="px-8 h-11 shadow-md hover:shadow-lg transition-all"
                   data-testid="button-save-notifications"
                 >
-                  {updateNotificationsMutation.isPending ? 'Enregistrement...' : 'Enregistrer les préférences'}
+                  {updateNotificationsMutation.isPending ? t.common.saving : t.settings.savePreferences}
                 </Button>
               </div>
             </CardContent>
@@ -477,16 +550,16 @@ export default function Settings() {
                   <Shield className="h-5 w-5" />
                 </div>
                 <CardTitle className="text-2xl bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
-                  Mot de passe
+                  {t.settings.changePassword}
                 </CardTitle>
               </div>
               <CardDescription className="text-base">
-                Modifiez votre mot de passe
+                {t.settings.updatePassword}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="currentPassword" className="text-sm font-medium">Mot de passe actuel</Label>
+                <Label htmlFor="currentPassword" className="text-sm font-medium">{t.settings.currentPassword}</Label>
                 <Input
                   id="currentPassword"
                   type="password"
@@ -497,7 +570,7 @@ export default function Settings() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="newPassword" className="text-sm font-medium">Nouveau mot de passe</Label>
+                <Label htmlFor="newPassword" className="text-sm font-medium">{t.settings.newPassword}</Label>
                 <Input
                   id="newPassword"
                   type="password"
@@ -508,7 +581,7 @@ export default function Settings() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirmer le mot de passe</Label>
+                <Label htmlFor="confirmPassword" className="text-sm font-medium">{t.settings.confirmNewPassword}</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -525,7 +598,7 @@ export default function Settings() {
                   className="px-8 h-11 shadow-md hover:shadow-lg transition-all"
                   data-testid="button-change-password"
                 >
-                  {changePasswordMutation.isPending ? 'Modification...' : 'Modifier le mot de passe'}
+                  {changePasswordMutation.isPending ? t.common.saving : t.settings.changePassword}
                 </Button>
               </div>
             </CardContent>

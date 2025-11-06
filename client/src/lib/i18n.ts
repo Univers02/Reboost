@@ -92,12 +92,26 @@ type TranslationKeys = {
     pendingTransfers: string;
     availableFunds: string;
     upcomingRepayments: string;
+    yourGlobalBalance: string;
+    noActiveLoans: string;
+    noTransfers: string;
+    dataLoadError: string;
+    available: string;
+    notifications: string;
+    noNotifications: string;
+    viewDetails: string;
+    availableOffers: string;
   };
   loan: {
     amount: string;
     interestRate: string;
     nextPayment: string;
     viewAll: string;
+    status: string;
+    downloadContract: string;
+    uploadSignedContract: string;
+    downloading: string;
+    uploading: string;
   };
   transfer: {
     requestSubmitted: string;
@@ -109,6 +123,14 @@ type TranslationKeys = {
     inProgress: string;
     approved: string;
     rejected: string;
+    completed: string;
+    suspended: string;
+    noAccount: string;
+    validation: string;
+    validating: string;
+    onHold: string;
+    processing: string;
+    processingComplete: string;
   };
   fee: {
     type: string;
@@ -124,6 +146,76 @@ type TranslationKeys = {
     loading: string;
     error: string;
     success: string;
+    active: string;
+    pending: string;
+    completed: string;
+    suspended: string;
+    saving: string;
+    cancel: string;
+    save: string;
+    close: string;
+    noData: string;
+  };
+  settings: {
+    title: string;
+    profile: string;
+    notifications: string;
+    security: string;
+    appearance: string;
+    personalInfo: string;
+    updateInfo: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    company: string;
+    saveChanges: string;
+    accountType: string;
+    yourAccountType: string;
+    individualAccount: string;
+    businessAccount: string;
+    individualAccess: string;
+    businessAccess: string;
+    verified: string;
+    notificationPreferences: string;
+    chooseNotifications: string;
+    emailAlerts: string;
+    emailAlertsDesc: string;
+    transferUpdates: string;
+    transferUpdatesDesc: string;
+    loanReminders: string;
+    loanRemindersDesc: string;
+    marketingEmails: string;
+    marketingEmailsDesc: string;
+    savePreferences: string;
+    changePassword: string;
+    updatePassword: string;
+    currentPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+    themeSettings: string;
+    chooseTheme: string;
+    lightMode: string;
+    darkMode: string;
+    systemMode: string;
+    languageSettings: string;
+    chooseLanguage: string;
+  };
+  messages: {
+    profileUpdated: string;
+    profileUpdatedDesc: string;
+    preferencesUpdated: string;
+    preferencesUpdatedDesc: string;
+    passwordChanged: string;
+    passwordChangedDesc: string;
+    passwordMismatch: string;
+    errorUpdatingProfile: string;
+    errorUpdatingPreferences: string;
+    errorChangingPassword: string;
+    avatarUpdated: string;
+    avatarUpdatedDesc: string;
+    errorUploadingAvatar: string;
+    invalidFileType: string;
+    fileTooLarge: string;
   };
   about: {
     title: string;
@@ -442,12 +534,26 @@ export const translations: Record<Language, TranslationKeys> = {
       pendingTransfers: 'Transferts en attente',
       availableFunds: 'Fonds disponibles',
       upcomingRepayments: 'Remboursements à venir',
+      yourGlobalBalance: 'Votre solde global',
+      noActiveLoans: 'Aucun prêt actif',
+      noTransfers: 'Aucun transfert trouvé',
+      dataLoadError: 'Erreur lors du chargement des données',
+      available: 'disponible',
+      notifications: 'Notifications',
+      noNotifications: 'Aucune notification',
+      viewDetails: 'Voir les détails',
+      availableOffers: 'Offres disponibles pour vous',
     },
     loan: {
       amount: 'Montant',
       interestRate: 'Taux d\'intérêt',
       nextPayment: 'Prochain paiement',
       viewAll: 'Voir tout',
+      status: 'Statut',
+      downloadContract: 'Télécharger le contrat',
+      uploadSignedContract: 'Télécharger le contrat signé',
+      downloading: 'Téléchargement...',
+      uploading: 'Téléchargement...',
     },
     transfer: {
       requestSubmitted: 'Demande soumise',
@@ -459,6 +565,14 @@ export const translations: Record<Language, TranslationKeys> = {
       inProgress: 'En cours',
       approved: 'Approuvé',
       rejected: 'Rejeté',
+      completed: 'Complété',
+      suspended: 'Suspendu',
+      noAccount: 'Aucun compte enregistré',
+      validation: 'Validation',
+      validating: 'Validation...',
+      onHold: 'Transfert en pause',
+      processing: 'Transfert en cours',
+      processingComplete: 'Transfert complété',
     },
     fee: {
       type: 'Type de frais',
@@ -474,6 +588,76 @@ export const translations: Record<Language, TranslationKeys> = {
       loading: 'Chargement...',
       error: 'Erreur',
       success: 'Succès',
+      active: 'Actif',
+      pending: 'En attente',
+      completed: 'Complété',
+      suspended: 'Suspendu',
+      saving: 'Enregistrement...',
+      cancel: 'Annuler',
+      save: 'Enregistrer',
+      close: 'Fermer',
+      noData: 'Aucune donnée disponible',
+    },
+    settings: {
+      title: 'Paramètres',
+      profile: 'Profil',
+      notifications: 'Notifications',
+      security: 'Sécurité',
+      appearance: 'Apparence',
+      personalInfo: 'Informations personnelles',
+      updateInfo: 'Mettez à jour vos informations de profil',
+      fullName: 'Nom complet',
+      email: 'Email',
+      phone: 'Téléphone',
+      company: 'Entreprise',
+      saveChanges: 'Enregistrer les modifications',
+      accountType: 'Type de compte',
+      yourAccountType: 'Votre compte',
+      individualAccount: 'Compte Particulier',
+      businessAccount: 'Compte Professionnel',
+      individualAccess: 'Accès aux services de financement personnel',
+      businessAccess: 'Accès complet aux services de financement d\'entreprise',
+      verified: 'Vérifié',
+      notificationPreferences: 'Préférences de notification',
+      chooseNotifications: 'Choisissez comment vous souhaitez être notifié',
+      emailAlerts: 'Alertes par email',
+      emailAlertsDesc: 'Recevez des alertes importantes par email',
+      transferUpdates: 'Mises à jour de transfert',
+      transferUpdatesDesc: 'Notifications sur l\'état de vos transferts',
+      loanReminders: 'Rappels de paiement',
+      loanRemindersDesc: 'Rappels pour vos échéances de prêt',
+      marketingEmails: 'Emails marketing',
+      marketingEmailsDesc: 'Recevez des nouvelles et des offres spéciales',
+      savePreferences: 'Enregistrer les préférences',
+      changePassword: 'Modifier le mot de passe',
+      updatePassword: 'Mise à jour de votre mot de passe',
+      currentPassword: 'Mot de passe actuel',
+      newPassword: 'Nouveau mot de passe',
+      confirmNewPassword: 'Confirmer le nouveau mot de passe',
+      themeSettings: 'Paramètres de thème',
+      chooseTheme: 'Sélectionnez votre thème préféré',
+      lightMode: 'Mode clair',
+      darkMode: 'Mode sombre',
+      systemMode: 'Système',
+      languageSettings: 'Paramètres de langue',
+      chooseLanguage: 'Sélectionnez votre langue',
+    },
+    messages: {
+      profileUpdated: 'Profil mis à jour',
+      profileUpdatedDesc: 'Vos informations ont été enregistrées avec succès.',
+      preferencesUpdated: 'Préférences enregistrées',
+      preferencesUpdatedDesc: 'Vos préférences de notification ont été mises à jour.',
+      passwordChanged: 'Mot de passe modifié',
+      passwordChangedDesc: 'Votre mot de passe a été modifié avec succès.',
+      passwordMismatch: 'Les mots de passe ne correspondent pas',
+      errorUpdatingProfile: 'Erreur lors de la mise à jour du profil',
+      errorUpdatingPreferences: 'Erreur lors de la mise à jour des préférences',
+      errorChangingPassword: 'Erreur lors du changement de mot de passe',
+      avatarUpdated: 'Photo de profil mise à jour',
+      avatarUpdatedDesc: 'Votre photo de profil a été mise à jour avec succès.',
+      errorUploadingAvatar: 'Erreur lors du téléchargement de la photo',
+      invalidFileType: 'Type de fichier non autorisé. Seules les images JPEG, PNG et WebP sont acceptées.',
+      fileTooLarge: 'Le fichier est trop volumineux (max 5MB).',
     },
     about: {
       title: 'À propos d\'Altus Finance Group',

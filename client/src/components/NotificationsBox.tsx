@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { Bell, CheckCircle2, AlertCircle, Info, AlertTriangle } from 'lucide-react';
+import { useTranslations } from '@/lib/i18n';
 
 interface AdminMessage {
   id: string;
@@ -16,6 +17,7 @@ interface AdminMessage {
 }
 
 export default function NotificationsBox() {
+  const t = useTranslations();
   const { data: messages, isLoading } = useQuery<AdminMessage[]>({
     queryKey: ['/api/messages'],
   });
@@ -64,7 +66,7 @@ export default function NotificationsBox() {
         <CardTitle className="flex items-center justify-between text-sm font-medium text-muted-foreground">
           <span className="flex items-center gap-2">
             <Bell className="w-4 h-4" />
-            Notifications
+            {t.dashboard.notifications}
           </span>
           {unreadCount > 0 && (
             <Badge variant="destructive" className="h-5 text-xs" data-testid="badge-unread-count">
@@ -113,7 +115,7 @@ export default function NotificationsBox() {
                           disabled={markAsReadMutation.isPending}
                           data-testid={`button-mark-read-${message.id}`}
                         >
-                          Lu
+                          ✓
                         </Button>
                       )}
                     </div>
@@ -131,7 +133,7 @@ export default function NotificationsBox() {
         ) : (
           <div className="text-center py-8 text-muted-foreground">
             <Bell className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>Aucune notification</p>
+            <p>{t.dashboard.noNotifications}</p>
           </div>
         )}
       </CardContent>

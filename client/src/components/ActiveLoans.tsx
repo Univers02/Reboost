@@ -59,7 +59,7 @@ export default function ActiveLoans({ loans }: ActiveLoansProps) {
         </CardHeader>
         <CardContent className="space-y-2">
           {displayedLoans.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-2">Aucun prêt actif</p>
+            <p className="text-sm text-muted-foreground py-2">{t.dashboard.noActiveLoans}</p>
           ) : (
             displayedLoans.map((loan) => {
               const progress = (loan.totalRepaid / loan.amount) * 100;
@@ -74,13 +74,13 @@ export default function ActiveLoans({ loans }: ActiveLoansProps) {
                     <div>
                       <p className="text-sm font-medium">{formatCurrency(loan.amount)}</p>
                       <p className="text-xs text-muted-foreground">
-                        Remboursé: {formatCurrency(loan.totalRepaid)}
+                        {formatCurrency(loan.totalRepaid)}
                       </p>
                     </div>
                     <span className="text-xs text-muted-foreground">{loan.interestRate}%</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Prochain: {loan.nextPaymentDate || 'N/A'}
+                    {t.loan.nextPayment}: {loan.nextPaymentDate || 'N/A'}
                   </p>
                   <div className="space-y-0.5">
                     <Progress value={progress} className="h-1" />
@@ -91,7 +91,7 @@ export default function ActiveLoans({ loans }: ActiveLoansProps) {
             })
           )}
           <div className="flex items-center justify-between pt-2 border-t text-xs">
-            <span className="text-muted-foreground">Total actifs</span>
+            <span className="text-muted-foreground">{t.dashboard.activeLoans}</span>
             <span className="font-semibold" data-testid="text-active-loans-total">{activeLoansCount}</span>
           </div>
         </CardContent>

@@ -49,7 +49,7 @@ export default function Dashboard() {
   if (!dashboardData) {
     return (
       <div className="p-6 md:p-8">
-        <p className="text-destructive">Erreur lors du chargement des données</p>
+        <p className="text-destructive">{t.dashboard.dataLoadError}</p>
       </div>
     );
   }
@@ -60,7 +60,7 @@ export default function Dashboard() {
       <div className="p-4 md:p-6 space-y-4">
         <div className="mb-4">
           <h1 className="text-xl md:text-2xl font-semibold mb-1" data-testid="text-welcome">{getGreeting()} 👋</h1>
-          <p className="text-sm text-muted-foreground">Votre solde global : <span className="font-semibold text-foreground">{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(dashboardData.balance.currentBalance)}</span></p>
+          <p className="text-sm text-muted-foreground">{t.dashboard.yourGlobalBalance} : <span className="font-semibold text-foreground">{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(dashboardData.balance.currentBalance)}</span></p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

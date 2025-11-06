@@ -6,6 +6,7 @@ import { Calendar, TrendingUp, DollarSign, Download, Upload, FileText, CheckCirc
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient, getApiUrl } from '@/lib/queryClient';
+import { useTranslations } from '@/lib/i18n';
 
 interface Loan {
   id: string;
@@ -27,6 +28,7 @@ interface LoanDetailsDialogProps {
 export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDetailsDialogProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
+  const t = useTranslations();
 
   if (!loan) return null;
 
@@ -44,13 +46,13 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
     try {
       window.open(`/api/loans/${loan.id}/contract`, '_blank');
       toast({
-        title: 'Téléchargement du contrat',
-        description: 'Votre contrat va être téléchargé.',
+        title: t.loan.downloadContract,
+        description: t.loan.downloading,
       });
     } catch (error) {
       toast({
-        title: 'Erreur',
-        description: 'Impossible de télécharger le contrat.',
+        title: t.common.error,
+        description: t.messages.errorUpdatingProfile,
         variant: 'destructive',
       });
     }
@@ -62,8 +64,8 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
 
     if (file.type !== 'application/pdf') {
       toast({
-        title: 'Erreur',
-        description: 'Seuls les fichiers PDF sont acceptés.',
+        title: t.common.error,
+        description: t.messages.invalidFileType,
         variant: 'destructive',
       });
       return;
@@ -71,8 +73,8 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
 
     if (file.size > 10 * 1024 * 1024) {
       toast({
-        title: 'Erreur',
-        description: 'Le fichier est trop volumineux (max 10MB).',
+        title: t.common.error,
+        description: t.messages.fileTooLarge,
         variant: 'destructive',
       });
       return;
@@ -97,22 +99,22 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Échec du téléchargement');
+        throw new Error(error.error || t.messages.errorUploadingAvatar);
       }
 
       await queryClient.invalidateQueries({ queryKey: ['/api/loans'] });
       await queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
 
       toast({
-        title: 'Succès',
-        description: 'Contrat signé téléchargé avec succès. Les fonds seront débloqués dans un délai allant de quelques minutes à 24 heures maximum.',
+        title: t.common.success,
+        description: t.loan.uploading,
       });
 
       onOpenChange(false);
     } catch (error: any) {
       toast({
-        title: 'Erreur',
-        description: error.message || 'Impossible de télécharger le contrat signé.',
+        title: t.common.error,
+        description: error.message || t.messages.errorUpdatingProfile,
         variant: 'destructive',
       });
     } finally {
@@ -123,11 +125,11 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
 
   const getStatusText = (status: string) => {
     const statusMap: Record<string, string> = {
-      'pending': 'En attente',
-      'approved': 'Approuvé',
-      'active': 'Actif',
-      'signed': 'Signé',
-      'rejected': 'Refusé',
+      'pending': t.common.pending,
+      'approved': t.transfer.approved,
+      'active': t.common.active,
+      'signed': t.common.completed,
+      'rejected': t.transfer.rejected,
     };
     return statusMap[status] || status;
   };
@@ -141,13 +143,13 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="max-w-[95vw] sm:max-w-[500px] md:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Détails du prêt</DialogTitle>
+          <DialogTitle className="text-xl sm:text-2xl">{t.dashboard.viewDetails}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-6 mt-4">
+        <div className="space-y-4 sm:space-y-6 mt-2 sm:mt-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Statut</h3>
+            <h3 className="text-base sm:text-lg font-semibold">{t.loan.status}</h3>
             <Badge variant={getStatusVariant(loan.status)}>{getStatusText(loan.status)}</Badge>
           </div>
 
@@ -157,30 +159,30 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
                 <FileText className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
                 <div className="flex-1">
                   <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
-                    Votre contrat est prêt
+                    {t.loan.downloadContract}
                   </h4>
                   <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-3">
-                    Téléchargez votre contrat, signez-le avec la mention "Lu et approuvé", puis téléchargez-le ici.
+                    {t.loan.uploadSignedContract}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Button
                       onClick={handleContractDownload}
                       size="sm"
-                      className="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-600 dark:hover:bg-yellow-700"
+                      className="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-xs sm:text-sm"
                       data-testid="button-download-contract"
                     >
-                      <Download className="h-4 w-4 mr-2" />
-                      Télécharger le contrat
+                      <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                      {t.loan.downloadContract}
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
-                      className="relative border-yellow-300 dark:border-yellow-700"
+                      className="relative border-yellow-300 dark:border-yellow-700 text-xs sm:text-sm"
                       disabled={isUploading}
                       data-testid="button-upload-signed-contract"
                     >
-                      <Upload className="h-4 w-4 mr-2" />
-                      {isUploading ? 'Téléchargement...' : 'Télécharger le contrat signé'}
+                      <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                      {isUploading ? t.loan.uploading : t.loan.uploadSignedContract}
                       <input
                         type="file"
                         className="absolute inset-0 opacity-0 cursor-pointer"
@@ -202,10 +204,10 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
                 <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
                 <div>
                   <h4 className="font-semibold text-green-900 dark:text-green-100">
-                    Contrat signé reçu
+                    {t.common.success}
                   </h4>
                   <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                    Votre contrat signé a été reçu. Les fonds seront débloqués dans un délai allant de quelques minutes à 24 heures maximum.
+                    {t.transfer.processingComplete}
                   </p>
                 </div>
               </div>
@@ -218,57 +220,58 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
                 onClick={handleContractDownload}
                 variant="outline"
                 size="sm"
+                className="text-xs sm:text-sm"
                 data-testid="button-view-contract"
               >
-                <FileText className="h-4 w-4 mr-2" />
-                Voir le contrat
+                <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                {t.dashboard.viewDetails}
               </Button>
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="border rounded-lg p-4 space-y-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <DollarSign className="h-4 w-4" />
-                <span className="text-sm">Montant initial</span>
+          <div className="grid grid-cols-2 gap-2 sm:gap-4">
+            <div className="border rounded-lg p-2 sm:p-4 space-y-1 sm:space-y-2">
+              <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground">
+                <DollarSign className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="text-xs sm:text-sm">{t.loan.amount}</span>
               </div>
-              <p className="text-2xl font-mono font-bold">{formatCurrency(loan.amount)}</p>
+              <p className="text-lg sm:text-2xl font-mono font-bold">{formatCurrency(loan.amount)}</p>
             </div>
 
-            <div className="border rounded-lg p-4 space-y-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <TrendingUp className="h-4 w-4" />
-                <span className="text-sm">Taux d'intérêt</span>
+            <div className="border rounded-lg p-2 sm:p-4 space-y-1 sm:space-y-2">
+              <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground">
+                <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="text-xs sm:text-sm">{t.loan.interestRate}</span>
               </div>
-              <p className="text-2xl font-bold">{loan.interestRate}%</p>
+              <p className="text-lg sm:text-2xl font-bold">{loan.interestRate}%</p>
             </div>
 
-            <div className="border rounded-lg p-4 space-y-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                <span className="text-sm">Prochain paiement</span>
+            <div className="border rounded-lg p-2 sm:p-4 space-y-1 sm:space-y-2">
+              <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground">
+                <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="text-xs sm:text-sm">{t.loan.nextPayment}</span>
               </div>
-              <p className="text-lg font-semibold">{loan.nextPaymentDate || 'N/A'}</p>
+              <p className="text-sm sm:text-lg font-semibold">{loan.nextPaymentDate || 'N/A'}</p>
             </div>
 
-            <div className="border rounded-lg p-4 space-y-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <DollarSign className="h-4 w-4" />
-                <span className="text-sm">Montant restant</span>
+            <div className="border rounded-lg p-2 sm:p-4 space-y-1 sm:space-y-2">
+              <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground">
+                <DollarSign className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="text-xs sm:text-sm">{t.loan.amount}</span>
               </div>
-              <p className="text-2xl font-mono font-bold">{formatCurrency(remainingAmount)}</p>
+              <p className="text-lg sm:text-2xl font-mono font-bold">{formatCurrency(remainingAmount)}</p>
             </div>
           </div>
 
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Progression du remboursement</span>
+          <div className="space-y-2 sm:space-y-3">
+            <div className="flex justify-between text-xs sm:text-sm">
+              <span className="text-muted-foreground">{t.dashboard.availableOffers}</span>
               <span className="font-semibold">{progress.toFixed(1)}%</span>
             </div>
-            <Progress value={progress} className="h-3" />
-            <div className="flex justify-between text-sm">
-              <span>Remboursé: {formatCurrency(loan.totalRepaid)}</span>
-              <span>Restant: {formatCurrency(remainingAmount)}</span>
+            <Progress value={progress} className="h-2 sm:h-3" />
+            <div className="flex justify-between text-xs sm:text-sm">
+              <span>{formatCurrency(loan.totalRepaid)}</span>
+              <span>{formatCurrency(remainingAmount)}</span>
             </div>
           </div>
         </div>

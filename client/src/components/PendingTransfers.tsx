@@ -31,14 +31,14 @@ export default function PendingTransfers({ transfers }: PendingTransfersProps) {
     switch (status) {
       case 'completed':
       case 'approved':
-        return { label: 'Complété', variant: 'default' as const, icon: CheckCircle2 };
+        return { label: t.transfer.completed, variant: 'default' as const, icon: CheckCircle2 };
       case 'in-progress':
-        return { label: 'En traitement', variant: 'secondary' as const, icon: Shield };
+        return { label: t.transfer.processing, variant: 'secondary' as const, icon: Shield };
       case 'suspended':
       case 'rejected':
-        return { label: 'Suspendu', variant: 'destructive' as const, icon: Clock };
+        return { label: t.transfer.suspended, variant: 'destructive' as const, icon: Clock };
       default:
-        return { label: 'En attente de validation', variant: 'outline' as const, icon: Clock };
+        return { label: t.transfer.pending, variant: 'outline' as const, icon: Clock };
     }
   };
 
@@ -50,10 +50,10 @@ export default function PendingTransfers({ transfers }: PendingTransfersProps) {
   };
 
   const getStepLabel = (transfer: Transfer) => {
-    if (transfer.status === 'completed' || transfer.status === 'approved') return 'Transfert complété';
-    if (transfer.status === 'in-progress') return 'Traitement en cours';
-    if (transfer.status === 'suspended' || transfer.status === 'rejected') return 'Transfert suspendu';
-    return `Validation en cours (étape ${transfer.currentStep})`;
+    if (transfer.status === 'completed' || transfer.status === 'approved') return t.transfer.processingComplete;
+    if (transfer.status === 'in-progress') return t.transfer.processing;
+    if (transfer.status === 'suspended' || transfer.status === 'rejected') return t.transfer.suspended;
+    return `${t.transfer.validation} ${transfer.currentStep}`;
   };
 
   return (
@@ -63,7 +63,7 @@ export default function PendingTransfers({ transfers }: PendingTransfersProps) {
       </CardHeader>
       <CardContent className="space-y-2">
         {transfers.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4">Aucun transfert en cours</p>
+          <p className="text-sm text-muted-foreground py-4">{t.dashboard.noTransfers}</p>
         ) : (
           transfers.slice(0, 2).map((transfer) => {
             const statusInfo = getStatusInfo(transfer.status);
@@ -99,7 +99,7 @@ export default function PendingTransfers({ transfers }: PendingTransfersProps) {
         )}
         {transfers.length > 2 && (
           <p className="text-xs text-muted-foreground pt-2">
-            +{transfers.length - 2} autres transferts
+            +{transfers.length - 2}
           </p>
         )}
       </CardContent>
