@@ -751,6 +751,143 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/user/profile", requireAuth, requireCSRF, async (req, res) => {
+    try {
+      const updateProfileSchema = z.object({
+        fullName: z.string().min(1, 'Le nom complet est requis').optional(),
+        email: z.string().email('Email invalide').optional(),
+        phone: z.string().optional(),
+        companyName: z.string().optional(),
+      });
+
+      const validatedData = updateProfileSchema.parse(req.body);
+
+      if (validatedData.email) {
+        const existingUser = await storage.getUserByEmail(validatedData.email);
+        if (existingUser && existingUser.id !== req.session.userId) {
+          return res.status(400).json({ error: 'Cet email est déjà utilisé' });
+        }
+      }
+
+      const updatedUser = await storage.updateUser(req.session.userId!, validatedData);
+
+      if (!updatedUser) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      }
+
+      await storage.createAuditLog({
+        actorId: req.session.userId!,
+        actorRole: req.session.userRole || 'user',
+        action: 'profile_update',
+        entityType: 'user',
+        entityId: req.session.userId!,
+        ipAddress: req.ip || req.headers['x-forwarded-for'] as string || 'unknown',
+        userAgent: req.headers['user-agent'] || 'unknown',
+      });
+
+      const { password: _, verificationToken: __, ...userWithoutSensitive } = updatedUser;
+      res.json({ 
+        success: true, 
+        user: userWithoutSensitive,
+        message: 'Profil mis à jour avec succès'
+      });
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
+      console.error('Profile update error:', error);
+      res.status(500).json({ error: 'Erreur lors de la mise à jour du profil' });
+    }
+  });
+
+  app.patch("/api/user/notifications", requireAuth, requireCSRF, async (req, res) => {
+    try {
+      const updateNotificationsSchema = z.object({
+        notificationEmailAlerts: z.boolean().optional(),
+        notificationTransferUpdates: z.boolean().optional(),
+        notificationLoanReminders: z.boolean().optional(),
+        notificationMarketingEmails: z.boolean().optional(),
+      });
+
+      const validatedData = updateNotificationsSchema.parse(req.body);
+
+      const updatedUser = await storage.updateUser(req.session.userId!, validatedData);
+
+      if (!updatedUser) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      }
+
+      const { password: _, verificationToken: __, ...userWithoutSensitive } = updatedUser;
+      res.json({ 
+        success: true, 
+        user: userWithoutSensitive,
+        message: 'Préférences de notification mises à jour avec succès'
+      });
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
+      console.error('Notifications update error:', error);
+      res.status(500).json({ error: 'Erreur lors de la mise à jour des préférences' });
+    }
+  });
+
+  app.post("/api/user/change-password", requireAuth, requireCSRF, async (req, res) => {
+    try {
+      const changePasswordSchema = z.object({
+        currentPassword: z.string().min(1, 'Le mot de passe actuel est requis'),
+        newPassword: z.string().min(8, 'Le nouveau mot de passe doit contenir au moins 8 caractères'),
+        confirmPassword: z.string().min(1, 'Veuillez confirmer le nouveau mot de passe'),
+      }).refine((data) => data.newPassword === data.confirmPassword, {
+        message: 'Les mots de passe ne correspondent pas',
+        path: ['confirmPassword'],
+      });
+
+      const validatedData = changePasswordSchema.parse(req.body);
+
+      const user = await storage.getUser(req.session.userId!);
+      if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      }
+
+      const bcrypt = await import('bcrypt');
+      const isPasswordValid = await bcrypt.compare(validatedData.currentPassword, user.password);
+      
+      if (!isPasswordValid) {
+        return res.status(400).json({ error: 'Mot de passe actuel incorrect' });
+      }
+
+      const hashedPassword = await bcrypt.hash(validatedData.newPassword, 10);
+      await storage.updateUser(req.session.userId!, {
+        password: hashedPassword,
+      });
+
+      await storage.createAuditLog({
+        actorId: req.session.userId!,
+        actorRole: req.session.userRole || 'user',
+        action: 'password_change',
+        entityType: 'user',
+        entityId: req.session.userId!,
+        ipAddress: req.ip || req.headers['x-forwarded-for'] as string || 'unknown',
+        userAgent: req.headers['user-agent'] || 'unknown',
+      });
+
+      res.json({ 
+        success: true,
+        message: 'Mot de passe modifié avec succès'
+      });
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
+      console.error('Password change error:', error);
+      res.status(500).json({ error: 'Erreur lors du changement de mot de passe' });
+    }
+  });
+
   app.post("/api/kyc/upload", requireAuth, requireCSRF, uploadLimiter, upload.single('document'), async (req, res) => {
     try {
       if (!req.file) {

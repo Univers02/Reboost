@@ -29,6 +29,10 @@ export const users = pgTable("users", {
   transferBlockReason: text("transfer_block_reason"),
   hasSeenWelcomeMessage: boolean("has_seen_welcome_message").notNull().default(false),
   profilePhoto: text("profile_photo"),
+  notificationEmailAlerts: boolean("notification_email_alerts").notNull().default(true),
+  notificationTransferUpdates: boolean("notification_transfer_updates").notNull().default(true),
+  notificationLoanReminders: boolean("notification_loan_reminders").notNull().default(true),
+  notificationMarketingEmails: boolean("notification_marketing_emails").notNull().default(false),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
   updatedAt: timestamp("updated_at").notNull().default(sql`now()`),
 });

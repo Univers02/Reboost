@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -11,17 +11,22 @@ import { User, Bell, Shield, Palette, Globe, Camera, Mail, Phone, Building2, Che
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n';
 import { useTheme } from '@/hooks/use-theme';
+import { useUser, getUserInitials } from '@/hooks/use-user';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest, queryClient } from '@/lib/queryClient';
+import type { User as UserType } from '@shared/schema';
 
 export default function Settings() {
   const { toast } = useToast();
   const { language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
+  const { data: user, isLoading } = useUser();
   
   const [profileData, setProfileData] = useState({
-    fullName: 'Jean Dupont',
-    email: 'jean.dupont@entreprise.fr',
-    phone: '+33612345678',
-    company: 'Entreprise SARL',
+    fullName: '',
+    email: '',
+    phone: '',
+    companyName: '',
   });
 
   const [notifications, setNotifications] = useState({
@@ -31,19 +36,142 @@ export default function Settings() {
     marketingEmails: false,
   });
 
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        fullName: user.fullName || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        companyName: user.companyName || '',
+      });
+      setNotifications({
+        emailAlerts: user.notificationEmailAlerts ?? true,
+        transferUpdates: user.notificationTransferUpdates ?? true,
+        loanReminders: user.notificationLoanReminders ?? true,
+        marketingEmails: user.notificationMarketingEmails ?? false,
+      });
+    }
+  }, [user]);
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: Partial<UserType>) => {
+      return await apiRequest('/api/user/profile', {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+      toast({
+        title: 'Profil mis à jour',
+        description: 'Vos informations ont été enregistrées avec succès.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: error.message || 'Erreur lors de la mise à jour du profil',
+      });
+    },
+  });
+
+  const updateNotificationsMutation = useMutation({
+    mutationFn: async (data: {
+      notificationEmailAlerts?: boolean;
+      notificationTransferUpdates?: boolean;
+      notificationLoanReminders?: boolean;
+      notificationMarketingEmails?: boolean;
+    }) => {
+      return await apiRequest('/api/user/notifications', {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+      toast({
+        title: 'Préférences enregistrées',
+        description: 'Vos préférences de notification ont été mises à jour.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: error.message || 'Erreur lors de la mise à jour des préférences',
+      });
+    },
+  });
+
+  const changePasswordMutation = useMutation({
+    mutationFn: async (data: { currentPassword: string; newPassword: string; confirmPassword: string }) => {
+      return await apiRequest('/api/user/change-password', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+      toast({
+        title: 'Mot de passe modifié',
+        description: 'Votre mot de passe a été modifié avec succès.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: error.message || 'Erreur lors du changement de mot de passe',
+      });
+    },
+  });
+
   const handleSaveProfile = () => {
-    toast({
-      title: 'Profil mis à jour',
-      description: 'Vos informations ont été enregistrées avec succès.',
-    });
+    updateProfileMutation.mutate(profileData);
   };
 
   const handleSaveNotifications = () => {
-    toast({
-      title: 'Préférences enregistrées',
-      description: 'Vos préférences de notification ont été mises à jour.',
+    updateNotificationsMutation.mutate({
+      notificationEmailAlerts: notifications.emailAlerts,
+      notificationTransferUpdates: notifications.transferUpdates,
+      notificationLoanReminders: notifications.loanReminders,
+      notificationMarketingEmails: notifications.marketingEmails,
     });
   };
+
+  const handleChangePassword = () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Les mots de passe ne correspondent pas',
+      });
+      return;
+    }
+    changePasswordMutation.mutate(passwordData);
+  };
+
+  if (isLoading || !user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-violet-950/30 dark:to-blue-950/30 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+          <p className="mt-4 text-muted-foreground">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-violet-950/30 dark:to-blue-950/30">
@@ -59,9 +187,9 @@ export default function Settings() {
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-blue-500 to-cyan-500 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
                   <Avatar className="relative h-24 w-24 border-4 border-white dark:border-slate-800 shadow-2xl ring-4 ring-violet-500/30 dark:ring-violet-400/30">
-                    <AvatarImage src="" alt="Profile" />
+                    <AvatarImage src={user.profilePhoto || ''} alt="Profile" />
                     <AvatarFallback className="text-2xl font-semibold bg-gradient-to-br from-violet-600 via-blue-600 to-cyan-600 text-white">
-                      JD
+                      {getUserInitials(user.fullName)}
                     </AvatarFallback>
                   </Avatar>
                   <button 
@@ -75,26 +203,32 @@ export default function Settings() {
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-3">
                     <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-                      {profileData.fullName}
+                      {user.fullName}
                     </h1>
-                    <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-green-500/20 to-emerald-500/20 dark:from-green-500/30 dark:to-emerald-500/30 border border-green-500/30 dark:border-green-400/30 text-green-700 dark:text-green-400 rounded-full text-sm font-semibold shadow-lg shadow-green-500/10">
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      Vérifié
-                    </div>
+                    {user.kycStatus === 'approved' && (
+                      <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-green-500/20 to-emerald-500/20 dark:from-green-500/30 dark:to-emerald-500/30 border border-green-500/30 dark:border-green-400/30 text-green-700 dark:text-green-400 rounded-full text-sm font-semibold shadow-lg shadow-green-500/10">
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        Vérifié
+                      </div>
+                    )}
                   </div>
                   <p className="text-muted-foreground flex items-center gap-2">
                     <Mail className="h-4 w-4" />
-                    {profileData.email}
+                    {user.email}
                   </p>
                   <div className="flex flex-wrap gap-4 text-sm text-muted-foreground pt-2">
-                    <span className="flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      {profileData.phone}
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <Building2 className="h-4 w-4" />
-                      {profileData.company}
-                    </span>
+                    {user.phone && (
+                      <span className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        {user.phone}
+                      </span>
+                    )}
+                    {user.companyName && (
+                      <span className="flex items-center gap-2">
+                        <Building2 className="h-4 w-4" />
+                        {user.companyName}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -192,8 +326,8 @@ export default function Settings() {
                   <Label htmlFor="company" className="text-sm font-medium">Entreprise</Label>
                   <Input
                     id="company"
-                    value={profileData.company}
-                    onChange={(e) => setProfileData({ ...profileData, company: e.target.value })}
+                    value={profileData.companyName}
+                    onChange={(e) => setProfileData({ ...profileData, companyName: e.target.value })}
                     className="h-11 transition-all focus:ring-2 focus:ring-primary/20"
                     data-testid="input-company"
                   />
@@ -201,11 +335,12 @@ export default function Settings() {
               </div>
               <div className="flex justify-end pt-2">
                 <Button 
-                  onClick={handleSaveProfile} 
+                  onClick={handleSaveProfile}
+                  disabled={updateProfileMutation.isPending}
                   className="px-8 h-11 shadow-md hover:shadow-lg transition-all"
                   data-testid="button-save-profile"
                 >
-                  Enregistrer les modifications
+                  {updateProfileMutation.isPending ? 'Enregistrement...' : 'Enregistrer les modifications'}
                 </Button>
               </div>
             </CardContent>
@@ -218,19 +353,23 @@ export default function Settings() {
                 Type de compte
               </CardTitle>
               <CardDescription className="text-base">
-                Votre compte professionnel ALTUS
+                Votre compte {user.accountType === 'business' ? 'professionnel' : 'particulier'} ALTUS
               </CardDescription>
             </CardHeader>
             <CardContent className="relative">
               <div className="flex items-center justify-between p-6 bg-gradient-to-br from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20 backdrop-blur-sm rounded-xl border-2 border-violet-300/30 dark:border-violet-500/30 shadow-lg">
                 <div className="space-y-1">
-                  <p className="text-lg font-semibold">Compte Professionnel</p>
+                  <p className="text-lg font-semibold">
+                    {user.accountType === 'business' ? 'Compte Professionnel' : 'Compte Particulier'}
+                  </p>
                   <p className="text-sm text-muted-foreground">
-                    Accès complet aux services de financement d'entreprise
+                    {user.accountType === 'business' 
+                      ? 'Accès complet aux services de financement d\'entreprise'
+                      : 'Accès aux services de financement personnel'}
                   </p>
                 </div>
                 <div className="px-4 py-2 bg-gradient-to-r from-violet-600 via-purple-600 to-blue-600 text-white rounded-full text-sm font-semibold shadow-xl shadow-violet-500/30">
-                  Actif
+                  {user.status === 'active' ? 'Actif' : user.status === 'pending' ? 'En attente' : user.status}
                 </div>
               </div>
             </CardContent>
@@ -323,11 +462,12 @@ export default function Settings() {
               </div>
               <div className="flex justify-end pt-4">
                 <Button 
-                  onClick={handleSaveNotifications} 
+                  onClick={handleSaveNotifications}
+                  disabled={updateNotificationsMutation.isPending}
                   className="px-8 h-11 shadow-md hover:shadow-lg transition-all"
                   data-testid="button-save-notifications"
                 >
-                  Enregistrer les préférences
+                  {updateNotificationsMutation.isPending ? 'Enregistrement...' : 'Enregistrer les préférences'}
                 </Button>
               </div>
             </CardContent>
@@ -356,6 +496,8 @@ export default function Settings() {
                 <Input
                   id="currentPassword"
                   type="password"
+                  value={passwordData.currentPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
                   className="h-11 transition-all focus:ring-2 focus:ring-primary/20"
                   data-testid="input-current-password"
                 />
@@ -365,6 +507,8 @@ export default function Settings() {
                 <Input
                   id="newPassword"
                   type="password"
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
                   className="h-11 transition-all focus:ring-2 focus:ring-primary/20"
                   data-testid="input-new-password"
                 />
@@ -374,16 +518,20 @@ export default function Settings() {
                 <Input
                   id="confirmPassword"
                   type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
                   className="h-11 transition-all focus:ring-2 focus:ring-primary/20"
                   data-testid="input-confirm-password"
                 />
               </div>
               <div className="flex justify-end pt-2">
                 <Button 
+                  onClick={handleChangePassword}
+                  disabled={changePasswordMutation.isPending}
                   className="px-8 h-11 shadow-md hover:shadow-lg transition-all"
                   data-testid="button-change-password"
                 >
-                  Modifier le mot de passe
+                  {changePasswordMutation.isPending ? 'Modification...' : 'Modifier le mot de passe'}
                 </Button>
               </div>
             </CardContent>
@@ -437,92 +585,87 @@ export default function Settings() {
                 </CardTitle>
               </div>
               <CardDescription className="text-base">
-                Personnalisez l'apparence de l'interface
+                Choisissez votre thème préféré
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-6">
+            <CardContent className="relative">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button
                   onClick={() => setTheme('light')}
-                  className={`group p-6 border-2 rounded-xl transition-all hover:shadow-xl ${
-                    theme === 'light' 
-                      ? 'border-pink-500/50 bg-gradient-to-br from-pink-500/10 to-rose-500/10 shadow-xl shadow-pink-500/20' 
-                      : 'border-pink-200/30 dark:border-pink-500/20 hover:border-pink-400/50 dark:hover:border-pink-400/40'
+                  className={`flex items-center justify-between p-6 rounded-xl border-2 transition-all ${
+                    theme === 'light'
+                      ? 'border-pink-500 bg-pink-500/10 dark:bg-pink-500/20'
+                      : 'border-muted hover:border-pink-300'
                   }`}
                   data-testid="button-theme-light"
                 >
-                  <div className="aspect-video bg-gradient-to-br from-white via-violet-50 to-blue-50 rounded-lg mb-3 border-2 border-violet-200/50 shadow-md" />
-                  <p className="text-base font-semibold">Clair</p>
-                  <p className="text-xs text-muted-foreground mt-1">Mode lumineux</p>
+                  <span className="font-semibold">Clair</span>
+                  {theme === 'light' && <CheckCircle2 className="h-5 w-5 text-pink-600" />}
                 </button>
                 <button
                   onClick={() => setTheme('dark')}
-                  className={`group p-6 border-2 rounded-xl transition-all hover:shadow-xl ${
-                    theme === 'dark' 
-                      ? 'border-pink-500/50 bg-gradient-to-br from-pink-500/10 to-rose-500/10 shadow-xl shadow-pink-500/20' 
-                      : 'border-pink-200/30 dark:border-pink-500/20 hover:border-pink-400/50 dark:hover:border-pink-400/40'
+                  className={`flex items-center justify-between p-6 rounded-xl border-2 transition-all ${
+                    theme === 'dark'
+                      ? 'border-pink-500 bg-pink-500/10 dark:bg-pink-500/20'
+                      : 'border-muted hover:border-pink-300'
                   }`}
                   data-testid="button-theme-dark"
                 >
-                  <div className="aspect-video bg-gradient-to-br from-slate-950 via-violet-950 to-blue-950 rounded-lg mb-3 border-2 border-violet-700/50 shadow-md" />
-                  <p className="text-base font-semibold">Sombre</p>
-                  <p className="text-xs text-muted-foreground mt-1">Mode nocturne</p>
+                  <span className="font-semibold">Sombre</span>
+                  {theme === 'dark' && <CheckCircle2 className="h-5 w-5 text-pink-600" />}
                 </button>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="relative border border-purple-200/50 dark:border-purple-500/30 shadow-xl shadow-purple-500/10 dark:shadow-purple-500/20 hover:shadow-2xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-indigo-500/5 to-transparent dark:from-purple-500/10 dark:via-indigo-500/10 pointer-events-none" />
+          <Card className="relative border border-indigo-200/50 dark:border-indigo-500/30 shadow-xl shadow-indigo-500/10 dark:shadow-indigo-500/20 hover:shadow-2xl hover:shadow-indigo-500/20 dark:hover:shadow-indigo-500/30 transition-all duration-300 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-transparent dark:from-indigo-500/10 dark:via-purple-500/10 pointer-events-none" />
             <CardHeader className="relative space-y-1 pb-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400">
+                <div className="p-2 rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400">
                   <Globe className="h-5 w-5" />
                 </div>
-                <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                <CardTitle className="text-2xl bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
                   Langue
                 </CardTitle>
               </div>
               <CardDescription className="text-base">
-                Choisissez votre langue préférée
+                Sélectionnez votre langue
               </CardDescription>
             </CardHeader>
             <CardContent className="relative">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <button
                   onClick={() => setLanguage('fr')}
-                  className={`p-5 border-2 rounded-xl transition-all flex items-center gap-3 hover:shadow-xl ${
-                    language === 'fr' 
-                      ? 'border-purple-500/50 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 shadow-xl shadow-purple-500/20' 
-                      : 'border-purple-200/30 dark:border-purple-500/20 hover:border-purple-400/50 dark:hover:border-purple-400/40'
+                  className={`p-4 rounded-lg border-2 transition-all ${
+                    language === 'fr'
+                      ? 'border-indigo-500 bg-indigo-500/10 dark:bg-indigo-500/20'
+                      : 'border-muted hover:border-indigo-300'
                   }`}
                   data-testid="button-lang-fr"
                 >
-                  <Globe className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   <span className="font-semibold">Français</span>
                 </button>
                 <button
                   onClick={() => setLanguage('en')}
-                  className={`p-5 border-2 rounded-xl transition-all flex items-center gap-3 hover:shadow-xl ${
-                    language === 'en' 
-                      ? 'border-purple-500/50 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 shadow-xl shadow-purple-500/20' 
-                      : 'border-purple-200/30 dark:border-purple-500/20 hover:border-purple-400/50 dark:hover:border-purple-400/40'
+                  className={`p-4 rounded-lg border-2 transition-all ${
+                    language === 'en'
+                      ? 'border-indigo-500 bg-indigo-500/10 dark:bg-indigo-500/20'
+                      : 'border-muted hover:border-indigo-300'
                   }`}
                   data-testid="button-lang-en"
                 >
-                  <Globe className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   <span className="font-semibold">English</span>
                 </button>
                 <button
                   onClick={() => setLanguage('es')}
-                  className={`p-5 border-2 rounded-xl transition-all flex items-center gap-3 hover:shadow-xl ${
-                    language === 'es' 
-                      ? 'border-purple-500/50 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 shadow-xl shadow-purple-500/20' 
-                      : 'border-purple-200/30 dark:border-purple-500/20 hover:border-purple-400/50 dark:hover:border-purple-400/40'
+                  className={`p-4 rounded-lg border-2 transition-all ${
+                    language === 'es'
+                      ? 'border-indigo-500 bg-indigo-500/10 dark:bg-indigo-500/20'
+                      : 'border-muted hover:border-indigo-300'
                   }`}
                   data-testid="button-lang-es"
                 >
-                  <Globe className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   <span className="font-semibold">Español</span>
                 </button>
               </div>
