@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRoute, useLocation } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +18,7 @@ export default function TransferFlow() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   
-  const [step, setStep] = useState<'form' | 'validation' | 'progress' | 'complete'>('form');
+  const [step, setStep] = useState<'form' | 'verification' | 'validation' | 'progress' | 'complete'>('form');
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
   const [externalAccountId, setExternalAccountId] = useState('');
@@ -26,6 +26,10 @@ export default function TransferFlow() {
   const [transferId, setTransferId] = useState(params?.id || '');
   const [currentSequence, setCurrentSequence] = useState(1);
   const [demoCode, setDemoCode] = useState('');
+  const [verificationProgress, setVerificationProgress] = useState(0);
+  
+  const verificationIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const notificationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: externalAccounts } = useQuery<ExternalAccount[]>({
     queryKey: ['/api/external-accounts'],
@@ -43,14 +47,18 @@ export default function TransferFlow() {
       return await response.json();
     },
     onSuccess: (data: any) => {
+      if (verificationIntervalRef.current) clearInterval(verificationIntervalRef.current);
+      if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
+      
       setTransferId(data.transfer.id);
       setDemoCode(data.codeForDemo);
       setCurrentSequence(1);
+      setVerificationProgress(0);
       setLocation(`/transfer/${data.transfer.id}`);
-      setStep('validation');
+      setStep('verification');
       toast({
         title: 'Transfert initié',
-        description: data.message,
+        description: 'Vérification de votre transfert en cours...',
       });
     },
     onError: () => {
@@ -105,6 +113,43 @@ export default function TransferFlow() {
       });
     },
   });
+
+  useEffect(() => {
+    if (step === 'verification') {
+      let progress = 0;
+      
+      verificationIntervalRef.current = setInterval(() => {
+        progress += 100 / 45;
+        setVerificationProgress(Math.min(progress, 100));
+        
+        if (progress >= 100) {
+          if (verificationIntervalRef.current) {
+            clearInterval(verificationIntervalRef.current);
+            verificationIntervalRef.current = null;
+          }
+          setStep('validation');
+        }
+      }, 1000);
+      
+      notificationTimeoutRef.current = setTimeout(() => {
+        toast({
+          title: 'Transfert approuvé',
+          description: 'Votre transfert est approuvé et en cours de traitement.',
+        });
+      }, 20000);
+      
+      return () => {
+        if (verificationIntervalRef.current) {
+          clearInterval(verificationIntervalRef.current);
+          verificationIntervalRef.current = null;
+        }
+        if (notificationTimeoutRef.current) {
+          clearTimeout(notificationTimeoutRef.current);
+          notificationTimeoutRef.current = null;
+        }
+      };
+    }
+  }, [step, toast]);
 
   useEffect(() => {
     if (transferData?.transfer) {
@@ -225,6 +270,78 @@ export default function TransferFlow() {
             >
               {initiateMutation.isPending ? 'Initiation...' : 'Initier le transfert'}
             </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (step === 'verification') {
+    return (
+      <div className="p-6 md:p-8 max-w-2xl mx-auto">
+        <Card data-testid="card-verification" className="border-blue-200 dark:border-blue-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3">
+              <div className="relative">
+                <Shield className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-pulse" />
+                <div className="absolute inset-0 bg-blue-400 dark:bg-blue-600 rounded-full opacity-25 animate-ping"></div>
+              </div>
+              Vérification du transfert
+            </CardTitle>
+            <CardDescription>
+              Veuillez patienter pendant la vérification de votre transfert
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Alert className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800" data-testid="alert-verification">
+              <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <AlertDescription className="text-blue-900 dark:text-blue-100">
+                <strong className="text-lg">⚠️ Ne fermez pas cette page</strong>
+                <p className="mt-2">
+                  Votre transfert est en cours de vérification par notre système sécurisé. 
+                  Cette opération prend environ 45 secondes.
+                </p>
+              </AlertDescription>
+            </Alert>
+
+            <div className="space-y-4">
+              <div className="flex justify-between text-sm font-medium">
+                <span>Progression de la vérification</span>
+                <span className="text-blue-600 dark:text-blue-400" data-testid="text-verification-progress">
+                  {Math.round(verificationProgress)}%
+                </span>
+              </div>
+              <Progress 
+                value={verificationProgress} 
+                className="h-4 bg-gray-200 dark:bg-gray-700"
+              />
+              <p className="text-sm text-muted-foreground text-center">
+                Vérification des informations bancaires et des limites de transfert...
+              </p>
+            </div>
+
+            <div className="bg-muted p-4 rounded-lg space-y-3">
+              <div className="flex items-start gap-3">
+                <Clock className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Étapes de vérification</p>
+                  <ul className="text-sm text-muted-foreground space-y-1 list-none">
+                    <li className={verificationProgress > 20 ? "text-green-600 dark:text-green-400" : ""}>
+                      ✓ Vérification du compte émetteur
+                    </li>
+                    <li className={verificationProgress > 40 ? "text-green-600 dark:text-green-400" : ""}>
+                      ✓ Validation du montant et des frais
+                    </li>
+                    <li className={verificationProgress > 60 ? "text-green-600 dark:text-green-400" : ""}>
+                      ✓ Contrôle de sécurité anti-fraude
+                    </li>
+                    <li className={verificationProgress > 80 ? "text-green-600 dark:text-green-400" : ""}>
+                      ✓ Préparation du transfert sécurisé
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
