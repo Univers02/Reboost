@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import helmet from "helmet";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import ConnectPgSimple from "connect-pg-simple";
 import pkg from "pg";
@@ -42,6 +43,24 @@ if (process.env.NODE_ENV === 'production' && (!process.env.SESSION_SECRET || !pr
 if (!process.env.SESSION_SECRET) {
   console.warn('WARNING: Using default SESSION_SECRET. Set SESSION_SECRET environment variable for production.');
 }
+
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [process.env.FRONTEND_URL || 'https://altusfinancegroup.com']
+  : ['http://localhost:5000', 'http://localhost:5173', 'http://127.0.0.1:5000'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-CSRF-Token', 'Authorization'],
+  exposedHeaders: ['Set-Cookie'],
+}));
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -101,7 +120,8 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    sameSite: 'strict',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    domain: process.env.NODE_ENV === 'production' ? '.altusfinancegroup.com' : undefined,
   },
   name: 'sessionId',
 }));
