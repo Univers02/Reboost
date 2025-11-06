@@ -15,7 +15,7 @@ export default function AdminTransfers() {
 
   const updateTransferMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      return await apiRequest(`/api/admin/transfers/${id}`, "PATCH", data);
+      return await apiRequest("PATCH", `/api/admin/transfers/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/transfers"] });

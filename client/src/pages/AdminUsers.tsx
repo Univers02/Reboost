@@ -14,31 +14,71 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Ban, Trash2, CheckCircle } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 export default function AdminUsers() {
   const { toast } = useToast();
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [suspendReason, setSuspendReason] = useState("");
+  const [suspendUntil, setSuspendUntil] = useState("");
+
   const { data: users, isLoading } = useQuery({
     queryKey: ["/api/admin/users"],
   });
 
-  const updateUserMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      return await apiRequest(`/api/admin/users/${id}`, "PATCH", data);
+  const suspendUserMutation = useMutation({
+    mutationFn: async ({ id, until, reason }: { id: string; until: string; reason: string }) => {
+      return await apiRequest("POST", `/api/admin/users/${id}/suspend`, { until, reason });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
       toast({
-        title: "Utilisateur mis à jour",
-        description: "Le statut de l'utilisateur a été modifié avec succès",
+        title: "Utilisateur suspendu",
+        description: "L'utilisateur a été suspendu avec succès",
       });
+      setSuspendDialogOpen(false);
+      setSuspendReason("");
+      setSuspendUntil("");
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
         title: "Erreur",
-        description: "Impossible de mettre à jour l'utilisateur",
+        description: error?.message || "Impossible de suspendre l'utilisateur",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const unblockUserMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return await apiRequest("POST", `/api/admin/users/${id}/unblock`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      toast({
+        title: "Utilisateur activé",
+        description: "L'utilisateur a été activé avec succès",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible d'activer l'utilisateur",
         variant: "destructive",
       });
     },
@@ -46,7 +86,7 @@ export default function AdminUsers() {
 
   const deleteUserMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest(`/api/admin/users/${id}`, "DELETE");
+      return await apiRequest("DELETE", `/api/admin/users/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
@@ -55,21 +95,38 @@ export default function AdminUsers() {
         description: "L'utilisateur a été supprimé avec succès",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
         title: "Erreur",
-        description: "Impossible de supprimer l'utilisateur",
+        description: error?.message || "Impossible de supprimer l'utilisateur",
         variant: "destructive",
       });
     },
   });
 
   const handleSuspend = (userId: string) => {
-    updateUserMutation.mutate({ id: userId, data: { status: "suspended" } });
+    setSelectedUserId(userId);
+    setSuspendDialogOpen(true);
+  };
+
+  const handleSuspendConfirm = () => {
+    if (!suspendReason || !suspendUntil) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs",
+        variant: "destructive",
+      });
+      return;
+    }
+    suspendUserMutation.mutate({ 
+      id: selectedUserId, 
+      until: new Date(suspendUntil).toISOString(), 
+      reason: suspendReason 
+    });
   };
 
   const handleActivate = (userId: string) => {
-    updateUserMutation.mutate({ id: userId, data: { status: "active" } });
+    unblockUserMutation.mutate(userId);
   };
 
   const handleDelete = (userId: string) => {
@@ -104,6 +161,55 @@ export default function AdminUsers() {
           Gérer tous les comptes utilisateurs de la plateforme
         </p>
       </div>
+
+      <Dialog open={suspendDialogOpen} onOpenChange={setSuspendDialogOpen}>
+        <DialogContent data-testid="dialog-suspend-user">
+          <DialogHeader>
+            <DialogTitle>Suspendre l'utilisateur</DialogTitle>
+            <DialogDescription>
+              Veuillez indiquer la durée et la raison de la suspension
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="suspendUntil">Suspendre jusqu'au</Label>
+              <Input
+                id="suspendUntil"
+                type="datetime-local"
+                value={suspendUntil}
+                onChange={(e) => setSuspendUntil(e.target.value)}
+                data-testid="input-suspend-until"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="suspendReason">Raison</Label>
+              <Textarea
+                id="suspendReason"
+                placeholder="Indiquez la raison de la suspension..."
+                value={suspendReason}
+                onChange={(e) => setSuspendReason(e.target.value)}
+                data-testid="textarea-suspend-reason"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setSuspendDialogOpen(false)}
+              data-testid="button-cancel-suspend"
+            >
+              Annuler
+            </Button>
+            <Button
+              onClick={handleSuspendConfirm}
+              disabled={suspendUserMutation.isPending}
+              data-testid="button-confirm-suspend"
+            >
+              {suspendUserMutation.isPending ? "Suspension..." : "Suspendre"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Card data-testid="card-users-table">
         <CardHeader>
@@ -164,7 +270,7 @@ export default function AdminUsers() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleSuspend(user.id)}
-                          disabled={updateUserMutation.isPending}
+                          disabled={suspendUserMutation.isPending || unblockUserMutation.isPending}
                           data-testid={`button-suspend-${user.id}`}
                         >
                           <Ban className="h-4 w-4 mr-1" />
@@ -175,7 +281,7 @@ export default function AdminUsers() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleActivate(user.id)}
-                          disabled={updateUserMutation.isPending}
+                          disabled={suspendUserMutation.isPending || unblockUserMutation.isPending}
                           data-testid={`button-activate-${user.id}`}
                         >
                           <CheckCircle className="h-4 w-4 mr-1" />
