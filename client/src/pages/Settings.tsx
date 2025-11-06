@@ -61,10 +61,8 @@ export default function Settings() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: Partial<UserType>) => {
-      return await apiRequest('/api/user/profile', {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('PATCH', '/api/user/profile', data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
@@ -89,10 +87,8 @@ export default function Settings() {
       notificationLoanReminders?: boolean;
       notificationMarketingEmails?: boolean;
     }) => {
-      return await apiRequest('/api/user/notifications', {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('PATCH', '/api/user/notifications', data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
@@ -112,10 +108,8 @@ export default function Settings() {
 
   const changePasswordMutation = useMutation({
     mutationFn: async (data: { currentPassword: string; newPassword: string; confirmPassword: string }) => {
-      return await apiRequest('/api/user/change-password', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('POST', '/api/user/change-password', data);
+      return response.json();
     },
     onSuccess: () => {
       setPasswordData({
