@@ -1,5 +1,18 @@
 # ALTUS - Professional Loan Platform
 
+## Recent Changes
+
+### November 6, 2025 - KYC Document Upload Fix
+- **Fixed:** Documents KYC uploaded by users now appear correctly in admin dashboard
+- **Issue:** The `NewLoanDialog` component was not actually sending files to the server; it only displayed a success message locally
+- **Solution:** Implemented real file upload via FormData to `/api/kyc/upload` endpoint
+- **Improvements:**
+  - Added loading states during file upload with visual spinner
+  - Precise tracking of successfully uploaded files (fixes bug where partial failures were misreported)
+  - Proper error handling with informative toast messages
+  - Input field cleared after upload for better UX
+  - Submit button disabled during upload to prevent double submission
+
 ## Overview
 
 ALTUS is a multi-language professional loan management platform designed for business clients. It offers a comprehensive dashboard for managing loans, transfers, fees, and financial transactions, emphasizing trust, clarity, and data-driven decision-making. As a fintech application, it incorporates professional design patterns inspired by industry leaders, providing features like multi-language support (French, English, Spanish), an interactive amortization calculator, real-time status tracking for transfers, external bank account management, KYC document upload, and financial analytics. The platform aims to serve business professionals and enterprises seeking robust loan financing and financial management tools.
