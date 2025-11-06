@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRoute, Link } from 'wouter';
 import { useMutation } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
+import { apiRequest, getApiUrl } from '@/lib/queryClient';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
@@ -13,7 +13,7 @@ export default function Verify() {
 
   const verifyMutation = useMutation({
     mutationFn: async (token: string) => {
-      const response = await fetch(`/api/auth/verify/${token}`);
+      const response = await fetch(getApiUrl(`/api/auth/verify/${token}`));
       const data = await response.json();
       
       if (!response.ok) {

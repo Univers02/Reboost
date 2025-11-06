@@ -18,6 +18,14 @@
 
 **Solution** : Utilisation de la variable `FRONTEND_URL` dans les emails pour générer les bons liens
 
+### 3. Erreur "Unexpected token '<', "<!DOCTYPE "..." lors de la vérification
+
+**Symptôme** : Message d'erreur JSON lors du clic sur le lien de vérification
+
+**Cause** : La page `Verify.tsx` utilisait un fetch relatif au lieu d'utiliser `getApiUrl()`, donc la requête allait au frontend Vercel (HTML) au lieu du backend Render (JSON)
+
+**Solution** : Mise à jour de `Verify.tsx` pour utiliser `getApiUrl()` comme toutes les autres requêtes API
+
 ---
 
 ## Architecture de Déploiement
