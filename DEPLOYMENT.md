@@ -1,9 +1,22 @@
 # Guide de Déploiement - ALTUS
 
+## 🚨 PROBLÈME RÉSOLU : Inscription en Production
+
+### Symptôme
+L'inscription ne fonctionnait pas en production sur altusfinancegroup.com
+
+### Cause
+Le frontend sur Vercel faisait des requêtes **relatives** (`/api/...`) qui ne savaient pas où trouver le backend API sur Render
+
+### Solution
+Configuration de la variable d'environnement `VITE_API_URL` pour pointer vers l'API backend
+
+---
+
 ## Architecture de Déploiement
 
-- **Frontend** : Déployé sur **Vercel**
-- **Backend** : Déployé sur **Render** (ou Railway, Heroku, etc.)
+- **Frontend** : Déployé sur **Vercel** (altusfinancegroup.com)
+- **Backend** : Déployé sur **Render** (api.altusfinancegroup.com)
 - **Base de données** : PostgreSQL (Neon, Railway, Supabase, etc.)
 
 ## 📦 Backend (Render)
@@ -31,8 +44,15 @@
    PORT=5000
    SESSION_SECRET=<générer avec: openssl rand -base64 32>
    DATABASE_URL=postgresql://user:pass@host:5432/dbname?sslmode=require
-   SENDGRID_API_KEY=<votre clé SendGrid (optionnel)>
+   FRONTEND_URL=https://altusfinancegroup.com
+   SENDGRID_API_KEY=<votre clé SendGrid>
+   SENDGRID_FROM_EMAIL=noreply@altusfinancegroup.com
    ```
+
+   ⚠️ **CRITIQUE** :
+   - `FRONTEND_URL` doit correspondre exactement à l'URL de votre frontend Vercel
+   - **PAS de slash `/` à la fin**
+   - Cette variable est utilisée pour la configuration CORS
 
 5. **Health Check Path** : `/health`
 
@@ -63,10 +83,13 @@ Notez cette URL, vous en aurez besoin pour le frontend.
 5. **Variables d'environnement** (Settings > Environment Variables) :
 
    ```bash
-   VITE_API_URL=https://altus-backend.onrender.com
+   VITE_API_URL=https://api.altusfinancegroup.com
    ```
 
-   ⚠️ **Important** : Remplacez par l'URL de votre backend Render.
+   ⚠️ **CRITIQUE** : 
+   - Utilisez l'URL **complète** de votre backend (avec https://)
+   - **PAS de slash `/` à la fin** de l'URL
+   - Après l'ajout de cette variable, **REDÉPLOYEZ** le frontend pour que les changements prennent effet
 
 ### Fichier vercel.json
 
@@ -204,11 +227,29 @@ Si le bouton de chargement reste en français :
 - Videz le cache du navigateur
 - Attendez quelques minutes pour la propagation CDN
 
-### Erreur de connexion API
+### Erreur de connexion API / Inscription ne fonctionne pas
 
-1. Vérifiez que `VITE_API_URL` pointe vers votre backend Render
-2. Assurez-vous qu'il n'y a pas de `/` à la fin de l'URL
-3. Vérifiez les logs du backend sur Render
+**Vérification 1 : Variable d'environnement sur Vercel**
+1. Allez dans Settings > Environment Variables de votre projet Vercel
+2. Vérifiez que `VITE_API_URL` existe et pointe vers `https://api.altusfinancegroup.com`
+3. **IMPORTANT** : Après avoir ajouté/modifié la variable, vous DEVEZ redéployer le frontend
+
+**Vérification 2 : Logs du Backend Render**
+1. Ouvrez les logs Render de votre backend
+2. Vous devriez voir des requêtes avec l'origin correct :
+   ```
+   [CORS DEBUG] Incoming request: POST /api/auth/signup
+   [CORS DEBUG] Origin: https://altusfinancegroup.com
+   [CORS DEBUG] ✅ Origin allowed: https://altusfinancegroup.com
+   ```
+3. Si vous voyez seulement `Origin: NO ORIGIN`, le frontend n'envoie pas de requêtes au backend
+
+**Vérification 3 : Console du Navigateur**
+1. Ouvrez les DevTools (F12) sur votre site
+2. Allez dans l'onglet Network
+3. Essayez de vous inscrire
+4. Les requêtes doivent pointer vers `https://api.altusfinancegroup.com/api/...`
+5. Si vous voyez des erreurs CORS, vérifiez la variable `FRONTEND_URL` sur Render
 
 ### Base de données ne se connecte pas
 

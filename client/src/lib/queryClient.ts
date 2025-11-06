@@ -1,5 +1,14 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
+export function getApiUrl(path: string): string {
+  if (!path.startsWith('/')) {
+    path = '/' + path;
+  }
+  return `${API_BASE_URL}${path}`;
+}
+
 let csrfToken: string | null = null;
 
 export function clearCsrfToken() {
@@ -10,7 +19,7 @@ async function getCsrfToken(): Promise<string> {
   if (csrfToken) return csrfToken;
   
   try {
-    const res = await fetch('/api/csrf-token', {
+    const res = await fetch(getApiUrl('/api/csrf-token'), {
       credentials: 'include',
     });
     if (res.ok) {
@@ -45,7 +54,7 @@ export async function apiRequest(
     }
   }
 
-  const res = await fetch(url, {
+  const res = await fetch(getApiUrl(url), {
     method,
     headers,
     body: data ? JSON.stringify(data) : undefined,
@@ -64,7 +73,7 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const url = queryKey.join("/") as string;
 
-    const res = await fetch(url, {
+    const res = await fetch(getApiUrl(url), {
       credentials: "include",
     });
 

@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/lib/i18n';
 import { useToast } from '@/hooks/use-toast';
+import { getApiUrl } from '@/lib/queryClient';
 
 interface NewTransferDialogProps {
   open: boolean;
@@ -23,10 +24,11 @@ export default function NewTransferDialog({ open, onOpenChange }: NewTransferDia
 
   const createTransferMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const response = await fetch('/api/transfers', {
+      const response = await fetch(getApiUrl('/api/transfers'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
+        credentials: 'include',
       });
       if (!response.ok) throw new Error('Failed to create transfer');
       return response.json();

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, TrendingUp, DollarSign, Download, Upload, FileText, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest, queryClient } from '@/lib/queryClient';
+import { apiRequest, queryClient, getApiUrl } from '@/lib/queryClient';
 
 interface Loan {
   id: string;
@@ -84,14 +84,15 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
       const formData = new FormData();
       formData.append('signedContract', file);
 
-      const csrfToken = await fetch('/api/csrf-token').then((res) => res.json()).then((data) => data.csrfToken);
+      const csrfToken = await fetch(getApiUrl('/api/csrf-token')).then((res) => res.json()).then((data) => data.csrfToken);
 
-      const response = await fetch(`/api/loans/${loan.id}/upload-signed-contract`, {
+      const response = await fetch(getApiUrl(`/api/loans/${loan.id}/upload-signed-contract`), {
         method: 'POST',
         headers: {
           'X-CSRF-Token': csrfToken,
         },
         body: formData,
+        credentials: 'include',
       });
 
       if (!response.ok) {
