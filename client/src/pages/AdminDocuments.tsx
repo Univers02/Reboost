@@ -21,7 +21,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { CheckCircle, XCircle, Download, Trash2, Eye, FileText, Filter } from "lucide-react";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { apiRequest, queryClient, getApiUrl } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { format } from "date-fns";
@@ -137,7 +137,23 @@ export default function AdminDocuments() {
 
   const handleDownload = async (doc: KycDocument) => {
     try {
-      window.open(`/api/kyc/download/${doc.id}`, '_blank');
+      const response = await fetch(getApiUrl(`/api/kyc/download/${doc.id}`), {
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Échec du téléchargement');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = doc.fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     } catch (error) {
       toast({
         title: "Erreur",
@@ -411,13 +427,13 @@ export default function AdminDocuments() {
               <div className="border rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 min-h-[400px] flex items-center justify-center">
                 {selectedDocument.fileName.toLowerCase().endsWith('.pdf') ? (
                   <iframe
-                    src={`/api/kyc/download/${selectedDocument.id}`}
+                    src={getApiUrl(`/api/kyc/download/${selectedDocument.id}`)}
                     className="w-full h-[600px]"
                     title="Document preview"
                   />
                 ) : (
                   <img
-                    src={`/api/kyc/download/${selectedDocument.id}`}
+                    src={getApiUrl(`/api/kyc/download/${selectedDocument.id}`)}
                     alt={selectedDocument.fileName}
                     className="max-w-full max-h-[600px] object-contain"
                   />

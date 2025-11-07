@@ -2065,6 +2065,16 @@ export class DatabaseStorage implements IStorage {
       })
       .where(eq(kycDocuments.id, id))
       .returning();
+    
+    if (result[0]) {
+      await db.update(users)
+        .set({ 
+          kycStatus: 'verified',
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, result[0].userId));
+    }
+    
     return result[0];
   }
 
