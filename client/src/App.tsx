@@ -21,6 +21,8 @@ import Verify from '@/pages/Verify';
 import VerifyOtp from '@/pages/VerifyOtp';
 import TwoFactorSetup from '@/pages/TwoFactorSetup';
 import VerifyTwoFactor from '@/pages/VerifyTwoFactor';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
 import AdminDashboard from '@/pages/AdminDashboard';
 import AdminUsers from '@/pages/AdminUsers';
 import AdminLoans from '@/pages/AdminLoans';
@@ -98,6 +100,8 @@ function App() {
             <Route path="/verify/:token" component={Verify} />
             <Route path="/verify-otp/:userId" component={VerifyOtp} />
             <Route path="/verify-2fa" component={VerifyTwoFactor} />
+            <Route path="/forgot-password" component={ForgotPassword} />
+            <Route path="/reset-password/:token" component={ResetPassword} />
             <Route path="/loan-request" component={LoanRequest} />
             <Route>
               <SidebarProvider style={style as React.CSSProperties}>

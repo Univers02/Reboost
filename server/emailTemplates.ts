@@ -8,7 +8,7 @@ function escapeHtml(unsafe: string): string {
 }
 
 type Language = 'fr' | 'en' | 'es' | 'pt' | 'it' | 'de' | 'nl';
-type TemplateType = 'verification' | 'welcome' | 'contract' | 'fundingRelease' | 'otp';
+type TemplateType = 'verification' | 'welcome' | 'contract' | 'fundingRelease' | 'otp' | 'resetPassword';
 
 interface EmailTemplate {
   subject: string;
@@ -47,7 +47,12 @@ interface OtpVariables {
   otpCode: string;
 }
 
-type TemplateVariables = VerificationVariables | WelcomeVariables | ContractVariables | FundingReleaseVariables | OtpVariables;
+interface ResetPasswordVariables {
+  fullName: string;
+  resetUrl: string;
+}
+
+type TemplateVariables = VerificationVariables | WelcomeVariables | ContractVariables | FundingReleaseVariables | OtpVariables | ResetPasswordVariables;
 
 const translations = {
   fr: {

@@ -250,6 +250,18 @@ export default function Auth() {
                     )}
                   />
 
+                  <div className="flex items-center justify-end">
+                    <Link href="/forgot-password">
+                      <button
+                        type="button"
+                        className="text-sm text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300 hover:underline"
+                        data-testid="link-forgot-password"
+                      >
+                        Mot de passe oublié ?
+                      </button>
+                    </Link>
+                  </div>
+
                   <Button
                     type="submit"
                     className="w-full bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700"

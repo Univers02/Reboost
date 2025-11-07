@@ -47,11 +47,14 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByVerificationToken(token: string): Promise<User | undefined>;
+  getUserByResetPasswordToken(token: string): Promise<User | undefined>;
   verifyUserEmail(userId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
   updateUserSessionId(userId: string, sessionId: string | null): Promise<User | undefined>;
   markWelcomeMessageAsSeen(userId: string): Promise<User | undefined>;
+  setResetPasswordToken(email: string, token: string, expiry: Date): Promise<User | undefined>;
+  resetPassword(userId: string, newPassword: string): Promise<User | undefined>;
   
   getUserLoans(userId: string): Promise<Loan[]>;
   getLoan(id: string): Promise<Loan | undefined>;
@@ -1515,6 +1518,36 @@ export class DatabaseStorage implements IStorage {
 
   async markWelcomeMessageAsSeen(userId: string): Promise<User | undefined> {
     const result = await db.update(users).set({ hasSeenWelcomeMessage: true, updatedAt: new Date() }).where(eq(users.id, userId)).returning();
+    return result[0];
+  }
+
+  async getUserByResetPasswordToken(token: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.resetPasswordToken, token));
+    return result[0];
+  }
+
+  async setResetPasswordToken(email: string, token: string, expiry: Date): Promise<User | undefined> {
+    const result = await db.update(users)
+      .set({ 
+        resetPasswordToken: token,
+        resetPasswordTokenExpiry: expiry,
+        updatedAt: new Date()
+      })
+      .where(eq(users.email, email))
+      .returning();
+    return result[0];
+  }
+
+  async resetPassword(userId: string, newPassword: string): Promise<User | undefined> {
+    const result = await db.update(users)
+      .set({ 
+        password: newPassword,
+        resetPasswordToken: null,
+        resetPasswordTokenExpiry: null,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId))
+      .returning();
     return result[0];
   }
 

@@ -5,7 +5,7 @@ import { storage } from "./storage";
 import { insertLoanSchema, insertTransferSchema, insertUserSchema, transferValidationCodes } from "@shared/schema";
 import bcrypt from "bcrypt";
 import { randomUUID, randomBytes } from "crypto";
-import { sendVerificationEmail, sendWelcomeEmail } from "./email";
+import { sendVerificationEmail, sendWelcomeEmail, sendResetPasswordEmail } from "./email";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import multer from "multer";
@@ -805,6 +805,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Resend verification error:', error);
       res.status(500).json({ error: 'Erreur lors du renvoi de l\'email' });
+    }
+  });
+
+  app.post("/api/auth/forgot-password", authLimiter, async (req, res) => {
+    try {
+      const forgotPasswordSchema = z.object({
+        email: z.string().email('Email invalide'),
+      });
+      
+      const validatedInput = forgotPasswordSchema.parse(req.body);
+      const { email } = validatedInput;
+      
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.json({ 
+          message: 'Si un compte existe avec cet email, vous recevrez un lien de réinitialisation.' 
+        });
+      }
+      
+      const resetToken = randomUUID();
+      const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000);
+      
+      await storage.setResetPasswordToken(email, resetToken, resetTokenExpiry);
+      await sendResetPasswordEmail(user.email, user.fullName, resetToken, user.preferredLanguage || 'fr');
+      
+      await storage.createAuditLog({
+        actorId: user.id,
+        actorRole: user.role,
+        action: 'password_reset_requested',
+        entityType: 'user',
+        entityId: user.id,
+        ipAddress: req.ip || req.headers['x-forwarded-for'] as string || 'unknown',
+        userAgent: req.headers['user-agent'] || 'unknown',
+      });
+      
+      res.json({ 
+        message: 'Si un compte existe avec cet email, vous recevrez un lien de réinitialisation.' 
+      });
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
+      console.error('Forgot password error:', error);
+      res.status(500).json({ error: 'Erreur lors de la demande de réinitialisation' });
+    }
+  });
+
+  app.post("/api/auth/reset-password", authLimiter, async (req, res) => {
+    try {
+      const resetPasswordSchema = z.object({
+        token: z.string().min(1, 'Token requis'),
+        password: z.string()
+          .min(12, 'Le mot de passe doit contenir au moins 12 caractères')
+          .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
+          .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
+          .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre')
+          .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins un caractère spécial'),
+      });
+      
+      const validatedInput = resetPasswordSchema.parse(req.body);
+      const { token, password } = validatedInput;
+      
+      const user = await storage.getUserByResetPasswordToken(token);
+      if (!user) {
+        return res.status(400).json({ error: 'Lien de réinitialisation invalide ou expiré' });
+      }
+      
+      if (!user.resetPasswordTokenExpiry || new Date() > user.resetPasswordTokenExpiry) {
+        return res.status(400).json({ error: 'Lien de réinitialisation expiré. Veuillez en demander un nouveau.' });
+      }
+      
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await storage.resetPassword(user.id, hashedPassword);
+      
+      await storage.createAuditLog({
+        actorId: user.id,
+        actorRole: user.role,
+        action: 'password_reset_completed',
+        entityType: 'user',
+        entityId: user.id,
+        ipAddress: req.ip || req.headers['x-forwarded-for'] as string || 'unknown',
+        userAgent: req.headers['user-agent'] || 'unknown',
+      });
+      
+      res.json({ message: 'Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.' });
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        const firstError = error.errors[0];
+        return res.status(400).json({ error: firstError.message });
+      }
+      console.error('Reset password error:', error);
+      res.status(500).json({ error: 'Erreur lors de la réinitialisation du mot de passe' });
     }
   });
 

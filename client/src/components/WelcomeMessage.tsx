@@ -29,10 +29,16 @@ export default function WelcomeMessage() {
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
       setIsOpen(false);
     },
+    onError: (error) => {
+      console.error('Failed to mark welcome message as seen:', error);
+      setIsOpen(false);
+    },
   });
 
-  const handleClose = () => {
-    markAsSeenMutation.mutate();
+  const handleClose = (open: boolean) => {
+    if (!open && !markAsSeenMutation.isPending) {
+      markAsSeenMutation.mutate();
+    }
   };
 
   if (!user) return null;
@@ -62,7 +68,7 @@ export default function WelcomeMessage() {
   const availableOffers = isIndividual ? individualOffers : businessOffers;
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-4 sm:p-6 gap-0" data-testid="dialog-welcome-message">
         <DialogHeader className="flex-shrink-0">
           <div className="flex items-center gap-2 sm:gap-3 mb-2">
@@ -118,7 +124,7 @@ export default function WelcomeMessage() {
 
         <DialogFooter className="flex-shrink-0">
           <Button
-            onClick={handleClose}
+            onClick={() => handleClose(false)}
             className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
             disabled={markAsSeenMutation.isPending}
             data-testid="button-close-welcome"
