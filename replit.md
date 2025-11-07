@@ -38,10 +38,12 @@ Preferred communication style: Simple, everyday language.
 ### Technical Implementations
 - **Authentication:**
     - Complete forgot/reset password functionality with email notifications, rate limiting, and 12-character password validation.
+    - Email verification with automatic login: After clicking verification link, users are automatically logged in and redirected to dashboard (no manual login required).
     - TOTP-based Two-Factor Authentication (2FA) using Google Authenticator, including setup, verification, and disable flows.
     - Email-based 2FA with 6-digit OTP codes, 5-minute expiration, and 3 attempt limit.
     - Single session enforcement preventing multiple simultaneous logins per user.
     - CSRF protection on mutating routes, with preloading tokens for signup.
+    - Cross-domain session cookies configured for production (domain: .altusfinancegroup.com, SameSite: none, secure, httpOnly).
 - **Session Management & Error Handling:**
     - Global 401/403 interceptor in `queryClient.ts` redirecting to login with contextual messages stored in sessionStorage.
     - `SessionMonitor` component for periodic session validation (60s intervals) and inactivity detection (30min timeout).
