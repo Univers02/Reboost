@@ -1,16 +1,13 @@
 import { useState } from 'react';
-import { CreditCard, Info, Check, Globe, Shield, Gift, Clock, Lock, Zap, Eye } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { CreditCard, Info, Check, Globe, Shield, Zap } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useTranslations } from '@/lib/i18n';
 import { useToast } from '@/hooks/use-toast';
 import VirtualBankCard from './VirtualBankCard';
 import CardTermsDialog from './CardTermsDialog';
-import cardImage1 from '@assets/WhatsApp Image 2025-11-05 at 13.16.36_1762345203268.jpeg';
-import cardImage2 from '@assets/WhatsApp Image 2025-11-05 at 13.16.36 (1)_1762345210880.jpeg';
 
 export default function BankCardOffer() {
   const t = useTranslations();
@@ -48,115 +45,38 @@ export default function BankCardOffer() {
           </DialogHeader>
 
           <div className="space-y-6 py-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <img 
-                src={cardImage1} 
-                alt="Carte bancaire Altus" 
-                className="w-full rounded-lg shadow-lg"
-              />
-              <img 
-                src={cardImage2} 
-                alt="Carte bancaire Altus" 
-                className="w-full rounded-lg shadow-lg"
-              />
-            </div>
-
-            <Separator />
-
             <div>
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2" data-testid="text-advantages-title">
                 <Check className="h-5 w-5 text-green-600" />
                 {t.bankCard.advantagesTitle}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
-                    <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-sm" data-testid="text-advantage-security">Sécurité maximale</p>
-                      <p className="text-xs text-muted-foreground">Numéros temporaires qui changent après chaque utilisation, protection totale contre le piratage</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
-                    <Lock className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-sm" data-testid="text-advantage-fraud">Protection anti-fraude</p>
-                      <p className="text-xs text-muted-foreground">Même en cas de vol de données, les coordonnées expirées ne peuvent plus être exploitées</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
-                    <Zap className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-sm" data-testid="text-advantage-instant">Activation instantanée</p>
-                      <p className="text-xs text-muted-foreground">Création immédiate depuis l'application, utilisable en quelques secondes</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
-                    <Eye className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-sm" data-testid="text-advantage-control">Contrôle total</p>
-                      <p className="text-xs text-muted-foreground">Plafonds personnalisables, verrouillage instantané et suppression en un clic</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
-                    <Check className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-sm" data-testid="text-advantage-nofees">Sans frais cachés</p>
-                      <p className="text-xs text-muted-foreground">Création gratuite, 0% de frais en zone euro, pas de cotisation annuelle</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
-                    <Globe className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-sm" data-testid="text-advantage-global">Acceptée mondialement</p>
-                      <p className="text-xs text-muted-foreground">Compatible avec tous les sites marchands et portefeuilles mobiles (Apple Pay, Google Pay)</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            <div>
-              <h3 className="text-lg font-semibold mb-4" data-testid="text-usage-zones-title">{t.bankCard.usageZonesTitle}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3">
-                  <Globe className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
+                  <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium" data-testid="text-zone-worldwide">{t.bankCard.usageZones.worldwide}</p>
-                    <p className="text-sm text-muted-foreground">{t.bankCard.usageZones.worldwideDesc}</p>
+                    <p className="font-medium text-sm" data-testid="text-advantage-security">Sécurité maximale</p>
+                    <p className="text-xs text-muted-foreground">Numéros temporaires avec protection totale</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <CreditCard className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
+                  <Zap className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium" data-testid="text-zone-online">{t.bankCard.usageZones.online}</p>
-                    <p className="text-sm text-muted-foreground">{t.bankCard.usageZones.onlineDesc}</p>
+                    <p className="font-medium text-sm" data-testid="text-advantage-instant">Activation instantanée</p>
+                    <p className="text-xs text-muted-foreground">Utilisable immédiatement</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Shield className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
+                  <Check className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium" data-testid="text-zone-stores">{t.bankCard.usageZones.stores}</p>
-                    <p className="text-sm text-muted-foreground">{t.bankCard.usageZones.storesDesc}</p>
+                    <p className="font-medium text-sm" data-testid="text-advantage-nofees">Sans frais</p>
+                    <p className="text-xs text-muted-foreground">0% de frais en zone euro</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Check className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
+                  <Globe className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium" data-testid="text-zone-atm">{t.bankCard.usageZones.atm}</p>
-                    <p className="text-sm text-muted-foreground">{t.bankCard.usageZones.atmDesc}</p>
+                    <p className="font-medium text-sm" data-testid="text-advantage-global">Acceptée mondialement</p>
+                    <p className="text-xs text-muted-foreground">Compatible Apple Pay & Google Pay</p>
                   </div>
                 </div>
               </div>
