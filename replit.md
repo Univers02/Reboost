@@ -2,6 +2,21 @@
 
 ## Recent Changes
 
+### November 7, 2025 - Two-Factor Authentication (2FA) Implementation
+- **Email-Based 2FA:** Implemented secure two-factor authentication using 6-digit OTP codes sent via SendGrid
+- **Security Features:**
+  - OTP codes expire after 5 minutes
+  - Maximum 3 verification attempts per code (blocks further attempts after 3 failures)
+  - Rate limiting on both login and OTP verification endpoints
+  - Codes stored with attempt tracking in `userOtps` database table
+- **User Flow:**
+  1. User logs in with username/password
+  2. System sends 6-digit code to registered email in user's language (fr/en/es/pt/it/de/nl)
+  3. User enters code on verification page (/verify-otp)
+  4. Upon successful verification, session is created and user is redirected to dashboard
+- **Translations:** Full 2FA support in all 7 supported languages (fr, en, es, pt, it, de, nl)
+- **Files Modified:** server/services/otp.ts, server/routes.ts, server/emailTemplates.ts, client/src/pages/VerifyOtp.tsx, client/src/pages/Auth.tsx, client/src/lib/i18n.ts, shared/schema.ts
+
 ### November 6, 2025 - Critical Security & UX Improvements
 - **Bank Card Positioning:** Virtual bank card now positioned fixed in bottom-right corner of dashboard (matches design reference, hidden on mobile)
 - **CSRF Token Fix:** Eliminated intermittent "Failed to fetch" errors during signup by preloading CSRF tokens when Auth page loads
@@ -68,6 +83,7 @@ transferValidationCodes (id, transferId, sequence, code, expiresAt, usedAt, crea
 transferEvents (id, transferId, eventType, eventData, createdAt)
 adminMessages (id, userId, subject, content, isRead, readAt, createdAt)
 externalAccounts (id, userId, accountType, accountName, iban, bic, createdAt)
+userOtps (id, userId, otpCode, expiresAt, attempts, used, createdAt)
 ```
 
 **Key Architectural Decisions:** A monorepo structure for client and server code, end-to-end type safety, Vite middleware for development HMR, and separate client/server builds for production.
