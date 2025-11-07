@@ -28,11 +28,18 @@ export default function UserProfileHeader() {
 
   const uploadPhotoMutation = useMutation({
     mutationFn: async (file: File) => {
+      const csrfToken = await fetch(getApiUrl('/api/csrf-token'), {
+        credentials: 'include',
+      }).then((res) => res.json()).then((data) => data.csrfToken);
+
       const formData = new FormData();
       formData.append('profilePhoto', file);
 
       const response = await fetch(getApiUrl('/api/user/profile-photo'), {
         method: 'POST',
+        headers: {
+          'X-CSRF-Token': csrfToken,
+        },
         body: formData,
         credentials: 'include',
       });

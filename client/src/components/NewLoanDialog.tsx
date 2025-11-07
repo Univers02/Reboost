@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AlertCircle, Upload, FileText, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { apiRequest } from '@/lib/queryClient';
+import { apiRequest, getApiUrl } from '@/lib/queryClient';
 import type { User } from '@shared/schema';
 
 interface NewLoanDialogProps {
@@ -173,6 +173,10 @@ export default function NewLoanDialog({ open, onOpenChange }: NewLoanDialogProps
     let errorCount = 0;
 
     try {
+      const csrfToken = await fetch(getApiUrl('/api/csrf-token'), {
+        credentials: 'include',
+      }).then((res) => res.json()).then((data) => data.csrfToken);
+
       for (const file of fileArray) {
         try {
           const formData = new FormData();
@@ -180,8 +184,11 @@ export default function NewLoanDialog({ open, onOpenChange }: NewLoanDialogProps
           formData.append('documentType', 'identity');
           formData.append('loanType', loanType as string);
 
-          const response = await fetch('/api/kyc/upload', {
+          const response = await fetch(getApiUrl('/api/kyc/upload'), {
             method: 'POST',
+            headers: {
+              'X-CSRF-Token': csrfToken,
+            },
             body: formData,
             credentials: 'include',
           });
