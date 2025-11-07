@@ -33,6 +33,7 @@ Preferred communication style: Simple, everyday language.
 - Responsive design across all pages.
 - Clear feedback and loading states for actions like file uploads and 2FA setup.
 - Password strength indicators during reset.
+- Profile photo upload with dual cache-busting mechanism (server `updatedAt` + client `photoCacheBuster`) for immediate display after upload.
 
 ### Technical Implementations
 - **Authentication:**
@@ -61,13 +62,21 @@ Preferred communication style: Simple, everyday language.
     - PostgreSQL table (`notifications`) with fields: userId, type, title, message, severity, isRead, metadata, createdAt, readAt.
     - RESTful API endpoints with full CSRF protection and defense-in-depth IDOR protection.
     - Storage methods enforce user ownership at SQL level: all read/update/delete operations include `WHERE userId = ?` clause.
-    - NotificationBell component with real-time polling (30s intervals), unread count badge, and dropdown menu.
+    - NotificationBell component with real-time polling (5s intervals for admin loan requests, 30s for user notifications), unread count badge, and dropdown menu.
+    - Sound alerts for new notifications (plays only when unread count increases).
+    - 2FA suggestion notification system:
+        - Appears once in notification bell for users without 2FA enabled.
+        - Uses `hasNotificationByType` to check all notifications (read/unread) preventing duplicates.
+        - Auto-removes via `deleteAllNotificationsByType` when user enables 2FA.
+    - Real-time loan request notifications for admins with 5s polling and audio alerts.
     - Notification helper utilities (`notification-helper.ts`) for automatic notification generation on key events:
         - Loan approved/rejected/disbursed
+        - Loan requests (admin notification with sound)
         - Transfer completed/approved/suspended
         - Validation code issued
         - KYC approved/rejected
         - Fee added
+        - 2FA activation suggestion
     - Notifications persist across page refreshes and logout/login cycles.
     - Security: SQL-level user ownership validation prevents cross-user access even if route checks are bypassed.
 
