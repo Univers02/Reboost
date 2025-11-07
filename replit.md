@@ -1,78 +1,8 @@
 # ALTUS - Professional Loan Platform
 
-## Recent Changes
-
-### November 7, 2025 - Google Authenticator 2FA Implementation (TOTP)
-- **Complete 2FA System:** Implemented TOTP-based two-factor authentication using Google Authenticator as an alternative to email OTP
-- **Backend Implementation:**
-  - Added `twoFactorSecret` and `twoFactorEnabled` columns to users table
-  - Created 2FA service using `speakeasy` and `qrcode` libraries for TOTP generation and QR code display
-  - Implemented 4 secure API routes: POST /api/2fa/setup, POST /api/2fa/verify, POST /api/2fa/validate, POST /api/2fa/disable
-  - All routes protected with requireAuth middleware, CSRF tokens, and rate limiting
-  - Modified login flow to check for 2FA and redirect to appropriate verification method
-  - Added storage methods for enabling/disabling 2FA (enable2FA, disable2FA)
-- **Frontend Implementation:**
-  - Created `/security/2fa` page with interactive 3-step setup process (install app → scan QR code → verify code)
-  - Created `/verify-2fa` page for entering TOTP code during login
-  - Updated Settings page with functional 2FA toggle (shows enabled/disabled status with visual indicators)
-  - Updated Auth page to handle 2FA redirect during login
-  - All pages fully responsive with proper loading states and error handling
-- **User Experience:**
-  - Users can enable 2FA in Settings → Security → Configure button
-  - QR code displayed for easy Google Authenticator setup
-  - Manual secret key provided as backup
-  - During login: If 2FA enabled → requires TOTP code; If disabled → requires email OTP
-  - Users can disable 2FA at any time from Settings
-- **Security Features:**
-  - TOTP codes are 6 digits with 30-second validity window
-  - Secrets stored encrypted in database
-  - Rate limiting on all 2FA endpoints
-  - Audit logs for 2FA enable/disable actions
-  - Session validation after successful 2FA verification
-- **Translations:** Full 2FA support in all 7 supported languages (fr, en, es, pt, it, de, nl)
-- **Files Modified/Created:** 
-  - Backend: server/services/twoFactor.ts (new), server/storage.ts, server/routes.ts, shared/schema.ts
-  - Frontend: client/src/pages/TwoFactorSetup.tsx (new), client/src/pages/VerifyTwoFactor.tsx (new), client/src/pages/Auth.tsx, client/src/pages/Settings.tsx, client/src/App.tsx
-
-### November 7, 2025 - Two-Factor Authentication (2FA) Implementation
-- **Email-Based 2FA:** Implemented secure two-factor authentication using 6-digit OTP codes sent via SendGrid
-- **Security Features:**
-  - OTP codes expire after 5 minutes
-  - Maximum 3 verification attempts per code (blocks further attempts after 3 failures)
-  - Rate limiting on both login and OTP verification endpoints
-  - Codes stored with attempt tracking in `userOtps` database table
-- **User Flow:**
-  1. User logs in with username/password
-  2. System sends 6-digit code to registered email in user's language (fr/en/es/pt/it/de/nl)
-  3. User enters code on verification page (/verify-otp)
-  4. Upon successful verification, session is created and user is redirected to dashboard
-- **Translations:** Full 2FA support in all 7 supported languages (fr, en, es, pt, it, de, nl)
-- **Files Modified:** server/services/otp.ts, server/routes.ts, server/emailTemplates.ts, client/src/pages/VerifyOtp.tsx, client/src/pages/Auth.tsx, client/src/lib/i18n.ts, shared/schema.ts
-
-### November 6, 2025 - Critical Security & UX Improvements
-- **Bank Card Positioning:** Virtual bank card now positioned fixed in bottom-right corner of dashboard (matches design reference, hidden on mobile)
-- **CSRF Token Fix:** Eliminated intermittent "Failed to fetch" errors during signup by preloading CSRF tokens when Auth page loads
-- **Single Session Enforcement:** Implemented critical security feature preventing multiple simultaneous logins in same browser:
-  - Added `activeSessionId` field to users table
-  - Login saves current session ID to database
-  - Logout clears session ID from database
-  - `requireAuth` middleware validates session ID matches, destroying invalid sessions
-  - Users see clear message: "Votre compte est connecté sur un autre appareil. Veuillez vous reconnecter."
-
-### November 6, 2025 - KYC Document Upload Fix
-- **Fixed:** Documents KYC uploaded by users now appear correctly in admin dashboard
-- **Issue:** The `NewLoanDialog` component was not actually sending files to the server; it only displayed a success message locally
-- **Solution:** Implemented real file upload via FormData to `/api/kyc/upload` endpoint
-- **Improvements:**
-  - Added loading states during file upload with visual spinner
-  - Precise tracking of successfully uploaded files (fixes bug where partial failures were misreported)
-  - Proper error handling with informative toast messages
-  - Input field cleared after upload for better UX
-  - Submit button disabled during upload to prevent double submission
-
 ## Overview
 
-ALTUS is a multi-language professional loan management platform designed for business clients. It offers a comprehensive dashboard for managing loans, transfers, fees, and financial transactions, emphasizing trust, clarity, and data-driven decision-making. As a fintech application, it incorporates professional design patterns inspired by industry leaders, providing features like multi-language support (French, English, Spanish), an interactive amortization calculator, real-time status tracking for transfers, external bank account management, KYC document upload, and financial analytics. The platform aims to serve business professionals and enterprises seeking robust loan financing and financial management tools.
+ALTUS is a multi-language professional loan management platform for business clients, offering a comprehensive dashboard for managing loans, transfers, fees, and financial transactions. It emphasizes trust, clarity, and data-driven decision-making, incorporating professional design patterns. Key features include multi-language support (French, English, Spanish), an interactive amortization calculator, real-time transfer tracking, external bank account management, KYC document upload, and financial analytics. The platform aims to serve business professionals and enterprises seeking robust loan financing and financial management tools.
 
 ## User Preferences
 
@@ -83,131 +13,49 @@ Preferred communication style: Simple, everyday language.
 ### Frontend Architecture
 
 **Technology Stack:** React 18 with TypeScript, Wouter for routing, Tailwind CSS with shadcn/ui for styling, Zustand for client-side state, TanStack Query for server state, React Hook Form with Zod for forms, and Vite for building.
-
-**Design System:** Utilizes Radix UI primitives, custom design tokens with HSL color system, Google Fonts for typography (Inter/Work Sans, JetBrains Mono), and a responsive mobile-first design.
-
-**Internationalization (i18n):** Custom implementation with Zustand for language state, supporting French (default), English, and Spanish, with language selection persisted in localStorage.
-
-**Theming:** Light/dark mode toggle managed via Zustand with localStorage persistence and CSS variable-based color system.
-
-**Component Architecture:** Follows an atomic design approach, separating reusable UI components, feature-specific components, and page-level components.
+**Design System:** Radix UI primitives, custom design tokens (HSL color system), Google Fonts, and a responsive mobile-first design.
+**Internationalization (i18n):** Custom implementation with Zustand, supporting French (default), English, and Spanish.
+**Theming:** Light/dark mode toggle via Zustand with localStorage persistence and CSS variables.
+**Component Architecture:** Atomic design approach for UI, feature, and page components.
 
 ### Backend Architecture
 
 **Technology Stack:** Node.js with Express.js, TypeScript, Drizzle ORM, PostgreSQL (via Neon serverless driver), and Connect-pg-simple for session management.
+**API Design:** RESTful API endpoints (`/api`) with response formatting and request logging.
+**Data Layer:** Schema-first design with Drizzle ORM, type-safe operations, Zod schemas, and drizzle-kit for migrations.
+**Storage Strategy:** PostgreSQL database (`DatabaseStorage`) with Neon serverless, using an `IStorage` interface.
+**Database Schema:** Key tables include `users`, `loans`, `transfers`, `fees`, `transactions`, `adminSettings`, `auditLogs`, `transferValidationCodes`, `transferEvents`, `adminMessages`, `externalAccounts`, and `userOtps`.
+**Key Architectural Decisions:** Monorepo for client/server, end-to-end type safety, Vite middleware for HMR, and separate client/server builds.
 
-**API Design:** RESTful API endpoints, prefixed with `/api`, with response formatting and request logging.
+### UI/UX Decisions
+- Virtual bank card fixed in bottom-right of dashboard.
+- Welcome modal appears once after first login.
+- Responsive design across all pages.
+- Clear feedback and loading states for actions like file uploads and 2FA setup.
+- Password strength indicators during reset.
 
-**Data Layer:** Schema-first design with Drizzle ORM, type-safe operations, Zod schemas for validation, and migration support via drizzle-kit.
-
-**Storage Strategy:** Employs a PostgreSQL database (`DatabaseStorage`) with Neon serverless for persistence. An `IStorage` interface ensures consistent API, and demo data is automatically seeded.
-
-**Database Schema:**
-```
-users (id, username, password, email, fullName, accountType, role, status, kycStatus, maxLoanAmount, hasSeenWelcomeMessage, suspendedUntil, suspensionReason, externalTransfersBlocked, transferBlockReason, activeSessionId, twoFactorSecret, twoFactorEnabled, createdAt, updatedAt)
-loans (id, userId, loanType, amount, interestRate, duration, status, approvedAt, approvedBy, rejectedAt, rejectionReason, nextPaymentDate, totalRepaid, deletedAt, deletedBy, deletionReason, createdAt)
-transfers (id, userId, amount, recipient, status, currentStep, validationMethod, createdAt, updatedAt)
-fees (id, userId, feeType, reason, amount, relatedMessageId, isPaid, paidAt, createdAt)
-transactions (id, userId, type, amount, description, createdAt)
-adminSettings (id, settingKey, settingValue, description, updatedBy, updatedAt)
-auditLogs (id, adminId, action, targetType, targetId, details, createdAt)
-transferValidationCodes (id, transferId, sequence, code, expiresAt, usedAt, createdAt)
-transferEvents (id, transferId, eventType, eventData, createdAt)
-adminMessages (id, userId, subject, content, isRead, readAt, createdAt)
-externalAccounts (id, userId, accountType, accountName, iban, bic, createdAt)
-userOtps (id, userId, otpCode, expiresAt, attempts, used, createdAt)
-```
-
-**Key Architectural Decisions:** A monorepo structure for client and server code, end-to-end type safety, Vite middleware for development HMR, and separate client/server builds for production.
+### Technical Implementations
+- **Authentication:**
+    - Complete forgot/reset password functionality with email notifications, rate limiting, and 12-character password validation.
+    - TOTP-based Two-Factor Authentication (2FA) using Google Authenticator, including setup, verification, and disable flows.
+    - Email-based 2FA with 6-digit OTP codes, 5-minute expiration, and 3 attempt limit.
+    - Single session enforcement preventing multiple simultaneous logins per user.
+    - CSRF protection on mutating routes, with preloading tokens for signup.
+- **Security Features:**
+    - IDOR protection, Zod validation, XSS protection, strong password requirements, UUID usernames, generic error messages.
+    - File upload validation with magic byte verification.
+    - Comprehensive rate limiting on sensitive endpoints.
+    - User status verification in authentication middleware.
+    - Encrypted 2FA secrets.
+- **Loan Disbursement Workflow:** Multi-step approval: Request -> Admin Approval -> Contract Signing -> Manual Admin Fund Disbursement (`active` status). Requires explicit admin action for disbursement, logs all actions, and validates loan status.
+- **KYC Document Upload:** Real file upload via FormData to `/api/kyc/upload` with loading states, error handling, and input clearing.
 
 ## External Dependencies
 
 **Database:** Neon Serverless PostgreSQL (`@neondatabase/serverless`).
-
-**UI Component Libraries:** Radix UI for headless components, shadcn/ui for pre-built components, Recharts for data visualization, and Lucide React for icons.
-
-**Styling & Design:** Tailwind CSS, `class-variance-authority`, `tailwind-merge`, and `clsx`.
-
-**Form Management:** React Hook Form, Zod, and `@hookform/resolvers`.
-
-**Development Tools:** Replit Plugins (runtime error modal, cartographer, dev banner), TypeScript, and ESBuild.
-
+**UI Component Libraries:** Radix UI, shadcn/ui, Recharts, Lucide React.
+**Styling & Design:** Tailwind CSS, `class-variance-authority`, `tailwind-merge`, `clsx`.
+**Form Management:** React Hook Form, Zod, `@hookform/resolvers`.
+**Development Tools:** Replit Plugins, TypeScript, ESBuild.
 **Authentication:** SendGrid for transactional email verification.
-
-## Production Deployment
-
-### Cross-Domain Configuration (Vercel + Render)
-- **Frontend:** Deployed on Vercel at `https://altusfinancegroup.com`
-- **Backend:** Deployed on Render at `https://api.altusfinancegroup.com`
-- **CORS:** Configured to allow frontend domain with credentials
-- **Cookies:** Cross-domain session cookies with `sameSite: 'none'` and `domain: '.altusfinancegroup.com'`
-- **CSRF Protection:** Applied to all mutating routes (POST/PUT/PATCH/DELETE)
-
-### Production Logging
-Comprehensive logging system for debugging production issues:
-- **CORS Debugging:** Logs all incoming requests with origin, method, and headers
-- **Error Tracking:** Detailed error messages with stack traces
-- **Configuration Display:** Shows critical settings at startup (allowed origins, cookie config)
-- **See:** `DEBUGGING_405_ERROR.md` for troubleshooting guide
-
-## Documentation
-
-### Security Documentation
-- **SECURITY_AUDIT.md**: Initial security audit identifying IDOR vulnerabilities, code exposure, and validation gaps
-- **DEEP_SECURITY_AUDIT.md**: Comprehensive security analysis covering all API routes with detailed vulnerability assessments and remediation status
-- **Security implementations completed:**
-  - IDOR protection with resource ownership verification
-  - Zod validation on all admin routes
-  - XSS protection with input sanitization
-  - Strong password requirements (12+ characters)
-  - UUID usernames for anonymity
-  - Generic error messages to prevent information disclosure
-  - File upload validation with magic byte verification
-  - Comprehensive rate limiting on sensitive endpoints
-  - Email verification token expiration (48 hours)
-  - User status verification in authentication middleware (suspended/blocked/inactive)
-
-### Admin Documentation
-- **ADMIN_FEATURES.md**: Complete reference of all administrative functionalities including:
-  - User management (CRUD, suspension, blocking, borrowing capacity)
-  - Loan management (approval, rejection, deletion)
-  - Transfer management (status updates, validation codes)
-  - System settings management
-  - Communication tools (messages, notifications with fees)
-  - Statistics and audit logs
-  - Detailed validation schemas and security measures
-- **ADMIN_SETUP.md**: Guide for creating admin accounts in production:
-  - Automated script (`scripts/create-admin.ts`) for interactive admin creation
-  - Manual SQL method for direct database access
-  - Security requirements (12+ character passwords, bcrypt hashing)
-  - Troubleshooting and support information
-
-### Business Workflows
-
-#### Loan Disbursement Workflow
-The loan disbursement process follows a strict multi-step approval workflow to ensure proper administrative control:
-
-1. **Loan Request (status: 'pending')**: User submits a loan application
-2. **Admin Review & Approval (status: 'approved')**: Admin reviews and approves the loan, generating the contract
-3. **Contract Signing (status: 'signed')**: User uploads signed contract, which triggers:
-   - Status change to 'signed'
-   - Admin notification message
-   - **No automatic fund disbursement**
-4. **Manual Fund Disbursement (status: 'active')**: Admin manually reviews signed contract and triggers fund disbursement via the admin panel, which:
-   - Changes loan status to 'active'
-   - Creates a credit transaction for the loan amount
-   - Sends success notification to user
-   - Logs the action in audit trail
-5. **Fund Access**: Only loans with 'active' status allow transfers
-
-**Key Security Controls:**
-- Fund disbursement requires explicit admin action (POST /api/admin/loans/:id/disburse)
-- Route protected with requireAdmin, CSRF token, and rate limiting
-- Validates loan is in 'signed' status and has signed contract before disbursement
-- Transfer creation verifies at least one 'active' loan exists
-- All actions logged in audit trail
-
-**Implementation Files:**
-- Backend route: `server/routes.ts` (lines 947-960 for contract upload, 1800-1852 for disbursement)
-- Admin interface: `client/src/pages/AdminLoans.tsx`
-- Status display: `client/src/components/LoanDetailsDialog.tsx`, `client/src/pages/IndividualLoans.tsx`
+**Two-Factor Authentication:** Speakeasy and qrcode libraries for TOTP.
