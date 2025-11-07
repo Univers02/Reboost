@@ -466,6 +466,312 @@ type TranslationKeys = {
     termsConditions: string;
     close: string;
   };
+  notifications: {
+    loan_request: { title: string; message: string };
+    loan_under_review: { title: string; message: string };
+    loan_approved: { title: string; message: string };
+    loan_rejected: { title: string; message: string };
+    loan_contract_generated: { title: string; message: string };
+    loan_contract_signed: { title: string; message: string };
+    loan_disbursed: { title: string; message: string };
+    transfer_initiated: { title: string; message: string };
+    transfer_completed: { title: string; message: string };
+    transfer_approved: { title: string; message: string };
+    transfer_suspended: { title: string; message: string };
+    code_issued: { title: string; message: string };
+    kyc_approved: { title: string; message: string };
+    kyc_rejected: { title: string; message: string };
+    fee_added: { title: string; message: string };
+    account_status_changed: { title: string; message: string };
+    admin_message_sent: { title: string; message: string };
+    general: { title: string; message: string };
+    twoFactorSuggestion: { title: string; message: string };
+    markAllRead: string;
+    markAsRead: string;
+    deleteNotification: string;
+  };
+  dialogs: {
+    newLoan: {
+      title: string;
+      subtitle: string;
+      loanType: string;
+      selectLoanType: string;
+      amount: string;
+      enterAmount: string;
+      duration: string;
+      selectDuration: string;
+      months: string;
+      estimatedRate: string;
+      monthlyPayment: string;
+      totalRepayment: string;
+      firstRequestAlert: string;
+      firstRequestAlertDesc: string;
+      addBankAccount: string;
+      selectAccount: string;
+      bankName: string;
+      bankNamePlaceholder: string;
+      accountLabel: string;
+      accountLabelPlaceholder: string;
+      iban: string;
+      ibanPlaceholder: string;
+      bic: string;
+      bicPlaceholder: string;
+      uploadDocuments: string;
+      kycDocumentsTab: string;
+      additionalDocumentsTab: string;
+      identity: string;
+      proof_of_address: string;
+      income_proof: string;
+      business_registration: string;
+      financial_statements: string;
+      tax_returns: string;
+      submit: string;
+      submitting: string;
+      cancel: string;
+      loanTypes: {
+        personal: string;
+        auto: string;
+        mortgage: string;
+        green: string;
+        renovation: string;
+        student: string;
+        business: string;
+        cashFlow: string;
+        equipment: string;
+        commercialProperty: string;
+        lineOfCredit: string;
+        vehicleFleet: string;
+      };
+    };
+    transfer: {
+      title: string;
+      subtitle: string;
+      selectAccount: string;
+      noAccountsAvailable: string;
+      amount: string;
+      enterAmount: string;
+      availableFunds: string;
+      feesAndProcessing: string;
+      submit: string;
+      submitting: string;
+      cancel: string;
+    };
+    cardTerms: {
+      title: string;
+      acceptTerms: string;
+      declineTerms: string;
+    };
+    welcome: {
+      title: string;
+      description: string;
+      accountTypeTitle: string;
+      individualAccount: string;
+      businessAccount: string;
+      individualAccess: string;
+      businessAccess: string;
+      availableOffers: string;
+      getStarted: string;
+    };
+    transactionHistory: {
+      title: string;
+      type: string;
+      amount: string;
+      date: string;
+      status: string;
+      noTransactions: string;
+      close: string;
+    };
+  };
+  verify: {
+    verifying: string;
+    success: string;
+    successMessage: string;
+    goToDashboard: string;
+    error: string;
+    errorMessage: string;
+    tryAgain: string;
+    backToSignup: string;
+    backToHome: string;
+  };
+  forgotPassword: {
+    title: string;
+    description: string;
+    instructions: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    sendResetLink: string;
+    sending: string;
+    backToLogin: string;
+    emailSent: string;
+    emailSentDesc: string;
+    error: string;
+    errorDesc: string;
+  };
+  resetPassword: {
+    title: string;
+    description: string;
+    newPassword: string;
+    newPasswordPlaceholder: string;
+    confirmPassword: string;
+    confirmPasswordPlaceholder: string;
+    requirements: string;
+    minLength: string;
+    uppercase: string;
+    lowercase: string;
+    number: string;
+    specialChar: string;
+    passwordStrength: string;
+    weak: string;
+    medium: string;
+    strong: string;
+    veryStrong: string;
+    resetPassword: string;
+    resetting: string;
+    success: string;
+    successMessage: string;
+    error: string;
+    invalidToken: string;
+    passwordMismatch: string;
+  };
+  twoFactorAuth: {
+    setup: {
+      title: string;
+      description: string;
+      step1: string;
+      step1Description: string;
+      step2: string;
+      step2Description: string;
+      step3: string;
+      step3Description: string;
+      qrCodeInstructions: string;
+      cantScanQR: string;
+      secretKey: string;
+      enterCode: string;
+      codePlaceholder: string;
+      verify: string;
+      verifying: string;
+      cancel: string;
+      successTitle: string;
+      successMessage: string;
+      errorTitle: string;
+      errorMessage: string;
+    };
+    disable: {
+      title: string;
+      description: string;
+      enterPassword: string;
+      passwordPlaceholder: string;
+      disable: string;
+      disabling: string;
+      cancel: string;
+      successTitle: string;
+      successMessage: string;
+      errorTitle: string;
+      errorMessage: string;
+    };
+    login: {
+      title: string;
+      description: string;
+      enterCode: string;
+      codePlaceholder: string;
+      verify: string;
+      verifying: string;
+      cancel: string;
+      errorTitle: string;
+      errorMessage: string;
+    };
+  };
+  bankAccounts: {
+    title: string;
+    description: string;
+    addAccount: string;
+    noAccountsTitle: string;
+    noAccountsDescription: string;
+    accountLabel: string;
+    bankName: string;
+    iban: string;
+    bic: string;
+    createdAt: string;
+    actions: string;
+    delete: string;
+    deleteConfirm: string;
+    deleteSuccess: string;
+    addAccountTitle: string;
+    addAccountDescription: string;
+    accountLabelLabel: string;
+    accountLabelPlaceholder: string;
+    accountLabelRequired: string;
+    bankNameLabel: string;
+    bankNamePlaceholder: string;
+    bankNameRequired: string;
+    ibanLabel: string;
+    ibanPlaceholder: string;
+    ibanRequired: string;
+    bicLabel: string;
+    bicPlaceholder: string;
+    submit: string;
+    submitting: string;
+    cancel: string;
+    addSuccess: string;
+    addSuccessDesc: string;
+    addError: string;
+  };
+  welcomeModal: {
+    title: string;
+    description: string;
+    accountType: string;
+    individualAccount: string;
+    businessAccount: string;
+    individualAccess: string;
+    businessAccess: string;
+    availableOffers: string;
+    getStarted: string;
+  };
+  calculator: {
+    title: string;
+    description: string;
+    loanAmount: string;
+    interestRate: string;
+    loanDuration: string;
+    months: string;
+    calculate: string;
+    results: string;
+    monthlyPayment: string;
+    totalInterest: string;
+    totalAmount: string;
+    amortizationSchedule: string;
+    month: string;
+    payment: string;
+    principal: string;
+    interest: string;
+    balance: string;
+    downloadSchedule: string;
+  };
+  kycDocuments: {
+    title: string;
+    description: string;
+    uploadDocuments: string;
+    documentType: string;
+    selectDocumentType: string;
+    identity: string;
+    proof_of_address: string;
+    income_proof: string;
+    business_registration: string;
+    financial_statements: string;
+    tax_returns: string;
+    chooseFile: string;
+    upload: string;
+    uploading: string;
+    uploadSuccess: string;
+    uploadSuccessDesc: string;
+    uploadError: string;
+    status: string;
+    pending: string;
+    approved: string;
+    rejected: string;
+    uploadedAt: string;
+    noDocuments: string;
+  };
 };
 
 export const translations: Record<Language, TranslationKeys> = {
@@ -972,6 +1278,312 @@ export const translations: Record<Language, TranslationKeys> = {
       termsConditions: 'Voir les conditions générales',
       close: 'Fermer',
     },
+    notifications: {
+      loan_request: { title: 'Demande de prêt soumise', message: 'Votre demande de prêt a été soumise avec succès. Nous examinerons votre dossier dans les plus brefs délais.' },
+      loan_under_review: { title: 'Demande en cours d\'examen', message: 'Votre demande de prêt est actuellement en cours d\'examen par notre équipe.' },
+      loan_approved: { title: 'Prêt approuvé', message: 'Votre demande de prêt a été approuvée. Vous pouvez maintenant procéder à la signature du contrat.' },
+      loan_rejected: { title: 'Prêt refusé', message: 'Votre demande de prêt a été refusée.' },
+      loan_contract_generated: { title: 'Contrat de prêt disponible', message: 'Votre contrat de prêt est maintenant disponible. Veuillez le télécharger, le signer et le renvoyer.' },
+      loan_contract_signed: { title: 'Contrat signé reçu', message: 'Nous avons bien reçu votre contrat signé. Votre prêt sera traité dans les plus brefs délais.' },
+      loan_disbursed: { title: 'Fonds déboursés', message: 'Les fonds de votre prêt ont été déboursés avec succès sur votre compte.' },
+      transfer_initiated: { title: 'Transfert initié', message: 'Votre demande de transfert a été initiée et est en cours de traitement.' },
+      transfer_completed: { title: 'Transfert terminé', message: 'Votre transfert a été complété avec succès.' },
+      transfer_approved: { title: 'Transfert approuvé', message: 'Votre demande de transfert a été approuvée par l\'administration.' },
+      transfer_suspended: { title: 'Transfert suspendu', message: 'Votre transfert a été suspendu.' },
+      code_issued: { title: 'Code de validation émis', message: 'Un nouveau code de validation a été émis pour votre transfert. Vérifiez vos emails.' },
+      kyc_approved: { title: 'Documents KYC approuvés', message: 'Vos documents ont été vérifiés et approuvés. Votre compte est maintenant actif.' },
+      kyc_rejected: { title: 'Documents KYC refusés', message: 'Vos documents ont été refusés. Veuillez soumettre de nouveaux documents.' },
+      fee_added: { title: 'Nouveaux frais', message: 'De nouveaux frais ont été ajoutés à votre compte.' },
+      account_status_changed: { title: 'Statut du compte modifié', message: 'Le statut de votre compte a été modifié.' },
+      admin_message_sent: { title: 'Nouveau message de l\'administration', message: 'Vous avez reçu un nouveau message de l\'administration.' },
+      general: { title: 'Notification', message: 'Vous avez une nouvelle notification.' },
+      twoFactorSuggestion: { title: 'Sécurisez votre compte', message: 'Activez l\'authentification à deux facteurs pour renforcer la sécurité de votre compte.' },
+      markAllRead: 'Tout marquer comme lu',
+      markAsRead: 'Marquer comme lu',
+      deleteNotification: 'Supprimer',
+    },
+    dialogs: {
+      newLoan: {
+        title: 'Nouvelle demande de prêt',
+        subtitle: 'Complétez les informations pour votre demande',
+        loanType: 'Type de prêt',
+        selectLoanType: 'Sélectionnez le type de prêt',
+        amount: 'Montant',
+        enterAmount: 'Entrez le montant souhaité',
+        duration: 'Durée',
+        selectDuration: 'Sélectionnez la durée',
+        months: 'mois',
+        estimatedRate: 'Taux estimé',
+        monthlyPayment: 'Mensualité estimée',
+        totalRepayment: 'Montant total à rembourser',
+        firstRequestAlert: 'Première demande :',
+        firstRequestAlertDesc: 'Vos documents seront vérifiés une seule fois. Les demandes suivantes ne nécessiteront plus de documents.',
+        addBankAccount: 'Ajouter un compte bancaire',
+        selectAccount: 'Sélectionnez un compte',
+        bankName: 'Nom de la banque',
+        bankNamePlaceholder: 'Ex: BNP Paribas',
+        accountLabel: 'Libellé du compte',
+        accountLabelPlaceholder: 'Ex: Compte courant principal',
+        iban: 'IBAN',
+        ibanPlaceholder: 'FR76 1234 5678 9012 3456 7890 123',
+        bic: 'BIC/SWIFT',
+        bicPlaceholder: 'BNPAFRPP',
+        uploadDocuments: 'Télécharger vos documents',
+        kycDocumentsTab: 'Documents KYC',
+        additionalDocumentsTab: 'Documents supplémentaires',
+        identity: 'Pièce d\'identité',
+        proof_of_address: 'Justificatif de domicile',
+        income_proof: 'Justificatif de revenus',
+        business_registration: 'Extrait Kbis',
+        financial_statements: 'Bilans financiers',
+        tax_returns: 'Déclaration d\'impôts',
+        submit: 'Soumettre la demande',
+        submitting: 'Soumission...',
+        cancel: 'Annuler',
+        loanTypes: {
+          personal: 'Prêt personnel',
+          auto: 'Prêt auto',
+          mortgage: 'Prêt immobilier',
+          green: 'Prêt vert',
+          renovation: 'Prêt rénovation',
+          student: 'Prêt étudiant',
+          business: 'Prêt professionnel',
+          cashFlow: 'Crédit de trésorerie',
+          equipment: 'Financement équipement',
+          commercialProperty: 'Prêt immobilier pro',
+          lineOfCredit: 'Ligne de crédit',
+          vehicleFleet: 'Crédit véhicule pro',
+        },
+      },
+      transfer: {
+        title: 'Transférer des fonds',
+        subtitle: 'Initiez un transfert sécurisé vers un compte externe',
+        selectAccount: 'Sélectionnez un compte',
+        noAccountsAvailable: 'Aucun compte bancaire disponible',
+        amount: 'Montant',
+        enterAmount: 'Entrez le montant',
+        availableFunds: 'Fonds disponibles',
+        feesAndProcessing: 'Frais de 2% • Traitement sous 24-48h',
+        submit: 'Initier le transfert',
+        submitting: 'Traitement...',
+        cancel: 'Annuler',
+      },
+      cardTerms: {
+        title: 'Conditions générales de la carte bancaire',
+        acceptTerms: 'Accepter les conditions',
+        declineTerms: 'Refuser',
+      },
+      welcome: {
+        title: 'Bienvenue sur ALTUS',
+        description: 'Votre compte a été créé avec succès',
+        accountTypeTitle: 'Votre type de compte',
+        individualAccount: 'Compte Particulier',
+        businessAccount: 'Compte Professionnel',
+        individualAccess: 'Accès aux services de financement personnel',
+        businessAccess: 'Accès complet aux services de financement d\'entreprise',
+        availableOffers: 'Offres disponibles pour vous',
+        getStarted: 'Commencer',
+      },
+      transactionHistory: {
+        title: 'Historique des transactions',
+        type: 'Type',
+        amount: 'Montant',
+        date: 'Date',
+        status: 'Statut',
+        noTransactions: 'Aucune transaction trouvée',
+        close: 'Fermer',
+      },
+    },
+    verify: {
+      verifying: 'Vérification en cours...',
+      success: 'Email vérifié !',
+      successMessage: 'Votre email a été vérifié avec succès. Vous allez être redirigé vers le tableau de bord.',
+      goToDashboard: 'Aller au tableau de bord',
+      error: 'Erreur de vérification',
+      errorMessage: 'Le lien de vérification est invalide ou a expiré.',
+      tryAgain: 'Réessayer',
+      backToSignup: 'Retour à l\'inscription',
+      backToHome: 'Retour à l\'accueil',
+    },
+    forgotPassword: {
+      title: 'Mot de passe oublié',
+      description: 'Réinitialisez votre mot de passe',
+      instructions: 'Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
+      emailLabel: 'Adresse email',
+      emailPlaceholder: 'votre.email@exemple.com',
+      sendResetLink: 'Envoyer le lien',
+      sending: 'Envoi...',
+      backToLogin: 'Retour à la connexion',
+      emailSent: 'Email envoyé',
+      emailSentDesc: 'Un lien de réinitialisation a été envoyé à votre adresse email.',
+      error: 'Erreur',
+      errorDesc: 'Une erreur s\'est produite. Veuillez réessayer.',
+    },
+    resetPassword: {
+      title: 'Réinitialiser le mot de passe',
+      description: 'Créez un nouveau mot de passe',
+      newPassword: 'Nouveau mot de passe',
+      newPasswordPlaceholder: 'Entrez votre nouveau mot de passe',
+      confirmPassword: 'Confirmer le mot de passe',
+      confirmPasswordPlaceholder: 'Confirmez votre nouveau mot de passe',
+      requirements: 'Exigences du mot de passe :',
+      minLength: 'Au moins 12 caractères',
+      uppercase: 'Une lettre majuscule',
+      lowercase: 'Une lettre minuscule',
+      number: 'Un chiffre',
+      specialChar: 'Un caractère spécial',
+      passwordStrength: 'Force du mot de passe',
+      weak: 'Faible',
+      medium: 'Moyen',
+      strong: 'Fort',
+      veryStrong: 'Très fort',
+      resetPassword: 'Réinitialiser',
+      resetting: 'Réinitialisation...',
+      success: 'Succès',
+      successMessage: 'Votre mot de passe a été réinitialisé avec succès.',
+      error: 'Erreur',
+      invalidToken: 'Le lien de réinitialisation est invalide ou a expiré.',
+      passwordMismatch: 'Les mots de passe ne correspondent pas.',
+    },
+    twoFactorAuth: {
+      setup: {
+        title: 'Configurer l\'authentification à deux facteurs',
+        description: 'Renforcez la sécurité de votre compte',
+        step1: 'Étape 1: Télécharger l\'application',
+        step1Description: 'Téléchargez Google Authenticator ou Authy sur votre téléphone',
+        step2: 'Étape 2: Scanner le QR code',
+        step2Description: 'Scannez ce QR code avec votre application d\'authentification',
+        step3: 'Étape 3: Vérifier le code',
+        step3Description: 'Entrez le code à 6 chiffres généré par l\'application',
+        qrCodeInstructions: 'Scannez ce QR code avec votre application d\'authentification',
+        cantScanQR: 'Impossible de scanner ? Entrez ce code manuellement :',
+        secretKey: 'Clé secrète',
+        enterCode: 'Entrez le code à 6 chiffres',
+        codePlaceholder: '000000',
+        verify: 'Activer 2FA',
+        verifying: 'Vérification...',
+        cancel: 'Annuler',
+        successTitle: '2FA activé',
+        successMessage: 'L\'authentification à deux facteurs a été activée avec succès.',
+        errorTitle: 'Erreur',
+        errorMessage: 'Le code est invalide. Veuillez réessayer.',
+      },
+      disable: {
+        title: 'Désactiver l\'authentification à deux facteurs',
+        description: 'Entrez votre mot de passe pour confirmer',
+        enterPassword: 'Mot de passe',
+        passwordPlaceholder: 'Entrez votre mot de passe',
+        disable: 'Désactiver 2FA',
+        disabling: 'Désactivation...',
+        cancel: 'Annuler',
+        successTitle: '2FA désactivé',
+        successMessage: 'L\'authentification à deux facteurs a été désactivée.',
+        errorTitle: 'Erreur',
+        errorMessage: 'Mot de passe incorrect.',
+      },
+      login: {
+        title: 'Authentification à deux facteurs',
+        description: 'Entrez le code de votre application d\'authentification',
+        enterCode: 'Code à 6 chiffres',
+        codePlaceholder: '000000',
+        verify: 'Vérifier',
+        verifying: 'Vérification...',
+        cancel: 'Annuler',
+        errorTitle: 'Erreur',
+        errorMessage: 'Code invalide. Veuillez réessayer.',
+      },
+    },
+    bankAccounts: {
+      title: 'Comptes bancaires',
+      description: 'Gérez vos comptes bancaires externes',
+      addAccount: 'Ajouter un compte',
+      noAccountsTitle: 'Aucun compte bancaire',
+      noAccountsDescription: 'Ajoutez un compte bancaire pour pouvoir effectuer des transferts.',
+      accountLabel: 'Libellé',
+      bankName: 'Banque',
+      iban: 'IBAN',
+      bic: 'BIC',
+      createdAt: 'Ajouté le',
+      actions: 'Actions',
+      delete: 'Supprimer',
+      deleteConfirm: 'Êtes-vous sûr de vouloir supprimer ce compte ?',
+      deleteSuccess: 'Compte supprimé avec succès',
+      addAccountTitle: 'Ajouter un compte bancaire',
+      addAccountDescription: 'Ajoutez un compte bancaire externe pour les transferts',
+      accountLabelLabel: 'Libellé du compte',
+      accountLabelPlaceholder: 'Ex: Compte courant principal',
+      accountLabelRequired: 'Le libellé est requis',
+      bankNameLabel: 'Nom de la banque',
+      bankNamePlaceholder: 'Ex: BNP Paribas',
+      bankNameRequired: 'Le nom de la banque est requis',
+      ibanLabel: 'IBAN',
+      ibanPlaceholder: 'FR76 1234 5678 9012 3456 7890 123',
+      ibanRequired: 'L\'IBAN est requis',
+      bicLabel: 'BIC/SWIFT',
+      bicPlaceholder: 'BNPAFRPP',
+      submit: 'Ajouter le compte',
+      submitting: 'Ajout...',
+      cancel: 'Annuler',
+      addSuccess: 'Compte ajouté',
+      addSuccessDesc: 'Le compte bancaire a été ajouté avec succès.',
+      addError: 'Erreur lors de l\'ajout du compte',
+    },
+    welcomeModal: {
+      title: 'Bienvenue sur ALTUS',
+      description: 'Votre compte a été créé avec succès',
+      accountType: 'Votre type de compte',
+      individualAccount: 'Compte Particulier',
+      businessAccount: 'Compte Professionnel',
+      individualAccess: 'Accès aux services de financement personnel',
+      businessAccess: 'Accès complet aux services de financement d\'entreprise',
+      availableOffers: 'Offres disponibles pour vous',
+      getStarted: 'Commencer',
+    },
+    calculator: {
+      title: 'Calculateur d\'amortissement',
+      description: 'Simulez votre plan de remboursement',
+      loanAmount: 'Montant du prêt',
+      interestRate: 'Taux d\'intérêt annuel (%)',
+      loanDuration: 'Durée du prêt',
+      months: 'mois',
+      calculate: 'Calculer',
+      results: 'Résultats',
+      monthlyPayment: 'Mensualité',
+      totalInterest: 'Intérêts totaux',
+      totalAmount: 'Montant total',
+      amortizationSchedule: 'Tableau d\'amortissement',
+      month: 'Mois',
+      payment: 'Paiement',
+      principal: 'Capital',
+      interest: 'Intérêts',
+      balance: 'Solde restant',
+      downloadSchedule: 'Télécharger le tableau',
+    },
+    kycDocuments: {
+      title: 'Documents KYC',
+      description: 'Téléchargez vos documents d\'identification',
+      uploadDocuments: 'Télécharger vos documents',
+      documentType: 'Type de document',
+      selectDocumentType: 'Sélectionnez le type',
+      identity: 'Pièce d\'identité',
+      proof_of_address: 'Justificatif de domicile',
+      income_proof: 'Justificatif de revenus',
+      business_registration: 'Extrait Kbis',
+      financial_statements: 'Bilans financiers',
+      tax_returns: 'Déclaration d\'impôts',
+      chooseFile: 'Choisir un fichier',
+      upload: 'Télécharger',
+      uploading: 'Téléchargement...',
+      uploadSuccess: 'Document téléchargé',
+      uploadSuccessDesc: 'Votre document a été téléchargé avec succès.',
+      uploadError: 'Erreur lors du téléchargement',
+      status: 'Statut',
+      pending: 'En attente',
+      approved: 'Approuvé',
+      rejected: 'Refusé',
+      uploadedAt: 'Téléchargé le',
+      noDocuments: 'Aucun document téléchargé',
+    },
   },
   en: {
     hero: {
@@ -1464,6 +2076,312 @@ export const translations: Record<Language, TranslationKeys> = {
       termsConditions: 'View terms and conditions',
       close: 'Close',
     },
+    notifications: {
+      loan_request: { title: 'Loan Request Submitted', message: 'Your loan request has been successfully submitted. We will review your application shortly.' },
+      loan_under_review: { title: 'Application Under Review', message: 'Your loan application is currently being reviewed by our team.' },
+      loan_approved: { title: 'Loan Approved', message: 'Your loan application has been approved. You can now proceed to contract signing.' },
+      loan_rejected: { title: 'Loan Rejected', message: 'Your loan application has been rejected.' },
+      loan_contract_generated: { title: 'Loan Contract Available', message: 'Your loan contract is now available. Please download it, sign it, and return it.' },
+      loan_contract_signed: { title: 'Signed Contract Received', message: 'We have received your signed contract. Your loan will be processed shortly.' },
+      loan_disbursed: { title: 'Funds Disbursed', message: 'Your loan funds have been successfully disbursed to your account.' },
+      transfer_initiated: { title: 'Transfer Initiated', message: 'Your transfer request has been initiated and is being processed.' },
+      transfer_completed: { title: 'Transfer Completed', message: 'Your transfer has been completed successfully.' },
+      transfer_approved: { title: 'Transfer Approved', message: 'Your transfer request has been approved by the administration.' },
+      transfer_suspended: { title: 'Transfer Suspended', message: 'Your transfer has been suspended.' },
+      code_issued: { title: 'Validation Code Issued', message: 'A new validation code has been issued for your transfer. Check your emails.' },
+      kyc_approved: { title: 'KYC Documents Approved', message: 'Your documents have been verified and approved. Your account is now active.' },
+      kyc_rejected: { title: 'KYC Documents Rejected', message: 'Your documents have been rejected. Please submit new documents.' },
+      fee_added: { title: 'New Fee', message: 'New fees have been added to your account.' },
+      account_status_changed: { title: 'Account Status Changed', message: 'Your account status has been updated.' },
+      admin_message_sent: { title: 'New Admin Message', message: 'You have received a new message from administration.' },
+      general: { title: 'Notification', message: 'You have a new notification.' },
+      twoFactorSuggestion: { title: 'Secure Your Account', message: 'Enable two-factor authentication to strengthen your account security.' },
+      markAllRead: 'Mark all as read',
+      markAsRead: 'Mark as read',
+      deleteNotification: 'Delete',
+    },
+    dialogs: {
+      newLoan: {
+        title: 'New Loan Request',
+        subtitle: 'Complete the information for your request',
+        loanType: 'Loan Type',
+        selectLoanType: 'Select loan type',
+        amount: 'Amount',
+        enterAmount: 'Enter desired amount',
+        duration: 'Duration',
+        selectDuration: 'Select duration',
+        months: 'months',
+        estimatedRate: 'Estimated Rate',
+        monthlyPayment: 'Estimated Monthly Payment',
+        totalRepayment: 'Total Amount to Repay',
+        firstRequestAlert: 'First Request:',
+        firstRequestAlertDesc: 'Your documents will be verified once. Subsequent requests will no longer require documents.',
+        addBankAccount: 'Add Bank Account',
+        selectAccount: 'Select an account',
+        bankName: 'Bank Name',
+        bankNamePlaceholder: 'E.g.: HSBC',
+        accountLabel: 'Account Label',
+        accountLabelPlaceholder: 'E.g.: Main checking account',
+        iban: 'IBAN',
+        ibanPlaceholder: 'GB29 NWBK 6016 1331 9268 19',
+        bic: 'BIC/SWIFT',
+        bicPlaceholder: 'NWBKGB2L',
+        uploadDocuments: 'Upload Your Documents',
+        kycDocumentsTab: 'KYC Documents',
+        additionalDocumentsTab: 'Additional Documents',
+        identity: 'Identity Document',
+        proof_of_address: 'Proof of Address',
+        income_proof: 'Proof of Income',
+        business_registration: 'Business Registration',
+        financial_statements: 'Financial Statements',
+        tax_returns: 'Tax Returns',
+        submit: 'Submit Request',
+        submitting: 'Submitting...',
+        cancel: 'Cancel',
+        loanTypes: {
+          personal: 'Personal Loan',
+          auto: 'Auto Loan',
+          mortgage: 'Mortgage Loan',
+          green: 'Green Loan',
+          renovation: 'Home Improvement Loan',
+          student: 'Student Loan',
+          business: 'Business Loan',
+          cashFlow: 'Cash Flow Credit',
+          equipment: 'Equipment Financing',
+          commercialProperty: 'Commercial Property Loan',
+          lineOfCredit: 'Line of Credit',
+          vehicleFleet: 'Fleet Vehicle Credit',
+        },
+      },
+      transfer: {
+        title: 'Transfer Funds',
+        subtitle: 'Initiate a secure transfer to an external account',
+        selectAccount: 'Select an account',
+        noAccountsAvailable: 'No bank accounts available',
+        amount: 'Amount',
+        enterAmount: 'Enter amount',
+        availableFunds: 'Available Funds',
+        feesAndProcessing: '2% fee • Processing within 24-48h',
+        submit: 'Initiate Transfer',
+        submitting: 'Processing...',
+        cancel: 'Cancel',
+      },
+      cardTerms: {
+        title: 'Bank Card Terms and Conditions',
+        acceptTerms: 'Accept Terms',
+        declineTerms: 'Decline',
+      },
+      welcome: {
+        title: 'Welcome to ALTUS',
+        description: 'Your account has been successfully created',
+        accountTypeTitle: 'Your Account Type',
+        individualAccount: 'Personal Account',
+        businessAccount: 'Business Account',
+        individualAccess: 'Access to personal financing services',
+        businessAccess: 'Full access to business financing services',
+        availableOffers: 'Available offers for you',
+        getStarted: 'Get Started',
+      },
+      transactionHistory: {
+        title: 'Transaction History',
+        type: 'Type',
+        amount: 'Amount',
+        date: 'Date',
+        status: 'Status',
+        noTransactions: 'No transactions found',
+        close: 'Close',
+      },
+    },
+    verify: {
+      verifying: 'Verifying...',
+      success: 'Email Verified!',
+      successMessage: 'Your email has been successfully verified. You will be redirected to the dashboard.',
+      goToDashboard: 'Go to Dashboard',
+      error: 'Verification Error',
+      errorMessage: 'The verification link is invalid or has expired.',
+      tryAgain: 'Try Again',
+      backToSignup: 'Back to Signup',
+      backToHome: 'Back to Home',
+    },
+    forgotPassword: {
+      title: 'Forgot Password',
+      description: 'Reset your password',
+      instructions: 'Enter your email address and we will send you a link to reset your password.',
+      emailLabel: 'Email Address',
+      emailPlaceholder: 'your.email@example.com',
+      sendResetLink: 'Send Reset Link',
+      sending: 'Sending...',
+      backToLogin: 'Back to Login',
+      emailSent: 'Email Sent',
+      emailSentDesc: 'A reset link has been sent to your email address.',
+      error: 'Error',
+      errorDesc: 'An error occurred. Please try again.',
+    },
+    resetPassword: {
+      title: 'Reset Password',
+      description: 'Create a new password',
+      newPassword: 'New Password',
+      newPasswordPlaceholder: 'Enter your new password',
+      confirmPassword: 'Confirm Password',
+      confirmPasswordPlaceholder: 'Confirm your new password',
+      requirements: 'Password Requirements:',
+      minLength: 'At least 12 characters',
+      uppercase: 'One uppercase letter',
+      lowercase: 'One lowercase letter',
+      number: 'One number',
+      specialChar: 'One special character',
+      passwordStrength: 'Password Strength',
+      weak: 'Weak',
+      medium: 'Medium',
+      strong: 'Strong',
+      veryStrong: 'Very Strong',
+      resetPassword: 'Reset',
+      resetting: 'Resetting...',
+      success: 'Success',
+      successMessage: 'Your password has been successfully reset.',
+      error: 'Error',
+      invalidToken: 'The reset link is invalid or has expired.',
+      passwordMismatch: 'Passwords do not match.',
+    },
+    twoFactorAuth: {
+      setup: {
+        title: 'Set Up Two-Factor Authentication',
+        description: 'Strengthen your account security',
+        step1: 'Step 1: Download the App',
+        step1Description: 'Download Google Authenticator or Authy on your phone',
+        step2: 'Step 2: Scan the QR Code',
+        step2Description: 'Scan this QR code with your authenticator app',
+        step3: 'Step 3: Verify the Code',
+        step3Description: 'Enter the 6-digit code generated by the app',
+        qrCodeInstructions: 'Scan this QR code with your authenticator app',
+        cantScanQR: 'Can\'t scan? Enter this code manually:',
+        secretKey: 'Secret Key',
+        enterCode: 'Enter 6-digit code',
+        codePlaceholder: '000000',
+        verify: 'Enable 2FA',
+        verifying: 'Verifying...',
+        cancel: 'Cancel',
+        successTitle: '2FA Enabled',
+        successMessage: 'Two-factor authentication has been successfully enabled.',
+        errorTitle: 'Error',
+        errorMessage: 'The code is invalid. Please try again.',
+      },
+      disable: {
+        title: 'Disable Two-Factor Authentication',
+        description: 'Enter your password to confirm',
+        enterPassword: 'Password',
+        passwordPlaceholder: 'Enter your password',
+        disable: 'Disable 2FA',
+        disabling: 'Disabling...',
+        cancel: 'Cancel',
+        successTitle: '2FA Disabled',
+        successMessage: 'Two-factor authentication has been disabled.',
+        errorTitle: 'Error',
+        errorMessage: 'Incorrect password.',
+      },
+      login: {
+        title: 'Two-Factor Authentication',
+        description: 'Enter the code from your authenticator app',
+        enterCode: '6-digit code',
+        codePlaceholder: '000000',
+        verify: 'Verify',
+        verifying: 'Verifying...',
+        cancel: 'Cancel',
+        errorTitle: 'Error',
+        errorMessage: 'Invalid code. Please try again.',
+      },
+    },
+    bankAccounts: {
+      title: 'Bank Accounts',
+      description: 'Manage your external bank accounts',
+      addAccount: 'Add Account',
+      noAccountsTitle: 'No Bank Accounts',
+      noAccountsDescription: 'Add a bank account to make transfers.',
+      accountLabel: 'Label',
+      bankName: 'Bank',
+      iban: 'IBAN',
+      bic: 'BIC',
+      createdAt: 'Added on',
+      actions: 'Actions',
+      delete: 'Delete',
+      deleteConfirm: 'Are you sure you want to delete this account?',
+      deleteSuccess: 'Account deleted successfully',
+      addAccountTitle: 'Add Bank Account',
+      addAccountDescription: 'Add an external bank account for transfers',
+      accountLabelLabel: 'Account Label',
+      accountLabelPlaceholder: 'E.g.: Main checking account',
+      accountLabelRequired: 'Label is required',
+      bankNameLabel: 'Bank Name',
+      bankNamePlaceholder: 'E.g.: HSBC',
+      bankNameRequired: 'Bank name is required',
+      ibanLabel: 'IBAN',
+      ibanPlaceholder: 'GB29 NWBK 6016 1331 9268 19',
+      ibanRequired: 'IBAN is required',
+      bicLabel: 'BIC/SWIFT',
+      bicPlaceholder: 'NWBKGB2L',
+      submit: 'Add Account',
+      submitting: 'Adding...',
+      cancel: 'Cancel',
+      addSuccess: 'Account Added',
+      addSuccessDesc: 'The bank account has been successfully added.',
+      addError: 'Error adding account',
+    },
+    welcomeModal: {
+      title: 'Welcome to ALTUS',
+      description: 'Your account has been successfully created',
+      accountType: 'Your Account Type',
+      individualAccount: 'Personal Account',
+      businessAccount: 'Business Account',
+      individualAccess: 'Access to personal financing services',
+      businessAccess: 'Full access to business financing services',
+      availableOffers: 'Available offers for you',
+      getStarted: 'Get Started',
+    },
+    calculator: {
+      title: 'Amortization Calculator',
+      description: 'Simulate your repayment plan',
+      loanAmount: 'Loan Amount',
+      interestRate: 'Annual Interest Rate (%)',
+      loanDuration: 'Loan Duration',
+      months: 'months',
+      calculate: 'Calculate',
+      results: 'Results',
+      monthlyPayment: 'Monthly Payment',
+      totalInterest: 'Total Interest',
+      totalAmount: 'Total Amount',
+      amortizationSchedule: 'Amortization Schedule',
+      month: 'Month',
+      payment: 'Payment',
+      principal: 'Principal',
+      interest: 'Interest',
+      balance: 'Remaining Balance',
+      downloadSchedule: 'Download Schedule',
+    },
+    kycDocuments: {
+      title: 'KYC Documents',
+      description: 'Upload your identification documents',
+      uploadDocuments: 'Upload Your Documents',
+      documentType: 'Document Type',
+      selectDocumentType: 'Select type',
+      identity: 'Identity Document',
+      proof_of_address: 'Proof of Address',
+      income_proof: 'Proof of Income',
+      business_registration: 'Business Registration',
+      financial_statements: 'Financial Statements',
+      tax_returns: 'Tax Returns',
+      chooseFile: 'Choose File',
+      upload: 'Upload',
+      uploading: 'Uploading...',
+      uploadSuccess: 'Document Uploaded',
+      uploadSuccessDesc: 'Your document has been successfully uploaded.',
+      uploadError: 'Upload Error',
+      status: 'Status',
+      pending: 'Pending',
+      approved: 'Approved',
+      rejected: 'Rejected',
+      uploadedAt: 'Uploaded on',
+      noDocuments: 'No documents uploaded',
+    },
   },
   es: {
     hero: {
@@ -1950,6 +2868,312 @@ export const translations: Record<Language, TranslationKeys> = {
       orderProcessDesc: 'Ordene su tarjeta en unos pocos clics. Después de la validación de su solicitud, recibirá su tarjeta en 5-7 días hábiles.',
       termsConditions: 'Ver términos y condiciones',
       close: 'Cerrar',
+    },
+    notifications: {
+      loan_request: { title: 'Solicitud de Préstamo Enviada', message: 'Su solicitud de préstamo ha sido enviada con éxito. Revisaremos su solicitud próximamente.' },
+      loan_under_review: { title: 'Solicitud en Revisión', message: 'Su solicitud de préstamo está siendo revisada por nuestro equipo.' },
+      loan_approved: { title: 'Préstamo Aprobado', message: 'Su solicitud de préstamo ha sido aprobada. Ahora puede proceder a la firma del contrato.' },
+      loan_rejected: { title: 'Préstamo Rechazado', message: 'Su solicitud de préstamo ha sido rechazada.' },
+      loan_contract_generated: { title: 'Contrato de Préstamo Disponible', message: 'Su contrato de préstamo está disponible. Por favor descárguelo, fírmelo y devuélvalo.' },
+      loan_contract_signed: { title: 'Contrato Firmado Recibido', message: 'Hemos recibido su contrato firmado. Su préstamo será procesado próximamente.' },
+      loan_disbursed: { title: 'Fondos Desembolsados', message: 'Los fondos de su préstamo han sido desembolsados exitosamente en su cuenta.' },
+      transfer_initiated: { title: 'Transferencia Iniciada', message: 'Su solicitud de transferencia ha sido iniciada y está siendo procesada.' },
+      transfer_completed: { title: 'Transferencia Completada', message: 'Su transferencia ha sido completada exitosamente.' },
+      transfer_approved: { title: 'Transferencia Aprobada', message: 'Su solicitud de transferencia ha sido aprobada por la administración.' },
+      transfer_suspended: { title: 'Transferencia Suspendida', message: 'Su transferencia ha sido suspendida.' },
+      code_issued: { title: 'Código de Validación Emitido', message: 'Se ha emitido un nuevo código de validación para su transferencia. Verifique sus correos.' },
+      kyc_approved: { title: 'Documentos KYC Aprobados', message: 'Sus documentos han sido verificados y aprobados. Su cuenta está ahora activa.' },
+      kyc_rejected: { title: 'Documentos KYC Rechazados', message: 'Sus documentos han sido rechazados. Por favor envíe nuevos documentos.' },
+      fee_added: { title: 'Nueva Tarifa', message: 'Se han agregado nuevas tarifas a su cuenta.' },
+      account_status_changed: { title: 'Estado de Cuenta Modificado', message: 'El estado de su cuenta ha sido actualizado.' },
+      admin_message_sent: { title: 'Nuevo Mensaje de Administración', message: 'Ha recibido un nuevo mensaje de la administración.' },
+      general: { title: 'Notificación', message: 'Tiene una nueva notificación.' },
+      twoFactorSuggestion: { title: 'Asegure Su Cuenta', message: 'Active la autenticación de dos factores para fortalecer la seguridad de su cuenta.' },
+      markAllRead: 'Marcar todo como leído',
+      markAsRead: 'Marcar como leído',
+      deleteNotification: 'Eliminar',
+    },
+    dialogs: {
+      newLoan: {
+        title: 'Nueva Solicitud de Préstamo',
+        subtitle: 'Complete la información para su solicitud',
+        loanType: 'Tipo de Préstamo',
+        selectLoanType: 'Seleccione el tipo de préstamo',
+        amount: 'Monto',
+        enterAmount: 'Ingrese el monto deseado',
+        duration: 'Duración',
+        selectDuration: 'Seleccione la duración',
+        months: 'meses',
+        estimatedRate: 'Tasa Estimada',
+        monthlyPayment: 'Pago Mensual Estimado',
+        totalRepayment: 'Monto Total a Pagar',
+        firstRequestAlert: 'Primera solicitud:',
+        firstRequestAlertDesc: 'Sus documentos serán verificados una vez. Las solicitudes siguientes ya no requerirán documentos.',
+        addBankAccount: 'Agregar Cuenta Bancaria',
+        selectAccount: 'Seleccione una cuenta',
+        bankName: 'Nombre del Banco',
+        bankNamePlaceholder: 'Ej: Santander',
+        accountLabel: 'Etiqueta de la Cuenta',
+        accountLabelPlaceholder: 'Ej: Cuenta corriente principal',
+        iban: 'IBAN',
+        ibanPlaceholder: 'ES91 2100 0418 4502 0005 1332',
+        bic: 'BIC/SWIFT',
+        bicPlaceholder: 'CAIXESBBXXX',
+        uploadDocuments: 'Subir Sus Documentos',
+        kycDocumentsTab: 'Documentos KYC',
+        additionalDocumentsTab: 'Documentos Adicionales',
+        identity: 'Documento de Identidad',
+        proof_of_address: 'Comprobante de Domicilio',
+        income_proof: 'Comprobante de Ingresos',
+        business_registration: 'Registro Mercantil',
+        financial_statements: 'Estados Financieros',
+        tax_returns: 'Declaración de Impuestos',
+        submit: 'Enviar Solicitud',
+        submitting: 'Enviando...',
+        cancel: 'Cancelar',
+        loanTypes: {
+          personal: 'Préstamo Personal',
+          auto: 'Préstamo Auto',
+          mortgage: 'Préstamo Hipotecario',
+          green: 'Préstamo Verde',
+          renovation: 'Préstamo para Reformas',
+          student: 'Préstamo Estudiantil',
+          business: 'Préstamo Empresarial',
+          cashFlow: 'Crédito de Flujo de Caja',
+          equipment: 'Financiamiento de Equipos',
+          commercialProperty: 'Préstamo Inmobiliario Comercial',
+          lineOfCredit: 'Línea de Crédito',
+          vehicleFleet: 'Crédito Flota de Vehículos',
+        },
+      },
+      transfer: {
+        title: 'Transferir Fondos',
+        subtitle: 'Inicie una transferencia segura a una cuenta externa',
+        selectAccount: 'Seleccione una cuenta',
+        noAccountsAvailable: 'No hay cuentas bancarias disponibles',
+        amount: 'Monto',
+        enterAmount: 'Ingrese el monto',
+        availableFunds: 'Fondos Disponibles',
+        feesAndProcessing: 'Tarifa del 2% • Procesamiento en 24-48h',
+        submit: 'Iniciar Transferencia',
+        submitting: 'Procesando...',
+        cancel: 'Cancelar',
+      },
+      cardTerms: {
+        title: 'Términos y Condiciones de la Tarjeta Bancaria',
+        acceptTerms: 'Aceptar Términos',
+        declineTerms: 'Rechazar',
+      },
+      welcome: {
+        title: 'Bienvenido a ALTUS',
+        description: 'Su cuenta ha sido creada exitosamente',
+        accountTypeTitle: 'Su Tipo de Cuenta',
+        individualAccount: 'Cuenta Personal',
+        businessAccount: 'Cuenta Empresarial',
+        individualAccess: 'Acceso a servicios de financiamiento personal',
+        businessAccess: 'Acceso completo a servicios de financiamiento empresarial',
+        availableOffers: 'Ofertas disponibles para usted',
+        getStarted: 'Comenzar',
+      },
+      transactionHistory: {
+        title: 'Historial de Transacciones',
+        type: 'Tipo',
+        amount: 'Monto',
+        date: 'Fecha',
+        status: 'Estado',
+        noTransactions: 'No se encontraron transacciones',
+        close: 'Cerrar',
+      },
+    },
+    verify: {
+      verifying: 'Verificando...',
+      success: '¡Correo Verificado!',
+      successMessage: 'Su correo ha sido verificado exitosamente. Será redirigido al panel de control.',
+      goToDashboard: 'Ir al Panel',
+      error: 'Error de Verificación',
+      errorMessage: 'El enlace de verificación es inválido o ha expirado.',
+      tryAgain: 'Intentar de Nuevo',
+      backToSignup: 'Volver al Registro',
+      backToHome: 'Volver al Inicio',
+    },
+    forgotPassword: {
+      title: 'Contraseña Olvidada',
+      description: 'Reinicie su contraseña',
+      instructions: 'Ingrese su dirección de correo electrónico y le enviaremos un enlace para reiniciar su contraseña.',
+      emailLabel: 'Dirección de Correo Electrónico',
+      emailPlaceholder: 'su.correo@ejemplo.com',
+      sendResetLink: 'Enviar Enlace',
+      sending: 'Enviando...',
+      backToLogin: 'Volver al Inicio de Sesión',
+      emailSent: 'Correo Enviado',
+      emailSentDesc: 'Se ha enviado un enlace de reinicio a su dirección de correo electrónico.',
+      error: 'Error',
+      errorDesc: 'Ocurrió un error. Por favor intente de nuevo.',
+    },
+    resetPassword: {
+      title: 'Reiniciar Contraseña',
+      description: 'Cree una nueva contraseña',
+      newPassword: 'Nueva Contraseña',
+      newPasswordPlaceholder: 'Ingrese su nueva contraseña',
+      confirmPassword: 'Confirmar Contraseña',
+      confirmPasswordPlaceholder: 'Confirme su nueva contraseña',
+      requirements: 'Requisitos de Contraseña:',
+      minLength: 'Al menos 12 caracteres',
+      uppercase: 'Una letra mayúscula',
+      lowercase: 'Una letra minúscula',
+      number: 'Un número',
+      specialChar: 'Un carácter especial',
+      passwordStrength: 'Fuerza de la Contraseña',
+      weak: 'Débil',
+      medium: 'Media',
+      strong: 'Fuerte',
+      veryStrong: 'Muy Fuerte',
+      resetPassword: 'Reiniciar',
+      resetting: 'Reiniciando...',
+      success: 'Éxito',
+      successMessage: 'Su contraseña ha sido reiniciada exitosamente.',
+      error: 'Error',
+      invalidToken: 'El enlace de reinicio es inválido o ha expirado.',
+      passwordMismatch: 'Las contraseñas no coinciden.',
+    },
+    twoFactorAuth: {
+      setup: {
+        title: 'Configurar Autenticación de Dos Factores',
+        description: 'Fortalezca la seguridad de su cuenta',
+        step1: 'Paso 1: Descargar la Aplicación',
+        step1Description: 'Descargue Google Authenticator o Authy en su teléfono',
+        step2: 'Paso 2: Escanear el Código QR',
+        step2Description: 'Escanee este código QR con su aplicación de autenticación',
+        step3: 'Paso 3: Verificar el Código',
+        step3Description: 'Ingrese el código de 6 dígitos generado por la aplicación',
+        qrCodeInstructions: 'Escanee este código QR con su aplicación de autenticación',
+        cantScanQR: '¿No puede escanear? Ingrese este código manualmente:',
+        secretKey: 'Clave Secreta',
+        enterCode: 'Ingrese el código de 6 dígitos',
+        codePlaceholder: '000000',
+        verify: 'Activar 2FA',
+        verifying: 'Verificando...',
+        cancel: 'Cancelar',
+        successTitle: '2FA Activado',
+        successMessage: 'La autenticación de dos factores ha sido activada exitosamente.',
+        errorTitle: 'Error',
+        errorMessage: 'El código es inválido. Por favor intente de nuevo.',
+      },
+      disable: {
+        title: 'Desactivar Autenticación de Dos Factores',
+        description: 'Ingrese su contraseña para confirmar',
+        enterPassword: 'Contraseña',
+        passwordPlaceholder: 'Ingrese su contraseña',
+        disable: 'Desactivar 2FA',
+        disabling: 'Desactivando...',
+        cancel: 'Cancelar',
+        successTitle: '2FA Desactivado',
+        successMessage: 'La autenticación de dos factores ha sido desactivada.',
+        errorTitle: 'Error',
+        errorMessage: 'Contraseña incorrecta.',
+      },
+      login: {
+        title: 'Autenticación de Dos Factores',
+        description: 'Ingrese el código de su aplicación de autenticación',
+        enterCode: 'Código de 6 dígitos',
+        codePlaceholder: '000000',
+        verify: 'Verificar',
+        verifying: 'Verificando...',
+        cancel: 'Cancelar',
+        errorTitle: 'Error',
+        errorMessage: 'Código inválido. Por favor intente de nuevo.',
+      },
+    },
+    bankAccounts: {
+      title: 'Cuentas Bancarias',
+      description: 'Administre sus cuentas bancarias externas',
+      addAccount: 'Agregar Cuenta',
+      noAccountsTitle: 'Sin Cuentas Bancarias',
+      noAccountsDescription: 'Agregue una cuenta bancaria para realizar transferencias.',
+      accountLabel: 'Etiqueta',
+      bankName: 'Banco',
+      iban: 'IBAN',
+      bic: 'BIC',
+      createdAt: 'Agregado el',
+      actions: 'Acciones',
+      delete: 'Eliminar',
+      deleteConfirm: '¿Está seguro que desea eliminar esta cuenta?',
+      deleteSuccess: 'Cuenta eliminada exitosamente',
+      addAccountTitle: 'Agregar Cuenta Bancaria',
+      addAccountDescription: 'Agregue una cuenta bancaria externa para transferencias',
+      accountLabelLabel: 'Etiqueta de la Cuenta',
+      accountLabelPlaceholder: 'Ej: Cuenta corriente principal',
+      accountLabelRequired: 'La etiqueta es requerida',
+      bankNameLabel: 'Nombre del Banco',
+      bankNamePlaceholder: 'Ej: Santander',
+      bankNameRequired: 'El nombre del banco es requerido',
+      ibanLabel: 'IBAN',
+      ibanPlaceholder: 'ES91 2100 0418 4502 0005 1332',
+      ibanRequired: 'El IBAN es requerido',
+      bicLabel: 'BIC/SWIFT',
+      bicPlaceholder: 'CAIXESBBXXX',
+      submit: 'Agregar Cuenta',
+      submitting: 'Agregando...',
+      cancel: 'Cancelar',
+      addSuccess: 'Cuenta Agregada',
+      addSuccessDesc: 'La cuenta bancaria ha sido agregada exitosamente.',
+      addError: 'Error al agregar cuenta',
+    },
+    welcomeModal: {
+      title: 'Bienvenido a ALTUS',
+      description: 'Su cuenta ha sido creada exitosamente',
+      accountType: 'Su Tipo de Cuenta',
+      individualAccount: 'Cuenta Personal',
+      businessAccount: 'Cuenta Empresarial',
+      individualAccess: 'Acceso a servicios de financiamiento personal',
+      businessAccess: 'Acceso completo a servicios de financiamiento empresarial',
+      availableOffers: 'Ofertas disponibles para usted',
+      getStarted: 'Comenzar',
+    },
+    calculator: {
+      title: 'Calculadora de Amortización',
+      description: 'Simule su plan de pago',
+      loanAmount: 'Monto del Préstamo',
+      interestRate: 'Tasa de Interés Anual (%)',
+      loanDuration: 'Duración del Préstamo',
+      months: 'meses',
+      calculate: 'Calcular',
+      results: 'Resultados',
+      monthlyPayment: 'Pago Mensual',
+      totalInterest: 'Intereses Totales',
+      totalAmount: 'Monto Total',
+      amortizationSchedule: 'Tabla de Amortización',
+      month: 'Mes',
+      payment: 'Pago',
+      principal: 'Capital',
+      interest: 'Intereses',
+      balance: 'Saldo Restante',
+      downloadSchedule: 'Descargar Tabla',
+    },
+    kycDocuments: {
+      title: 'Documentos KYC',
+      description: 'Suba sus documentos de identificación',
+      uploadDocuments: 'Suba Sus Documentos',
+      documentType: 'Tipo de Documento',
+      selectDocumentType: 'Seleccione el tipo',
+      identity: 'Documento de Identidad',
+      proof_of_address: 'Comprobante de Domicilio',
+      income_proof: 'Comprobante de Ingresos',
+      business_registration: 'Registro Mercantil',
+      financial_statements: 'Estados Financieros',
+      tax_returns: 'Declaración de Impuestos',
+      chooseFile: 'Elegir Archivo',
+      upload: 'Subir',
+      uploading: 'Subiendo...',
+      uploadSuccess: 'Documento Subido',
+      uploadSuccessDesc: 'Su documento ha sido subido exitosamente.',
+      uploadError: 'Error al subir',
+      status: 'Estado',
+      pending: 'Pendiente',
+      approved: 'Aprobado',
+      rejected: 'Rechazado',
+      uploadedAt: 'Subido el',
+      noDocuments: 'No se subieron documentos',
     },
   },
 };
