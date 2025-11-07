@@ -158,12 +158,17 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
               <div className="flex items-start gap-3">
                 <FileText className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
                 <div className="flex-1">
-                  <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
-                    {t.loan.downloadContract}
+                  <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1 text-base">
+                    🎉 Votre prêt a été approuvé !
                   </h4>
                   <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-3">
-                    {t.loan.uploadSignedContract}
+                    Pour finaliser votre prêt, veuillez suivre ces étapes :
                   </p>
+                  <ol className="text-sm text-yellow-700 dark:text-yellow-300 mb-4 space-y-1 list-decimal list-inside">
+                    <li>Téléchargez votre contrat de prêt (PDF)</li>
+                    <li>Lisez-le attentivement et signez-le</li>
+                    <li>Renvoyez le contrat signé (PDF) via le bouton ci-dessous</li>
+                  </ol>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Button
                       onClick={handleContractDownload}
@@ -172,7 +177,7 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
                       data-testid="button-download-contract"
                     >
                       <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                      {t.loan.downloadContract}
+                      1. Télécharger le contrat
                     </Button>
                     <Button
                       size="sm"
@@ -182,7 +187,7 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
                       data-testid="button-upload-signed-contract"
                     >
                       <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                      {isUploading ? t.loan.uploading : t.loan.uploadSignedContract}
+                      {isUploading ? 'Envoi en cours...' : '2. Renvoyer le contrat signé'}
                       <input
                         type="file"
                         className="absolute inset-0 opacity-0 cursor-pointer"
