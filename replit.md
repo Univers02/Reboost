@@ -56,6 +56,20 @@ Preferred communication style: Simple, everyday language.
     - Encrypted 2FA secrets.
 - **Loan Disbursement Workflow:** Multi-step approval: Request -> Admin Approval -> Contract Signing -> Manual Admin Fund Disbursement (`active` status). Requires explicit admin action for disbursement, logs all actions, and validates loan status.
 - **KYC Document Upload:** Real file upload via FormData to `/api/kyc/upload` with loading states, error handling, and input clearing.
+- **Notification System (November 2025):**
+    - Database-backed persistent notifications replacing temporary toast messages.
+    - PostgreSQL table (`notifications`) with fields: userId, type, title, message, severity, isRead, metadata, createdAt, readAt.
+    - RESTful API endpoints with full CSRF protection and defense-in-depth IDOR protection.
+    - Storage methods enforce user ownership at SQL level: all read/update/delete operations include `WHERE userId = ?` clause.
+    - NotificationBell component with real-time polling (30s intervals), unread count badge, and dropdown menu.
+    - Notification helper utilities (`notification-helper.ts`) for automatic notification generation on key events:
+        - Loan approved/rejected/disbursed
+        - Transfer completed/approved/suspended
+        - Validation code issued
+        - KYC approved/rejected
+        - Fee added
+    - Notifications persist across page refreshes and logout/login cycles.
+    - Security: SQL-level user ownership validation prevents cross-user access even if route checks are bypassed.
 
 ## External Dependencies
 
