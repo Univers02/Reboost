@@ -2,81 +2,46 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { FileText, Search, CheckCircle, Banknote, Clock } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n';
 
 export default function ProcessTimeline() {
+  const { t } = useLanguage();
+
   const steps = [
     {
       icon: FileText,
-      title: 'Demande en ligne',
-      duration: '5 minutes',
-      description: 'Remplissez notre formulaire sécurisé et téléchargez vos justificatifs',
-      documents: [
-        'Kbis de moins de 3 mois',
-        'Pièce d\'identité du dirigeant',
-        'Derniers bilans comptables',
-        'Relevés bancaires (3 mois)'
-      ]
+      title: t.processTimeline.step1Title,
+      duration: t.processTimeline.step1Duration,
+      description: t.processTimeline.step1Description,
+      documents: t.processTimeline.step1Docs
     },
     {
       icon: Search,
-      title: 'Analyse du dossier',
-      duration: '24-48h',
-      description: 'Notre équipe d\'experts étudie votre demande et votre capacité de remboursement',
-      documents: [
-        'Vérification des documents',
-        'Analyse financière',
-        'Étude de solvabilité',
-        'Calcul du taux personnalisé'
-      ]
+      title: t.processTimeline.step2Title,
+      duration: t.processTimeline.step2Duration,
+      description: t.processTimeline.step2Description,
+      documents: t.processTimeline.step2Docs
     },
     {
       icon: CheckCircle,
-      title: 'Accord de principe',
-      duration: '48h',
-      description: 'Réception de votre offre de prêt détaillée avec conditions définitives',
-      documents: [
-        'Montant accordé',
-        'TAEG et mensualités',
-        'Garanties requises',
-        'Conditions suspensives'
-      ]
+      title: t.processTimeline.step3Title,
+      duration: t.processTimeline.step3Duration,
+      description: t.processTimeline.step3Description,
+      documents: t.processTimeline.step3Docs
     },
     {
       icon: Banknote,
-      title: 'Déblocage des fonds',
-      duration: '7-15 jours',
-      description: 'Signature électronique du contrat et versement sous 7 à 15 jours après mise en place des garanties',
-      documents: [
-        'Signature contrat de prêt',
-        'Mise en place garanties',
-        'Assurance emprunteur',
-        'Virement des fonds'
-      ]
+      title: t.processTimeline.step4Title,
+      duration: t.processTimeline.step4Duration,
+      description: t.processTimeline.step4Description,
+      documents: t.processTimeline.step4Docs
     }
   ];
 
   const requiredDocuments = {
-    creation: [
-      'Business plan détaillé',
-      'Prévisionnel financier sur 3 ans',
-      'Plan de financement',
-      'CV du dirigeant et expérience',
-      'Justificatif apport personnel'
-    ],
-    reprise: [
-      'Protocole d\'accord de reprise',
-      'Bilans des 3 derniers exercices',
-      'Évaluation du fonds de commerce',
-      'Bail commercial',
-      'Attestation non-gage'
-    ],
-    developpement: [
-      'Bilans des 3 derniers exercices',
-      'Liasse fiscale complète',
-      'Devis fournisseurs (équipement)',
-      'Relevés bancaires pro (6 mois)',
-      'Prévisionnel d\'activité'
-    ]
+    creation: t.processTimeline.creationDocs,
+    reprise: t.processTimeline.repriseDocs,
+    developpement: t.processTimeline.developmentDocs
   };
 
   return (
@@ -87,10 +52,10 @@ export default function ProcessTimeline() {
             <Clock className="w-8 h-8 text-primary" />
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-            Processus de Financement
+            {t.processTimeline.title}
           </h2>
           <p className="text-xl text-muted-foreground">
-            De votre demande au déblocage des fonds : un parcours simplifié et rapide
+            {t.processTimeline.subtitle}
           </p>
         </div>
 
@@ -130,10 +95,10 @@ export default function ProcessTimeline() {
         </div>
 
         <div className="max-w-5xl mx-auto">
-          <h3 className="text-3xl font-bold mb-8 text-center">Documents à Préparer selon Votre Projet</h3>
+          <h3 className="text-3xl font-bold mb-8 text-center">{t.processTimeline.documentsTitle}</h3>
           <div className="grid md:grid-cols-3 gap-6">
             <Card className="p-6">
-              <h4 className="text-xl font-bold mb-4 text-primary">Création d'entreprise</h4>
+              <h4 className="text-xl font-bold mb-4 text-primary">{t.processTimeline.creationTitle}</h4>
               <ul className="space-y-3">
                 {requiredDocuments.creation.map((doc, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-sm">
@@ -144,7 +109,7 @@ export default function ProcessTimeline() {
               </ul>
             </Card>
             <Card className="p-6">
-              <h4 className="text-xl font-bold mb-4 text-primary">Reprise d'entreprise</h4>
+              <h4 className="text-xl font-bold mb-4 text-primary">{t.processTimeline.repriseTitle}</h4>
               <ul className="space-y-3">
                 {requiredDocuments.reprise.map((doc, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-sm">
@@ -155,7 +120,7 @@ export default function ProcessTimeline() {
               </ul>
             </Card>
             <Card className="p-6">
-              <h4 className="text-xl font-bold mb-4 text-primary">Développement</h4>
+              <h4 className="text-xl font-bold mb-4 text-primary">{t.processTimeline.developmentTitle}</h4>
               <ul className="space-y-3">
                 {requiredDocuments.developpement.map((doc, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-sm">
@@ -170,14 +135,14 @@ export default function ProcessTimeline() {
           <div className="mt-8 p-6 bg-gradient-to-r from-primary/10 to-transparent rounded-lg border border-primary/20">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div>
-                <h4 className="font-bold text-lg mb-2">Dossier incomplet ? Pas de panique !</h4>
+                <h4 className="font-bold text-lg mb-2">{t.processTimeline.incompleteTitle}</h4>
                 <p className="text-sm text-muted-foreground">
-                  Notre équipe vous accompagne pour constituer votre dossier. Nous vous aidons à obtenir les documents manquants.
+                  {t.processTimeline.incompleteDescription}
                 </p>
               </div>
               <Link href="/contact">
                 <Button size="lg" className="whitespace-nowrap" data-testid="button-help-documents">
-                  Besoin d'aide ?
+                  {t.processTimeline.needHelp}
                 </Button>
               </Link>
             </div>
@@ -186,11 +151,11 @@ export default function ProcessTimeline() {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground mb-4">
-            ⏱️ <strong>Délai total moyen :</strong> 2 à 3 semaines du dépôt du dossier au déblocage des fonds
+            <strong>{t.processTimeline.averageTime}</strong> {t.processTimeline.averageTimeValue}
           </p>
           <Link href="/loan-request">
             <Button size="lg" data-testid="button-start-application">
-              Commencer ma demande
+              {t.processTimeline.startApplication}
             </Button>
           </Link>
         </div>
