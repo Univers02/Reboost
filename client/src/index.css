@@ -368,4 +368,21 @@
   .animate-marquee {
     animation: marquee 60s linear infinite;
   }
+
+  /* Dashboard card styling */
+  .dashboard-card {
+    @apply bg-white dark:bg-slate-900 shadow-sm;
+    border: 1px solid hsl(var(--border));
+  }
+
+  /* 3D Bank card styling */
+  .dashboard-card-3d {
+    @apply bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 rounded-2xl shadow-2xl;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+  }
+
+  .dashboard-card-3d:hover {
+    transform: translateY(-2px) scale(1.02);
+  }
 }
