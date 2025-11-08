@@ -15,33 +15,36 @@ export default function UpcomingRepaymentsChart({ data }: UpcomingRepaymentsChar
   const t = useTranslations();
 
   return (
-    <Card className="shadow-sm border bg-white dark:bg-slate-800">
+    <Card className="dashboard-card border-0">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{t.dashboard.upcomingRepayments}</CardTitle>
+        <CardTitle className="text-sm font-medium text-[#64748B]">{t.dashboard.upcomingRepayments}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-48">
+        <div className="h-56">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" opacity={0.5} />
               <XAxis
                 dataKey="month"
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={10}
+                stroke="#94A3B8"
+                fontSize={11}
                 tickLine={false}
+                axisLine={false}
               />
               <YAxis
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={10}
+                stroke="#94A3B8"
+                fontSize={11}
                 tickLine={false}
+                axisLine={false}
                 tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--popover))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
+                  backgroundColor: 'white',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '12px',
                   fontSize: '12px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                 }}
                 formatter={(value: number) =>
                   new Intl.NumberFormat('fr-FR', {
@@ -50,9 +53,9 @@ export default function UpcomingRepaymentsChart({ data }: UpcomingRepaymentsChar
                   }).format(value)
                 }
               />
-              <Bar dataKey="loan1" stackId="a" fill="hsl(var(--chart-1))" name={`${t.loan.loanNumber} #1`} radius={[4, 4, 0, 0]} />
-              <Bar dataKey="loan2" stackId="a" fill="hsl(var(--chart-2))" name={`${t.loan.loanNumber} #2`} />
-              <Bar dataKey="loan3" stackId="a" fill="hsl(var(--chart-3))" name={`${t.loan.loanNumber} #3`} />
+              <Bar dataKey="loan1" stackId="a" fill="#2563EB" name={`${t.loan.loanNumber} #1`} radius={[8, 8, 0, 0]} />
+              <Bar dataKey="loan2" stackId="a" fill="#60A5FA" name={`${t.loan.loanNumber} #2`} />
+              <Bar dataKey="loan3" stackId="a" fill="#93C5FD" name={`${t.loan.loanNumber} #3`} />
             </BarChart>
           </ResponsiveContainer>
         </div>

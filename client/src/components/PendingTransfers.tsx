@@ -57,9 +57,9 @@ export default function PendingTransfers({ transfers }: PendingTransfersProps) {
   };
 
   return (
-    <Card className="shadow-sm border bg-white dark:bg-slate-800">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{t.dashboard.pendingTransfers}</CardTitle>
+    <Card className="dashboard-card border-0">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-[#64748B]">{t.dashboard.pendingTransfers}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         {transfers.length === 0 ? (

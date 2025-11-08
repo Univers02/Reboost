@@ -24,24 +24,23 @@ export default function BorrowingCapacity({
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <Card className="shadow-sm border bg-white dark:bg-slate-800">
+    <Card className="dashboard-card border-0">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{t.dashboard.borrowingCapacity}</CardTitle>
+        <CardTitle className="text-sm font-medium text-[#64748B]">{t.dashboard.borrowingCapacity}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4">
         <div className="text-center">
-          <p className="text-2xl font-bold" data-testid="text-borrowing-capacity">
+          <p className="text-3xl font-bold text-[#1E293B]" data-testid="text-borrowing-capacity">
             {formatCurrency(currentCapacity)}
           </p>
-          <p className="text-xs text-muted-foreground mt-1">{t.dashboard.available} sur {formatCurrency(maxCapacity)}</p>
+          <p className="text-xs text-[#94A3B8] mt-2">{Math.round(percentage)}% {t.dashboard.available}</p>
         </div>
-        <div className="w-full bg-muted rounded-full h-2">
+        <div className="w-full bg-[#E2E8F0] rounded-full h-3">
           <div 
-            className="bg-primary h-2 rounded-full transition-all"
+            className="bg-[#2563EB] h-3 rounded-full transition-all"
             style={{ width: `${percentage}%` }}
           />
         </div>
-        <p className="text-xs text-center text-muted-foreground">{Math.round(percentage)}% {t.dashboard.available}</p>
       </CardContent>
     </Card>
   );
