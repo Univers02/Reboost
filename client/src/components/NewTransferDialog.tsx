@@ -80,7 +80,7 @@ export default function NewTransferDialog({ open, onOpenChange }: NewTransferDia
             <Input
               id="amount"
               type="number"
-              placeholder="50000"
+              placeholder={t.dialogs.transfer.amountPlaceholder}
               value={formData.amount}
               onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
               required

@@ -661,6 +661,7 @@ type TranslationKeys = {
       noAccountsAvailable: string;
       amount: string;
       enterAmount: string;
+      amountPlaceholder: string;
       recipient: string;
       recipientPlaceholder: string;
       feesDescription: string;
@@ -1775,6 +1776,7 @@ export const translations: Record<Language, TranslationKeys> = {
         noAccountsAvailable: 'Aucun compte bancaire disponible',
         amount: 'Montant',
         enterAmount: 'Entrez le montant',
+        amountPlaceholder: '50000',
         recipient: 'Destinataire',
         recipientPlaceholder: 'Nom de l\'entreprise ou du bénéficiaire',
         feesDescription: 'Des frais de transfert de 25€ seront appliqués. Votre transfert sera traité dans les 2-3 jours ouvrables.',
@@ -2915,6 +2917,7 @@ export const translations: Record<Language, TranslationKeys> = {
         noAccountsAvailable: 'No bank accounts available',
         amount: 'Amount',
         enterAmount: 'Enter amount',
+        amountPlaceholder: '50000',
         recipient: 'Recipient',
         recipientPlaceholder: 'Recipient name or company',
         feesDescription: 'Transfer fees of 25€ will apply',
@@ -4050,6 +4053,7 @@ export const translations: Record<Language, TranslationKeys> = {
         noAccountsAvailable: 'No hay cuentas bancarias disponibles',
         amount: 'Monto',
         enterAmount: 'Ingrese el monto',
+        amountPlaceholder: '50000',
         recipient: 'Destinatario',
         recipientPlaceholder: 'Nombre de la empresa o beneficiario',
         feesDescription: 'Se aplicarán tarifas de transferencia de 25€',
@@ -5185,6 +5189,7 @@ export const translations: Record<Language, TranslationKeys> = {
         noAccountsAvailable: 'Nenhuma conta bancária disponível. Adicione uma conta primeiro.',
         amount: 'Valor',
         enterAmount: 'Digite o valor',
+        amountPlaceholder: '50000',
         recipient: 'Destinatário',
         recipientPlaceholder: 'Nome da empresa ou beneficiário',
         feesDescription: 'Taxas de transferência de 25€ serão aplicadas',
@@ -6322,6 +6327,7 @@ export const translations: Record<Language, TranslationKeys> = {
         noAccountsAvailable: 'Nessun conto bancario disponibile. Aggiungi prima un conto.',
         amount: 'Importo',
         enterAmount: 'Inserisci l\'importo',
+        amountPlaceholder: '50000',
         recipient: 'Destinatario',
         recipientPlaceholder: 'Nome dell\'azienda o beneficiario',
         feesDescription: 'Verranno applicate commissioni di trasferimento di 25€',
@@ -7429,6 +7435,7 @@ export const translations: Record<Language, TranslationKeys> = {
         noAccountsAvailable: 'Kein Bankkonto verfügbar. Fügen Sie zuerst ein Konto hinzu.',
         amount: 'Betrag',
         enterAmount: 'Betrag eingeben',
+        amountPlaceholder: '50000',
         recipient: 'Empfänger',
         recipientPlaceholder: 'Name des Unternehmens oder Begünstigten',
         feesDescription: 'Es fallen Überweisungsgebühren von 25€ an',
@@ -8536,6 +8543,7 @@ export const translations: Record<Language, TranslationKeys> = {
         noAccountsAvailable: 'Geen bankrekening beschikbaar. Voeg eerst een rekening toe.',
         amount: 'Bedrag',
         enterAmount: 'Bedrag invoeren',
+        amountPlaceholder: '50000',
         recipient: 'Ontvanger',
         recipientPlaceholder: 'Naam van bedrijf of begunstigde',
         feesDescription: 'Er zijn overboekingskosten van 25€ van toepassing',
