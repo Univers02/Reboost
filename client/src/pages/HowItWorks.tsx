@@ -96,7 +96,7 @@ export default function HowItWorks() {
       <SEO
         title={t.seo.howItWorks.title}
         description={t.seo.howItWorks.description}
-        keywords="comment obtenir prêt professionnel, processus crédit pro, documents prêt entreprise, critères éligibilité, délai financement, étapes demande prêt"
+        keywords="how to get professional loan, business credit process, business loan documents, eligibility criteria, financing timeline, loan application steps"
         path="/how-it-works"
       />
       <Header />

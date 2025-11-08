@@ -9,8 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { Loader2, Lock, Check, X, Eye, EyeOff } from 'lucide-react';
 import SEO from '@/components/SEO';
+import { useTranslations } from '@/lib/i18n';
 
 export default function ResetPassword() {
+  const t = useTranslations();
   const [, setLocation] = useLocation();
   const [, params] = useRoute('/reset-password/:token');
   const { toast } = useToast();
@@ -86,8 +88,8 @@ export default function ResetPassword() {
   return (
     <>
       <SEO 
-        title="Réinitialiser le mot de passe | Altus Finance Group"
-        description="Créez un nouveau mot de passe pour votre compte"
+        title={t.seo.resetPassword.title}
+        description={t.seo.resetPassword.description}
       />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">

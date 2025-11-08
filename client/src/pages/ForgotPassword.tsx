@@ -9,8 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { Loader2, Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 import SEO from '@/components/SEO';
+import { useTranslations } from '@/lib/i18n';
 
 export default function ForgotPassword() {
+  const t = useTranslations();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
@@ -48,8 +50,8 @@ export default function ForgotPassword() {
     return (
       <>
         <SEO 
-          title="Email envoyé | Altus Finance Group"
-          description="Un lien de réinitialisation a été envoyé"
+          title={t.seo.forgotPassword.emailSentTitle}
+          description={t.seo.forgotPassword.emailSentDescription}
         />
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
           <Card className="w-full max-w-md">
@@ -90,8 +92,8 @@ export default function ForgotPassword() {
   return (
     <>
       <SEO 
-        title="Mot de passe oublié | Altus Finance Group"
-        description="Réinitialisez votre mot de passe"
+        title={t.seo.forgotPassword.title}
+        description={t.seo.forgotPassword.description}
       />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">

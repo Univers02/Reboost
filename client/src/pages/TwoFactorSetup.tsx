@@ -9,8 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { Loader2, Shield, KeyRound, Smartphone } from 'lucide-react';
 import SEO from '@/components/SEO';
+import { useTranslations } from '@/lib/i18n';
 
 export default function TwoFactorSetup() {
+  const t = useTranslations();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [verificationCode, setVerificationCode] = useState('');
@@ -66,8 +68,8 @@ export default function TwoFactorSetup() {
   return (
     <>
       <SEO 
-        title="Configuration 2FA | Altus Finance Group"
-        description="Configurez l'authentification à deux facteurs pour sécuriser votre compte"
+        title={t.seo.twoFactorSetup.title}
+        description={t.seo.twoFactorSetup.description}
       />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
         <Card className="w-full max-w-2xl">

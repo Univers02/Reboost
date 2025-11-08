@@ -24,8 +24,8 @@ export default function Contact() {
   });
 
   const contactBreadcrumb = breadcrumbSchema([
-    { name: 'Accueil', path: '/' },
-    { name: 'Contact', path: '/contact' }
+    { name: t.nav.home, path: '/' },
+    { name: t.nav.contact, path: '/contact' }
   ]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,7 +68,7 @@ export default function Contact() {
       <SEO
         title={t.seo.contact.title}
         description={t.seo.contact.description}
-        keywords="contact Altus Finance Group, nous contacter, service client prêt, aide financement entreprise, support client Altus"
+        keywords="contact Altus Finance Group, contact us, loan customer service, business financing help, Altus customer support"
         path="/contact"
         structuredData={[contactPageSchema, contactBreadcrumb]}
       />

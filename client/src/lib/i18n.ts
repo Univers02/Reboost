@@ -2648,18 +2648,22 @@ export const translations: Record<Language, TranslationKeys> = {
       home: {
         title: 'Altus Finance Group - Prêt Professionnel & Personnel | Financement Rapide et Compétitif',
         description: 'Solutions de prêt professionnel et personnel avec Altus Finance Group. Obtenez un financement rapide pour votre entreprise ou projet personnel. Taux compétitifs, processus simple et transparent.',
+        keywords: 'prêt professionnel, crédit entreprise, financement professionnel, prêt personnel, crédit rapide, taux compétitifs, Altus Finance Group',
       },
       about: {
         title: 'À propos d\'Altus Finance Group - Notre Mission et Nos Valeurs | Solutions de Financement',
         description: 'Découvrez Altus Finance Group, leader en solutions de prêt professionnel avec plus de 15 ans d\'expérience, 10 000+ clients satisfaits et 500M€ de prêts accordés. Notre mission : rendre le financement accessible à tous.',
+        keywords: 'à propos Altus Finance Group, mission Altus Finance Group, valeurs entreprise financement, expérience prêt professionnel, financement entreprise fiable',
       },
       contact: {
         title: 'Contactez-nous - Altus Finance Group | Questions sur nos Prêts Professionnels',
         description: 'Une question sur nos solutions de financement ? Contactez Altus Finance Group. Notre équipe est à votre disposition pour vous accompagner dans votre projet de prêt professionnel. Réponse rapide garantie.',
+        keywords: 'contact Altus Finance Group, nous contacter, service client prêt, aide financement entreprise, support client Altus',
       },
       howItWorks: {
         title: 'Comment Obtenir un Prêt Pro - Processus Détaillé | Altus Finance Group',
         description: 'Découvrez le processus complet pour obtenir un prêt professionnel avec Altus Finance Group. De la demande en ligne au déblocage des fonds : critères, documents requis et délais. Réponse en 24-48h.',
+        keywords: 'comment obtenir prêt professionnel, processus crédit pro, documents prêt entreprise, critères éligibilité, délai financement, étapes demande prêt',
       },
       forgotPassword: {
         title: 'Mot de passe oublié | Altus Finance Group',

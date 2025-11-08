@@ -10,8 +10,8 @@ export default function About() {
   const t = useTranslations();
 
   const aboutBreadcrumb = breadcrumbSchema([
-    { name: 'Accueil', path: '/' },
-    { name: 'À propos', path: '/about' }
+    { name: t.nav.home, path: '/' },
+    { name: t.nav.about, path: '/about' }
   ]);
 
   const stats = [
@@ -26,7 +26,7 @@ export default function About() {
       <SEO
         title={t.seo.about.title}
         description={t.seo.about.description}
-        keywords="à propos Altus Finance Group, mission Altus Finance Group, valeurs entreprise financement, expérience prêt professionnel, financement entreprise fiable"
+        keywords="about Altus Finance Group, Altus Finance Group mission, financing company values, professional loan experience, reliable business financing"
         path="/about"
         structuredData={[organizationSchema, aboutBreadcrumb]}
       />
