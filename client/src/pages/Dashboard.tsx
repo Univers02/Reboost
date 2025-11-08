@@ -36,7 +36,7 @@ export default function Dashboard() {
   const getGreeting = () => {
     if (user) {
       const firstName = user.fullName.split(' ')[0];
-      return `${t.dashboard.welcome}, ${firstName}`;
+      return `${t.dashboard.welcome}, ${firstName} 👋`;
     }
     return t.dashboard.welcome;
   };

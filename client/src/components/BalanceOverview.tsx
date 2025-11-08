@@ -28,7 +28,9 @@ export default function BalanceOverview({
   return (
     <Card className="bg-card border-card-border shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold text-primary">{t.dashboard.currentBalance}</CardTitle>
+        <div className="inline-block bg-primary/10 px-3 py-1.5 rounded-full">
+          <CardTitle className="text-sm font-semibold text-primary">{t.dashboard.currentBalance}</CardTitle>
+        </div>
       </CardHeader>
       <CardContent className="space-y-3">
         <div>

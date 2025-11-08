@@ -26,7 +26,9 @@ export default function BorrowingCapacity({
   return (
     <Card className="bg-card border-card-border shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold text-primary">{t.dashboard.borrowingCapacity}</CardTitle>
+        <div className="inline-block bg-primary/10 px-3 py-1.5 rounded-full">
+          <CardTitle className="text-sm font-semibold text-primary">{t.dashboard.borrowingCapacity}</CardTitle>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="text-center">

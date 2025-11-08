@@ -17,7 +17,9 @@ export default function UpcomingRepaymentsChart({ data }: UpcomingRepaymentsChar
   return (
     <Card className="dashboard-card border-0">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-[#64748B]">{t.dashboard.upcomingRepayments}</CardTitle>
+        <div className="inline-block bg-primary/10 px-3 py-1.5 rounded-full">
+          <CardTitle className="text-sm font-semibold text-primary">{t.dashboard.upcomingRepayments}</CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-56">

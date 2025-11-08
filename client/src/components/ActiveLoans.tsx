@@ -48,7 +48,9 @@ export default function ActiveLoans({ loans }: ActiveLoansProps) {
     <>
       <Card className="dashboard-card border-0">
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <CardTitle className="text-sm font-medium text-muted-foreground">{t.dashboard.activeLoans}</CardTitle>
+          <div className="inline-block bg-primary/10 px-3 py-1.5 rounded-full">
+            <CardTitle className="text-sm font-semibold text-primary">{t.dashboard.activeLoans}</CardTitle>
+          </div>
           {loans.length > 2 && (
             <Button 
               variant="ghost" 
