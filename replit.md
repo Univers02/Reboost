@@ -14,7 +14,13 @@ Preferred communication style: Simple, everyday language.
 
 **Technology Stack:** React 18 with TypeScript, Wouter for routing, Tailwind CSS with shadcn/ui for styling, Zustand for client-side state, TanStack Query for server state, React Hook Form with Zod for forms, and Vite for building.
 **Design System:** Radix UI primitives, custom design tokens (HSL color system), Google Fonts, and a responsive mobile-first design.
-**Internationalization (i18n):** Custom implementation with Zustand, supporting French (default), English, and Spanish.
+**Internationalization (i18n):** Custom implementation with Zustand, supporting 7 languages: French (FR - default), English (EN), Spanish (ES), Portuguese (PT), Italian (IT), German (DE), and Dutch (NL). Extended i18n coverage (November 2025) includes:
+  - `transferFlow` namespace: Complete transfer workflow internationalization (form, verification, validation, progress, completion steps)
+  - `loanOffers` namespace: Loan request page with all tabs and offer types
+  - `cardTermsContent` namespace: 13-section bank card terms & conditions document
+  - All namespaces include placeholder support for dynamic content interpolation
+  - Type-safe translation keys with TypeScript TranslationKeys interface
+  - useTranslations hook for component-level translation access
 **Theming:** Light/dark mode toggle via Zustand with localStorage persistence and CSS variables.
 **Component Architecture:** Atomic design approach for UI, feature, and page components.
 
