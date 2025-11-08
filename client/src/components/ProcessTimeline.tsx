@@ -2,10 +2,10 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { FileText, Search, CheckCircle, Banknote, Clock } from 'lucide-react';
-import { useLanguage } from '@/lib/i18n';
+import { useTranslations } from '@/lib/i18n';
 
 export default function ProcessTimeline() {
-  const { t } = useLanguage();
+  const t = useTranslations();
 
   const steps = [
     {

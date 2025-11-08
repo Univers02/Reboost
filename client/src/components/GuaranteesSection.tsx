@@ -1,9 +1,9 @@
 import { Card } from '@/components/ui/card';
 import { Shield, FileCheck, Building, Users, TrendingUp, CheckCircle2 } from 'lucide-react';
-import { useLanguage } from '@/lib/i18n';
+import { useTranslations } from '@/lib/i18n';
 
 export default function GuaranteesSection() {
-  const { t } = useLanguage();
+  const t = useTranslations();
 
   const guarantees = [
     {
