@@ -97,6 +97,8 @@ type TranslationKeys = {
     noNotifications: string;
     viewDetails: string;
     availableOffers: string;
+    contractToSign: string;
+    moreTransfers: string;
   };
   loan: {
     amount: string;
@@ -108,6 +110,7 @@ type TranslationKeys = {
     uploadSignedContract: string;
     downloading: string;
     uploading: string;
+    loanNumber: string;
   };
   transfer: {
     requestSubmitted: string;
@@ -137,6 +140,13 @@ type TranslationKeys = {
     loanFees: string;
     transferFees: string;
     accountFees: string;
+    feesToPay: string;
+    unpaidFeesCount: string;
+    unpaidFeesSingular: string;
+    pendingValidation: string;
+    autoValidatedViaCode: string;
+    totalUnpaid: string;
+    totalOverall: string;
   };
   common: {
     loading: string;
@@ -845,6 +855,8 @@ export const translations: Record<Language, TranslationKeys> = {
       noNotifications: 'Aucune notification',
       viewDetails: 'Voir les détails',
       availableOffers: 'Offres disponibles pour vous',
+      contractToSign: 'Contrat à signer',
+      moreTransfers: 'transfert(s) supplémentaire(s)',
     },
     loan: {
       amount: 'Montant',
@@ -856,6 +868,7 @@ export const translations: Record<Language, TranslationKeys> = {
       uploadSignedContract: 'Télécharger le contrat signé',
       downloading: 'Téléchargement...',
       uploading: 'Téléchargement...',
+      loanNumber: 'Prêt',
     },
     transfer: {
       requestSubmitted: 'Demande soumise',
@@ -885,6 +898,13 @@ export const translations: Record<Language, TranslationKeys> = {
       loanFees: 'Frais de prêt',
       transferFees: 'Frais de transfert',
       accountFees: 'Frais de compte',
+      feesToPay: 'Frais à payer',
+      unpaidFeesCount: 'frais impayés',
+      unpaidFeesSingular: 'frais impayé',
+      pendingValidation: 'En attente de validation',
+      autoValidatedViaCode: 'Auto-validé via code',
+      totalUnpaid: 'Total impayé',
+      totalOverall: 'Total général',
     },
     common: {
       loading: 'Chargement...',
@@ -1655,6 +1675,8 @@ export const translations: Record<Language, TranslationKeys> = {
       noNotifications: 'No notifications',
       viewDetails: 'View Details',
       availableOffers: 'Available offers for you',
+      contractToSign: 'Contract to sign',
+      moreTransfers: 'more transfer(s)',
     },
     loan: {
       amount: 'Amount',
@@ -1666,6 +1688,7 @@ export const translations: Record<Language, TranslationKeys> = {
       uploadSignedContract: 'Upload Signed Contract',
       downloading: 'Downloading...',
       uploading: 'Uploading...',
+      loanNumber: 'Loan',
     },
     transfer: {
       requestSubmitted: 'Request Submitted',
@@ -1695,6 +1718,13 @@ export const translations: Record<Language, TranslationKeys> = {
       loanFees: 'Loan Fees',
       transferFees: 'Transfer Fees',
       accountFees: 'Account Fees',
+      feesToPay: 'Fees to Pay',
+      unpaidFeesCount: 'unpaid fees',
+      unpaidFeesSingular: 'unpaid fee',
+      pendingValidation: 'Pending validation',
+      autoValidatedViaCode: 'Auto-validated via code',
+      totalUnpaid: 'Total Unpaid',
+      totalOverall: 'Total Overall',
     },
     common: {
       loading: 'Loading...',
@@ -2453,6 +2483,8 @@ export const translations: Record<Language, TranslationKeys> = {
       noNotifications: 'Sin notificaciones',
       viewDetails: 'Ver Detalles',
       availableOffers: 'Ofertas disponibles para usted',
+      contractToSign: 'Contrato para firmar',
+      moreTransfers: 'transferencia(s) adicional(es)',
     },
     loan: {
       amount: 'Cantidad',
@@ -2464,6 +2496,7 @@ export const translations: Record<Language, TranslationKeys> = {
       uploadSignedContract: 'Subir Contrato Firmado',
       downloading: 'Descargando...',
       uploading: 'Subiendo...',
+      loanNumber: 'Préstamo',
     },
     transfer: {
       requestSubmitted: 'Solicitud Enviada',
@@ -2493,6 +2526,13 @@ export const translations: Record<Language, TranslationKeys> = {
       loanFees: 'Tarifas de Préstamo',
       transferFees: 'Tarifas de Transferencia',
       accountFees: 'Tarifas de Cuenta',
+      feesToPay: 'Tarifas a Pagar',
+      unpaidFeesCount: 'tarifas impagadas',
+      unpaidFeesSingular: 'tarifa impagada',
+      pendingValidation: 'Pendiente de validación',
+      autoValidatedViaCode: 'Auto-validado vía código',
+      totalUnpaid: 'Total Impagado',
+      totalOverall: 'Total General',
     },
     common: {
       loading: 'Cargando...',
