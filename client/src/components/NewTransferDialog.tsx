@@ -30,7 +30,7 @@ export default function NewTransferDialog({ open, onOpenChange }: NewTransferDia
         body: JSON.stringify(data),
         credentials: 'include',
       });
-      if (!response.ok) throw new Error('Failed to create transfer');
+      if (!response.ok) throw new Error();
       return response.json();
     },
     onSuccess: () => {
