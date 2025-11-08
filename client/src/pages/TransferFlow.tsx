@@ -12,11 +12,13 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { ArrowLeft, CheckCircle2, Clock, Send, Shield, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { TransferDetailsResponse, ExternalAccount } from '@shared/schema';
+import { useTranslations } from '@/lib/i18n';
 
 export default function TransferFlow() {
   const [, params] = useRoute('/transfer/:id');
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const t = useTranslations();
   
   const [step, setStep] = useState<'form' | 'verification' | 'validation' | 'progress' | 'complete'>('form');
   const [amount, setAmount] = useState('');
@@ -57,15 +59,15 @@ export default function TransferFlow() {
       setLocation(`/transfer/${data.transfer.id}`);
       setStep('verification');
       toast({
-        title: 'Transfert initié',
-        description: 'Vérification de votre transfert en cours...',
+        title: t.transferFlow.toast.initiated,
+        description: t.transferFlow.toast.initiatedDesc,
       });
     },
     onError: () => {
       toast({
         variant: 'destructive',
-        title: 'Erreur',
-        description: 'Échec de l\'initiation du transfert',
+        title: t.transferFlow.toast.error,
+        description: t.transferFlow.toast.errorInitiation,
       });
     },
   });
@@ -78,7 +80,7 @@ export default function TransferFlow() {
     onSuccess: (data: any) => {
       setValidationCode('');
       toast({
-        title: 'Code validé',
+        title: t.transferFlow.toast.codeValidated,
         description: data.message,
       });
       
@@ -94,8 +96,8 @@ export default function TransferFlow() {
     onError: () => {
       toast({
         variant: 'destructive',
-        title: 'Code invalide',
-        description: 'Le code est incorrect ou expiré',
+        title: t.transferFlow.toast.codeInvalid,
+        description: t.transferFlow.toast.codeInvalidDesc,
       });
     },
   });
@@ -108,8 +110,8 @@ export default function TransferFlow() {
     onSuccess: (data: any) => {
       setDemoCode(data.codeForDemo);
       toast({
-        title: 'Code envoyé',
-        description: `Code ${data.sequence} envoyé avec succès`,
+        title: t.transferFlow.toast.codeSent,
+        description: t.transferFlow.toast.codeSentDesc.replace('{sequence}', data.sequence.toString()),
       });
     },
   });
@@ -133,8 +135,8 @@ export default function TransferFlow() {
       
       notificationTimeoutRef.current = setTimeout(() => {
         toast({
-          title: 'Transfert approuvé',
-          description: 'Votre transfert est approuvé et en cours de traitement.',
+          title: t.transferFlow.toast.approved,
+          description: t.transferFlow.toast.approvedDesc,
         });
       }, 20000);
       
@@ -172,8 +174,8 @@ export default function TransferFlow() {
     if (!amount || !recipient) {
       toast({
         variant: 'destructive',
-        title: 'Champs requis',
-        description: 'Veuillez remplir tous les champs',
+        title: t.transferFlow.toast.fieldsRequired,
+        description: t.transferFlow.toast.fieldsRequiredDesc,
       });
       return;
     }
@@ -189,8 +191,8 @@ export default function TransferFlow() {
     if (!validationCode || validationCode.length !== 6) {
       toast({
         variant: 'destructive',
-        title: 'Code invalide',
-        description: 'Le code doit contenir 6 chiffres',
+        title: t.transferFlow.toast.invalidCode,
+        description: t.transferFlow.toast.invalidCodeDesc,
       });
       return;
     }
@@ -211,23 +213,23 @@ export default function TransferFlow() {
           data-testid="button-back"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Retour au tableau de bord
+          {t.transferFlow.backToDashboard}
         </Button>
 
         <Card data-testid="card-transfer-form">
           <CardHeader>
-            <CardTitle>Nouveau transfert</CardTitle>
+            <CardTitle>{t.transferFlow.form.title}</CardTitle>
             <CardDescription>
-              Initiez un transfert sécurisé vers un compte externe
+              {t.transferFlow.form.subtitle}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="amount">Montant (EUR)</Label>
+              <Label htmlFor="amount">{t.transferFlow.form.amountLabel}</Label>
               <Input
                 id="amount"
                 type="number"
-                placeholder="10000"
+                placeholder={t.transferFlow.form.amountPlaceholder}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 data-testid="input-amount"
@@ -235,13 +237,13 @@ export default function TransferFlow() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="account">Compte externe (optionnel)</Label>
+              <Label htmlFor="account">{t.transferFlow.form.accountLabel}</Label>
               <Select value={externalAccountId} onValueChange={setExternalAccountId}>
                 <SelectTrigger data-testid="select-account">
-                  <SelectValue placeholder="Sélectionner un compte" />
+                  <SelectValue placeholder={t.transferFlow.form.accountPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">Aucun compte enregistré</SelectItem>
+                  <SelectItem value="none">{t.transferFlow.form.noAccount}</SelectItem>
                   {externalAccounts?.map((account) => (
                     <SelectItem key={account.id} value={account.id}>
                       {account.accountLabel} - {account.iban}
@@ -252,10 +254,10 @@ export default function TransferFlow() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="recipient">Bénéficiaire</Label>
+              <Label htmlFor="recipient">{t.transferFlow.form.recipientLabel}</Label>
               <Input
                 id="recipient"
-                placeholder="Nom du bénéficiaire"
+                placeholder={t.transferFlow.form.recipientPlaceholder}
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
                 data-testid="input-recipient"
@@ -268,7 +270,7 @@ export default function TransferFlow() {
               className="w-full"
               data-testid="button-initiate"
             >
-              {initiateMutation.isPending ? 'Initiation...' : 'Initier le transfert'}
+              {initiateMutation.isPending ? t.transferFlow.form.initiating : t.transferFlow.form.initiateButton}
             </Button>
           </CardContent>
         </Card>
@@ -286,27 +288,26 @@ export default function TransferFlow() {
                 <Shield className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-pulse" />
                 <div className="absolute inset-0 bg-blue-400 dark:bg-blue-600 rounded-full opacity-25 animate-ping"></div>
               </div>
-              Vérification du transfert
+              {t.transferFlow.verification.title}
             </CardTitle>
             <CardDescription>
-              Veuillez patienter pendant la vérification de votre transfert
+              {t.transferFlow.verification.subtitle}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <Alert className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800" data-testid="alert-verification">
               <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <AlertDescription className="text-blue-900 dark:text-blue-100">
-                <strong className="text-lg">⚠️ Ne fermez pas cette page</strong>
+                <strong className="text-lg">⚠️ {t.transferFlow.verification.doNotClose}</strong>
                 <p className="mt-2">
-                  Votre transfert est en cours de vérification par notre système sécurisé. 
-                  Cette opération prend environ 45 secondes.
+                  {t.transferFlow.verification.doNotCloseDesc}
                 </p>
               </AlertDescription>
             </Alert>
 
             <div className="space-y-4">
               <div className="flex justify-between text-sm font-medium">
-                <span>Progression de la vérification</span>
+                <span>{t.transferFlow.verification.progressLabel}</span>
                 <span className="text-blue-600 dark:text-blue-400" data-testid="text-verification-progress">
                   {Math.round(verificationProgress)}%
                 </span>
@@ -316,7 +317,7 @@ export default function TransferFlow() {
                 className="h-4 bg-gray-200 dark:bg-gray-700"
               />
               <p className="text-sm text-muted-foreground text-center">
-                Vérification des informations bancaires et des limites de transfert...
+                {t.transferFlow.verification.subtitle}
               </p>
             </div>
 
@@ -324,19 +325,19 @@ export default function TransferFlow() {
               <div className="flex items-start gap-3">
                 <Clock className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                 <div className="space-y-1">
-                  <p className="text-sm font-medium">Étapes de vérification</p>
+                  <p className="text-sm font-medium">{t.transferFlow.verification.verificationSteps}</p>
                   <ul className="text-sm text-muted-foreground space-y-1 list-none">
                     <li className={verificationProgress > 20 ? "text-green-600 dark:text-green-400" : ""}>
-                      ✓ Vérification du compte émetteur
+                      ✓ {t.transferFlow.verification.step1}
                     </li>
                     <li className={verificationProgress > 40 ? "text-green-600 dark:text-green-400" : ""}>
-                      ✓ Validation du montant et des frais
+                      ✓ {t.transferFlow.verification.step2}
                     </li>
                     <li className={verificationProgress > 60 ? "text-green-600 dark:text-green-400" : ""}>
-                      ✓ Contrôle de sécurité anti-fraude
+                      ✓ {t.transferFlow.verification.step3}
                     </li>
                     <li className={verificationProgress > 80 ? "text-green-600 dark:text-green-400" : ""}>
-                      ✓ Préparation du transfert sécurisé
+                      ✓ {t.transferFlow.verification.step4}
                     </li>
                   </ul>
                 </div>
@@ -355,33 +356,33 @@ export default function TransferFlow() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="w-6 h-6 text-primary" />
-              Validation du transfert
+              {t.transferFlow.validation.title}
             </CardTitle>
             <CardDescription>
-              Code {currentSequence} / {transferData?.transfer?.requiredCodes || 1}
+              {t.transferFlow.validation.subtitle.replace('{sequence}', currentSequence.toString()).replace('{total}', transferData?.transfer?.requiredCodes?.toString() || '1')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <Alert data-testid="alert-demo-code">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                <strong>Code de démonstration :</strong> {demoCode}
+                <strong>{t.transferFlow.validation.demoCodeLabel}</strong> {demoCode}
               </AlertDescription>
             </Alert>
 
             <div className="space-y-2">
-              <Label htmlFor="code">Code de validation (6 chiffres)</Label>
+              <Label htmlFor="code">{t.transferFlow.validation.codeLabel}</Label>
               <Input
                 id="code"
                 type="text"
                 maxLength={6}
-                placeholder="000000"
+                placeholder={t.transferFlow.validation.codePlaceholder}
                 value={validationCode}
                 onChange={(e) => setValidationCode(e.target.value.replace(/\D/g, ''))}
                 data-testid="input-validation-code"
               />
               <p className="text-sm text-muted-foreground">
-                Un code a été envoyé à votre email
+                {t.transferFlow.validation.codeHelpText}
               </p>
             </div>
 
@@ -392,7 +393,7 @@ export default function TransferFlow() {
                 className="flex-1"
                 data-testid="button-validate-code"
               >
-                {validateMutation.isPending ? 'Validation...' : 'Valider'}
+                {validateMutation.isPending ? t.transferFlow.validation.validating : t.transferFlow.validation.validateButton}
               </Button>
               <Button
                 variant="outline"
@@ -401,13 +402,13 @@ export default function TransferFlow() {
                 data-testid="button-resend-code"
               >
                 <Send className="w-4 h-4 mr-2" />
-                Renvoyer
+                {t.transferFlow.validation.resendButton}
               </Button>
             </div>
 
             {transferData?.events && (
               <div className="mt-6 space-y-2">
-                <h3 className="font-semibold text-sm">Historique</h3>
+                <h3 className="font-semibold text-sm">{t.transferFlow.validation.historyLabel}</h3>
                 <div className="space-y-2" data-testid="list-events">
                   {transferData.events.map((event: any) => (
                     <div key={event.id} className="text-sm border-l-2 border-primary pl-3 py-1">
@@ -440,23 +441,23 @@ export default function TransferFlow() {
               {isPaused ? (
                 <>
                   <AlertCircle className="w-6 h-6 text-orange-500" />
-                  Transfert en pause
+                  {t.transferFlow.progress.titlePaused}
                 </>
               ) : (
                 <>
                   <Clock className="w-6 h-6 text-primary animate-pulse" />
-                  Transfert en cours
+                  {t.transferFlow.progress.titleInProgress}
                 </>
               )}
             </CardTitle>
             <CardDescription>
-              Montant: {transferData?.transfer?.amount} EUR vers {transferData?.transfer?.recipient}
+              {t.transferFlow.progress.amountLabel.replace('{amount}', transferData?.transfer?.amount?.toString() || '').replace('{recipient}', transferData?.transfer?.recipient || '')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span>Progression</span>
+                <span>{t.transferFlow.progress.progressLabel}</span>
                 <span className="font-semibold" data-testid="text-progress">{progress}%</span>
               </div>
               <Progress value={progress} className="h-3" />
@@ -468,24 +469,24 @@ export default function TransferFlow() {
                   <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-orange-900 dark:text-orange-100">
-                      Code de déblocage requis à {pausePercent}%
+                      {t.transferFlow.progress.pauseTitle.replace('{percent}', pausePercent?.toString() || '')}
                     </p>
                     <p className="text-sm text-orange-700 dark:text-orange-300 mt-1">
-                      Veuillez contacter le service client pour obtenir le code de déblocage de votre transfert.
+                      {t.transferFlow.progress.pauseDescription}
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <label htmlFor="pause-code" className="text-sm font-medium">
-                    Code de déblocage
+                    {t.transferFlow.progress.pauseCodeLabel}
                   </label>
                   <Input
                     id="pause-code"
                     type="text"
                     value={validationCode}
                     onChange={(e) => setValidationCode(e.target.value.toUpperCase())}
-                    placeholder="Entrez le code"
+                    placeholder={t.transferFlow.progress.pauseCodePlaceholder}
                     className="font-mono"
                     data-testid="input-pause-code"
                   />
@@ -496,8 +497,8 @@ export default function TransferFlow() {
                     if (!validationCode) {
                       toast({
                         variant: 'destructive',
-                        title: 'Code requis',
-                        description: 'Veuillez entrer le code de déblocage',
+                        title: t.transferFlow.toast.codeRequired,
+                        description: t.transferFlow.toast.codeRequiredDesc,
                       });
                       return;
                     }
@@ -507,7 +508,7 @@ export default function TransferFlow() {
                         const data = await response.json();
                         setValidationCode('');
                         toast({
-                          title: 'Transfert débloqué',
+                          title: t.transferFlow.toast.unblocked,
                           description: data.message,
                         });
                         refetchTransfer();
@@ -515,8 +516,8 @@ export default function TransferFlow() {
                       .catch(() => {
                         toast({
                           variant: 'destructive',
-                          title: 'Code invalide',
-                          description: 'Le code est incorrect ou expiré',
+                          title: t.transferFlow.toast.codeInvalid,
+                          description: t.transferFlow.toast.codeInvalidDesc,
                         });
                       });
                   }}
@@ -524,23 +525,23 @@ export default function TransferFlow() {
                   className="w-full"
                   data-testid="button-validate-pause-code"
                 >
-                  Valider le code
+                  {t.transferFlow.progress.validatePauseCode}
                 </Button>
               </div>
             ) : (
               <div className="bg-muted p-4 rounded-lg space-y-2">
-                <p className="text-sm font-medium">État actuel</p>
+                <p className="text-sm font-medium">{t.transferFlow.progress.statusLabel}</p>
                 <p className="text-sm text-muted-foreground" data-testid="text-status">
                   {status === 'completed' 
-                    ? 'Transfert terminé !' 
-                    : 'Traitement en cours par notre système bancaire...'}
+                    ? t.transferFlow.progress.statusCompleted
+                    : t.transferFlow.progress.statusProcessing}
                 </p>
               </div>
             )}
 
             {transferData?.events && (
               <div className="space-y-2">
-                <h3 className="font-semibold text-sm">Événements</h3>
+                <h3 className="font-semibold text-sm">{t.transferFlow.progress.eventsLabel}</h3>
                 <div className="space-y-2" data-testid="list-progress-events">
                   {transferData.events.map((event: any) => (
                     <div key={event.id} className="text-sm border-l-2 border-primary pl-3 py-1">
@@ -566,28 +567,28 @@ export default function TransferFlow() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-green-600">
               <CheckCircle2 className="w-6 h-6" />
-              Transfert complété
+              {t.transferFlow.complete.title}
             </CardTitle>
             <CardDescription>
-              Votre transfert a été effectué avec succès
+              {t.transferFlow.complete.subtitle}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Montant</span>
+                <span className="text-sm font-medium">{t.transferFlow.complete.amountLabel}</span>
                 <span className="text-sm font-semibold">{transferData?.transfer?.amount} EUR</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Bénéficiaire</span>
+                <span className="text-sm font-medium">{t.transferFlow.complete.recipientLabel}</span>
                 <span className="text-sm">{transferData?.transfer?.recipient}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Frais</span>
+                <span className="text-sm font-medium">{t.transferFlow.complete.feesLabel}</span>
                 <span className="text-sm">{transferData?.transfer?.feeAmount} EUR</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Date</span>
+                <span className="text-sm font-medium">{t.dialogs.transactionHistory.date}</span>
                 <span className="text-sm">
                   {transferData?.transfer?.completedAt 
                     ? new Date(transferData.transfer.completedAt).toLocaleString('fr-FR')
@@ -602,7 +603,7 @@ export default function TransferFlow() {
               className="w-full"
               data-testid="button-back-to-dashboard"
             >
-              Retour au tableau de bord
+              {t.transferFlow.backToDashboard}
             </Button>
           </CardContent>
         </Card>

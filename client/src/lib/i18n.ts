@@ -877,6 +877,187 @@ type TranslationKeys = {
     uploadedAt: string;
     noDocuments: string;
   };
+  transferFlow: {
+    backToDashboard: string;
+    form: {
+      title: string;
+      subtitle: string;
+      amountLabel: string;
+      amountPlaceholder: string;
+      accountLabel: string;
+      accountPlaceholder: string;
+      noAccount: string;
+      recipientLabel: string;
+      recipientPlaceholder: string;
+      initiateButton: string;
+      initiating: string;
+    };
+    verification: {
+      title: string;
+      subtitle: string;
+      doNotClose: string;
+      doNotCloseDesc: string;
+      progressLabel: string;
+      verificationSteps: string;
+      step1: string;
+      step2: string;
+      step3: string;
+      step4: string;
+    };
+    validation: {
+      title: string;
+      subtitle: string;
+      demoCodeLabel: string;
+      codeLabel: string;
+      codePlaceholder: string;
+      codeHelpText: string;
+      validateButton: string;
+      validating: string;
+      resendButton: string;
+      historyLabel: string;
+    };
+    progress: {
+      titlePaused: string;
+      titleInProgress: string;
+      amountLabel: string;
+      progressLabel: string;
+      pauseTitle: string;
+      pauseDescription: string;
+      pauseCodeLabel: string;
+      pauseCodePlaceholder: string;
+      validatePauseCode: string;
+      statusLabel: string;
+      statusCompleted: string;
+      statusProcessing: string;
+      eventsLabel: string;
+    };
+    complete: {
+      title: string;
+      subtitle: string;
+      amountLabel: string;
+      recipientLabel: string;
+      feesLabel: string;
+    };
+    toast: {
+      initiated: string;
+      initiatedDesc: string;
+      error: string;
+      errorInitiation: string;
+      codeValidated: string;
+      codeInvalid: string;
+      codeInvalidDesc: string;
+      codeSent: string;
+      codeSentDesc: string;
+      approved: string;
+      approvedDesc: string;
+      fieldsRequired: string;
+      fieldsRequiredDesc: string;
+      invalidCode: string;
+      invalidCodeDesc: string;
+      codeRequired: string;
+      codeRequiredDesc: string;
+      unblocked: string;
+      unblockedDesc: string;
+    };
+  };
+  loanOffers: {
+    pageTitle: string;
+    pageSubtitle: string;
+    accountInfo: string;
+    individualTab: string;
+    businessTab: string;
+    individual: string;
+    business: string;
+    amountLabel: string;
+    rateLabel: string;
+    durationLabel: string;
+    advantagesLabel: string;
+    requestButton: string;
+    loginToRequest: string;
+  };
+  cardTermsContent: {
+    title: string;
+    lastUpdated: string;
+    section1: {
+      title: string;
+      content: string;
+    };
+    section2: {
+      title: string;
+      subtitle1: string;
+      content1: string;
+      subtitle2: string;
+      item1: string;
+      item2: string;
+    };
+    section3: {
+      title: string;
+      content: string;
+      list: string[];
+    };
+    section4: {
+      title: string;
+      subtitle1: string;
+      content1: string;
+      subtitle2: string;
+      list1: string[];
+      subtitle3: string;
+      list2: string[];
+    };
+    section5: {
+      title: string;
+      subtitle1: string;
+      list1: string[];
+      subtitle2: string;
+      content2: string;
+      subtitle3: string;
+      content3: string;
+    };
+    section6: {
+      title: string;
+      content: string;
+      list: string[];
+      content2: string;
+    };
+    section7: {
+      title: string;
+      list: string[];
+    };
+    section8: {
+      title: string;
+      content: string;
+    };
+    section9: {
+      title: string;
+      subtitle1: string;
+      content1: string;
+      subtitle2: string;
+      content2: string;
+      subtitle3: string;
+      content3: string;
+    };
+    section10: {
+      title: string;
+      content: string;
+      list: string[];
+      content2: string;
+    };
+    section11: {
+      title: string;
+      content: string;
+    };
+    section12: {
+      title: string;
+      content: string;
+      list: string[];
+      content2: string;
+    };
+    section13: {
+      title: string;
+      content: string;
+    };
+    note: string;
+  };
 };
 
 export const translations: Record<Language, TranslationKeys> = {
@@ -1790,6 +1971,227 @@ export const translations: Record<Language, TranslationKeys> = {
       uploadedAt: 'Téléchargé le',
       noDocuments: 'Aucun document téléchargé',
     },
+    transferFlow: {
+      backToDashboard: 'Retour au tableau de bord',
+      form: {
+        title: 'Nouveau transfert',
+        subtitle: 'Initiez un transfert sécurisé vers un compte externe',
+        amountLabel: 'Montant (EUR)',
+        amountPlaceholder: '10000',
+        accountLabel: 'Compte externe (optionnel)',
+        accountPlaceholder: 'Sélectionner un compte',
+        noAccount: 'Aucun compte enregistré',
+        recipientLabel: 'Bénéficiaire',
+        recipientPlaceholder: 'Nom du bénéficiaire',
+        initiateButton: 'Initier le transfert',
+        initiating: 'Initiation...',
+      },
+      verification: {
+        title: 'Vérification du transfert',
+        subtitle: 'Veuillez patienter pendant la vérification de votre transfert',
+        doNotClose: 'Ne fermez pas cette page',
+        doNotCloseDesc: 'Votre transfert est en cours de vérification par notre système sécurisé. Cette opération prend environ 45 secondes.',
+        progressLabel: 'Progression de la vérification',
+        verificationSteps: 'Étapes de vérification',
+        step1: 'Vérification du compte émetteur',
+        step2: 'Validation du montant et des frais',
+        step3: 'Contrôle de sécurité anti-fraude',
+        step4: 'Préparation du transfert sécurisé',
+      },
+      validation: {
+        title: 'Validation du transfert',
+        subtitle: 'Code {sequence} / {total}',
+        demoCodeLabel: 'Code de démonstration :',
+        codeLabel: 'Code de validation (6 chiffres)',
+        codePlaceholder: '000000',
+        codeHelpText: 'Un code a été envoyé à votre email',
+        validateButton: 'Valider',
+        validating: 'Validation...',
+        resendButton: 'Renvoyer',
+        historyLabel: 'Historique',
+      },
+      progress: {
+        titlePaused: 'Transfert en pause',
+        titleInProgress: 'Transfert en cours',
+        amountLabel: 'Montant: {amount} EUR vers {recipient}',
+        progressLabel: 'Progression',
+        pauseTitle: 'Code de déblocage requis à {percent}%',
+        pauseDescription: 'Veuillez contacter le service client pour obtenir le code de déblocage de votre transfert.',
+        pauseCodeLabel: 'Code de déblocage',
+        pauseCodePlaceholder: 'Entrez le code',
+        validatePauseCode: 'Valider le code',
+        statusLabel: 'État actuel',
+        statusCompleted: 'Transfert terminé !',
+        statusProcessing: 'Traitement en cours par notre système bancaire...',
+        eventsLabel: 'Événements',
+      },
+      complete: {
+        title: 'Transfert complété',
+        subtitle: 'Votre transfert a été effectué avec succès',
+        amountLabel: 'Montant',
+        recipientLabel: 'Bénéficiaire',
+        feesLabel: 'Frais',
+      },
+      toast: {
+        initiated: 'Transfert initié',
+        initiatedDesc: 'Vérification de votre transfert en cours...',
+        error: 'Erreur',
+        errorInitiation: 'Échec de l\'initiation du transfert',
+        codeValidated: 'Code validé',
+        codeInvalid: 'Code invalide',
+        codeInvalidDesc: 'Le code est incorrect ou expiré',
+        codeSent: 'Code envoyé',
+        codeSentDesc: 'Code {sequence} envoyé avec succès',
+        approved: 'Transfert approuvé',
+        approvedDesc: 'Votre transfert est approuvé et en cours de traitement.',
+        fieldsRequired: 'Champs requis',
+        fieldsRequiredDesc: 'Veuillez remplir tous les champs',
+        invalidCode: 'Code invalide',
+        invalidCodeDesc: 'Le code doit contenir 6 chiffres',
+        codeRequired: 'Code requis',
+        codeRequiredDesc: 'Veuillez entrer le code de déblocage',
+        unblocked: 'Transfert débloqué',
+        unblockedDesc: 'Le transfert a été débloqué avec succès',
+      },
+    },
+    loanOffers: {
+      pageTitle: 'Nos offres de prêt',
+      pageSubtitle: 'Découvrez toutes nos solutions de financement pour particuliers et professionnels',
+      accountInfo: 'Compte {accountType} :',
+      individualTab: 'Prêts Particuliers',
+      businessTab: 'Prêts Professionnels',
+      individual: 'Particulier',
+      business: 'Professionnel',
+      amountLabel: 'Montant',
+      rateLabel: 'Taux',
+      durationLabel: 'Durée',
+      advantagesLabel: 'Avantages',
+      requestButton: 'Demander ce prêt',
+      loginToRequest: 'Se connecter pour demander',
+    },
+    cardTermsContent: {
+      title: 'Conditions Générales d\'Utilisation - Carte Virtuelle ALTUS',
+      lastUpdated: 'Dernière mise à jour : Novembre 2025',
+      section1: {
+        title: '1. OBJET ET CHAMP D\'APPLICATION',
+        content: 'Les présentes conditions générales (ci-après « CGU ») régissent l\'utilisation de la carte bancaire virtuelle ALTUS (ci-après « la Carte Virtuelle »), proposée par ALTUS Finance Group aux clients titulaires d\'un compte ALTUS (ci-après « le Titulaire »). La Carte Virtuelle est un moyen de paiement dématérialisé lié à votre compte ALTUS.',
+      },
+      section2: {
+        title: '2. DESCRIPTION DU SERVICE',
+        subtitle1: '2.1 Nature de la Carte Virtuelle',
+        content1: 'La Carte Virtuelle est une carte de paiement dématérialisée comportant un numéro de carte à 16 chiffres, une date d\'expiration et un cryptogramme visuel (CVV). Elle fonctionne comme une carte bancaire physique mais existe uniquement sous forme électronique.',
+        subtitle2: '2.2 Type de Carte',
+        item1: 'Carte virtuelle permanente : coordonnées fixes pendant toute sa durée de validité (3 ans)',
+        item2: 'Carte virtuelle éphémère : coordonnées temporaires avec montant et durée paramétrables',
+      },
+      section3: {
+        title: '3. CONDITIONS D\'ÉLIGIBILITÉ',
+        content: 'Pour obtenir une Carte Virtuelle, le Titulaire doit :',
+        list: [
+          'Être client ALTUS avec un compte actif et approvisionné',
+          'Avoir complété la vérification d\'identité (KYC)',
+          'Ne pas être en situation de découvert non autorisé',
+          'Avoir activé l\'authentification forte (double facteur)',
+          'Accepter les présentes CGU et les Conditions Tarifaires',
+        ],
+      },
+      section4: {
+        title: '4. ACTIVATION ET UTILISATION',
+        subtitle1: '4.1 Activation',
+        content1: 'La Carte Virtuelle est activée instantanément dès sa création via l\'application ou l\'espace client ALTUS. Le Titulaire reçoit immédiatement les coordonnées complètes de la carte.',
+        subtitle2: '4.2 Utilisations autorisées',
+        list1: [
+          'Paiements sur tous les sites marchands en ligne acceptant Visa/Mastercard',
+          'Paiements récurrents et abonnements (carte permanente uniquement)',
+          'Achats sur sites internationaux',
+          'Paiements sans contact en magasin (si ajoutée à Apple Pay/Google Pay)',
+        ],
+        subtitle3: '4.3 Limitations',
+        list2: [
+          'Pas de retraits d\'espèces aux distributeurs automatiques',
+          'Présentation physique impossible (location de voiture, certains hôtels)',
+          'Certains prestataires peuvent refuser les cartes virtuelles',
+        ],
+      },
+      section5: {
+        title: '5. SÉCURITÉ ET PROTECTION',
+        subtitle1: '5.1 Sécurité renforcée',
+        list1: [
+          'Les coordonnées de votre carte bancaire physique ne sont jamais exposées',
+          'Possibilité de verrouiller/déverrouiller instantanément la carte',
+          'Suppression définitive en un clic',
+          'Protection 3D Secure sur toutes les transactions',
+          'CVV dynamique pour une sécurité maximale',
+        ],
+        subtitle2: '5.2 Obligations du Titulaire',
+        content2: 'Le Titulaire s\'engage à conserver les coordonnées de sa Carte Virtuelle de manière confidentielle et à ne pas les communiquer à des tiers. En cas de suspicion de fraude, le Titulaire doit immédiatement verrouiller ou supprimer la carte via son espace client.',
+        subtitle3: '5.3 Garanties et assurances',
+        content3: 'La Carte Virtuelle bénéficie des mêmes garanties que votre carte physique, incluant la protection contre la fraude, l\'assurance achats et la garantie de livraison conforme.',
+      },
+      section6: {
+        title: '6. PLAFONDS ET LIMITES',
+        content: 'Les plafonds de paiement de la Carte Virtuelle sont identiques à ceux de votre carte principale ALTUS :',
+        list: [
+          'Plafond mensuel : jusqu\'à 50 000 € selon votre profil',
+          'Plafond par transaction : jusqu\'à 10 000 €',
+          'Possibilité d\'ajuster temporairement les plafonds depuis l\'application',
+        ],
+        content2: 'Pour les cartes éphémères, vous définissez le montant maximum et la durée de validité lors de la création.',
+      },
+      section7: {
+        title: '7. TARIFICATION',
+        list: [
+          'Création de carte virtuelle : Gratuit',
+          'Frais de transaction en zone euro : 0%',
+          'Paiements hors zone euro : 1,5% du montant',
+          'Cotisation annuelle : Gratuit',
+          'Verrouillage/Déverrouillage : Gratuit et illimité',
+        ],
+      },
+      section8: {
+        title: '8. DÉBIT ET RELEVÉ',
+        content: 'Toutes les opérations effectuées avec la Carte Virtuelle sont débitées en temps réel sur votre compte ALTUS. Elles apparaissent immédiatement dans votre historique de transactions et sur vos relevés mensuels.',
+      },
+      section9: {
+        title: '9. OPPOSITION ET RÉSILIATION',
+        subtitle1: '9.1 Verrouillage temporaire',
+        content1: 'Vous pouvez verrouiller votre Carte Virtuelle à tout moment depuis votre espace client. Le déverrouillage est instantané.',
+        subtitle2: '9.2 Suppression définitive',
+        content2: 'La suppression d\'une Carte Virtuelle est immédiate et irréversible. Les abonnements liés à cette carte seront automatiquement refusés. Il est recommandé de mettre à jour vos informations de paiement chez les commerçants concernés avant suppression.',
+        subtitle3: '9.3 En cas de fraude',
+        content3: 'En cas de perte ou vol présumé des coordonnées, supprimez immédiatement la carte depuis votre application et contactez notre service client au +33 1 XX XX XX XX (disponible 24h/24, 7j/7).',
+      },
+      section10: {
+        title: '10. RESPONSABILITÉ',
+        content: 'ALTUS ne pourra être tenu responsable en cas de :',
+        list: [
+          'Refus d\'un commerçant d\'accepter la Carte Virtuelle',
+          'Interruption temporaire du service pour maintenance',
+          'Utilisation frauduleuse résultant d\'une négligence du Titulaire',
+          'Litiges commerciaux entre le Titulaire et un commerçant',
+        ],
+        content2: 'Le Titulaire est entièrement responsable de l\'utilisation de sa Carte Virtuelle et des opérations effectuées jusqu\'à la notification d\'une utilisation frauduleuse.',
+      },
+      section11: {
+        title: '11. DURÉE ET MODIFICATION',
+        content: 'Les présentes CGU sont conclues pour une durée indéterminée. ALTUS se réserve le droit de modifier les présentes CGU à tout moment. Toute modification sera notifiée au Titulaire au moins 2 mois avant son entrée en vigueur. L\'absence d\'opposition dans ce délai vaudra acceptation.',
+      },
+      section12: {
+        title: '12. RÉCLAMATIONS',
+        content: 'Pour toute réclamation, le Titulaire peut contacter le service client ALTUS :',
+        list: [
+          'Par email : support@altusgroup.com',
+          'Par téléphone : +33 1 XX XX XX XX',
+          'Via l\'espace client sécurisé',
+        ],
+        content2: 'En l\'absence de réponse satisfaisante dans un délai de 2 mois, le Titulaire peut saisir le Médiateur de l\'AMF.',
+      },
+      section13: {
+        title: '13. DROIT APPLICABLE ET JURIDICTION',
+        content: 'Les présentes CGU sont régies par le droit français. Tout litige relatif à leur interprétation ou exécution relève de la compétence exclusive des tribunaux français.',
+      },
+      note: 'En activant votre Carte Virtuelle ALTUS, vous reconnaissez avoir lu, compris et accepté l\'intégralité des présentes Conditions Générales d\'Utilisation.',
+    },
   },
   en: {
     hero: {
@@ -2689,6 +3091,227 @@ export const translations: Record<Language, TranslationKeys> = {
       uploadedAt: 'Uploaded on',
       noDocuments: 'No documents uploaded',
     },
+    transferFlow: {
+      backToDashboard: 'Back to Dashboard',
+      form: {
+        title: 'New Transfer',
+        subtitle: 'Initiate a secure transfer to an external account',
+        amountLabel: 'Amount (EUR)',
+        amountPlaceholder: '10000',
+        accountLabel: 'External Account (optional)',
+        accountPlaceholder: 'Select an account',
+        noAccount: 'No account registered',
+        recipientLabel: 'Recipient',
+        recipientPlaceholder: 'Recipient name',
+        initiateButton: 'Initiate Transfer',
+        initiating: 'Initiating...',
+      },
+      verification: {
+        title: 'Transfer Verification',
+        subtitle: 'Please wait while we verify your transfer',
+        doNotClose: 'Do not close this page',
+        doNotCloseDesc: 'Your transfer is being verified by our secure system. This operation takes approximately 45 seconds.',
+        progressLabel: 'Verification Progress',
+        verificationSteps: 'Verification Steps',
+        step1: 'Sender account verification',
+        step2: 'Amount and fees validation',
+        step3: 'Anti-fraud security check',
+        step4: 'Secure transfer preparation',
+      },
+      validation: {
+        title: 'Transfer Validation',
+        subtitle: 'Code {sequence} / {total}',
+        demoCodeLabel: 'Demo code:',
+        codeLabel: 'Validation Code (6 digits)',
+        codePlaceholder: '000000',
+        codeHelpText: 'A code has been sent to your email',
+        validateButton: 'Validate',
+        validating: 'Validating...',
+        resendButton: 'Resend',
+        historyLabel: 'History',
+      },
+      progress: {
+        titlePaused: 'Transfer Paused',
+        titleInProgress: 'Transfer in Progress',
+        amountLabel: 'Amount: {amount} EUR to {recipient}',
+        progressLabel: 'Progress',
+        pauseTitle: 'Unlock code required at {percent}%',
+        pauseDescription: 'Please contact customer service to obtain your transfer unlock code.',
+        pauseCodeLabel: 'Unlock Code',
+        pauseCodePlaceholder: 'Enter code',
+        validatePauseCode: 'Validate Code',
+        statusLabel: 'Current Status',
+        statusCompleted: 'Transfer completed!',
+        statusProcessing: 'Processing by our banking system...',
+        eventsLabel: 'Events',
+      },
+      complete: {
+        title: 'Transfer Completed',
+        subtitle: 'Your transfer has been successfully completed',
+        amountLabel: 'Amount',
+        recipientLabel: 'Recipient',
+        feesLabel: 'Fees',
+      },
+      toast: {
+        initiated: 'Transfer Initiated',
+        initiatedDesc: 'Your transfer verification is in progress...',
+        error: 'Error',
+        errorInitiation: 'Transfer initiation failed',
+        codeValidated: 'Code Validated',
+        codeInvalid: 'Invalid Code',
+        codeInvalidDesc: 'The code is incorrect or expired',
+        codeSent: 'Code Sent',
+        codeSentDesc: 'Code {sequence} sent successfully',
+        approved: 'Transfer Approved',
+        approvedDesc: 'Your transfer is approved and being processed.',
+        fieldsRequired: 'Required Fields',
+        fieldsRequiredDesc: 'Please fill in all fields',
+        invalidCode: 'Invalid Code',
+        invalidCodeDesc: 'Code must contain 6 digits',
+        codeRequired: 'Code Required',
+        codeRequiredDesc: 'Please enter the unlock code',
+        unblocked: 'Transfer Unblocked',
+        unblockedDesc: 'Transfer has been successfully unblocked',
+      },
+    },
+    loanOffers: {
+      pageTitle: 'Our Loan Offers',
+      pageSubtitle: 'Discover all our financing solutions for individuals and professionals',
+      accountInfo: '{accountType} Account:',
+      individualTab: 'Personal Loans',
+      businessTab: 'Business Loans',
+      individual: 'Individual',
+      business: 'Professional',
+      amountLabel: 'Amount',
+      rateLabel: 'Rate',
+      durationLabel: 'Duration',
+      advantagesLabel: 'Advantages',
+      requestButton: 'Request this Loan',
+      loginToRequest: 'Login to Request',
+    },
+    cardTermsContent: {
+      title: 'Terms and Conditions - ALTUS Virtual Card',
+      lastUpdated: 'Last updated: November 2025',
+      section1: {
+        title: '1. PURPOSE AND SCOPE',
+        content: 'These general terms and conditions (hereinafter "T&C") govern the use of the ALTUS virtual bank card (hereinafter "Virtual Card"), offered by ALTUS Finance Group to customers holding an ALTUS account (hereinafter "Cardholder"). The Virtual Card is a dematerialized means of payment linked to your ALTUS account.',
+      },
+      section2: {
+        title: '2. SERVICE DESCRIPTION',
+        subtitle1: '2.1 Nature of the Virtual Card',
+        content1: 'The Virtual Card is a dematerialized payment card with a 16-digit card number, expiration date, and visual cryptogram (CVV). It functions like a physical bank card but exists only in electronic form.',
+        subtitle2: '2.2 Card Type',
+        item1: 'Permanent virtual card: fixed credentials for its entire validity period (3 years)',
+        item2: 'Temporary virtual card: temporary credentials with configurable amount and duration',
+      },
+      section3: {
+        title: '3. ELIGIBILITY CONDITIONS',
+        content: 'To obtain a Virtual Card, the Cardholder must:',
+        list: [
+          'Be an ALTUS customer with an active and funded account',
+          'Have completed identity verification (KYC)',
+          'Not be in an unauthorized overdraft situation',
+          'Have activated strong authentication (two-factor)',
+          'Accept these T&C and the Pricing Conditions',
+        ],
+      },
+      section4: {
+        title: '4. ACTIVATION AND USE',
+        subtitle1: '4.1 Activation',
+        content1: 'The Virtual Card is instantly activated upon creation via the ALTUS application or client area. The Cardholder immediately receives the complete card credentials.',
+        subtitle2: '4.2 Authorized Uses',
+        list1: [
+          'Payments on all online merchant sites accepting Visa/Mastercard',
+          'Recurring payments and subscriptions (permanent card only)',
+          'Purchases on international sites',
+          'Contactless payments in stores (if added to Apple Pay/Google Pay)',
+        ],
+        subtitle3: '4.3 Limitations',
+        list2: [
+          'No cash withdrawals at ATMs',
+          'Physical presentation impossible (car rental, some hotels)',
+          'Some providers may refuse virtual cards',
+        ],
+      },
+      section5: {
+        title: '5. SECURITY AND PROTECTION',
+        subtitle1: '5.1 Enhanced Security',
+        list1: [
+          'Your physical bank card credentials are never exposed',
+          'Ability to instantly lock/unlock the card',
+          'Permanent deletion with one click',
+          '3D Secure protection on all transactions',
+          'Dynamic CVV for maximum security',
+        ],
+        subtitle2: '5.2 Cardholder Obligations',
+        content2: 'The Cardholder agrees to keep Virtual Card credentials confidential and not share them with third parties. In case of suspected fraud, the Cardholder must immediately lock or delete the card via their client area.',
+        subtitle3: '5.3 Guarantees and Insurance',
+        content3: 'The Virtual Card benefits from the same guarantees as your physical card, including fraud protection, purchase insurance, and compliant delivery guarantee.',
+      },
+      section6: {
+        title: '6. LIMITS AND CEILINGS',
+        content: 'The Virtual Card payment limits are identical to those of your main ALTUS card:',
+        list: [
+          'Monthly limit: up to €50,000 depending on your profile',
+          'Per transaction limit: up to €10,000',
+          'Ability to temporarily adjust limits from the application',
+        ],
+        content2: 'For temporary cards, you define the maximum amount and validity duration during creation.',
+      },
+      section7: {
+        title: '7. PRICING',
+        list: [
+          'Virtual card creation: Free',
+          'Transaction fees in euro zone: 0%',
+          'Payments outside euro zone: 1.5% of amount',
+          'Annual fee: Free',
+          'Lock/Unlock: Free and unlimited',
+        ],
+      },
+      section8: {
+        title: '8. DEBIT AND STATEMENT',
+        content: 'All operations performed with the Virtual Card are debited in real-time from your ALTUS account. They appear immediately in your transaction history and on your monthly statements.',
+      },
+      section9: {
+        title: '9. OPPOSITION AND TERMINATION',
+        subtitle1: '9.1 Temporary Lock',
+        content1: 'You can lock your Virtual Card at any time from your client area. Unlocking is instant.',
+        subtitle2: '9.2 Permanent Deletion',
+        content2: 'Deletion of a Virtual Card is immediate and irreversible. Subscriptions linked to this card will be automatically refused. It is recommended to update your payment information with concerned merchants before deletion.',
+        subtitle3: '9.3 In Case of Fraud',
+        content3: 'In case of loss or suspected theft of credentials, immediately delete the card from your application and contact our customer service at +44 XX XX XX XX (available 24/7).',
+      },
+      section10: {
+        title: '10. LIABILITY',
+        content: 'ALTUS cannot be held liable in case of:',
+        list: [
+          'Merchant refusal to accept the Virtual Card',
+          'Temporary service interruption for maintenance',
+          'Fraudulent use resulting from Cardholder negligence',
+          'Commercial disputes between Cardholder and merchant',
+        ],
+        content2: 'The Cardholder is fully responsible for use of their Virtual Card and operations performed until notification of fraudulent use.',
+      },
+      section11: {
+        title: '11. TERM AND MODIFICATION',
+        content: 'These T&C are concluded for an indefinite period. ALTUS reserves the right to modify these T&C at any time. Any modification will be notified to the Cardholder at least 2 months before its entry into force. Absence of opposition within this period will constitute acceptance.',
+      },
+      section12: {
+        title: '12. COMPLAINTS',
+        content: 'For any complaint, the Cardholder may contact ALTUS customer service:',
+        list: [
+          'By email: support@altusgroup.com',
+          'By phone: +44 XX XX XX XX',
+          'Via secure client area',
+        ],
+        content2: 'In the absence of a satisfactory response within 2 months, the Cardholder may contact the Financial Services Ombudsman.',
+      },
+      section13: {
+        title: '13. APPLICABLE LAW AND JURISDICTION',
+        content: 'These T&C are governed by English law. Any dispute relating to their interpretation or execution falls under the exclusive jurisdiction of English courts.',
+      },
+      note: 'By activating your ALTUS Virtual Card, you acknowledge having read, understood, and accepted all of these Terms and Conditions.',
+    },
   },
   es: {
     hero: {
@@ -3583,6 +4206,227 @@ export const translations: Record<Language, TranslationKeys> = {
       uploadedAt: 'Subido el',
       noDocuments: 'No se subieron documentos',
     },
+    transferFlow: {
+      backToDashboard: 'Volver al Panel',
+      form: {
+        title: 'Nueva Transferencia',
+        subtitle: 'Inicie una transferencia segura a una cuenta externa',
+        amountLabel: 'Monto (EUR)',
+        amountPlaceholder: '10000',
+        accountLabel: 'Cuenta Externa (opcional)',
+        accountPlaceholder: 'Seleccionar una cuenta',
+        noAccount: 'Ninguna cuenta registrada',
+        recipientLabel: 'Beneficiario',
+        recipientPlaceholder: 'Nombre del beneficiario',
+        initiateButton: 'Iniciar Transferencia',
+        initiating: 'Iniciando...',
+      },
+      verification: {
+        title: 'Verificación de Transferencia',
+        subtitle: 'Por favor espere mientras verificamos su transferencia',
+        doNotClose: 'No cierre esta página',
+        doNotCloseDesc: 'Su transferencia está siendo verificada por nuestro sistema seguro. Esta operación toma aproximadamente 45 segundos.',
+        progressLabel: 'Progreso de Verificación',
+        verificationSteps: 'Pasos de Verificación',
+        step1: 'Verificación de cuenta emisora',
+        step2: 'Validación de monto y tarifas',
+        step3: 'Control de seguridad antifraude',
+        step4: 'Preparación de transferencia segura',
+      },
+      validation: {
+        title: 'Validación de Transferencia',
+        subtitle: 'Código {sequence} / {total}',
+        demoCodeLabel: 'Código de demostración:',
+        codeLabel: 'Código de Validación (6 dígitos)',
+        codePlaceholder: '000000',
+        codeHelpText: 'Se ha enviado un código a su correo electrónico',
+        validateButton: 'Validar',
+        validating: 'Validando...',
+        resendButton: 'Reenviar',
+        historyLabel: 'Historial',
+      },
+      progress: {
+        titlePaused: 'Transferencia en Pausa',
+        titleInProgress: 'Transferencia en Curso',
+        amountLabel: 'Monto: {amount} EUR a {recipient}',
+        progressLabel: 'Progreso',
+        pauseTitle: 'Código de desbloqueo requerido al {percent}%',
+        pauseDescription: 'Por favor contacte al servicio al cliente para obtener el código de desbloqueo de su transferencia.',
+        pauseCodeLabel: 'Código de Desbloqueo',
+        pauseCodePlaceholder: 'Ingrese el código',
+        validatePauseCode: 'Validar Código',
+        statusLabel: 'Estado Actual',
+        statusCompleted: '¡Transferencia completada!',
+        statusProcessing: 'Procesamiento en curso por nuestro sistema bancario...',
+        eventsLabel: 'Eventos',
+      },
+      complete: {
+        title: 'Transferencia Completada',
+        subtitle: 'Su transferencia se ha realizado exitosamente',
+        amountLabel: 'Monto',
+        recipientLabel: 'Beneficiario',
+        feesLabel: 'Tarifas',
+      },
+      toast: {
+        initiated: 'Transferencia Iniciada',
+        initiatedDesc: 'Verificación de su transferencia en curso...',
+        error: 'Error',
+        errorInitiation: 'Fallo al iniciar la transferencia',
+        codeValidated: 'Código Validado',
+        codeInvalid: 'Código Inválido',
+        codeInvalidDesc: 'El código es incorrecto o ha expirado',
+        codeSent: 'Código Enviado',
+        codeSentDesc: 'Código {sequence} enviado exitosamente',
+        approved: 'Transferencia Aprobada',
+        approvedDesc: 'Su transferencia está aprobada y siendo procesada.',
+        fieldsRequired: 'Campos Requeridos',
+        fieldsRequiredDesc: 'Por favor complete todos los campos',
+        invalidCode: 'Código Inválido',
+        invalidCodeDesc: 'El código debe contener 6 dígitos',
+        codeRequired: 'Código Requerido',
+        codeRequiredDesc: 'Por favor ingrese el código de desbloqueo',
+        unblocked: 'Transferencia Desbloqueada',
+        unblockedDesc: 'La transferencia ha sido desbloqueada exitosamente',
+      },
+    },
+    loanOffers: {
+      pageTitle: 'Nuestras Ofertas de Préstamos',
+      pageSubtitle: 'Descubra todas nuestras soluciones de financiamiento para particulares y profesionales',
+      accountInfo: 'Cuenta {accountType}:',
+      individualTab: 'Préstamos Personales',
+      businessTab: 'Préstamos Empresariales',
+      individual: 'Particular',
+      business: 'Profesional',
+      amountLabel: 'Monto',
+      rateLabel: 'Tasa',
+      durationLabel: 'Duración',
+      advantagesLabel: 'Ventajas',
+      requestButton: 'Solicitar este Préstamo',
+      loginToRequest: 'Iniciar Sesión para Solicitar',
+    },
+    cardTermsContent: {
+      title: 'Condiciones Generales de Uso - Tarjeta Virtual ALTUS',
+      lastUpdated: 'Última actualización: Noviembre 2025',
+      section1: {
+        title: '1. OBJETO Y ÁMBITO DE APLICACIÓN',
+        content: 'Las presentes condiciones generales (en adelante "CGU") rigen el uso de la tarjeta bancaria virtual ALTUS (en adelante "la Tarjeta Virtual"), propuesta por ALTUS Finance Group a los clientes titulares de una cuenta ALTUS (en adelante "el Titular"). La Tarjeta Virtual es un medio de pago desmaterializado vinculado a su cuenta ALTUS.',
+      },
+      section2: {
+        title: '2. DESCRIPCIÓN DEL SERVICIO',
+        subtitle1: '2.1 Naturaleza de la Tarjeta Virtual',
+        content1: 'La Tarjeta Virtual es una tarjeta de pago desmaterializada que incluye un número de tarjeta de 16 dígitos, una fecha de vencimiento y un criptograma visual (CVV). Funciona como una tarjeta bancaria física pero existe únicamente en forma electrónica.',
+        subtitle2: '2.2 Tipo de Tarjeta',
+        item1: 'Tarjeta virtual permanente: credenciales fijas durante toda su validez (3 años)',
+        item2: 'Tarjeta virtual efímera: credenciales temporales con monto y duración configurables',
+      },
+      section3: {
+        title: '3. CONDICIONES DE ELEGIBILIDAD',
+        content: 'Para obtener una Tarjeta Virtual, el Titular debe:',
+        list: [
+          'Ser cliente ALTUS con una cuenta activa y con fondos',
+          'Haber completado la verificación de identidad (KYC)',
+          'No estar en situación de descubierto no autorizado',
+          'Haber activado la autenticación fuerte (doble factor)',
+          'Aceptar las presentes CGU y las Condiciones Tarifarias',
+        ],
+      },
+      section4: {
+        title: '4. ACTIVACIÓN Y USO',
+        subtitle1: '4.1 Activación',
+        content1: 'La Tarjeta Virtual se activa instantáneamente desde su creación a través de la aplicación o el área de cliente ALTUS. El Titular recibe inmediatamente las credenciales completas de la tarjeta.',
+        subtitle2: '4.2 Usos Autorizados',
+        list1: [
+          'Pagos en todos los sitios comerciales en línea que acepten Visa/Mastercard',
+          'Pagos recurrentes y suscripciones (solo tarjeta permanente)',
+          'Compras en sitios internacionales',
+          'Pagos sin contacto en tienda (si se agrega a Apple Pay/Google Pay)',
+        ],
+        subtitle3: '4.3 Limitaciones',
+        list2: [
+          'Sin retiros de efectivo en cajeros automáticos',
+          'Presentación física imposible (alquiler de automóviles, algunos hoteles)',
+          'Algunos proveedores pueden rechazar tarjetas virtuales',
+        ],
+      },
+      section5: {
+        title: '5. SEGURIDAD Y PROTECCIÓN',
+        subtitle1: '5.1 Seguridad Reforzada',
+        list1: [
+          'Las credenciales de su tarjeta bancaria física nunca se exponen',
+          'Posibilidad de bloquear/desbloquear instantáneamente la tarjeta',
+          'Eliminación definitiva con un clic',
+          'Protección 3D Secure en todas las transacciones',
+          'CVV dinámico para máxima seguridad',
+        ],
+        subtitle2: '5.2 Obligaciones del Titular',
+        content2: 'El Titular se compromete a conservar las credenciales de su Tarjeta Virtual de manera confidencial y a no comunicarlas a terceros. En caso de sospecha de fraude, el Titular debe bloquear o eliminar inmediatamente la tarjeta a través de su área de cliente.',
+        subtitle3: '5.3 Garantías y Seguros',
+        content3: 'La Tarjeta Virtual se beneficia de las mismas garantías que su tarjeta física, incluyendo protección contra fraude, seguro de compras y garantía de entrega conforme.',
+      },
+      section6: {
+        title: '6. LÍMITES Y TECHOS',
+        content: 'Los límites de pago de la Tarjeta Virtual son idénticos a los de su tarjeta principal ALTUS:',
+        list: [
+          'Límite mensual: hasta 50.000 € según su perfil',
+          'Límite por transacción: hasta 10.000 €',
+          'Posibilidad de ajustar temporalmente los límites desde la aplicación',
+        ],
+        content2: 'Para tarjetas efímeras, usted define el monto máximo y la duración de validez durante la creación.',
+      },
+      section7: {
+        title: '7. TARIFAS',
+        list: [
+          'Creación de tarjeta virtual: Gratis',
+          'Tarifas de transacción en zona euro: 0%',
+          'Pagos fuera de zona euro: 1,5% del monto',
+          'Cuota anual: Gratis',
+          'Bloqueo/Desbloqueo: Gratis e ilimitado',
+        ],
+      },
+      section8: {
+        title: '8. DÉBITO Y EXTRACTO',
+        content: 'Todas las operaciones realizadas con la Tarjeta Virtual se debitan en tiempo real de su cuenta ALTUS. Aparecen inmediatamente en su historial de transacciones y en sus extractos mensuales.',
+      },
+      section9: {
+        title: '9. OPOSICIÓN Y RESOLUCIÓN',
+        subtitle1: '9.1 Bloqueo Temporal',
+        content1: 'Puede bloquear su Tarjeta Virtual en cualquier momento desde su área de cliente. El desbloqueo es instantáneo.',
+        subtitle2: '9.2 Eliminación Definitiva',
+        content2: 'La eliminación de una Tarjeta Virtual es inmediata e irreversible. Las suscripciones vinculadas a esta tarjeta serán automáticamente rechazadas. Se recomienda actualizar su información de pago con los comerciantes concernidos antes de la eliminación.',
+        subtitle3: '9.3 En Caso de Fraude',
+        content3: 'En caso de pérdida o robo presunto de credenciales, elimine inmediatamente la tarjeta desde su aplicación y contacte a nuestro servicio de atención al cliente al +34 XX XX XX XX (disponible 24h/24, 7d/7).',
+      },
+      section10: {
+        title: '10. RESPONSABILIDAD',
+        content: 'ALTUS no podrá ser responsable en caso de:',
+        list: [
+          'Rechazo de un comerciante a aceptar la Tarjeta Virtual',
+          'Interrupción temporal del servicio por mantenimiento',
+          'Uso fraudulento resultante de negligencia del Titular',
+          'Disputas comerciales entre el Titular y un comerciante',
+        ],
+        content2: 'El Titular es enteramente responsable del uso de su Tarjeta Virtual y de las operaciones realizadas hasta la notificación de un uso fraudulento.',
+      },
+      section11: {
+        title: '11. DURACIÓN Y MODIFICACIÓN',
+        content: 'Las presentes CGU se concluyen por duración indeterminada. ALTUS se reserva el derecho de modificar las presentes CGU en cualquier momento. Toda modificación será notificada al Titular al menos 2 meses antes de su entrada en vigor. La ausencia de oposición en este plazo valdrá aceptación.',
+      },
+      section12: {
+        title: '12. RECLAMACIONES',
+        content: 'Para cualquier reclamación, el Titular puede contactar al servicio de atención al cliente ALTUS:',
+        list: [
+          'Por correo electrónico: support@altusgroup.com',
+          'Por teléfono: +34 XX XX XX XX',
+          'A través del área de cliente segura',
+        ],
+        content2: 'En ausencia de respuesta satisfactoria en un plazo de 2 meses, el Titular puede recurrir al Mediador de la AMF.',
+      },
+      section13: {
+        title: '13. DERECHO APLICABLE Y JURISDICCIÓN',
+        content: 'Las presentes CGU se rigen por el derecho español. Todo litigio relativo a su interpretación o ejecución es competencia exclusiva de los tribunales españoles.',
+      },
+      note: 'Al activar su Tarjeta Virtual ALTUS, usted reconoce haber leído, comprendido y aceptado la totalidad de las presentes Condiciones Generales de Uso.',
+    },
   },
   pt: {
     hero: {
@@ -4476,6 +5320,227 @@ export const translations: Record<Language, TranslationKeys> = {
       rejected: 'Rejeitado',
       uploadedAt: 'Enviado em',
       noDocuments: 'Nenhum documento enviado',
+    },
+    transferFlow: {
+      backToDashboard: 'Voltar ao Painel',
+      form: {
+        title: 'Nova Transferência',
+        subtitle: 'Inicie uma transferência segura para uma conta externa',
+        amountLabel: 'Valor (EUR)',
+        amountPlaceholder: '10000',
+        accountLabel: 'Conta Externa (opcional)',
+        accountPlaceholder: 'Selecionar uma conta',
+        noAccount: 'Nenhuma conta registrada',
+        recipientLabel: 'Beneficiário',
+        recipientPlaceholder: 'Nome do beneficiário',
+        initiateButton: 'Iniciar Transferência',
+        initiating: 'Iniciando...',
+      },
+      verification: {
+        title: 'Verificação de Transferência',
+        subtitle: 'Por favor aguarde enquanto verificamos sua transferência',
+        doNotClose: 'Não feche esta página',
+        doNotCloseDesc: 'Sua transferência está sendo verificada pelo nosso sistema seguro. Esta operação leva aproximadamente 45 segundos.',
+        progressLabel: 'Progresso da Verificação',
+        verificationSteps: 'Etapas de Verificação',
+        step1: 'Verificação da conta emissora',
+        step2: 'Validação do valor e taxas',
+        step3: 'Controle de segurança antifraude',
+        step4: 'Preparação da transferência segura',
+      },
+      validation: {
+        title: 'Validação da Transferência',
+        subtitle: 'Código {sequence} / {total}',
+        demoCodeLabel: 'Código de demonstração:',
+        codeLabel: 'Código de Validação (6 dígitos)',
+        codePlaceholder: '000000',
+        codeHelpText: 'Um código foi enviado para seu e-mail',
+        validateButton: 'Validar',
+        validating: 'Validando...',
+        resendButton: 'Reenviar',
+        historyLabel: 'Histórico',
+      },
+      progress: {
+        titlePaused: 'Transferência Pausada',
+        titleInProgress: 'Transferência em Andamento',
+        amountLabel: 'Valor: {amount} EUR para {recipient}',
+        progressLabel: 'Progresso',
+        pauseTitle: 'Código de desbloqueio necessário em {percent}%',
+        pauseDescription: 'Entre em contato com o atendimento ao cliente para obter o código de desbloqueio da sua transferência.',
+        pauseCodeLabel: 'Código de Desbloqueio',
+        pauseCodePlaceholder: 'Digite o código',
+        validatePauseCode: 'Validar Código',
+        statusLabel: 'Estado Atual',
+        statusCompleted: 'Transferência concluída!',
+        statusProcessing: 'Processamento em andamento pelo nosso sistema bancário...',
+        eventsLabel: 'Eventos',
+      },
+      complete: {
+        title: 'Transferência Concluída',
+        subtitle: 'Sua transferência foi realizada com sucesso',
+        amountLabel: 'Valor',
+        recipientLabel: 'Beneficiário',
+        feesLabel: 'Taxas',
+      },
+      toast: {
+        initiated: 'Transferência Iniciada',
+        initiatedDesc: 'Verificação da sua transferência em andamento...',
+        error: 'Erro',
+        errorInitiation: 'Falha ao iniciar a transferência',
+        codeValidated: 'Código Validado',
+        codeInvalid: 'Código Inválido',
+        codeInvalidDesc: 'O código está incorreto ou expirou',
+        codeSent: 'Código Enviado',
+        codeSentDesc: 'Código {sequence} enviado com sucesso',
+        approved: 'Transferência Aprovada',
+        approvedDesc: 'Sua transferência está aprovada e sendo processada.',
+        fieldsRequired: 'Campos Obrigatórios',
+        fieldsRequiredDesc: 'Por favor preencha todos os campos',
+        invalidCode: 'Código Inválido',
+        invalidCodeDesc: 'O código deve conter 6 dígitos',
+        codeRequired: 'Código Obrigatório',
+        codeRequiredDesc: 'Por favor digite o código de desbloqueio',
+        unblocked: 'Transferência Desbloqueada',
+        unblockedDesc: 'A transferência foi desbloqueada com sucesso',
+      },
+    },
+    loanOffers: {
+      pageTitle: 'Nossas Ofertas de Empréstimo',
+      pageSubtitle: 'Descubra todas as nossas soluções de financiamento para particulares e profissionais',
+      accountInfo: 'Conta {accountType}:',
+      individualTab: 'Empréstimos Pessoais',
+      businessTab: 'Empréstimos Empresariais',
+      individual: 'Particular',
+      business: 'Profissional',
+      amountLabel: 'Valor',
+      rateLabel: 'Taxa',
+      durationLabel: 'Duração',
+      advantagesLabel: 'Vantagens',
+      requestButton: 'Solicitar este Empréstimo',
+      loginToRequest: 'Entrar para Solicitar',
+    },
+    cardTermsContent: {
+      title: 'Termos e Condições de Uso - Cartão Virtual ALTUS',
+      lastUpdated: 'Última atualização: Novembro 2025',
+      section1: {
+        title: '1. OBJETO E ÂMBITO DE APLICAÇÃO',
+        content: 'Os presentes termos e condições gerais (doravante "TCG") regem o uso do cartão bancário virtual ALTUS (doravante "Cartão Virtual"), oferecido pela ALTUS Finance Group aos clientes titulares de uma conta ALTUS (doravante "Titular"). O Cartão Virtual é um meio de pagamento desmaterializado vinculado à sua conta ALTUS.',
+      },
+      section2: {
+        title: '2. DESCRIÇÃO DO SERVIÇO',
+        subtitle1: '2.1 Natureza do Cartão Virtual',
+        content1: 'O Cartão Virtual é um cartão de pagamento desmaterializado com um número de cartão de 16 dígitos, uma data de validade e um criptograma visual (CVV). Funciona como um cartão bancário físico mas existe apenas em forma eletrônica.',
+        subtitle2: '2.2 Tipo de Cartão',
+        item1: 'Cartão virtual permanente: credenciais fixas durante todo o período de validade (3 anos)',
+        item2: 'Cartão virtual efêmero: credenciais temporárias com valor e duração configuráveis',
+      },
+      section3: {
+        title: '3. CONDIÇÕES DE ELEGIBILIDADE',
+        content: 'Para obter um Cartão Virtual, o Titular deve:',
+        list: [
+          'Ser cliente ALTUS com uma conta ativa e com fundos',
+          'Ter concluído a verificação de identidade (KYC)',
+          'Não estar em situação de saque a descoberto não autorizado',
+          'Ter ativado a autenticação forte (duplo fator)',
+          'Aceitar os presentes TCG e as Condições Tarifárias',
+        ],
+      },
+      section4: {
+        title: '4. ATIVAÇÃO E USO',
+        subtitle1: '4.1 Ativação',
+        content1: 'O Cartão Virtual é ativado instantaneamente após sua criação através do aplicativo ou da área do cliente ALTUS. O Titular recebe imediatamente as credenciais completas do cartão.',
+        subtitle2: '4.2 Usos Autorizados',
+        list1: [
+          'Pagamentos em todos os sites comerciais online que aceitem Visa/Mastercard',
+          'Pagamentos recorrentes e assinaturas (apenas cartão permanente)',
+          'Compras em sites internacionais',
+          'Pagamentos sem contato em loja (se adicionado ao Apple Pay/Google Pay)',
+        ],
+        subtitle3: '4.3 Limitações',
+        list2: [
+          'Sem saques em caixas eletrônicos',
+          'Apresentação física impossível (aluguel de automóveis, alguns hotéis)',
+          'Alguns fornecedores podem recusar cartões virtuais',
+        ],
+      },
+      section5: {
+        title: '5. SEGURANÇA E PROTEÇÃO',
+        subtitle1: '5.1 Segurança Reforçada',
+        list1: [
+          'As credenciais do seu cartão bancário físico nunca são expostas',
+          'Possibilidade de bloquear/desbloquear instantaneamente o cartão',
+          'Exclusão definitiva com um clique',
+          'Proteção 3D Secure em todas as transações',
+          'CVV dinâmico para máxima segurança',
+        ],
+        subtitle2: '5.2 Obrigações do Titular',
+        content2: 'O Titular compromete-se a manter as credenciais do seu Cartão Virtual de forma confidencial e a não comunicá-las a terceiros. Em caso de suspeita de fraude, o Titular deve imediatamente bloquear ou excluir o cartão através da sua área do cliente.',
+        subtitle3: '5.3 Garantias e Seguros',
+        content3: 'O Cartão Virtual beneficia das mesmas garantias que o seu cartão físico, incluindo proteção contra fraude, seguro de compras e garantia de entrega conforme.',
+      },
+      section6: {
+        title: '6. LIMITES E TETOS',
+        content: 'Os limites de pagamento do Cartão Virtual são idênticos aos do seu cartão principal ALTUS:',
+        list: [
+          'Limite mensal: até 50.000 € conforme seu perfil',
+          'Limite por transação: até 10.000 €',
+          'Possibilidade de ajustar temporariamente os limites através do aplicativo',
+        ],
+        content2: 'Para cartões efêmeros, você define o valor máximo e a duração de validade durante a criação.',
+      },
+      section7: {
+        title: '7. TARIFAÇÃO',
+        list: [
+          'Criação de cartão virtual: Grátis',
+          'Taxas de transação na zona euro: 0%',
+          'Pagamentos fora da zona euro: 1,5% do valor',
+          'Taxa anual: Grátis',
+          'Bloqueio/Desbloqueio: Grátis e ilimitado',
+        ],
+      },
+      section8: {
+        title: '8. DÉBITO E EXTRATO',
+        content: 'Todas as operações realizadas com o Cartão Virtual são debitadas em tempo real da sua conta ALTUS. Aparecem imediatamente no seu histórico de transações e nos seus extratos mensais.',
+      },
+      section9: {
+        title: '9. OPOSIÇÃO E RESCISÃO',
+        subtitle1: '9.1 Bloqueio Temporário',
+        content1: 'Você pode bloquear seu Cartão Virtual a qualquer momento através da sua área do cliente. O desbloqueio é instantâneo.',
+        subtitle2: '9.2 Exclusão Definitiva',
+        content2: 'A exclusão de um Cartão Virtual é imediata e irreversível. As assinaturas vinculadas a este cartão serão automaticamente recusadas. É recomendado atualizar suas informações de pagamento junto aos comerciantes concernidos antes da exclusão.',
+        subtitle3: '9.3 Em Caso de Fraude',
+        content3: 'Em caso de perda ou roubo presumido das credenciais, exclua imediatamente o cartão através do seu aplicativo e entre em contato com nosso atendimento ao cliente no +351 XX XX XX XX (disponível 24h/24, 7d/7).',
+      },
+      section10: {
+        title: '10. RESPONSABILIDADE',
+        content: 'A ALTUS não poderá ser responsabilizada em caso de:',
+        list: [
+          'Recusa de um comerciante em aceitar o Cartão Virtual',
+          'Interrupção temporária do serviço para manutenção',
+          'Uso fraudulento resultante de negligência do Titular',
+          'Disputas comerciais entre o Titular e um comerciante',
+        ],
+        content2: 'O Titular é inteiramente responsável pelo uso do seu Cartão Virtual e pelas operações realizadas até a notificação de um uso fraudulento.',
+      },
+      section11: {
+        title: '11. DURAÇÃO E MODIFICAÇÃO',
+        content: 'Os presentes TCG são celebrados por prazo indeterminado. A ALTUS reserva-se o direito de modificar os presentes TCG a qualquer momento. Qualquer modificação será notificada ao Titular pelo menos 2 meses antes de sua entrada em vigor. A ausência de oposição neste prazo valerá como aceitação.',
+      },
+      section12: {
+        title: '12. RECLAMAÇÕES',
+        content: 'Para qualquer reclamação, o Titular pode contatar o atendimento ao cliente ALTUS:',
+        list: [
+          'Por e-mail: support@altusgroup.com',
+          'Por telefone: +351 XX XX XX XX',
+          'Através da área do cliente segura',
+        ],
+        content2: 'Na ausência de resposta satisfatória num prazo de 2 meses, o Titular pode recorrer ao Provedor de Justiça do Banco de Portugal.',
+      },
+      section13: {
+        title: '13. LEI APLICÁVEL E JURISDIÇÃO',
+        content: 'Os presentes TCG são regidos pela lei portuguesa. Qualquer litígio relativo à sua interpretação ou execução é da competência exclusiva dos tribunais portugueses.',
+      },
+      note: 'Ao ativar o seu Cartão Virtual ALTUS, você reconhece ter lido, compreendido e aceitado a totalidade dos presentes Termos e Condições de Uso.',
     },
   },
   it: {
@@ -5373,6 +6438,227 @@ export const translations: Record<Language, TranslationKeys> = {
       uploadedAt: 'Caricato il',
       noDocuments: 'Nessun documento caricato',
     },
+    transferFlow: {
+      backToDashboard: 'Torna alla dashboard',
+      form: {
+        title: 'Nuovo trasferimento',
+        subtitle: 'Inizia un trasferimento sicuro verso un conto esterno',
+        amountLabel: 'Importo (EUR)',
+        amountPlaceholder: '10000',
+        accountLabel: 'Conto esterno (opzionale)',
+        accountPlaceholder: 'Seleziona un conto',
+        noAccount: 'Nessun conto registrato',
+        recipientLabel: 'Beneficiario',
+        recipientPlaceholder: 'Nome del beneficiario',
+        initiateButton: 'Inizia il trasferimento',
+        initiating: 'Inizializzazione...',
+      },
+      verification: {
+        title: 'Verifica del trasferimento',
+        subtitle: 'Attendere durante la verifica del trasferimento',
+        doNotClose: 'Non chiudere questa pagina',
+        doNotCloseDesc: 'Il trasferimento è in corso di verifica dal nostro sistema sicuro. Questa operazione richiede circa 45 secondi.',
+        progressLabel: 'Progresso della verifica',
+        verificationSteps: 'Fasi di verifica',
+        step1: 'Verifica del conto emittente',
+        step2: 'Convalida dell\'importo e delle commissioni',
+        step3: 'Controllo di sicurezza antifrode',
+        step4: 'Preparazione del trasferimento sicuro',
+      },
+      validation: {
+        title: 'Convalida del trasferimento',
+        subtitle: 'Codice {sequence} / {total}',
+        demoCodeLabel: 'Codice di dimostrazione:',
+        codeLabel: 'Codice di convalida (6 cifre)',
+        codePlaceholder: '000000',
+        codeHelpText: 'Un codice è stato inviato alla tua email',
+        validateButton: 'Convalida',
+        validating: 'Convalida...',
+        resendButton: 'Invia di nuovo',
+        historyLabel: 'Cronologia',
+      },
+      progress: {
+        titlePaused: 'Trasferimento in pausa',
+        titleInProgress: 'Trasferimento in corso',
+        amountLabel: 'Importo: {amount} EUR verso {recipient}',
+        progressLabel: 'Progresso',
+        pauseTitle: 'Codice di sblocco richiesto al {percent}%',
+        pauseDescription: 'Si prega di contattare il servizio clienti per ottenere il codice di sblocco del trasferimento.',
+        pauseCodeLabel: 'Codice di sblocco',
+        pauseCodePlaceholder: 'Inserisci il codice',
+        validatePauseCode: 'Convalida il codice',
+        statusLabel: 'Stato attuale',
+        statusCompleted: 'Trasferimento completato!',
+        statusProcessing: 'Elaborazione in corso dal nostro sistema bancario...',
+        eventsLabel: 'Eventi',
+      },
+      complete: {
+        title: 'Trasferimento completato',
+        subtitle: 'Il tuo trasferimento è stato effettuato con successo',
+        amountLabel: 'Importo',
+        recipientLabel: 'Beneficiario',
+        feesLabel: 'Commissioni',
+      },
+      toast: {
+        initiated: 'Trasferimento iniziato',
+        initiatedDesc: 'Verifica del trasferimento in corso...',
+        error: 'Errore',
+        errorInitiation: 'Impossibile avviare il trasferimento',
+        codeValidated: 'Codice convalidato',
+        codeInvalid: 'Codice non valido',
+        codeInvalidDesc: 'Il codice è errato o scaduto',
+        codeSent: 'Codice inviato',
+        codeSentDesc: 'Codice {sequence} inviato con successo',
+        approved: 'Trasferimento approvato',
+        approvedDesc: 'Il tuo trasferimento è approvato e in elaborazione.',
+        fieldsRequired: 'Campi obbligatori',
+        fieldsRequiredDesc: 'Si prega di compilare tutti i campi',
+        invalidCode: 'Codice non valido',
+        invalidCodeDesc: 'Il codice deve contenere 6 cifre',
+        codeRequired: 'Codice obbligatorio',
+        codeRequiredDesc: 'Si prega di inserire il codice di sblocco',
+        unblocked: 'Trasferimento sbloccato',
+        unblockedDesc: 'Il trasferimento è stato sbloccato con successo',
+      },
+    },
+    loanOffers: {
+      pageTitle: 'Le nostre offerte di prestito',
+      pageSubtitle: 'Scopri tutte le nostre soluzioni di finanziamento per privati e professionisti',
+      accountInfo: 'Conto {accountType}:',
+      individualTab: 'Prestiti Personali',
+      businessTab: 'Prestiti Aziendali',
+      individual: 'Privato',
+      business: 'Aziendale',
+      amountLabel: 'Importo',
+      rateLabel: 'Tasso',
+      durationLabel: 'Durata',
+      advantagesLabel: 'Vantaggi',
+      requestButton: 'Richiedi questo prestito',
+      loginToRequest: 'Accedi per richiedere',
+    },
+    cardTermsContent: {
+      title: 'Condizioni Generali d\'Uso - Carta Virtuale ALTUS',
+      lastUpdated: 'Ultimo aggiornamento: Novembre 2025',
+      section1: {
+        title: '1. OGGETTO E CAMPO DI APPLICAZIONE',
+        content: 'Le presenti condizioni generali (di seguito "CGU") regolano l\'uso della carta bancaria virtuale ALTUS (di seguito "la Carta Virtuale"), proposta da ALTUS Finance Group ai clienti titolari di un conto ALTUS (di seguito "il Titolare"). La Carta Virtuale è un mezzo di pagamento dematerializzato collegato al vostro conto ALTUS.',
+      },
+      section2: {
+        title: '2. DESCRIZIONE DEL SERVIZIO',
+        subtitle1: '2.1 Natura della Carta Virtuale',
+        content1: 'La Carta Virtuale è una carta di pagamento dematerializzata con un numero di carta a 16 cifre, una data di scadenza e un crittogramma visivo (CVV). Funziona come una carta bancaria fisica ma esiste solo in forma elettronica.',
+        subtitle2: '2.2 Tipo di Carta',
+        item1: 'Carta virtuale permanente: coordinate fisse per tutta la sua durata di validità (3 anni)',
+        item2: 'Carta virtuale temporanea: coordinate temporanee con importo e durata parametrabili',
+      },
+      section3: {
+        title: '3. CONDIZIONI DI IDONEITÀ',
+        content: 'Per ottenere una Carta Virtuale, il Titolare deve:',
+        list: [
+          'Essere cliente ALTUS con un conto attivo e finanziato',
+          'Aver completato la verifica d\'identità (KYC)',
+          'Non essere in situazione di scoperto non autorizzato',
+          'Aver attivato l\'autenticazione forte (doppio fattore)',
+          'Accettare le presenti CGU e le Condizioni Tariffarie',
+        ],
+      },
+      section4: {
+        title: '4. ATTIVAZIONE E UTILIZZO',
+        subtitle1: '4.1 Attivazione',
+        content1: 'La Carta Virtuale viene attivata istantaneamente alla sua creazione tramite l\'applicazione o l\'area clienti ALTUS. Il Titolare riceve immediatamente le coordinate complete della carta.',
+        subtitle2: '4.2 Utilizzi autorizzati',
+        list1: [
+          'Pagamenti su tutti i siti commerciali online che accettano Visa/Mastercard',
+          'Pagamenti ricorrenti e abbonamenti (solo carta permanente)',
+          'Acquisti su siti internazionali',
+          'Pagamenti contactless nei negozi (se aggiunta a Apple Pay/Google Pay)',
+        ],
+        subtitle3: '4.3 Limitazioni',
+        list2: [
+          'Nessun prelievo di contanti ai distributori automatici',
+          'Presentazione fisica impossibile (noleggio auto, alcuni hotel)',
+          'Alcuni fornitori potrebbero rifiutare le carte virtuali',
+        ],
+      },
+      section5: {
+        title: '5. SICUREZZA E PROTEZIONE',
+        subtitle1: '5.1 Sicurezza rafforzata',
+        list1: [
+          'Le coordinate della vostra carta bancaria fisica non vengono mai esposte',
+          'Possibilità di bloccare/sbloccare istantaneamente la carta',
+          'Eliminazione definitiva con un clic',
+          'Protezione 3D Secure su tutte le transazioni',
+          'CVV dinamico per la massima sicurezza',
+        ],
+        subtitle2: '5.2 Obblighi del Titolare',
+        content2: 'Il Titolare si impegna a conservare le coordinate della sua Carta Virtuale in modo confidenziale e a non comunicarle a terzi. In caso di sospetta frode, il Titolare deve immediatamente bloccare o eliminare la carta tramite la sua area clienti.',
+        subtitle3: '5.3 Garanzie e assicurazioni',
+        content3: 'La Carta Virtuale beneficia delle stesse garanzie della vostra carta fisica, inclusa la protezione contro le frodi, l\'assicurazione acquisti e la garanzia di consegna conforme.',
+      },
+      section6: {
+        title: '6. MASSIMALI E LIMITI',
+        content: 'I massimali di pagamento della Carta Virtuale sono identici a quelli della vostra carta principale ALTUS:',
+        list: [
+          'Massimale mensile: fino a 50.000 € secondo il vostro profilo',
+          'Massimale per transazione: fino a 10.000 €',
+          'Possibilità di regolare temporaneamente i massimali dall\'applicazione',
+        ],
+        content2: 'Per le carte temporanee, definite l\'importo massimo e la durata di validità durante la creazione.',
+      },
+      section7: {
+        title: '7. TARIFFAZIONE',
+        list: [
+          'Creazione carta virtuale: Gratuita',
+          'Commissioni di transazione in zona euro: 0%',
+          'Pagamenti fuori zona euro: 1,5% dell\'importo',
+          'Quota annuale: Gratuita',
+          'Blocco/Sblocco: Gratuito e illimitato',
+        ],
+      },
+      section8: {
+        title: '8. ADDEBITO E ESTRATTO CONTO',
+        content: 'Tutte le operazioni effettuate con la Carta Virtuale vengono addebitate in tempo reale sul vostro conto ALTUS. Appaiono immediatamente nella vostra cronologia delle transazioni e sui vostri estratti conto mensili.',
+      },
+      section9: {
+        title: '9. OPPOSIZIONE E RISOLUZIONE',
+        subtitle1: '9.1 Blocco temporaneo',
+        content1: 'Potete bloccare la vostra Carta Virtuale in qualsiasi momento dalla vostra area clienti. Lo sblocco è istantaneo.',
+        subtitle2: '9.2 Eliminazione definitiva',
+        content2: 'L\'eliminazione di una Carta Virtuale è immediata e irreversibile. Gli abbonamenti collegati a questa carta saranno automaticamente rifiutati. Si consiglia di aggiornare le informazioni di pagamento presso i commercianti interessati prima dell\'eliminazione.',
+        subtitle3: '9.3 In caso di frode',
+        content3: 'In caso di perdita o furto presunto delle coordinate, eliminate immediatamente la carta dalla vostra applicazione e contattate il nostro servizio clienti al +39 XX XX XX XX XX (disponibile 24h/24, 7g/7).',
+      },
+      section10: {
+        title: '10. RESPONSABILITÀ',
+        content: 'ALTUS non può essere ritenuto responsabile in caso di:',
+        list: [
+          'Rifiuto di un commerciante di accettare la Carta Virtuale',
+          'Interruzione temporanea del servizio per manutenzione',
+          'Uso fraudolento derivante da negligenza del Titolare',
+          'Controversie commerciali tra il Titolare e un commerciante',
+        ],
+        content2: 'Il Titolare è interamente responsabile dell\'uso della sua Carta Virtuale e delle operazioni effettuate fino alla notifica di un uso fraudolento.',
+      },
+      section11: {
+        title: '11. DURATA E MODIFICA',
+        content: 'Le presenti CGU sono concluse per una durata indeterminata. ALTUS si riserva il diritto di modificare le presenti CGU in qualsiasi momento. Qualsiasi modifica sarà notificata al Titolare almeno 2 mesi prima della sua entrata in vigore. L\'assenza di opposizione entro questo termine varrà come accettazione.',
+      },
+      section12: {
+        title: '12. RECLAMI',
+        content: 'Per qualsiasi reclamo, il Titolare può contattare il servizio clienti ALTUS:',
+        list: [
+          'Via email: support@altusgroup.com',
+          'Per telefono: +39 XX XX XX XX XX',
+          'Tramite l\'area clienti sicura',
+        ],
+        content2: 'In assenza di risposta soddisfacente entro 2 mesi, il Titolare può rivolgersi al Mediatore dell\'AMF.',
+      },
+      section13: {
+        title: '13. LEGGE APPLICABILE E GIURISDIZIONE',
+        content: 'Le presenti CGU sono regolate dalla legge italiana. Qualsiasi controversia relativa alla loro interpretazione o esecuzione è di competenza esclusiva dei tribunali italiani.',
+      },
+      note: 'Attivando la vostra Carta Virtuale ALTUS, riconoscete di aver letto, compreso e accettato l\'interezza delle presenti Condizioni Generali d\'Uso.',
+    },
   } as TranslationKeys,
   de: {
     hero: {
@@ -6239,6 +7525,227 @@ export const translations: Record<Language, TranslationKeys> = {
       uploadedAt: 'Hochgeladen am',
       noDocuments: 'Keine Dokumente hochgeladen',
     },
+    transferFlow: {
+      backToDashboard: 'Zurück zum Dashboard',
+      form: {
+        title: 'Neue Überweisung',
+        subtitle: 'Starten Sie eine sichere Überweisung auf ein externes Konto',
+        amountLabel: 'Betrag (EUR)',
+        amountPlaceholder: '10000',
+        accountLabel: 'Externes Konto (optional)',
+        accountPlaceholder: 'Konto wählen',
+        noAccount: 'Kein Konto registriert',
+        recipientLabel: 'Empfänger',
+        recipientPlaceholder: 'Name des Empfängers',
+        initiateButton: 'Überweisung starten',
+        initiating: 'Wird initiiert...',
+      },
+      verification: {
+        title: 'Überweisungsüberprüfung',
+        subtitle: 'Bitte warten Sie während der Überprüfung Ihrer Überweisung',
+        doNotClose: 'Schließen Sie diese Seite nicht',
+        doNotCloseDesc: 'Ihre Überweisung wird von unserem sicheren System überprüft. Dieser Vorgang dauert etwa 45 Sekunden.',
+        progressLabel: 'Überprüfungsfortschritt',
+        verificationSteps: 'Überprüfungsschritte',
+        step1: 'Überprüfung des Senderkontos',
+        step2: 'Validierung von Betrag und Gebühren',
+        step3: 'Sicherheitskontrolle gegen Betrug',
+        step4: 'Vorbereitung der sicheren Überweisung',
+      },
+      validation: {
+        title: 'Überweisungsvalidierung',
+        subtitle: 'Code {sequence} / {total}',
+        demoCodeLabel: 'Demonstrationscode:',
+        codeLabel: 'Validierungscode (6 Ziffern)',
+        codePlaceholder: '000000',
+        codeHelpText: 'Ein Code wurde an Ihre E-Mail gesendet',
+        validateButton: 'Validieren',
+        validating: 'Wird validiert...',
+        resendButton: 'Erneut senden',
+        historyLabel: 'Verlauf',
+      },
+      progress: {
+        titlePaused: 'Überweisung pausiert',
+        titleInProgress: 'Überweisung in Bearbeitung',
+        amountLabel: 'Betrag: {amount} EUR an {recipient}',
+        progressLabel: 'Fortschritt',
+        pauseTitle: 'Entsperrcode erforderlich bei {percent}%',
+        pauseDescription: 'Bitte kontaktieren Sie den Kundendienst, um den Entsperrcode für Ihre Überweisung zu erhalten.',
+        pauseCodeLabel: 'Entsperrcode',
+        pauseCodePlaceholder: 'Code eingeben',
+        validatePauseCode: 'Code validieren',
+        statusLabel: 'Aktueller Status',
+        statusCompleted: 'Überweisung abgeschlossen!',
+        statusProcessing: 'Wird von unserem Banksystem bearbeitet...',
+        eventsLabel: 'Ereignisse',
+      },
+      complete: {
+        title: 'Überweisung abgeschlossen',
+        subtitle: 'Ihre Überweisung wurde erfolgreich durchgeführt',
+        amountLabel: 'Betrag',
+        recipientLabel: 'Empfänger',
+        feesLabel: 'Gebühren',
+      },
+      toast: {
+        initiated: 'Überweisung initiiert',
+        initiatedDesc: 'Überprüfung Ihrer Überweisung läuft...',
+        error: 'Fehler',
+        errorInitiation: 'Überweisung konnte nicht initiiert werden',
+        codeValidated: 'Code validiert',
+        codeInvalid: 'Ungültiger Code',
+        codeInvalidDesc: 'Der Code ist falsch oder abgelaufen',
+        codeSent: 'Code gesendet',
+        codeSentDesc: 'Code {sequence} erfolgreich gesendet',
+        approved: 'Überweisung genehmigt',
+        approvedDesc: 'Ihre Überweisung ist genehmigt und wird bearbeitet.',
+        fieldsRequired: 'Pflichtfelder',
+        fieldsRequiredDesc: 'Bitte füllen Sie alle Felder aus',
+        invalidCode: 'Ungültiger Code',
+        invalidCodeDesc: 'Der Code muss 6 Ziffern enthalten',
+        codeRequired: 'Code erforderlich',
+        codeRequiredDesc: 'Bitte geben Sie den Entsperrcode ein',
+        unblocked: 'Überweisung entsperrt',
+        unblockedDesc: 'Die Überweisung wurde erfolgreich entsperrt',
+      },
+    },
+    loanOffers: {
+      pageTitle: 'Unsere Kreditangebote',
+      pageSubtitle: 'Entdecken Sie alle unsere Finanzierungslösungen für Privat- und Geschäftskunden',
+      accountInfo: 'Konto {accountType}:',
+      individualTab: 'Privatkredite',
+      businessTab: 'Geschäftskredite',
+      individual: 'Privat',
+      business: 'Geschäftlich',
+      amountLabel: 'Betrag',
+      rateLabel: 'Zinssatz',
+      durationLabel: 'Laufzeit',
+      advantagesLabel: 'Vorteile',
+      requestButton: 'Diesen Kredit beantragen',
+      loginToRequest: 'Anmelden zum Beantragen',
+    },
+    cardTermsContent: {
+      title: 'Allgemeine Nutzungsbedingungen - ALTUS Virtuelle Karte',
+      lastUpdated: 'Letzte Aktualisierung: November 2025',
+      section1: {
+        title: '1. ZWECK UND GELTUNGSBEREICH',
+        content: 'Diese Allgemeinen Geschäftsbedingungen (nachfolgend "AGB") regeln die Nutzung der virtuellen Bankkarte ALTUS (nachfolgend "die Virtuelle Karte"), die von ALTUS Finance Group den Kunden mit einem ALTUS-Konto (nachfolgend "der Karteninhaber") angeboten wird. Die Virtuelle Karte ist ein dematerialisiertes Zahlungsmittel, das mit Ihrem ALTUS-Konto verbunden ist.',
+      },
+      section2: {
+        title: '2. SERVICEBESCHREIBUNG',
+        subtitle1: '2.1 Art der Virtuellen Karte',
+        content1: 'Die Virtuelle Karte ist eine dematerialisierte Zahlungskarte mit einer 16-stelligen Kartennummer, einem Ablaufdatum und einem visuellen Kryptogramm (CVV). Sie funktioniert wie eine physische Bankkarte, existiert aber nur in elektronischer Form.',
+        subtitle2: '2.2 Kartentyp',
+        item1: 'Permanente virtuelle Karte: feste Koordinaten während ihrer gesamten Gültigkeitsdauer (3 Jahre)',
+        item2: 'Temporäre virtuelle Karte: temporäre Koordinaten mit parametrierbarem Betrag und Dauer',
+      },
+      section3: {
+        title: '3. TEILNAHMEBEDINGUNGEN',
+        content: 'Um eine Virtuelle Karte zu erhalten, muss der Karteninhaber:',
+        list: [
+          'ALTUS-Kunde mit einem aktiven und finanzierten Konto sein',
+          'Die Identitätsprüfung (KYC) abgeschlossen haben',
+          'Sich nicht in einer Situation nicht genehmigter Überziehung befinden',
+          'Die starke Authentifizierung (Zwei-Faktor) aktiviert haben',
+          'Diese AGB und die Preisbedingungen akzeptieren',
+        ],
+      },
+      section4: {
+        title: '4. AKTIVIERUNG UND NUTZUNG',
+        subtitle1: '4.1 Aktivierung',
+        content1: 'Die Virtuelle Karte wird sofort nach ihrer Erstellung über die Anwendung oder den ALTUS-Kundenbereich aktiviert. Der Karteninhaber erhält sofort die vollständigen Kartenkoordinaten.',
+        subtitle2: '4.2 Zugelassene Verwendungen',
+        list1: [
+          'Zahlungen auf allen Online-Händlerseiten, die Visa/Mastercard akzeptieren',
+          'Wiederkehrende Zahlungen und Abonnements (nur permanente Karte)',
+          'Einkäufe auf internationalen Websites',
+          'Kontaktlose Zahlungen im Geschäft (wenn zu Apple Pay/Google Pay hinzugefügt)',
+        ],
+        subtitle3: '4.3 Einschränkungen',
+        list2: [
+          'Keine Bargeldabhebungen an Geldautomaten',
+          'Physische Vorlage unmöglich (Autovermietung, einige Hotels)',
+          'Einige Anbieter können virtuelle Karten ablehnen',
+        ],
+      },
+      section5: {
+        title: '5. SICHERHEIT UND SCHUTZ',
+        subtitle1: '5.1 Verstärkte Sicherheit',
+        list1: [
+          'Die Koordinaten Ihrer physischen Bankkarte werden niemals offengelegt',
+          'Möglichkeit, die Karte sofort zu sperren/entsperren',
+          'Endgültige Löschung mit einem Klick',
+          '3D Secure-Schutz bei allen Transaktionen',
+          'Dynamischer CVV für maximale Sicherheit',
+        ],
+        subtitle2: '5.2 Pflichten des Karteninhabers',
+        content2: 'Der Karteninhaber verpflichtet sich, die Koordinaten seiner Virtuellen Karte vertraulich zu behandeln und sie nicht an Dritte weiterzugeben. Bei Betrugsverdacht muss der Karteninhaber die Karte sofort über seinen Kundenbereich sperren oder löschen.',
+        subtitle3: '5.3 Garantien und Versicherungen',
+        content3: 'Die Virtuelle Karte profitiert von denselben Garantien wie Ihre physische Karte, einschließlich Betrugsschutz, Einkaufsversicherung und Garantie für konforme Lieferung.',
+      },
+      section6: {
+        title: '6. LIMITS UND GRENZEN',
+        content: 'Die Zahlungslimits der Virtuellen Karte sind identisch mit denen Ihrer ALTUS-Hauptkarte:',
+        list: [
+          'Monatslimit: bis zu 50.000 € je nach Profil',
+          'Limit pro Transaktion: bis zu 10.000 €',
+          'Möglichkeit, Limits vorübergehend über die Anwendung anzupassen',
+        ],
+        content2: 'Für temporäre Karten legen Sie den Höchstbetrag und die Gültigkeitsdauer bei der Erstellung fest.',
+      },
+      section7: {
+        title: '7. PREISGESTALTUNG',
+        list: [
+          'Erstellung virtueller Karte: Kostenlos',
+          'Transaktionsgebühren in der Eurozone: 0%',
+          'Zahlungen außerhalb der Eurozone: 1,5% des Betrags',
+          'Jahresbeitrag: Kostenlos',
+          'Sperren/Entsperren: Kostenlos und unbegrenzt',
+        ],
+      },
+      section8: {
+        title: '8. ABBUCHUNG UND KONTOAUSZUG',
+        content: 'Alle mit der Virtuellen Karte durchgeführten Transaktionen werden in Echtzeit von Ihrem ALTUS-Konto abgebucht. Sie erscheinen sofort in Ihrer Transaktionshistorie und auf Ihren monatlichen Kontoauszügen.',
+      },
+      section9: {
+        title: '9. WIDERSPRUCH UND KÜNDIGUNG',
+        subtitle1: '9.1 Temporäre Sperrung',
+        content1: 'Sie können Ihre Virtuelle Karte jederzeit über Ihren Kundenbereich sperren. Die Entsperrung erfolgt sofort.',
+        subtitle2: '9.2 Endgültige Löschung',
+        content2: 'Die Löschung einer Virtuellen Karte ist sofort und unwiderruflich. Abonnements, die mit dieser Karte verbunden sind, werden automatisch abgelehnt. Es wird empfohlen, Ihre Zahlungsinformationen bei den betroffenen Händlern vor der Löschung zu aktualisieren.',
+        subtitle3: '9.3 Im Falle von Betrug',
+        content3: 'Bei vermuteter Verlust oder Diebstahl der Koordinaten löschen Sie die Karte sofort über Ihre Anwendung und kontaktieren Sie unseren Kundendienst unter +49 XX XX XX XX XX (verfügbar 24/7).',
+      },
+      section10: {
+        title: '10. HAFTUNG',
+        content: 'ALTUS kann nicht haftbar gemacht werden im Falle von:',
+        list: [
+          'Ablehnung eines Händlers, die Virtuelle Karte zu akzeptieren',
+          'Vorübergehende Serviceunterbrechung zur Wartung',
+          'Betrügerische Nutzung aufgrund von Fahrlässigkeit des Karteninhabers',
+          'Handelsstreitigkeiten zwischen dem Karteninhaber und einem Händler',
+        ],
+        content2: 'Der Karteninhaber ist vollständig verantwortlich für die Nutzung seiner Virtuellen Karte und die durchgeführten Transaktionen bis zur Benachrichtigung über betrügerische Nutzung.',
+      },
+      section11: {
+        title: '11. LAUFZEIT UND ÄNDERUNG',
+        content: 'Diese AGB werden auf unbestimmte Zeit geschlossen. ALTUS behält sich das Recht vor, diese AGB jederzeit zu ändern. Jede Änderung wird dem Karteninhaber mindestens 2 Monate vor ihrem Inkrafttreten mitgeteilt. Das Fehlen eines Widerspruchs innerhalb dieser Frist gilt als Annahme.',
+      },
+      section12: {
+        title: '12. BESCHWERDEN',
+        content: 'Für Beschwerden kann der Karteninhaber den ALTUS-Kundendienst kontaktieren:',
+        list: [
+          'Per E-Mail: support@altusgroup.com',
+          'Per Telefon: +49 XX XX XX XX XX',
+          'Über den sicheren Kundenbereich',
+        ],
+        content2: 'Bei fehlender zufriedenstellender Antwort innerhalb von 2 Monaten kann sich der Karteninhaber an den AMF-Schlichter wenden.',
+      },
+      section13: {
+        title: '13. ANWENDBARES RECHT UND GERICHTSSTAND',
+        content: 'Diese AGB unterliegen deutschem Recht. Alle Streitigkeiten bezüglich ihrer Auslegung oder Ausführung fallen in die ausschließliche Zuständigkeit der deutschen Gerichte.',
+      },
+      note: 'Durch Aktivierung Ihrer ALTUS Virtuellen Karte bestätigen Sie, dass Sie die gesamten Allgemeinen Nutzungsbedingungen gelesen, verstanden und akzeptiert haben.',
+    },
   } as TranslationKeys,
   nl: {
     hero: {
@@ -7104,6 +8611,227 @@ export const translations: Record<Language, TranslationKeys> = {
       rejected: 'Afgewezen',
       uploadedAt: 'Geüpload op',
       noDocuments: 'Geen documenten geüpload',
+    },
+    transferFlow: {
+      backToDashboard: 'Terug naar dashboard',
+      form: {
+        title: 'Nieuwe overschrijving',
+        subtitle: 'Start een veilige overschrijving naar een externe rekening',
+        amountLabel: 'Bedrag (EUR)',
+        amountPlaceholder: '10000',
+        accountLabel: 'Externe rekening (optioneel)',
+        accountPlaceholder: 'Selecteer een rekening',
+        noAccount: 'Geen rekening geregistreerd',
+        recipientLabel: 'Begunstigde',
+        recipientPlaceholder: 'Naam van begunstigde',
+        initiateButton: 'Overschrijving starten',
+        initiating: 'Initialiseren...',
+      },
+      verification: {
+        title: 'Verificatie van overschrijving',
+        subtitle: 'Een ogenblik geduld tijdens de verificatie van uw overschrijving',
+        doNotClose: 'Sluit deze pagina niet',
+        doNotCloseDesc: 'Uw overschrijving wordt geverifieerd door ons beveiligde systeem. Deze bewerking duurt ongeveer 45 seconden.',
+        progressLabel: 'Verificatievoortgang',
+        verificationSteps: 'Verificatiestappen',
+        step1: 'Verificatie van afzenderrekening',
+        step2: 'Validatie van bedrag en kosten',
+        step3: 'Veiligheidscontrole tegen fraude',
+        step4: 'Voorbereiding van veilige overschrijving',
+      },
+      validation: {
+        title: 'Validatie van overschrijving',
+        subtitle: 'Code {sequence} / {total}',
+        demoCodeLabel: 'Demonstratiecode:',
+        codeLabel: 'Validatiecode (6 cijfers)',
+        codePlaceholder: '000000',
+        codeHelpText: 'Een code is naar uw e-mail verzonden',
+        validateButton: 'Valideren',
+        validating: 'Valideren...',
+        resendButton: 'Opnieuw verzenden',
+        historyLabel: 'Geschiedenis',
+      },
+      progress: {
+        titlePaused: 'Overschrijving gepauzeerd',
+        titleInProgress: 'Overschrijving in behandeling',
+        amountLabel: 'Bedrag: {amount} EUR naar {recipient}',
+        progressLabel: 'Voortgang',
+        pauseTitle: 'Deblokkeringscode vereist bij {percent}%',
+        pauseDescription: 'Neem contact op met de klantenservice om de deblokkeringscode voor uw overschrijving te verkrijgen.',
+        pauseCodeLabel: 'Deblokkeringscode',
+        pauseCodePlaceholder: 'Voer de code in',
+        validatePauseCode: 'Code valideren',
+        statusLabel: 'Huidige status',
+        statusCompleted: 'Overschrijving voltooid!',
+        statusProcessing: 'Wordt verwerkt door ons banksysteem...',
+        eventsLabel: 'Gebeurtenissen',
+      },
+      complete: {
+        title: 'Overschrijving voltooid',
+        subtitle: 'Uw overschrijving is succesvol uitgevoerd',
+        amountLabel: 'Bedrag',
+        recipientLabel: 'Begunstigde',
+        feesLabel: 'Kosten',
+      },
+      toast: {
+        initiated: 'Overschrijving geïnitieerd',
+        initiatedDesc: 'Verificatie van uw overschrijving loopt...',
+        error: 'Fout',
+        errorInitiation: 'Overschrijving kon niet worden gestart',
+        codeValidated: 'Code gevalideerd',
+        codeInvalid: 'Ongeldige code',
+        codeInvalidDesc: 'De code is onjuist of verlopen',
+        codeSent: 'Code verzonden',
+        codeSentDesc: 'Code {sequence} succesvol verzonden',
+        approved: 'Overschrijving goedgekeurd',
+        approvedDesc: 'Uw overschrijving is goedgekeurd en wordt verwerkt.',
+        fieldsRequired: 'Verplichte velden',
+        fieldsRequiredDesc: 'Vul alle velden in',
+        invalidCode: 'Ongeldige code',
+        invalidCodeDesc: 'De code moet 6 cijfers bevatten',
+        codeRequired: 'Code vereist',
+        codeRequiredDesc: 'Voer de deblokkeringscode in',
+        unblocked: 'Overschrijving gedeblokkeerd',
+        unblockedDesc: 'De overschrijving is succesvol gedeblokkeerd',
+      },
+    },
+    loanOffers: {
+      pageTitle: 'Onze leningaanbiedingen',
+      pageSubtitle: 'Ontdek al onze financieringsoplossingen voor particulieren en professionals',
+      accountInfo: 'Rekening {accountType}:',
+      individualTab: 'Particuliere leningen',
+      businessTab: 'Zakelijke leningen',
+      individual: 'Particulier',
+      business: 'Zakelijk',
+      amountLabel: 'Bedrag',
+      rateLabel: 'Tarief',
+      durationLabel: 'Looptijd',
+      advantagesLabel: 'Voordelen',
+      requestButton: 'Deze lening aanvragen',
+      loginToRequest: 'Inloggen om aan te vragen',
+    },
+    cardTermsContent: {
+      title: 'Algemene Gebruiksvoorwaarden - ALTUS Virtuele Kaart',
+      lastUpdated: 'Laatste update: November 2025',
+      section1: {
+        title: '1. DOEL EN TOEPASSINGSGEBIED',
+        content: 'Deze algemene voorwaarden (hierna "AV") regelen het gebruik van de virtuele bankkaart ALTUS (hierna "de Virtuele Kaart"), aangeboden door ALTUS Finance Group aan klanten met een ALTUS-rekening (hierna "de Kaarthouder"). De Virtuele Kaart is een gedematerialiseerd betaalmiddel gekoppeld aan uw ALTUS-rekening.',
+      },
+      section2: {
+        title: '2. SERVICEBESCHRIJVING',
+        subtitle1: '2.1 Aard van de Virtuele Kaart',
+        content1: 'De Virtuele Kaart is een gedematerialiseerde betaalkaart met een 16-cijferig kaartnummer, een vervaldatum en een visueel cryptogram (CVV). Het werkt als een fysieke bankkaart maar bestaat alleen in elektronische vorm.',
+        subtitle2: '2.2 Kaarttype',
+        item1: 'Permanente virtuele kaart: vaste coördinaten gedurende de gehele geldigheidsduur (3 jaar)',
+        item2: 'Tijdelijke virtuele kaart: tijdelijke coördinaten met instelbaar bedrag en duur',
+      },
+      section3: {
+        title: '3. GESCHIKTHEIDSVOORWAARDEN',
+        content: 'Om een Virtuele Kaart te verkrijgen, moet de Kaarthouder:',
+        list: [
+          'ALTUS-klant zijn met een actieve en gefinancierde rekening',
+          'De identiteitsverificatie (KYC) hebben voltooid',
+          'Niet in een situatie van ongeautoriseerde overtrekking verkeren',
+          'Sterke authenticatie (twee-factor) hebben geactiveerd',
+          'Deze AV en de Tariefvoorwaarden accepteren',
+        ],
+      },
+      section4: {
+        title: '4. ACTIVERING EN GEBRUIK',
+        subtitle1: '4.1 Activering',
+        content1: 'De Virtuele Kaart wordt onmiddellijk geactiveerd bij het aanmaken via de applicatie of het ALTUS-klantengebied. De Kaarthouder ontvangt onmiddellijk de volledige kaartcoördinaten.',
+        subtitle2: '4.2 Toegestaan gebruik',
+        list1: [
+          'Betalingen op alle online handelssites die Visa/Mastercard accepteren',
+          'Terugkerende betalingen en abonnementen (alleen permanente kaart)',
+          'Aankopen op internationale websites',
+          'Contactloze betalingen in winkels (indien toegevoegd aan Apple Pay/Google Pay)',
+        ],
+        subtitle3: '4.3 Beperkingen',
+        list2: [
+          'Geen contante opnames bij geldautomaten',
+          'Fysieke presentatie onmogelijk (autoverhuur, sommige hotels)',
+          'Sommige aanbieders kunnen virtuele kaarten weigeren',
+        ],
+      },
+      section5: {
+        title: '5. VEILIGHEID EN BESCHERMING',
+        subtitle1: '5.1 Versterkte veiligheid',
+        list1: [
+          'De coördinaten van uw fysieke bankkaart worden nooit blootgesteld',
+          'Mogelijkheid om de kaart onmiddellijk te blokkeren/deblokkeren',
+          'Definitieve verwijdering met één klik',
+          '3D Secure-bescherming op alle transacties',
+          'Dynamische CVV voor maximale veiligheid',
+        ],
+        subtitle2: '5.2 Verplichtingen van de Kaarthouder',
+        content2: 'De Kaarthouder verbindt zich ertoe de coördinaten van zijn Virtuele Kaart vertrouwelijk te behandelen en deze niet aan derden door te geven. Bij vermoeden van fraude moet de Kaarthouder de kaart onmiddellijk blokkeren of verwijderen via zijn klantengebied.',
+        subtitle3: '5.3 Garanties en verzekeringen',
+        content3: 'De Virtuele Kaart profiteert van dezelfde garanties als uw fysieke kaart, inclusief bescherming tegen fraude, aankoopverzekering en garantie voor conforme levering.',
+      },
+      section6: {
+        title: '6. LIMIETEN EN GRENZEN',
+        content: 'De betalingslimieten van de Virtuele Kaart zijn identiek aan die van uw ALTUS-hoofdkaart:',
+        list: [
+          'Maandelijks limiet: tot 50.000 € afhankelijk van uw profiel',
+          'Limiet per transactie: tot 10.000 €',
+          'Mogelijkheid om limieten tijdelijk aan te passen via de applicatie',
+        ],
+        content2: 'Voor tijdelijke kaarten bepaalt u het maximumbedrag en de geldigheidsduur bij het aanmaken.',
+      },
+      section7: {
+        title: '7. PRIJSSTELLING',
+        list: [
+          'Aanmaak virtuele kaart: Gratis',
+          'Transactiekosten in eurozone: 0%',
+          'Betalingen buiten eurozone: 1,5% van het bedrag',
+          'Jaarlijkse bijdrage: Gratis',
+          'Blokkeren/Deblokkeren: Gratis en onbeperkt',
+        ],
+      },
+      section8: {
+        title: '8. AFSCHRIJVING EN AFSCHRIFT',
+        content: 'Alle transacties uitgevoerd met de Virtuele Kaart worden in realtime van uw ALTUS-rekening afgeschreven. Ze verschijnen onmiddellijk in uw transactiegeschiedenis en op uw maandelijkse afschriften.',
+      },
+      section9: {
+        title: '9. VERZET EN BEËINDIGING',
+        subtitle1: '9.1 Tijdelijke blokkering',
+        content1: 'U kunt uw Virtuele Kaart op elk moment blokkeren via uw klantengebied. Deblokkering is onmiddellijk.',
+        subtitle2: '9.2 Definitieve verwijdering',
+        content2: 'Het verwijderen van een Virtuele Kaart is onmiddellijk en onomkeerbaar. Abonnementen gekoppeld aan deze kaart worden automatisch geweigerd. Het wordt aanbevolen uw betalingsinformatie bij de betrokken handelaren bij te werken vóór verwijdering.',
+        subtitle3: '9.3 In geval van fraude',
+        content3: 'Bij vermoedelijk verlies of diefstal van de coördinaten, verwijder de kaart onmiddellijk via uw applicatie en neem contact op met onze klantenservice op +31 XX XX XX XX XX (beschikbaar 24/7).',
+      },
+      section10: {
+        title: '10. AANSPRAKELIJKHEID',
+        content: 'ALTUS kan niet aansprakelijk worden gesteld in geval van:',
+        list: [
+          'Weigering van een handelaar om de Virtuele Kaart te accepteren',
+          'Tijdelijke onderbreking van de service voor onderhoud',
+          'Frauduleus gebruik als gevolg van nalatigheid van de Kaarthouder',
+          'Handelsgeschillen tussen de Kaarthouder en een handelaar',
+        ],
+        content2: 'De Kaarthouder is volledig verantwoordelijk voor het gebruik van zijn Virtuele Kaart en de uitgevoerde transacties tot de melding van frauduleus gebruik.',
+      },
+      section11: {
+        title: '11. DUUR EN WIJZIGING',
+        content: 'Deze AV worden voor onbepaalde tijd aangegaan. ALTUS behoudt zich het recht voor deze AV op elk moment te wijzigen. Elke wijziging wordt de Kaarthouder minstens 2 maanden vóór inwerkingtreding medegedeeld. Het ontbreken van bezwaar binnen deze termijn geldt als aanvaarding.',
+      },
+      section12: {
+        title: '12. KLACHTEN',
+        content: 'Voor klachten kan de Kaarthouder contact opnemen met de ALTUS-klantenservice:',
+        list: [
+          'Per e-mail: support@altusgroup.com',
+          'Per telefoon: +31 XX XX XX XX XX',
+          'Via het beveiligde klantengebied',
+        ],
+        content2: 'Bij gebrek aan een bevredigend antwoord binnen 2 maanden kan de Kaarthouder zich wenden tot de Ombudsman van de AFM.',
+      },
+      section13: {
+        title: '13. TOEPASSELIJK RECHT EN JURISDICTIE',
+        content: 'Deze AV worden beheerst door Nederlands recht. Alle geschillen met betrekking tot hun interpretatie of uitvoering vallen onder de exclusieve bevoegdheid van de Nederlandse rechtbanken.',
+      },
+      note: 'Door uw ALTUS Virtuele Kaart te activeren, erkent u dat u de volledige Algemene Gebruiksvoorwaarden hebt gelezen, begrepen en geaccepteerd.',
     },
   } as TranslationKeys,
 };

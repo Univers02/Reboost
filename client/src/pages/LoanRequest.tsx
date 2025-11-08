@@ -11,8 +11,10 @@ import NewLoanDialog from '@/components/NewLoanDialog';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from '@/lib/i18n';
 
 export default function LoanRequest() {
+  const t = useTranslations();
   const { data: user } = useUser();
   const [, setLocation] = useLocation();
   const [selectedOffer, setSelectedOffer] = useState<LoanOffer | null>(null);
@@ -49,7 +51,7 @@ export default function LoanRequest() {
                   <IconComponent className={`h-6 w-6 ${offer.color}`} />
                 </div>
                 <Badge variant="secondary" className="text-xs">
-                  {type === 'individual' ? 'Particulier' : 'Professionnel'}
+                  {type === 'individual' ? t.loanOffers.individual : t.loanOffers.business}
                 </Badge>
               </div>
               <CardTitle className="text-xl">{offer.title}</CardTitle>
@@ -60,15 +62,15 @@ export default function LoanRequest() {
             <CardContent className="space-y-4">
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Montant</span>
+                  <span className="text-muted-foreground">{t.loanOffers.amountLabel}</span>
                   <span className="font-semibold">{offer.amount}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Taux</span>
+                  <span className="text-muted-foreground">{t.loanOffers.rateLabel}</span>
                   <span className="font-semibold">{offer.rate}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Durée</span>
+                  <span className="text-muted-foreground">{t.loanOffers.durationLabel}</span>
                   <span className="font-semibold">{offer.duration}</span>
                 </div>
               </div>
@@ -76,7 +78,7 @@ export default function LoanRequest() {
               {offer.features && offer.features.length > 0 && (
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-muted-foreground uppercase">
-                    Avantages
+                    {t.loanOffers.advantagesLabel}
                   </div>
                   <ul className="space-y-1">
                     {offer.features.map((feature, idx) => (
@@ -94,7 +96,7 @@ export default function LoanRequest() {
                 onClick={() => handleRequestLoan(offer)}
                 data-testid={`button-request-${offer.id}`}
               >
-                {user ? 'Demander ce prêt' : 'Se connecter pour demander'}
+                {user ? t.loanOffers.requestButton : t.loanOffers.loginToRequest}
               </Button>
             </CardContent>
           </Card>
@@ -110,10 +112,10 @@ export default function LoanRequest() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-              Nos offres de prêt
+              {t.loanOffers.pageTitle}
             </h1>
             <p className="text-xl text-muted-foreground">
-              Découvrez toutes nos solutions de financement pour particuliers et professionnels
+              {t.loanOffers.pageSubtitle}
             </p>
           </div>
 
@@ -121,8 +123,7 @@ export default function LoanRequest() {
             <Alert className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 mb-8 max-w-4xl mx-auto">
               <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
               <AlertDescription className="text-sm">
-                <strong>Compte {getAccountTypeLabel(user.accountType)} :</strong>{' '}
-                Vous êtes actuellement connecté avec un compte {getAccountTypeLabel(user.accountType).toLowerCase()}.
+                {t.loanOffers.accountInfo.replace('{accountType}', getAccountTypeLabel(user.accountType))}
               </AlertDescription>
             </Alert>
           )}
@@ -130,10 +131,10 @@ export default function LoanRequest() {
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'individual' | 'business')} className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
               <TabsTrigger value="individual" data-testid="tab-individual-loans">
-                Prêts Particuliers
+                {t.loanOffers.individualTab}
               </TabsTrigger>
               <TabsTrigger value="business" data-testid="tab-business-loans">
-                Prêts Professionnels
+                {t.loanOffers.businessTab}
               </TabsTrigger>
             </TabsList>
 

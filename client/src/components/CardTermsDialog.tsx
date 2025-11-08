@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { useTranslations } from '@/lib/i18n';
 
 interface CardTermsDialogProps {
   open: boolean;
@@ -8,45 +9,43 @@ interface CardTermsDialogProps {
 }
 
 export default function CardTermsDialog({ open, onOpenChange }: CardTermsDialogProps) {
+  const t = useTranslations();
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh]" data-testid="modal-card-terms">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Conditions Générales d'Utilisation - Carte Virtuelle ALTUS</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">{t.cardTermsContent.title}</DialogTitle>
           <DialogDescription>
-            Dernière mise à jour : Novembre 2025
+            {t.cardTermsContent.lastUpdated}
           </DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="h-[60vh] pr-4">
           <div className="space-y-6 text-sm">
             <section>
-              <h3 className="font-semibold text-lg mb-3">1. OBJET ET CHAMP D'APPLICATION</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section1.title}</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Les présentes conditions générales (ci-après « CGU ») régissent l'utilisation de la carte bancaire virtuelle ALTUS
-                (ci-après « la Carte Virtuelle »), proposée par ALTUS Finance Group aux clients titulaires d'un compte ALTUS
-                (ci-après « le Titulaire »). La Carte Virtuelle est un moyen de paiement dématérialisé lié à votre compte ALTUS.
+                {t.cardTermsContent.section1.content}
               </p>
             </section>
 
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">2. DESCRIPTION DU SERVICE</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section2.title}</h3>
               <div className="space-y-3">
                 <div>
-                  <h4 className="font-medium mb-2">2.1 Nature de la Carte Virtuelle</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section2.subtitle1}</h4>
                   <p className="text-muted-foreground leading-relaxed">
-                    La Carte Virtuelle est une carte de paiement dématérialisée comportant un numéro de carte à 16 chiffres,
-                    une date d'expiration et un cryptogramme visuel (CVV). Elle fonctionne comme une carte bancaire physique
-                    mais existe uniquement sous forme électronique.
+                    {t.cardTermsContent.section2.content1}
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">2.2 Type de Carte</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section2.subtitle2}</h4>
                   <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
-                    <li><strong>Carte virtuelle permanente</strong> : coordonnées fixes pendant toute sa durée de validité (3 ans)</li>
-                    <li><strong>Carte virtuelle éphémère</strong> : coordonnées temporaires avec montant et durée paramétrables</li>
+                    <li>{t.cardTermsContent.section2.item1}</li>
+                    <li>{t.cardTermsContent.section2.item2}</li>
                   </ul>
                 </div>
               </div>
@@ -55,44 +54,40 @@ export default function CardTermsDialog({ open, onOpenChange }: CardTermsDialogP
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">3. CONDITIONS D'ÉLIGIBILITÉ</h3>
-              <p className="text-muted-foreground leading-relaxed mb-2">Pour obtenir une Carte Virtuelle, le Titulaire doit :</p>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section3.title}</h3>
+              <p className="text-muted-foreground leading-relaxed mb-2">{t.cardTermsContent.section3.content}</p>
               <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
-                <li>Être client ALTUS avec un compte actif et approvisionné</li>
-                <li>Avoir complété la vérification d'identité (KYC)</li>
-                <li>Ne pas être en situation de découvert non autorisé</li>
-                <li>Avoir activé l'authentification forte (double facteur)</li>
-                <li>Accepter les présentes CGU et les Conditions Tarifaires</li>
+                {t.cardTermsContent.section3.list.map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
               </ul>
             </section>
 
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">4. ACTIVATION ET UTILISATION</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section4.title}</h3>
               <div className="space-y-3">
                 <div>
-                  <h4 className="font-medium mb-2">4.1 Activation</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section4.subtitle1}</h4>
                   <p className="text-muted-foreground leading-relaxed">
-                    La Carte Virtuelle est activée instantanément dès sa création via l'application ou l'espace client ALTUS.
-                    Le Titulaire reçoit immédiatement les coordonnées complètes de la carte.
+                    {t.cardTermsContent.section4.content1}
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">4.2 Utilisations autorisées</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section4.subtitle2}</h4>
                   <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
-                    <li>Paiements sur tous les sites marchands en ligne acceptant Visa/Mastercard</li>
-                    <li>Paiements récurrents et abonnements (carte permanente uniquement)</li>
-                    <li>Achats sur sites internationaux</li>
-                    <li>Paiements sans contact en magasin (si ajoutée à Apple Pay/Google Pay)</li>
+                    {t.cardTermsContent.section4.list1.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">4.3 Limitations</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section4.subtitle3}</h4>
                   <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
-                    <li>Pas de retraits d'espèces aux distributeurs automatiques</li>
-                    <li>Présentation physique impossible (location de voiture, certains hôtels)</li>
-                    <li>Certains prestataires peuvent refuser les cartes virtuelles</li>
+                    {t.cardTermsContent.section4.list2.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
                   </ul>
                 </div>
               </div>
@@ -101,31 +96,26 @@ export default function CardTermsDialog({ open, onOpenChange }: CardTermsDialogP
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">5. SÉCURITÉ ET PROTECTION</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section5.title}</h3>
               <div className="space-y-3">
                 <div>
-                  <h4 className="font-medium mb-2">5.1 Sécurité renforcée</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section5.subtitle1}</h4>
                   <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
-                    <li>Les coordonnées de votre carte bancaire physique ne sont jamais exposées</li>
-                    <li>Possibilité de verrouiller/déverrouiller instantanément la carte</li>
-                    <li>Suppression définitive en un clic</li>
-                    <li>Protection 3D Secure sur toutes les transactions</li>
-                    <li>CVV dynamique pour une sécurité maximale</li>
+                    {t.cardTermsContent.section5.list1.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">5.2 Obligations du Titulaire</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section5.subtitle2}</h4>
                   <p className="text-muted-foreground leading-relaxed">
-                    Le Titulaire s'engage à conserver les coordonnées de sa Carte Virtuelle de manière confidentielle
-                    et à ne pas les communiquer à des tiers. En cas de suspicion de fraude, le Titulaire doit immédiatement
-                    verrouiller ou supprimer la carte via son espace client.
+                    {t.cardTermsContent.section5.content2}
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">5.3 Garanties et assurances</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section5.subtitle3}</h4>
                   <p className="text-muted-foreground leading-relaxed">
-                    La Carte Virtuelle bénéficie des mêmes garanties que votre carte physique, incluant la protection contre
-                    la fraude, l'assurance achats et la garantie de livraison conforme.
+                    {t.cardTermsContent.section5.content3}
                   </p>
                 </div>
               </div>
@@ -134,18 +124,18 @@ export default function CardTermsDialog({ open, onOpenChange }: CardTermsDialogP
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">6. PLAFONDS ET LIMITES</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section6.title}</h3>
               <div className="space-y-2">
                 <p className="text-muted-foreground leading-relaxed">
-                  Les plafonds de paiement de la Carte Virtuelle sont identiques à ceux de votre carte principale ALTUS :
+                  {t.cardTermsContent.section6.content}
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
-                  <li>Plafond mensuel : jusqu'à 50 000 € selon votre profil</li>
-                  <li>Plafond par transaction : jusqu'à 10 000 €</li>
-                  <li>Possibilité d'ajuster temporairement les plafonds depuis l'application</li>
+                  {t.cardTermsContent.section6.list.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
                 </ul>
                 <p className="text-muted-foreground leading-relaxed mt-2">
-                  Pour les cartes éphémères, vous définissez le montant maximum et la durée de validité lors de la création.
+                  {t.cardTermsContent.section6.content2}
                 </p>
               </div>
             </section>
@@ -153,14 +143,12 @@ export default function CardTermsDialog({ open, onOpenChange }: CardTermsDialogP
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">7. TARIFICATION</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section7.title}</h3>
               <div className="space-y-2">
                 <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
-                  <li><strong>Création de carte virtuelle :</strong> Gratuit</li>
-                  <li><strong>Frais de transaction en zone euro :</strong> 0%</li>
-                  <li><strong>Paiements hors zone euro :</strong> 1,5% du montant</li>
-                  <li><strong>Cotisation annuelle :</strong> Gratuit</li>
-                  <li><strong>Verrouillage/Déverrouillage :</strong> Gratuit et illimité</li>
+                  {t.cardTermsContent.section7.list.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
                 </ul>
               </div>
             </section>
@@ -168,38 +156,33 @@ export default function CardTermsDialog({ open, onOpenChange }: CardTermsDialogP
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">8. DÉBIT ET RELEVÉ</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section8.title}</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Toutes les opérations effectuées avec la Carte Virtuelle sont débitées en temps réel sur votre compte ALTUS.
-                Elles apparaissent immédiatement dans votre historique de transactions et sur vos relevés mensuels.
+                {t.cardTermsContent.section8.content}
               </p>
             </section>
 
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">9. OPPOSITION ET RÉSILIATION</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section9.title}</h3>
               <div className="space-y-3">
                 <div>
-                  <h4 className="font-medium mb-2">9.1 Verrouillage temporaire</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section9.subtitle1}</h4>
                   <p className="text-muted-foreground leading-relaxed">
-                    Vous pouvez verrouiller votre Carte Virtuelle à tout moment depuis votre espace client.
-                    Le déverrouillage est instantané.
+                    {t.cardTermsContent.section9.content1}
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">9.2 Suppression définitive</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section9.subtitle2}</h4>
                   <p className="text-muted-foreground leading-relaxed">
-                    La suppression d'une Carte Virtuelle est immédiate et irréversible. Les abonnements liés à cette carte
-                    seront automatiquement refusés. Il est recommandé de mettre à jour vos informations de paiement chez
-                    les commerçants concernés avant suppression.
+                    {t.cardTermsContent.section9.content2}
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">9.3 En cas de fraude</h4>
+                  <h4 className="font-medium mb-2">{t.cardTermsContent.section9.subtitle3}</h4>
                   <p className="text-muted-foreground leading-relaxed">
-                    En cas de perte ou vol présumé des coordonnées, supprimez immédiatement la carte depuis votre application
-                    et contactez notre service client au +33 1 XX XX XX XX (disponible 24h/24, 7j/7).
+                    {t.cardTermsContent.section9.content3}
                   </p>
                 </div>
               </div>
@@ -208,64 +191,58 @@ export default function CardTermsDialog({ open, onOpenChange }: CardTermsDialogP
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">10. RESPONSABILITÉ</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section10.title}</h3>
               <p className="text-muted-foreground leading-relaxed mb-2">
-                ALTUS ne pourra être tenu responsable en cas de :
+                {t.cardTermsContent.section10.content}
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
-                <li>Refus d'un commerçant d'accepter la Carte Virtuelle</li>
-                <li>Interruption temporaire du service pour maintenance</li>
-                <li>Utilisation frauduleuse résultant d'une négligence du Titulaire</li>
-                <li>Litiges commerciaux entre le Titulaire et un commerçant</li>
+                {t.cardTermsContent.section10.list.map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
               </ul>
               <p className="text-muted-foreground leading-relaxed mt-2">
-                Le Titulaire est entièrement responsable de l'utilisation de sa Carte Virtuelle et des opérations effectuées
-                jusqu'à la notification d'une utilisation frauduleuse.
+                {t.cardTermsContent.section10.content2}
               </p>
             </section>
 
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">11. DURÉE ET MODIFICATION</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section11.title}</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Les présentes CGU sont conclues pour une durée indéterminée. ALTUS se réserve le droit de modifier
-                les présentes CGU à tout moment. Toute modification sera notifiée au Titulaire au moins 2 mois avant
-                son entrée en vigueur. L'absence d'opposition dans ce délai vaudra acceptation.
+                {t.cardTermsContent.section11.content}
               </p>
             </section>
 
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">12. RÉCLAMATIONS</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section12.title}</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Pour toute réclamation, le Titulaire peut contacter le service client ALTUS :
+                {t.cardTermsContent.section12.content}
               </p>
               <ul className="list-none text-muted-foreground space-y-1 ml-2 mt-2">
-                <li>• Par email : support@altusgroup.com</li>
-                <li>• Par téléphone : +33 1 XX XX XX XX</li>
-                <li>• Via l'espace client sécurisé</li>
+                {t.cardTermsContent.section12.list.map((item, idx) => (
+                  <li key={idx}>• {item}</li>
+                ))}
               </ul>
               <p className="text-muted-foreground leading-relaxed mt-2">
-                En l'absence de réponse satisfaisante dans un délai de 2 mois, le Titulaire peut saisir le Médiateur de l'AMF.
+                {t.cardTermsContent.section12.content2}
               </p>
             </section>
 
             <Separator />
 
             <section>
-              <h3 className="font-semibold text-lg mb-3">13. DROIT APPLICABLE ET JURIDICTION</h3>
+              <h3 className="font-semibold text-lg mb-3">{t.cardTermsContent.section13.title}</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Les présentes CGU sont régies par le droit français. Tout litige relatif à leur interprétation ou exécution
-                relève de la compétence exclusive des tribunaux français.
+                {t.cardTermsContent.section13.content}
               </p>
             </section>
 
             <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg mt-6">
               <p className="text-sm text-muted-foreground">
-                <strong>Note importante :</strong> En activant votre Carte Virtuelle ALTUS, vous reconnaissez avoir lu,
-                compris et accepté l'intégralité des présentes Conditions Générales d'Utilisation.
+                <strong>Note importante :</strong> {t.cardTermsContent.note}
               </p>
             </div>
           </div>
