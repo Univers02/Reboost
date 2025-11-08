@@ -254,3 +254,112 @@ ALTUS FINANCE GROUP
     throw error;
   }
 }
+
+export async function sendContactFormEmail(name: string, email: string, phone: string, message: string) {
+  try {
+    const { client, fromEmail } = await getUncachableSendGridClient();
+    
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safePhone = escapeHtml(phone);
+    const safeMessage = escapeHtml(message);
+    
+    const subject = `Nouveau message de contact - ${safeName}`;
+    
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f4f4f4; padding: 20px 0;">
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <tr>
+            <td style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">📧 Nouveau message de contact</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 40px 30px;">
+              <h2 style="color: #1f2937; font-size: 20px; margin: 0 0 20px 0;">Informations du contact :</h2>
+              
+              <table cellpadding="8" cellspacing="0" border="0" width="100%" style="margin-bottom: 30px;">
+                <tr>
+                  <td style="color: #6b7280; font-weight: bold; width: 120px;">Nom :</td>
+                  <td style="color: #1f2937;">${safeName}</td>
+                </tr>
+                <tr>
+                  <td style="color: #6b7280; font-weight: bold;">Email :</td>
+                  <td style="color: #1f2937;"><a href="mailto:${safeEmail}" style="color: #2563eb; text-decoration: none;">${safeEmail}</a></td>
+                </tr>
+                <tr>
+                  <td style="color: #6b7280; font-weight: bold;">Téléphone :</td>
+                  <td style="color: #1f2937;">${safePhone || 'Non renseigné'}</td>
+                </tr>
+              </table>
+              
+              <h3 style="color: #1f2937; font-size: 18px; margin: 0 0 15px 0;">Message :</h3>
+              <div style="background-color: #f9fafb; border-left: 4px solid #2563eb; padding: 20px; border-radius: 4px;">
+                <p style="color: #374151; font-size: 15px; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeMessage}</p>
+              </div>
+              
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                <p style="color: #6b7280; font-size: 13px; margin: 0;">
+                  Ce message a été envoyé depuis le formulaire de contact du site Altus Finance Group.
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="color: #6b7280; font-size: 12px; margin: 0;">
+                ALTUS FINANCE GROUP<br>
+                © ${new Date().getFullYear()} Tous droits réservés.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `;
+    
+    const text = `Nouveau message de contact
+
+Informations du contact :
+Nom : ${name}
+Email : ${email}
+Téléphone : ${phone || 'Non renseigné'}
+
+Message :
+${message}
+
+---
+Ce message a été envoyé depuis le formulaire de contact du site Altus Finance Group.
+ALTUS FINANCE GROUP
+© ${new Date().getFullYear()} Tous droits réservés.
+    `;
+    
+    const msg = {
+      to: fromEmail,
+      from: fromEmail,
+      replyTo: email,
+      subject,
+      html,
+      text,
+    };
+
+    await client.send(msg);
+    console.log(`Contact form email sent from ${email}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending contact form email:', error);
+    throw error;
+  }
+}

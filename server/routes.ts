@@ -3160,6 +3160,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const contactSchema = z.object({
+        name: z.string().min(1, 'Le nom est requis'),
+        email: z.string().email('Email invalide'),
+        phone: z.string().optional(),
+        message: z.string().min(10, 'Le message doit contenir au moins 10 caractères'),
+      });
+
+      const validatedData = contactSchema.parse(req.body);
+      const { sendContactFormEmail } = await import('./email');
+      
+      await sendContactFormEmail(
+        validatedData.name,
+        validatedData.email,
+        validatedData.phone || '',
+        validatedData.message
+      );
+
+      res.json({ 
+        success: true,
+        message: 'Message envoyé avec succès. Nous vous répondrons dans les plus brefs délais.',
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
+      console.error('Contact form error:', error);
+      res.status(500).json({ error: 'Erreur lors de l\'envoi du message. Veuillez réessayer plus tard.' });
+    }
+  });
+
   app.get("/api/fees/unpaid", requireAuth, async (req, res) => {
     try {
       const fees = await storage.getUnpaidFees(req.session.userId!);
