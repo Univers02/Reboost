@@ -752,6 +752,34 @@ type TranslationKeys = {
       businessAccess: string;
       availableOffers: string;
       getStarted: string;
+      dialog: {
+        title: string;
+        description: string;
+      };
+      account: {
+        badgeLabel: string;
+        individual: {
+          description: string;
+        };
+        business: {
+          description: string;
+        };
+      };
+      offers: {
+        title: string;
+        individual: string[];
+        business: string[];
+      };
+      important: {
+        title: string;
+        message: string;
+        individualSwitch: string;
+        businessSwitch: string;
+      };
+      cta: {
+        primary: string;
+        pending: string;
+      };
     };
     transactionHistory: {
       title: string;
@@ -2174,6 +2202,48 @@ export const translations: Record<Language, TranslationKeys> = {
         businessAccess: 'Accès complet aux services de financement d\'entreprise',
         availableOffers: 'Offres disponibles pour vous',
         getStarted: 'Commencer',
+        dialog: {
+          title: 'Bienvenue sur Altus Finance Group !',
+          description: 'Nous sommes ravis de vous accompagner dans vos projets de financement.',
+        },
+        account: {
+          badgeLabel: 'Votre compte :',
+          individual: {
+            description: 'Vous avez accès aux offres de prêt pour particuliers. Ces offres sont spécialement conçues pour vos besoins personnels et projets individuels.',
+          },
+          business: {
+            description: 'Vous avez accès aux offres de prêt professionnels. Ces offres sont spécialement conçues pour le développement et la croissance de votre entreprise.',
+          },
+        },
+        offers: {
+          title: 'Offres disponibles pour vous',
+          individual: [
+            'Prêt Personnel',
+            'Prêt Immobilier',
+            'Crédit Auto',
+            'Prêt Étudiant',
+            'Prêt Vert',
+            'Prêt Travaux',
+          ],
+          business: [
+            'Prêt Professionnel',
+            'Crédit de Trésorerie',
+            'Financement Équipement',
+            'Prêt Immobilier Pro',
+            'Ligne de Crédit',
+            'Crédit Véhicule Pro',
+          ],
+        },
+        important: {
+          title: 'Important :',
+          message: 'Seules les offres mentionnées ci-dessus vous seront accessibles dans votre espace.',
+          individualSwitch: ' Si vous souhaitez accéder aux offres professionnelles, vous devrez créer un compte entreprise.',
+          businessSwitch: ' Si vous souhaitez accéder aux offres pour particuliers, vous devrez créer un compte personnel.',
+        },
+        cta: {
+          primary: 'Compris, commencer',
+          pending: 'Chargement...',
+        },
       },
       transactionHistory: {
         title: 'Historique des transactions',
@@ -3684,6 +3754,48 @@ export const translations: Record<Language, TranslationKeys> = {
         businessAccess: 'Full access to business financing services',
         availableOffers: 'Available offers for you',
         getStarted: 'Get Started',
+        dialog: {
+          title: 'Welcome to Altus Finance Group!',
+          description: 'We are delighted to support you with your financing projects.',
+        },
+        account: {
+          badgeLabel: 'Your account:',
+          individual: {
+            description: 'You have access to personal loan offers. These offers are specially designed for your personal needs and individual projects.',
+          },
+          business: {
+            description: 'You have access to professional loan offers. These offers are specially designed for the development and growth of your business.',
+          },
+        },
+        offers: {
+          title: 'Available offers for you',
+          individual: [
+            'Personal Loan',
+            'Mortgage',
+            'Auto Loan',
+            'Student Loan',
+            'Green Loan',
+            'Home Improvement Loan',
+          ],
+          business: [
+            'Professional Loan',
+            'Cash Flow Credit',
+            'Equipment Financing',
+            'Commercial Mortgage',
+            'Line of Credit',
+            'Vehicle Loan',
+          ],
+        },
+        important: {
+          title: 'Important:',
+          message: 'Only the offers mentioned above will be accessible in your account.',
+          individualSwitch: ' If you wish to access professional offers, you will need to create a business account.',
+          businessSwitch: ' If you wish to access personal offers, you will need to create a personal account.',
+        },
+        cta: {
+          primary: 'Got it, let\'s start',
+          pending: 'Loading...',
+        },
       },
       transactionHistory: {
         title: 'Transaction History',
@@ -5080,6 +5192,48 @@ export const translations: Record<Language, TranslationKeys> = {
         businessAccess: 'Acceso completo a servicios de financiamiento empresarial',
         availableOffers: 'Ofertas disponibles para usted',
         getStarted: 'Comenzar',
+        dialog: {
+          title: '¡Bienvenido a Altus Finance Group!',
+          description: 'Estamos encantados de acompañarle en sus proyectos de financiamiento.',
+        },
+        account: {
+          badgeLabel: 'Su cuenta:',
+          individual: {
+            description: 'Tiene acceso a ofertas de préstamos personales. Estas ofertas están especialmente diseñadas para sus necesidades personales y proyectos individuales.',
+          },
+          business: {
+            description: 'Tiene acceso a ofertas de préstamos profesionales. Estas ofertas están especialmente diseñadas para el desarrollo y crecimiento de su empresa.',
+          },
+        },
+        offers: {
+          title: 'Ofertas disponibles para usted',
+          individual: [
+            'Préstamo Personal',
+            'Préstamo Hipotecario',
+            'Crédito Auto',
+            'Préstamo Estudiantil',
+            'Préstamo Verde',
+            'Préstamo para Obras',
+          ],
+          business: [
+            'Préstamo Profesional',
+            'Crédito de Tesorería',
+            'Financiamiento de Equipo',
+            'Hipoteca Comercial',
+            'Línea de Crédito',
+            'Crédito para Vehículo Profesional',
+          ],
+        },
+        important: {
+          title: 'Importante:',
+          message: 'Solo las ofertas mencionadas arriba serán accesibles en su espacio.',
+          individualSwitch: ' Si desea acceder a ofertas profesionales, deberá crear una cuenta empresarial.',
+          businessSwitch: ' Si desea acceder a ofertas personales, deberá crear una cuenta personal.',
+        },
+        cta: {
+          primary: 'Entendido, comenzar',
+          pending: 'Cargando...',
+        },
       },
       transactionHistory: {
         title: 'Historial de Transacciones',
@@ -6581,6 +6735,48 @@ export const translations: Record<Language, TranslationKeys> = {
         businessAccess: 'Acesso completo a soluções de financiamento empresarial e serviços premium',
         availableOffers: 'Ofertas Disponíveis para Você',
         getStarted: 'Começar',
+        dialog: {
+          title: 'Bem-vindo ao Altus Finance Group!',
+          description: 'Estamos felizes em apoiá-lo em seus projetos de financiamento.',
+        },
+        account: {
+          badgeLabel: 'Sua conta:',
+          individual: {
+            description: 'Você tem acesso a ofertas de empréstimos pessoais. Essas ofertas são especialmente projetadas para suas necessidades pessoais e projetos individuais.',
+          },
+          business: {
+            description: 'Você tem acesso a ofertas de empréstimos profissionais. Essas ofertas são especialmente projetadas para o desenvolvimento e crescimento de sua empresa.',
+          },
+        },
+        offers: {
+          title: 'Ofertas disponíveis para você',
+          individual: [
+            'Empréstimo Pessoal',
+            'Empréstimo Hipotecário',
+            'Crédito Auto',
+            'Empréstimo Estudantil',
+            'Empréstimo Verde',
+            'Empréstimo para Reformas',
+          ],
+          business: [
+            'Empréstimo Profissional',
+            'Crédito de Tesouraria',
+            'Financiamento de Equipamentos',
+            'Hipoteca Comercial',
+            'Linha de Crédito',
+            'Crédito para Veículo Profissional',
+          ],
+        },
+        important: {
+          title: 'Importante:',
+          message: 'Apenas as ofertas mencionadas acima estarão acessíveis em seu espaço.',
+          individualSwitch: ' Se você deseja acessar ofertas profissionais, precisará criar uma conta empresarial.',
+          businessSwitch: ' Se você deseja acessar ofertas pessoais, precisará criar uma conta pessoal.',
+        },
+        cta: {
+          primary: 'Entendi, começar',
+          pending: 'Carregando...',
+        },
       },
       transactionHistory: {
         title: 'Histórico de Transações',
@@ -8084,6 +8280,48 @@ export const translations: Record<Language, TranslationKeys> = {
         businessAccess: 'Accesso completo a soluzioni di finanziamento aziendale e servizi premium',
         availableOffers: 'Offerte disponibili per te',
         getStarted: 'Inizia',
+        dialog: {
+          title: 'Benvenuto in Altus Finance Group!',
+          description: 'Siamo felici di supportarti nei tuoi progetti di finanziamento.',
+        },
+        account: {
+          badgeLabel: 'Il tuo conto:',
+          individual: {
+            description: 'Hai accesso alle offerte di prestiti personali. Queste offerte sono appositamente progettate per le tue esigenze personali e progetti individuali.',
+          },
+          business: {
+            description: 'Hai accesso alle offerte di prestiti professionali. Queste offerte sono appositamente progettate per lo sviluppo e la crescita della tua azienda.',
+          },
+        },
+        offers: {
+          title: 'Offerte disponibili per te',
+          individual: [
+            'Prestito Personale',
+            'Prestito Immobiliare',
+            'Credito Auto',
+            'Prestito Studenti',
+            'Prestito Verde',
+            'Prestito Lavori',
+          ],
+          business: [
+            'Prestito Professionale',
+            'Credito di Tesoreria',
+            'Finanziamento Attrezzature',
+            'Ipoteca Commerciale',
+            'Linea di Credito',
+            'Credito per Veicolo Professionale',
+          ],
+        },
+        important: {
+          title: 'Importante:',
+          message: 'Solo le offerte menzionate sopra saranno accessibili nel tuo spazio.',
+          individualSwitch: ' Se desideri accedere alle offerte professionali, dovrai creare un conto aziendale.',
+          businessSwitch: ' Se desideri accedere alle offerte personali, dovrai creare un conto privato.',
+        },
+        cta: {
+          primary: 'Capito, iniziamo',
+          pending: 'Caricamento...',
+        },
       },
       transactionHistory: {
         title: 'Storico transazioni',
@@ -9557,6 +9795,48 @@ export const translations: Record<Language, TranslationKeys> = {
         businessAccess: 'Vollständiger Zugang zu Unternehmensfinanzierungslösungen und Premium-Services',
         availableOffers: 'Verfügbare Angebote für Sie',
         getStarted: 'Beginnen',
+        dialog: {
+          title: 'Willkommen bei Altus Finance Group!',
+          description: 'Wir freuen uns, Sie bei Ihren Finanzierungsprojekten zu unterstützen.',
+        },
+        account: {
+          badgeLabel: 'Ihr Konto:',
+          individual: {
+            description: 'Sie haben Zugang zu Privatkreditangeboten. Diese Angebote sind speziell auf Ihre persönlichen Bedürfnisse und individuellen Projekte zugeschnitten.',
+          },
+          business: {
+            description: 'Sie haben Zugang zu professionellen Kreditangeboten. Diese Angebote sind speziell für die Entwicklung und das Wachstum Ihres Unternehmens konzipiert.',
+          },
+        },
+        offers: {
+          title: 'Verfügbare Angebote für Sie',
+          individual: [
+            'Privatkredit',
+            'Immobilienkredit',
+            'Autokredit',
+            'Studentenkredit',
+            'Grüner Kredit',
+            'Renovierungskredit',
+          ],
+          business: [
+            'Professioneller Kredit',
+            'Liquiditätskredit',
+            'Ausrüstungsfinanzierung',
+            'Gewerbeimmobilie',
+            'Kreditlinie',
+            'Firmenfahrzeugkredit',
+          ],
+        },
+        important: {
+          title: 'Wichtig:',
+          message: 'Nur die oben genannten Angebote sind in Ihrem Bereich zugänglich.',
+          individualSwitch: ' Wenn Sie auf professionelle Angebote zugreifen möchten, müssen Sie ein Geschäftskonto erstellen.',
+          businessSwitch: ' Wenn Sie auf private Angebote zugreifen möchten, müssen Sie ein Privatkonto erstellen.',
+        },
+        cta: {
+          primary: 'Verstanden, loslegen',
+          pending: 'Lädt...',
+        },
       },
       transactionHistory: {
         title: 'Transaktionsverlauf',
@@ -11030,6 +11310,48 @@ export const translations: Record<Language, TranslationKeys> = {
         businessAccess: 'Volledige toegang tot zakelijke financieringsoplossingen en premiumdiensten',
         availableOffers: 'Beschikbare aanbiedingen voor u',
         getStarted: 'Beginnen',
+        dialog: {
+          title: 'Welkom bij Altus Finance Group!',
+          description: 'We zijn blij u te ondersteunen bij uw financieringsprojecten.',
+        },
+        account: {
+          badgeLabel: 'Uw account:',
+          individual: {
+            description: 'U heeft toegang tot persoonlijke leningaanbiedingen. Deze aanbiedingen zijn speciaal ontworpen voor uw persoonlijke behoeften en individuele projecten.',
+          },
+          business: {
+            description: 'U heeft toegang tot professionele leningaanbiedingen. Deze aanbiedingen zijn speciaal ontworpen voor de ontwikkeling en groei van uw bedrijf.',
+          },
+        },
+        offers: {
+          title: 'Beschikbare aanbiedingen voor u',
+          individual: [
+            'Persoonlijke Lening',
+            'Hypotheek',
+            'Auto Lening',
+            'Studielening',
+            'Groene Lening',
+            'Renovatielening',
+          ],
+          business: [
+            'Professionele Lening',
+            'Liquiditeitskrediet',
+            'Apparatuurfinanciering',
+            'Commerciële Hypotheek',
+            'Kredietlijn',
+            'Bedrijfsvoertuig Krediet',
+          ],
+        },
+        important: {
+          title: 'Belangrijk:',
+          message: 'Alleen de hierboven genoemde aanbiedingen zijn toegankelijk in uw ruimte.',
+          individualSwitch: ' Als u toegang wilt tot professionele aanbiedingen, moet u een zakelijke rekening aanmaken.',
+          businessSwitch: ' Als u toegang wilt tot persoonlijke aanbiedingen, moet u een particuliere rekening aanmaken.',
+        },
+        cta: {
+          primary: 'Begrepen, laten we beginnen',
+          pending: 'Laden...',
+        },
       },
       transactionHistory: {
         title: 'Transactiegeschiedenis',
