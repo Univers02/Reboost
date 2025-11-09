@@ -21,8 +21,10 @@ import { CheckCircle, XCircle, Wallet, Trash2 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { useTranslations } from "@/lib/i18n";
 
 export default function AdminLoans() {
+  const t = useTranslations();
   const { toast } = useToast();
   const [approveReason, setApproveReason] = useState("");
   const [rejectReason, setRejectReason] = useState("");
@@ -32,6 +34,10 @@ export default function AdminLoans() {
     queryKey: ["/api/admin/loans"],
   });
 
+  const interpolate = (template: string, values: Record<string, string>) => {
+    return template.replace(/{(\w+)}/g, (match, key) => values[key] || match);
+  };
+
   const approveLoanMutation = useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
       return await apiRequest("POST", `/api/admin/loans/${id}/approve`, { reason });
@@ -39,15 +45,15 @@ export default function AdminLoans() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/loans"] });
       toast({
-        title: "Prêt approuvé",
-        description: "Le prêt a été approuvé avec succès. Le contrat a été généré.",
+        title: t.admin.loans.loanApproved,
+        description: t.admin.loans.loanApprovedDesc,
       });
       setApproveReason("");
     },
     onError: (error: any) => {
       toast({
-        title: "Erreur",
-        description: error.message || "Impossible d'approuver le prêt",
+        title: t.admin.common.messages.error,
+        description: error.message || t.admin.common.messages.cannotApprove,
         variant: "destructive",
       });
     },
@@ -60,15 +66,15 @@ export default function AdminLoans() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/loans"] });
       toast({
-        title: "Prêt rejeté",
-        description: "Le prêt a été rejeté avec succès",
+        title: t.admin.loans.loanRejected,
+        description: t.admin.loans.loanRejectedDesc,
       });
       setRejectReason("");
     },
     onError: (error: any) => {
       toast({
-        title: "Erreur",
-        description: error.message || "Impossible de rejeter le prêt",
+        title: t.admin.common.messages.error,
+        description: error.message || t.admin.common.messages.cannotReject,
         variant: "destructive",
       });
     },
@@ -81,14 +87,14 @@ export default function AdminLoans() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/loans"] });
       toast({
-        title: "Fonds débloqués",
-        description: "Les fonds ont été débloqués avec succès. L'utilisateur a été notifié.",
+        title: t.admin.loans.fundsDisbursed,
+        description: t.admin.loans.fundsDisbursedDesc,
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Erreur",
-        description: error.message || "Impossible de débloquer les fonds",
+        title: t.admin.common.messages.error,
+        description: error.message || t.admin.common.messages.cannotUpdate,
         variant: "destructive",
       });
     },
@@ -101,15 +107,15 @@ export default function AdminLoans() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/loans"] });
       toast({
-        title: "Prêt supprimé",
-        description: "Le prêt a été supprimé avec succès",
+        title: t.admin.loans.loanDeleted,
+        description: t.admin.loans.loanDeletedDesc,
       });
       setDeleteReason("");
     },
     onError: (error: any) => {
       toast({
-        title: "Erreur",
-        description: error.message || "Impossible de supprimer le prêt",
+        title: t.admin.common.messages.error,
+        description: error.message || t.admin.common.messages.cannotDelete,
         variant: "destructive",
       });
     },
@@ -132,11 +138,11 @@ export default function AdminLoans() {
 
   const getStatusText = (status: string) => {
     const statusMap: Record<string, string> = {
-      'pending': 'En attente',
-      'approved': 'Approuvé',
-      'signed': 'Signé',
-      'active': 'Actif',
-      'rejected': 'Refusé',
+      'pending': t.admin.common.status.pending,
+      'approved': t.admin.common.status.approved,
+      'signed': t.admin.common.status.signed,
+      'active': t.admin.common.status.active,
+      'rejected': t.admin.common.status.rejected,
     };
     return statusMap[status] || status;
   };
@@ -164,29 +170,29 @@ export default function AdminLoans() {
   return (
     <div className="p-6 space-y-6" data-testid="page-admin-loans">
       <div>
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">Gestion des Prêts</h1>
+        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">{t.admin.loans.title}</h1>
         <p className="text-muted-foreground" data-testid="text-page-description">
-          Gérer toutes les demandes de prêts de la plateforme
+          {t.admin.loans.description}
         </p>
       </div>
 
       <Card data-testid="card-loans-table">
         <CardHeader>
-          <CardTitle>Tous les Prêts</CardTitle>
-          <CardDescription>Liste complète des demandes de prêts</CardDescription>
+          <CardTitle>{t.admin.loans.allLoans}</CardTitle>
+          <CardDescription>{t.admin.loans.allLoansDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Utilisateur</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Montant</TableHead>
-                <TableHead>Taux</TableHead>
-                <TableHead>Durée</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Contrat</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t.admin.common.labels.user}</TableHead>
+                <TableHead>{t.admin.common.labels.type}</TableHead>
+                <TableHead>{t.admin.common.labels.amount}</TableHead>
+                <TableHead>{t.admin.common.labels.rate}</TableHead>
+                <TableHead>{t.admin.common.labels.duration}</TableHead>
+                <TableHead>{t.admin.common.labels.status}</TableHead>
+                <TableHead>{t.admin.common.labels.contract}</TableHead>
+                <TableHead className="text-right">{t.admin.common.labels.actions}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -200,7 +206,7 @@ export default function AdminLoans() {
                     {parseFloat(loan.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
                   </TableCell>
                   <TableCell data-testid={`text-loan-rate-${loan.id}`}>{loan.interestRate}%</TableCell>
-                  <TableCell data-testid={`text-loan-duration-${loan.id}`}>{loan.duration} mois</TableCell>
+                  <TableCell data-testid={`text-loan-duration-${loan.id}`}>{loan.duration} {t.admin.common.labels.months}</TableCell>
                   <TableCell>
                     <Badge
                       variant={getStatusBadgeVariant(loan.status)}
@@ -210,7 +216,7 @@ export default function AdminLoans() {
                     </Badge>
                   </TableCell>
                   <TableCell data-testid={`text-loan-contract-${loan.id}`}>
-                    {loan.signedContractUrl ? '✅ Signé' : loan.contractUrl ? '📄 Généré' : '-'}
+                    {loan.signedContractUrl ? t.admin.loans.contractSigned : loan.contractUrl ? t.admin.loans.contractGenerated : '-'}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
@@ -224,36 +230,39 @@ export default function AdminLoans() {
                                 data-testid={`button-approve-${loan.id}`}
                               >
                                 <CheckCircle className="h-4 w-4 mr-1" />
-                                Approuver
+                                {t.admin.common.actions.approve}
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Approuver le prêt</AlertDialogTitle>
+                                <AlertDialogTitle>{t.admin.loans.approveDialogTitle}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Cette action approuvera le prêt de {parseFloat(loan.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })} pour {loan.userName} et générera le contrat.
+                                  {interpolate(t.admin.loans.approveDialogDesc, {
+                                    amount: parseFloat(loan.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }),
+                                    userName: loan.userName
+                                  })}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <div className="space-y-4">
                                 <div>
-                                  <Label htmlFor={`approve-reason-${loan.id}`}>Raison de l'approbation</Label>
+                                  <Label htmlFor={`approve-reason-${loan.id}`}>{t.admin.loans.approveReason}</Label>
                                   <Textarea
                                     id={`approve-reason-${loan.id}`}
                                     value={approveReason}
                                     onChange={(e) => setApproveReason(e.target.value)}
-                                    placeholder="Ex: Dossier complet et solvabilité vérifiée"
+                                    placeholder={t.admin.loans.approveReason}
                                     data-testid={`input-approve-reason-${loan.id}`}
                                   />
                                 </div>
                               </div>
                               <AlertDialogFooter>
-                                <AlertDialogCancel onClick={() => setApproveReason("")}>Annuler</AlertDialogCancel>
+                                <AlertDialogCancel onClick={() => setApproveReason("")}>{t.admin.common.actions.cancel}</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => approveLoanMutation.mutate({ id: loan.id, reason: approveReason })}
                                   disabled={!approveReason || approveLoanMutation.isPending}
                                   data-testid={`button-confirm-approve-${loan.id}`}
                                 >
-                                  Approuver
+                                  {t.admin.common.actions.approve}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -267,37 +276,37 @@ export default function AdminLoans() {
                                 data-testid={`button-reject-${loan.id}`}
                               >
                                 <XCircle className="h-4 w-4 mr-1" />
-                                Rejeter
+                                {t.admin.common.actions.reject}
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Rejeter le prêt</AlertDialogTitle>
+                                <AlertDialogTitle>{t.admin.loans.rejectDialogTitle}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Cette action rejettera définitivement le prêt. L'utilisateur sera notifié.
+                                  {t.admin.loans.rejectDialogDesc}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <div className="space-y-4">
                                 <div>
-                                  <Label htmlFor={`reject-reason-${loan.id}`}>Raison du rejet</Label>
+                                  <Label htmlFor={`reject-reason-${loan.id}`}>{t.admin.loans.rejectReason}</Label>
                                   <Textarea
                                     id={`reject-reason-${loan.id}`}
                                     value={rejectReason}
                                     onChange={(e) => setRejectReason(e.target.value)}
-                                    placeholder="Ex: Revenus insuffisants"
+                                    placeholder={t.admin.loans.rejectReason}
                                     data-testid={`input-reject-reason-${loan.id}`}
                                   />
                                 </div>
                               </div>
                               <AlertDialogFooter>
-                                <AlertDialogCancel onClick={() => setRejectReason("")}>Annuler</AlertDialogCancel>
+                                <AlertDialogCancel onClick={() => setRejectReason("")}>{t.admin.common.actions.cancel}</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => rejectLoanMutation.mutate({ id: loan.id, reason: rejectReason })}
                                   disabled={!rejectReason || rejectLoanMutation.isPending}
                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                   data-testid={`button-confirm-reject-${loan.id}`}
                                 >
-                                  Rejeter
+                                  {t.admin.common.actions.reject}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -314,24 +323,27 @@ export default function AdminLoans() {
                               data-testid={`button-disburse-${loan.id}`}
                             >
                               <Wallet className="h-4 w-4 mr-1" />
-                              Débloquer les fonds
+                              {t.admin.common.actions.disburse}
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Débloquer les fonds</AlertDialogTitle>
+                              <AlertDialogTitle>{t.admin.loans.disburseDialogTitle}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Cette action débloquera les fonds de {parseFloat(loan.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })} pour {loan.userName}. Le prêt passera en statut actif et l'utilisateur pourra effectuer des transferts.
+                                {interpolate(t.admin.loans.disburseDialogDesc, {
+                                  amount: parseFloat(loan.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }),
+                                  userName: loan.userName
+                                })}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
+                              <AlertDialogCancel>{t.admin.common.actions.cancel}</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => disburseFundsMutation.mutate(loan.id)}
                                 disabled={disburseFundsMutation.isPending}
                                 data-testid={`button-confirm-disburse-${loan.id}`}
                               >
-                                Débloquer
+                                {t.admin.common.actions.disburse}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -350,32 +362,32 @@ export default function AdminLoans() {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Supprimer le prêt</AlertDialogTitle>
+                            <AlertDialogTitle>{t.admin.loans.deleteDialogTitle}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Cette action supprimera le prêt de manière définitive.
+                              {t.admin.loans.deleteDialogDesc}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <div className="space-y-4">
                             <div>
-                              <Label htmlFor={`delete-reason-${loan.id}`}>Raison de la suppression</Label>
+                              <Label htmlFor={`delete-reason-${loan.id}`}>{t.admin.loans.deleteReason}</Label>
                               <Input
                                 id={`delete-reason-${loan.id}`}
                                 value={deleteReason}
                                 onChange={(e) => setDeleteReason(e.target.value)}
-                                placeholder="Raison obligatoire"
+                                placeholder={t.admin.loans.deleteReason}
                                 data-testid={`input-delete-reason-${loan.id}`}
                               />
                             </div>
                           </div>
                           <AlertDialogFooter>
-                            <AlertDialogCancel onClick={() => setDeleteReason("")}>Annuler</AlertDialogCancel>
+                            <AlertDialogCancel onClick={() => setDeleteReason("")}>{t.admin.common.actions.cancel}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => deleteLoanMutation.mutate({ id: loan.id, reason: deleteReason })}
                               disabled={!deleteReason || deleteLoanMutation.isPending}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                               data-testid={`button-confirm-delete-${loan.id}`}
                             >
-                              Supprimer
+                              {t.admin.common.actions.delete}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
