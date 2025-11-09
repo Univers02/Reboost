@@ -49,13 +49,13 @@ export default function ScrollingTestimonials() {
   }, [t.testimonials.reviews]);
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-background to-muted/30 overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-10 md:mb-12">
+    <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background via-muted/20 to-background overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-10 sm:mb-12 md:mb-16">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-5 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent tracking-tight">
             {t.testimonials.title}
           </h2>
-          <p className="text-lg sm:text-xl text-muted-foreground">
+          <p className="text-xl sm:text-2xl text-muted-foreground font-light">
             {t.testimonials.subtitle}
           </p>
         </div>
@@ -66,32 +66,32 @@ export default function ScrollingTestimonials() {
         className="relative overflow-hidden hide-scrollbar"
         style={{ whiteSpace: 'nowrap' }}
       >
-        <div className="scroll-content inline-flex gap-4 sm:gap-6 pr-4 sm:pr-6">
+        <div className="scroll-content inline-flex gap-5 sm:gap-7 pr-5 sm:pr-7">
           {t.testimonials.reviews.map((review, index) => (
             <Card 
               key={index} 
-              className="inline-block w-[280px] sm:w-[320px] md:w-[350px] p-4 sm:p-6 align-top bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl transition-shadow"
+              className="inline-block w-[320px] sm:w-[360px] md:w-[400px] p-6 sm:p-8 align-top bg-gradient-to-br from-card to-card/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover-elevate border-2"
               style={{ whiteSpace: 'normal' }}
               data-testid={`card-review-${index}`}
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-semibold text-white text-lg">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary via-primary to-accent flex items-center justify-center font-bold text-white text-xl shadow-lg flex-shrink-0">
                   {review.name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <div>
-                  <h4 className="font-semibold text-foreground">{review.name}</h4>
-                  <p className="text-sm text-muted-foreground">{review.role}</p>
-                  <p className="text-xs text-muted-foreground">{review.company}</p>
+                <div className="flex-1">
+                  <h4 className="font-bold text-foreground text-lg">{review.name}</h4>
+                  <p className="text-sm text-muted-foreground font-medium">{review.role}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{review.company}</p>
                 </div>
               </div>
 
-              <div className="flex gap-1 mb-3">
+              <div className="flex gap-1 mb-4">
                 {Array.from({ length: review.rating }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <Star key={i} className="h-5 w-5 fill-accent text-accent drop-shadow-sm" />
                 ))}
               </div>
 
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-base text-foreground leading-relaxed font-normal">
                 {review.text}
               </p>
             </Card>

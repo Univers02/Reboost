@@ -79,8 +79,8 @@
   --font-sans: Inter, 'Work Sans', system-ui, -apple-system, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-  --radius: 1rem; /* 16px */
-  --dashboard-radius: 1rem; /* 16px */
+  --radius: 0.75rem; /* 12px */
+  --dashboard-radius: 0.75rem; /* 12px */
   --shadow-2xs: 0px 1px 2px 0px hsl(210 8% 12% / 0.02);
   --shadow-xs: 0px 1px 3px 0px hsl(210 8% 12% / 0.04);
   --shadow-sm: 0px 2px 4px 0px hsl(210 8% 12% / 0.04), 0px 1px 2px -1px hsl(210 8% 12% / 0.02);

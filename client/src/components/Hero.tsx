@@ -43,32 +43,38 @@ export default function Hero() {
           style={{ backgroundImage: `url(${slide.image})` }}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/50" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/75 via-primary/30 to-black/60" />
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 md:px-8 text-center">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 sm:mb-6 transition-all duration-700 leading-tight">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 md:px-8 text-center">
+        <div className="inline-block mb-6 px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
+          <p className="text-white/95 text-sm font-medium tracking-wide">
+            {t.hero.trustIndicator}
+          </p>
+        </div>
+
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold text-white mb-6 sm:mb-8 transition-all duration-700 leading-[1.1] tracking-tight">
           {slides[currentSlide].title}
         </h1>
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8 max-w-3xl mx-auto transition-all duration-700">
+        <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/95 mb-8 sm:mb-10 max-w-4xl mx-auto transition-all duration-700 font-light leading-relaxed">
           {slides[currentSlide].subtitle}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-2">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center mb-12 sm:mb-16 px-2">
           <Link href="/loan-request" className="w-full sm:w-auto">
             <Button
               size="lg"
-              className="bg-primary text-primary-foreground hover-elevate active-elevate-2 gap-2 w-full sm:w-auto text-sm sm:text-base"
+              className="bg-primary text-primary-foreground hover-elevate active-elevate-2 gap-2 w-full sm:w-auto text-base sm:text-lg px-8 py-6 shadow-2xl shadow-primary/30 font-semibold"
               data-testid="button-request-loan"
             >
               {t.hero.cta1}
-              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+              <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
           </Link>
           <Link href="/login" className="w-full sm:w-auto">
             <Button
               size="lg"
               variant="outline"
-              className="backdrop-blur-md bg-white/20 text-white border-white/30 hover:bg-white/30 w-full sm:w-auto text-sm sm:text-base"
+              className="backdrop-blur-md bg-white/15 text-white border-white/40 hover:bg-white/25 w-full sm:w-auto text-base sm:text-lg px-8 py-6 shadow-xl font-semibold"
               data-testid="button-my-account"
             >
               {t.hero.cta2}
@@ -76,29 +82,25 @@ export default function Hero() {
           </Link>
         </div>
 
-        <div className="flex gap-2 justify-center mb-8">
+        <div className="flex gap-3 justify-center mb-8">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`h-1.5 rounded-full transition-all duration-500 ${
                 index === currentSlide
-                  ? 'bg-white w-8'
-                  : 'bg-white/40 hover:bg-white/60'
+                  ? 'bg-white w-12 shadow-lg shadow-white/30'
+                  : 'bg-white/40 hover:bg-white/70 w-8'
               }`}
               aria-label={`Aller à la diapositive ${index + 1}`}
               data-testid={`slide-indicator-${index}`}
             />
           ))}
         </div>
-
-        <div className="text-white/80 text-sm">
-          {t.hero.trustIndicator}
-        </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <ChevronDown className="h-8 w-8 text-white/60" />
+      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <ChevronDown className="h-9 w-9 text-white/70" />
       </div>
     </section>
   );
