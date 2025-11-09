@@ -551,6 +551,16 @@ type TranslationKeys = {
     satisfaction: string;
     years: string;
   };
+  partners: {
+    title: string;
+    subtitle: string;
+    banksNetwork: string;
+    loansFunded: string;
+    yearsExperience: string;
+    satisfactionRate: string;
+    networkTitle: string;
+    benefits: string[];
+  };
   testimonials: {
     title: string;
     subtitle: string;
@@ -2332,6 +2342,20 @@ export const translations: Record<Language, TranslationKeys> = {
       satisfaction: 'Taux de Satisfaction',
       years: 'Années d\'Expérience',
     },
+    partners: {
+      title: 'Nos Partenaires Financiers',
+      subtitle: 'Nous collaborons avec un large réseau de banques et institutions financières de premier plan pour vous garantir les meilleures conditions',
+      banksNetwork: 'Banques Partenaires',
+      loansFunded: 'Prêts Financés',
+      yearsExperience: 'Ans d\'Expérience',
+      satisfactionRate: 'Taux de Satisfaction',
+      networkTitle: 'Un Réseau de Partenaires de Confiance',
+      benefits: [
+        'Accès à plus de 50 institutions financières pour comparer les meilleures offres',
+        'Négociation de taux préférentiels grâce à notre volume d\'affaires',
+        'Expertise reconnue dans le courtage de crédit depuis plus de 25 ans'
+      ]
+    },
     testimonials: {
       title: 'Ce que disent nos clients',
       subtitle: 'Plus de 15 000 particuliers et professionnels nous font confiance',
@@ -4073,6 +4097,20 @@ export const translations: Record<Language, TranslationKeys> = {
       satisfaction: 'Satisfaction Rate',
       years: 'Years of Experience',
     },
+    partners: {
+      title: 'Our Financial Partners',
+      subtitle: 'We collaborate with a wide network of leading banks and financial institutions to guarantee you the best conditions',
+      banksNetwork: 'Partner Banks',
+      loansFunded: 'Loans Funded',
+      yearsExperience: 'Years of Experience',
+      satisfactionRate: 'Satisfaction Rate',
+      networkTitle: 'A Network of Trusted Partners',
+      benefits: [
+        'Access to over 50 financial institutions to compare the best offers',
+        'Preferential rate negotiation thanks to our business volume',
+        'Recognized expertise in credit brokerage for over 25 years'
+      ]
+    },
     testimonials: {
       title: 'What Our Clients Say',
       subtitle: 'Trusted by 15,000+ individuals and businesses',
@@ -5771,6 +5809,20 @@ export const translations: Record<Language, TranslationKeys> = {
       funded: 'Préstamos Otorgados',
       satisfaction: 'Tasa de Satisfacción',
       years: 'Años de Experiencia',
+    },
+    partners: {
+      title: 'Nuestros Socios Financieros',
+      subtitle: 'Colaboramos con una amplia red de bancos e instituciones financieras de primer nivel para garantizarle las mejores condiciones',
+      banksNetwork: 'Bancos Asociados',
+      loansFunded: 'Préstamos Financiados',
+      yearsExperience: 'Años de Experiencia',
+      satisfactionRate: 'Tasa de Satisfacción',
+      networkTitle: 'Una Red de Socios de Confianza',
+      benefits: [
+        'Acceso a más de 50 instituciones financieras para comparar las mejores ofertas',
+        'Negociación de tasas preferenciales gracias a nuestro volumen de negocios',
+        'Experiencia reconocida en intermediación de crédito desde hace más de 25 años'
+      ]
     },
     testimonials: {
       title: 'Lo que dicen nuestros clientes',
@@ -7503,6 +7555,20 @@ export const translations: Record<Language, TranslationKeys> = {
       satisfaction: 'Taxa de Satisfação',
       years: 'Anos de Experiência',
     },
+    partners: {
+      title: 'Nossos Parceiros Financeiros',
+      subtitle: 'Colaboramos com uma ampla rede de bancos e instituições financeiras de primeira linha para garantir as melhores condições',
+      banksNetwork: 'Bancos Parceiros',
+      loansFunded: 'Empréstimos Financiados',
+      yearsExperience: 'Anos de Experiência',
+      satisfactionRate: 'Taxa de Satisfação',
+      networkTitle: 'Uma Rede de Parceiros de Confiança',
+      benefits: [
+        'Acesso a mais de 50 instituições financeiras para comparar as melhores ofertas',
+        'Negociação de taxas preferenciais graças ao nosso volume de negócios',
+        'Experiência reconhecida em intermediação de crédito há mais de 25 anos'
+      ]
+    },
     testimonials: {
       title: 'O que Dizem Nossos Clientes',
       subtitle: 'Mais de 15.000 particulares e profissionais confiam em nós',
@@ -9201,6 +9267,20 @@ export const translations: Record<Language, TranslationKeys> = {
       satisfaction: 'Tasso di soddisfazione',
       years: 'Anni di esperienza',
     },
+    partners: {
+      title: 'I Nostri Partner Finanziari',
+      subtitle: 'Collaboriamo con un ampio network di banche e istituzioni finanziarie di primo livello per garantirti le migliori condizioni',
+      banksNetwork: 'Banche Partner',
+      loansFunded: 'Prestiti Finanziati',
+      yearsExperience: 'Anni di Esperienza',
+      satisfactionRate: 'Tasso di Soddisfazione',
+      networkTitle: 'Una Rete di Partner di Fiducia',
+      benefits: [
+        'Accesso a oltre 50 istituzioni finanziarie per confrontare le migliori offerte',
+        'Negoziazione di tassi preferenziali grazie al nostro volume d\'affari',
+        'Competenza riconosciuta nel brokeraggio di credito da oltre 25 anni'
+      ]
+    },
     testimonials: {
       title: 'Cosa dicono i nostri clienti',
       subtitle: 'Più di 15.000 privati e professionisti si fidano di noi',
@@ -10819,6 +10899,20 @@ export const translations: Record<Language, TranslationKeys> = {
       satisfaction: 'Zufriedenheitsrate',
       years: 'Jahre Erfahrung',
     },
+    partners: {
+      title: 'Unsere Finanzpartner',
+      subtitle: 'Wir arbeiten mit einem umfangreichen Netzwerk führender Banken und Finanzinstitute zusammen, um Ihnen die besten Konditionen zu garantieren',
+      banksNetwork: 'Partnerbanken',
+      loansFunded: 'Finanzierte Kredite',
+      yearsExperience: 'Jahre Erfahrung',
+      satisfactionRate: 'Zufriedenheitsrate',
+      networkTitle: 'Ein Netzwerk Vertrauenswürdiger Partner',
+      benefits: [
+        'Zugang zu über 50 Finanzinstituten zum Vergleich der besten Angebote',
+        'Verhandlung von Vorzugskonditionen dank unseres Geschäftsvolumens',
+        'Anerkannte Expertise im Kreditvermittlung seit über 25 Jahren'
+      ]
+    },
     testimonials: {
       title: 'Was unsere Kunden sagen',
       subtitle: 'Mehr als 15.000 Privat- und Geschäftskunden vertrauen uns',
@@ -12435,6 +12529,20 @@ export const translations: Record<Language, TranslationKeys> = {
       funded: 'Verstrekte leningen',
       satisfaction: 'Tevredenheidspercentage',
       years: 'Jaren ervaring',
+    },
+    partners: {
+      title: 'Onze Financiële Partners',
+      subtitle: 'We werken samen met een uitgebreid netwerk van toonaangevende banken en financiële instellingen om u de beste voorwaarden te garanderen',
+      banksNetwork: 'Partnerbanken',
+      loansFunded: 'Verstrekte Leningen',
+      yearsExperience: 'Jaren Ervaring',
+      satisfactionRate: 'Tevredenheidspercentage',
+      networkTitle: 'Een Netwerk van Betrouwbare Partners',
+      benefits: [
+        'Toegang tot meer dan 50 financiële instellingen om de beste aanbiedingen te vergelijken',
+        'Onderhandeling van voorkeurstarieven dankzij ons zakenvolume',
+        'Erkende expertise in kredietbemiddeling sinds meer dan 25 jaar'
+      ]
     },
     testimonials: {
       title: 'Wat onze klanten zeggen',

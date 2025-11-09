@@ -9,6 +9,7 @@ import FAQ from '@/components/FAQ';
 import Footer from '@/components/Footer';
 import GuaranteesSection from '@/components/GuaranteesSection';
 import ProcessTimeline from '@/components/ProcessTimeline';
+import PartnersSection from '@/components/PartnersSection';
 import SEO from '@/components/SEO';
 import { organizationSchema, websiteSchema } from '@/lib/seo-data';
 import { getKeywordsByPage } from '@/lib/seo-keywords';
@@ -34,6 +35,7 @@ export default function Home() {
       <GuaranteesSection />
       <ProcessTimeline />
       <FeaturesSection />
+      <PartnersSection />
       <ScrollingTestimonials />
       <FAQ />
       <Footer />
