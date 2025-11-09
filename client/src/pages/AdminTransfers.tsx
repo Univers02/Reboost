@@ -71,20 +71,155 @@ export default function AdminTransfers() {
   }
 
   return (
-    <div className="p-6 space-y-6" data-testid="page-admin-transfers">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6" data-testid="page-admin-transfers">
       <div>
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">{t.admin.transfers.title}</h1>
-        <p className="text-muted-foreground" data-testid="text-page-description">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2" data-testid="text-page-title">{t.admin.transfers.title}</h1>
+        <p className="text-sm sm:text-base text-muted-foreground" data-testid="text-page-description">
           {t.admin.transfers.description}
         </p>
       </div>
 
       <Card data-testid="card-transfers-table">
         <CardHeader>
-          <CardTitle>{t.admin.transfers.allTransfers}</CardTitle>
-          <CardDescription>{t.admin.transfers.allTransfersDescription}</CardDescription>
+          <CardTitle className="text-lg sm:text-xl">{t.admin.transfers.allTransfers}</CardTitle>
+          <CardDescription className="text-sm">{t.admin.transfers.allTransfersDescription}</CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4">
+            {Array.isArray(transfers) && transfers.map((transfer: any) => (
+              <Card key={transfer.id} className="p-4" data-testid={`card-transfer-mobile-${transfer.id}`}>
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <p className="font-medium">{transfer.userName}</p>
+                      <p className="text-sm text-muted-foreground">{transfer.userEmail}</p>
+                    </div>
+                    <Badge
+                      variant={
+                        transfer.status === 'completed' ? 'default' :
+                        transfer.status === 'in-progress' ? 'secondary' :
+                        transfer.status === 'suspended' ? 'destructive' :
+                        'outline'
+                      }
+                    >
+                      {transfer.status === 'completed' ? t.admin.common.status.completed :
+                       transfer.status === 'in-progress' ? t.admin.common.status.inProgress :
+                       transfer.status === 'suspended' ? t.admin.common.status.suspended :
+                       t.admin.common.status.pending}
+                    </Badge>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p className="text-muted-foreground text-xs">{t.admin.common.labels.recipient}</p>
+                      <p className="font-medium">{transfer.recipient}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">{t.admin.common.labels.amount}</p>
+                      <p className="font-medium">{parseFloat(transfer.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">{t.admin.common.labels.fees}</p>
+                      <p className="font-medium">{parseFloat(transfer.feeAmount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">{t.admin.common.labels.date}</p>
+                      <p className="font-medium">{new Date(transfer.createdAt).toLocaleDateString('fr-FR')}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-muted rounded-full h-2">
+                      <div
+                        className="bg-primary h-2 rounded-full"
+                        style={{ width: `${transfer.progressPercent}%` }}
+                      />
+                    </div>
+                    <span className="text-sm">{transfer.progressPercent}%</span>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">
+                    {t.admin.common.labels.codes}: {transfer.codesValidated}/{transfer.requiredCodes}
+                  </p>
+
+                  {(transfer.status === 'pending' || transfer.status === 'in-progress') && (
+                    <div className="flex flex-col gap-2 pt-2 border-t">
+                      {transfer.status === 'pending' && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full justify-start"
+                              data-testid={`button-approve-mobile-${transfer.id}`}
+                            >
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              {t.admin.common.actions.approve}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>{t.admin.transfers.approveDialogTitle}</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                {t.admin.transfers.approveDialogDesc}
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>{t.admin.common.actions.cancel}</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => updateTransferMutation.mutate({ id: transfer.id, data: { status: 'in-progress' } })}
+                                disabled={updateTransferMutation.isPending}
+                                data-testid={`button-confirm-approve-mobile-${transfer.id}`}
+                              >
+                                {t.admin.common.actions.approve}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="w-full justify-start"
+                            data-testid={`button-suspend-mobile-${transfer.id}`}
+                          >
+                            <Ban className="h-4 w-4 mr-2" />
+                            {t.admin.common.actions.suspend}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>{t.admin.transfers.suspendDialogTitle}</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              {t.admin.transfers.suspendDialogDesc}
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>{t.admin.common.actions.cancel}</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => updateTransferMutation.mutate({ id: transfer.id, data: { status: 'suspended' } })}
+                              disabled={updateTransferMutation.isPending}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              data-testid={`button-confirm-suspend-mobile-${transfer.id}`}
+                            >
+                              {t.admin.common.actions.suspend}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -182,6 +317,7 @@ export default function AdminTransfers() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

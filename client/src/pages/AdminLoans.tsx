@@ -168,21 +168,243 @@ export default function AdminLoans() {
   }
 
   return (
-    <div className="p-6 space-y-6" data-testid="page-admin-loans">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6" data-testid="page-admin-loans">
       <div>
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">{t.admin.loans.title}</h1>
-        <p className="text-muted-foreground" data-testid="text-page-description">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2" data-testid="text-page-title">{t.admin.loans.title}</h1>
+        <p className="text-sm sm:text-base text-muted-foreground" data-testid="text-page-description">
           {t.admin.loans.description}
         </p>
       </div>
 
       <Card data-testid="card-loans-table">
         <CardHeader>
-          <CardTitle>{t.admin.loans.allLoans}</CardTitle>
-          <CardDescription>{t.admin.loans.allLoansDescription}</CardDescription>
+          <CardTitle className="text-lg sm:text-xl">{t.admin.loans.allLoans}</CardTitle>
+          <CardDescription className="text-sm">{t.admin.loans.allLoansDescription}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4">
+            {Array.isArray(loans) && loans.map((loan: any) => (
+              <Card key={loan.id} className="p-4" data-testid={`card-loan-mobile-${loan.id}`}>
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium">{loan.userName}</p>
+                      <p className="text-sm text-muted-foreground">{loan.loanType}</p>
+                    </div>
+                    <Badge variant={getStatusBadgeVariant(loan.status)}>
+                      {getStatusText(loan.status)}
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p className="text-muted-foreground text-xs">{t.admin.common.labels.amount}</p>
+                      <p className="font-medium">{parseFloat(loan.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">{t.admin.common.labels.rate}</p>
+                      <p className="font-medium">{loan.interestRate}%</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">{t.admin.common.labels.duration}</p>
+                      <p className="font-medium">{loan.duration} {t.admin.common.labels.months}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">{t.admin.common.labels.contract}</p>
+                      <p className="font-medium text-xs">
+                        {loan.signedContractUrl ? t.admin.loans.contractSigned : loan.contractUrl ? t.admin.loans.contractGenerated : '-'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2 pt-2 border-t">
+                    {loan.status === 'pending' && (
+                      <>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full justify-start"
+                              data-testid={`button-approve-mobile-${loan.id}`}
+                            >
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              {t.admin.common.actions.approve}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>{t.admin.loans.approveDialogDesc}</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                {interpolate(t.admin.loans.approveDialogDesc, {
+                                  amount: parseFloat(loan.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }),
+                                  userName: loan.userName
+                                })}
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <div className="space-y-4">
+                              <div>
+                                <Label htmlFor={`approve-reason-mobile-${loan.id}`}>{t.admin.loans.approveReason}</Label>
+                                <Textarea
+                                  id={`approve-reason-mobile-${loan.id}`}
+                                  value={approveReason}
+                                  onChange={(e) => setApproveReason(e.target.value)}
+                                  placeholder={t.admin.loans.approveReason}
+                                  data-testid={`input-approve-reason-mobile-${loan.id}`}
+                                />
+                              </div>
+                            </div>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel onClick={() => setApproveReason("")}>{t.admin.common.actions.cancel}</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => approveLoanMutation.mutate({ id: loan.id, reason: approveReason })}
+                                disabled={!approveReason || approveLoanMutation.isPending}
+                                data-testid={`button-confirm-approve-mobile-${loan.id}`}
+                              >
+                                {t.admin.common.actions.approve}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full justify-start"
+                              data-testid={`button-reject-mobile-${loan.id}`}
+                            >
+                              <XCircle className="h-4 w-4 mr-2" />
+                              {t.admin.common.actions.reject}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>{t.admin.loans.rejectDialogTitle}</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                {t.admin.loans.rejectDialogDesc}
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <div className="space-y-4">
+                              <div>
+                                <Label htmlFor={`reject-reason-mobile-${loan.id}`}>{t.admin.loans.rejectReason}</Label>
+                                <Textarea
+                                  id={`reject-reason-mobile-${loan.id}`}
+                                  value={rejectReason}
+                                  onChange={(e) => setRejectReason(e.target.value)}
+                                  placeholder={t.admin.loans.rejectReason}
+                                  data-testid={`input-reject-reason-mobile-${loan.id}`}
+                                />
+                              </div>
+                            </div>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel onClick={() => setRejectReason("")}>{t.admin.common.actions.cancel}</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => rejectLoanMutation.mutate({ id: loan.id, reason: rejectReason })}
+                                disabled={!rejectReason || rejectLoanMutation.isPending}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                data-testid={`button-confirm-reject-mobile-${loan.id}`}
+                              >
+                                {t.admin.common.actions.reject}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </>
+                    )}
+
+                    {loan.status === 'signed' && loan.signedContractUrl && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="w-full justify-start"
+                            data-testid={`button-disburse-mobile-${loan.id}`}
+                          >
+                            <Wallet className="h-4 w-4 mr-2" />
+                            {t.admin.common.actions.disburse}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>{t.admin.loans.disburseDialogTitle}</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              {interpolate(t.admin.loans.disburseDialogDesc, {
+                                amount: parseFloat(loan.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }),
+                                userName: loan.userName
+                              })}
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>{t.admin.common.actions.cancel}</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => disburseFundsMutation.mutate(loan.id)}
+                              disabled={disburseFundsMutation.isPending}
+                              data-testid={`button-confirm-disburse-mobile-${loan.id}`}
+                            >
+                              {t.admin.common.actions.disburse}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start text-destructive"
+                          data-testid={`button-delete-mobile-${loan.id}`}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          {t.admin.common.actions.delete}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>{t.admin.loans.deleteDialogTitle}</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {t.admin.loans.deleteDialogDesc}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor={`delete-reason-mobile-${loan.id}`}>{t.admin.loans.deleteReason}</Label>
+                            <Input
+                              id={`delete-reason-mobile-${loan.id}`}
+                              value={deleteReason}
+                              onChange={(e) => setDeleteReason(e.target.value)}
+                              placeholder={t.admin.loans.deleteReason}
+                              data-testid={`input-delete-reason-mobile-${loan.id}`}
+                            />
+                          </div>
+                        </div>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel onClick={() => setDeleteReason("")}>{t.admin.common.actions.cancel}</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteLoanMutation.mutate({ id: loan.id, reason: deleteReason })}
+                            disabled={!deleteReason || deleteLoanMutation.isPending}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            data-testid={`button-confirm-delete-mobile-${loan.id}`}
+                          >
+                            {t.admin.common.actions.delete}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
+            <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t.admin.common.labels.user}</TableHead>
@@ -397,7 +619,8 @@ export default function AdminLoans() {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
