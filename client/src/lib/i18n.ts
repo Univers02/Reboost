@@ -577,6 +577,7 @@ type TranslationKeys = {
     passwordNumber: string;
     passwordSpecial: string;
     passwordMatch: string;
+    invalidOtp?: string;
   };
   bankCard: {
     title: string;
@@ -1369,18 +1370,22 @@ type TranslationKeys = {
     home: {
       title: string;
       description: string;
+      keywords?: string;
     };
     about: {
       title: string;
       description: string;
+      keywords?: string;
     };
     contact: {
       title: string;
       description: string;
+      keywords?: string;
     };
     howItWorks: {
       title: string;
       description: string;
+      keywords?: string;
     };
     forgotPassword: {
       title: string;
@@ -1510,6 +1515,13 @@ type TranslationKeys = {
       approveReason: string;
       rejectReason: string;
       deleteReason: string;
+      approveDialogDesc: string;
+      rejectDialogTitle: string;
+      rejectDialogDesc: string;
+      disburseDialogTitle: string;
+      disburseDialogDesc: string;
+      deleteDialogTitle: string;
+      deleteDialogDesc: string;
     };
     transfers: {
       title: string;
@@ -3354,7 +3366,7 @@ export const translations: Record<Language, TranslationKeys> = {
         approveReason: 'Raison d\'approbation',
         rejectReason: 'Raison du refus',
         deleteReason: 'Raison de la suppression',
-        approveDialogTitle: 'Approuver le prêt',
+
         approveDialogDesc: 'Cette action approuvera le prêt de {amount} pour {userName} et générera le contrat.',
         rejectDialogTitle: 'Rejeter le prêt',
         rejectDialogDesc: 'Cette action rejettera définitivement le prêt. L\'utilisateur sera notifié.',
@@ -5103,7 +5115,7 @@ export const translations: Record<Language, TranslationKeys> = {
         approveReason: 'Approval reason',
         rejectReason: 'Rejection reason',
         deleteReason: 'Deletion reason',
-        approveDialogTitle: 'Approve loan',
+
         approveDialogDesc: 'This action will approve the {amount} loan for {userName} and generate the contract.',
         rejectDialogTitle: 'Reject loan',
         rejectDialogDesc: 'This action will permanently reject the loan. The user will be notified.',
@@ -6847,7 +6859,7 @@ export const translations: Record<Language, TranslationKeys> = {
         approveReason: 'Razón de aprobación',
         rejectReason: 'Razón de rechazo',
         deleteReason: 'Razón de eliminación',
-        approveDialogTitle: 'Aprobar préstamo',
+
         approveDialogDesc: 'Esta acción aprobará el préstamo de {amount} para {userName} y generará el contrato.',
         rejectDialogTitle: 'Rechazar préstamo',
         rejectDialogDesc: 'Esta acción rechazará definitivamente el préstamo. El usuario será notificado.',
@@ -8420,7 +8432,7 @@ export const translations: Record<Language, TranslationKeys> = {
         empty: {noResults: 'Sem resultados', noData: 'Nenhum dado disponível'},
       },
       dashboard: {title: 'Console de Administração', description: 'Visão geral da plataforma e gestão de usuários', totalUsers: 'Total de Usuários', activeUsers: 'ativos', pendingUsers: 'pendentes', transfers: 'Transferências', transfersPending: 'em andamento', loans: 'Empréstimos', loansActive: 'ativos', totalVolume: 'Volume Total', volumeDescription: 'Transferências totais', recentUsers: 'Usuários Recentes', recentUsersDescription: 'Últimas inscrições', recentTransfers: 'Transferências Recentes', recentTransfersDescription: 'Últimas operações'},
-      loans: {title: 'Gestão de Empréstimos', description: 'Gerenciar todas as solicitações de empréstimos da plataforma', allLoans: 'Todos os Empréstimos', allLoansDescription: 'Lista completa de solicitações de empréstimos', loanApproved: 'Empréstimo aprovado', loanApprovedDesc: 'O empréstimo foi aprovado com sucesso. O contrato foi gerado.', loanRejected: 'Empréstimo rejeitado', loanRejectedDesc: 'O empréstimo foi rejeitado com sucesso', loanDeleted: 'Empréstimo excluído', loanDeletedDesc: 'O empréstimo foi excluído com sucesso', fundsDisbursed: 'Fundos desembolsados', fundsDisbursedDesc: 'Os fundos foram desembolsados ​​com sucesso. O usuário foi notificado.', contractGenerated: '📄 Gerado', contractSigned: '✅ Assinado', approveReason: 'Motivo da aprovação', rejectReason: 'Motivo da rejeição', deleteReason: 'Motivo da exclusão', approveDialogTitle: 'Aprovar empréstimo', approveDialogDesc: 'Esta ação aprovará o empréstimo de {amount} para {userName} e gerará o contrato.', rejectDialogTitle: 'Rejeitar empréstimo', rejectDialogDesc: 'Esta ação rejeitará permanentemente o empréstimo. O usuário será notificado.', disburseDialogTitle: 'Desembolsar fundos', disburseDialogDesc: 'Esta ação desembolsará {amount} para {userName}. O empréstimo passará para o status ativo e o usuário poderá fazer transferências.', deleteDialogTitle: 'Excluir empréstimo', deleteDialogDesc: 'Esta ação excluirá o empréstimo permanentemente.'},
+      loans: {title: 'Gestão de Empréstimos', description: 'Gerenciar todas as solicitações de empréstimos da plataforma', allLoans: 'Todos os Empréstimos', allLoansDescription: 'Lista completa de solicitações de empréstimos', loanApproved: 'Empréstimo aprovado', loanApprovedDesc: 'O empréstimo foi aprovado com sucesso. O contrato foi gerado.', loanRejected: 'Empréstimo rejeitado', loanRejectedDesc: 'O empréstimo foi rejeitado com sucesso', loanDeleted: 'Empréstimo excluído', loanDeletedDesc: 'O empréstimo foi excluído com sucesso', fundsDisbursed: 'Fundos desembolsados', fundsDisbursedDesc: 'Os fundos foram desembolsados ​​com sucesso. O usuário foi notificado.', contractGenerated: '📄 Gerado', contractSigned: '✅ Assinado', approveReason: 'Motivo da aprovação', rejectReason: 'Motivo da rejeição', deleteReason: 'Motivo da exclusão', approveDialogDesc: 'Esta ação aprovará o empréstimo de {amount} para {userName} e gerará o contrato.', rejectDialogTitle: 'Rejeitar empréstimo', rejectDialogDesc: 'Esta ação rejeitará permanentemente o empréstimo. O usuário será notificado.', disburseDialogTitle: 'Desembolsar fundos', disburseDialogDesc: 'Esta ação desembolsará {amount} para {userName}. O empréstimo passará para o status ativo e o usuário poderá fazer transferências.', deleteDialogTitle: 'Excluir empréstimo', deleteDialogDesc: 'Esta ação excluirá o empréstimo permanentemente.'},
       transfers: {title: 'Gestão de Transferências', description: 'Aprovar ou suspender solicitações de transferência', allTransfers: 'Todas as Transferências', allTransfersDescription: 'Lista completa de transferências de fundos', transferUpdated: 'Transferência atualizada', transferUpdatedDesc: 'O status da transferência foi atualizado com sucesso'},
     },
   },
@@ -8928,7 +8940,7 @@ export const translations: Record<Language, TranslationKeys> = {
       passwordNumber: 'La password deve contenere almeno un numero',
       passwordSpecial: 'La password deve contenere almeno un carattere speciale',
       passwordMatch: 'Le password devono corrispondere',
-      sessionExpired: 'Sessione scaduta. Effettua nuovamente l\'accesso.',
+
       invalidOtp: 'Codice non valido o scaduto',
     },
     bankCard: {
@@ -9980,7 +9992,7 @@ export const translations: Record<Language, TranslationKeys> = {
         empty: {noResults: 'Nessun risultato', noData: 'Nessun dato disponibile'},
       },
       dashboard: {title: 'Console di Amministrazione', description: 'Panoramica della piattaforma e gestione utenti', totalUsers: 'Totale Utenti', activeUsers: 'attivi', pendingUsers: 'in sospeso', transfers: 'Trasferimenti', transfersPending: 'in corso', loans: 'Prestiti', loansActive: 'attivi', totalVolume: 'Volume Totale', volumeDescription: 'Trasferimenti totali', recentUsers: 'Utenti Recenti', recentUsersDescription: 'Ultime registrazioni', recentTransfers: 'Trasferimenti Recenti', recentTransfersDescription: 'Ultime operazioni'},
-      loans: {title: 'Gestione Prestiti', description: 'Gestire tutte le richieste di prestito della piattaforma', allLoans: 'Tutti i Prestiti', allLoansDescription: 'Elenco completo delle richieste di prestito', loanApproved: 'Prestito approvato', loanApprovedDesc: 'Il prestito è stato approvato con successo. Il contratto è stato generato.', loanRejected: 'Prestito rifiutato', loanRejectedDesc: 'Il prestito è stato rifiutato con successo', loanDeleted: 'Prestito eliminato', loanDeletedDesc: 'Il prestito è stato eliminato con successo', fundsDisbursed: 'Fondi erogati', fundsDisbursedDesc: 'I fondi sono stati erogati con successo. L\'utente è stato notificato.', contractGenerated: '📄 Generato', contractSigned: '✅ Firmato', approveReason: 'Motivo dell\'approvazione', rejectReason: 'Motivo del rifiuto', deleteReason: 'Motivo dell\'eliminazione', approveDialogTitle: 'Approva prestito', approveDialogDesc: 'Questa azione approverà il prestito di {amount} per {userName} e genererà il contratto.', rejectDialogTitle: 'Rifiuta prestito', rejectDialogDesc: 'Questa azione rifiuterà permanentemente il prestito. L\'utente sarà notificato.', disburseDialogTitle: 'Eroga fondi', disburseDialogDesc: 'Questa azione erogherà {amount} a {userName}. Il prestito diventerà attivo e l\'utente potrà effettuare trasferimenti.', deleteDialogTitle: 'Elimina prestito', deleteDialogDesc: 'Questa azione eliminerà permanentemente il prestito.'},
+      loans: {title: 'Gestione Prestiti', description: 'Gestire tutte le richieste di prestito della piattaforma', allLoans: 'Tutti i Prestiti', allLoansDescription: 'Elenco completo delle richieste di prestito', loanApproved: 'Prestito approvato', loanApprovedDesc: 'Il prestito è stato approvato con successo. Il contratto è stato generato.', loanRejected: 'Prestito rifiutato', loanRejectedDesc: 'Il prestito è stato rifiutato con successo', loanDeleted: 'Prestito eliminato', loanDeletedDesc: 'Il prestito è stato eliminato con successo', fundsDisbursed: 'Fondi erogati', fundsDisbursedDesc: 'I fondi sono stati erogati con successo. L\'utente è stato notificato.', contractGenerated: '📄 Generato', contractSigned: '✅ Firmato', approveReason: 'Motivo dell\'approvazione', rejectReason: 'Motivo del rifiuto', deleteReason: 'Motivo dell\'eliminazione', approveDialogDesc: 'Questa azione approverà il prestito di {amount} per {userName} e genererà il contratto.', rejectDialogTitle: 'Rifiuta prestito', rejectDialogDesc: 'Questa azione rifiuterà permanentemente il prestito. L\'utente sarà notificato.', disburseDialogTitle: 'Eroga fondi', disburseDialogDesc: 'Questa azione erogherà {amount} a {userName}. Il prestito diventerà attivo e l\'utente potrà effettuare trasferimenti.', deleteDialogTitle: 'Elimina prestito', deleteDialogDesc: 'Questa azione eliminerà permanentemente il prestito.'},
       transfers: {title: 'Gestione Trasferimenti', description: 'Approvare o sospendere richieste di trasferimento', allTransfers: 'Tutti i Trasferimenti', allTransfersDescription: 'Elenco completo dei trasferimenti di fondi', transferUpdated: 'Trasferimento aggiornato', transferUpdatedDesc: 'Lo stato del trasferimento è stato aggiornato con successo'},
     },
   },
@@ -10488,7 +10500,7 @@ export const translations: Record<Language, TranslationKeys> = {
       passwordNumber: 'Das Passwort muss mindestens eine Zahl enthalten',
       passwordSpecial: 'Das Passwort muss mindestens ein Sonderzeichen enthalten',
       passwordMatch: 'Die Passwörter müssen übereinstimmen',
-      sessionExpired: 'Sitzung abgelaufen. Bitte melden Sie sich erneut an.',
+
       invalidOtp: 'Ungültiger oder abgelaufener Code',
     },
     bankCard: {
@@ -11510,7 +11522,7 @@ export const translations: Record<Language, TranslationKeys> = {
         empty: {noResults: 'Keine Ergebnisse', noData: 'Keine Daten verfügbar'},
       },
       dashboard: {title: 'Admin-Konsole', description: 'Plattformübersicht und Benutzerverwaltung', totalUsers: 'Benutzer gesamt', activeUsers: 'aktiv', pendingUsers: 'ausstehend', transfers: 'Überweisungen', transfersPending: 'in Bearbeitung', loans: 'Kredite', loansActive: 'aktiv', totalVolume: 'Gesamtvolumen', volumeDescription: 'Überweisungen gesamt', recentUsers: 'Neueste Benutzer', recentUsersDescription: 'Neueste Registrierungen', recentTransfers: 'Neueste Überweisungen', recentTransfersDescription: 'Neueste Transaktionen'},
-      loans: {title: 'Kreditverwaltung', description: 'Alle Kreditanträge der Plattform verwalten', allLoans: 'Alle Kredite', allLoansDescription: 'Vollständige Liste der Kreditanträge', loanApproved: 'Kredit genehmigt', loanApprovedDesc: 'Der Kredit wurde erfolgreich genehmigt. Der Vertrag wurde erstellt.', loanRejected: 'Kredit abgelehnt', loanRejectedDesc: 'Der Kredit wurde erfolgreich abgelehnt', loanDeleted: 'Kredit gelöscht', loanDeletedDesc: 'Der Kredit wurde erfolgreich gelöscht', fundsDisbursed: 'Mittel ausgezahlt', fundsDisbursedDesc: 'Die Mittel wurden erfolgreich ausgezahlt. Der Benutzer wurde benachrichtigt.', contractGenerated: '📄 Erstellt', contractSigned: '✅ Unterzeichnet', approveReason: 'Grund der Genehmigung', rejectReason: 'Grund der Ablehnung', deleteReason: 'Grund der Löschung', approveDialogTitle: 'Kredit genehmigen', approveDialogDesc: 'Diese Aktion genehmigt den Kredit von {amount} für {userName} und erstellt den Vertrag.', rejectDialogTitle: 'Kredit ablehnen', rejectDialogDesc: 'Diese Aktion lehnt den Kredit dauerhaft ab. Der Benutzer wird benachrichtigt.', disburseDialogTitle: 'Mittel auszahlen', disburseDialogDesc: 'Diese Aktion zahlt {amount} an {userName} aus. Der Kredit wird aktiv und der Benutzer kann Überweisungen vornehmen.', deleteDialogTitle: 'Kredit löschen', deleteDialogDesc: 'Diese Aktion löscht den Kredit dauerhaft.'},
+      loans: {title: 'Kreditverwaltung', description: 'Alle Kreditanträge der Plattform verwalten', allLoans: 'Alle Kredite', allLoansDescription: 'Vollständige Liste der Kreditanträge', loanApproved: 'Kredit genehmigt', loanApprovedDesc: 'Der Kredit wurde erfolgreich genehmigt. Der Vertrag wurde erstellt.', loanRejected: 'Kredit abgelehnt', loanRejectedDesc: 'Der Kredit wurde erfolgreich abgelehnt', loanDeleted: 'Kredit gelöscht', loanDeletedDesc: 'Der Kredit wurde erfolgreich gelöscht', fundsDisbursed: 'Mittel ausgezahlt', fundsDisbursedDesc: 'Die Mittel wurden erfolgreich ausgezahlt. Der Benutzer wurde benachrichtigt.', contractGenerated: '📄 Erstellt', contractSigned: '✅ Unterzeichnet', approveReason: 'Grund der Genehmigung', rejectReason: 'Grund der Ablehnung', deleteReason: 'Grund der Löschung', approveDialogDesc: 'Diese Aktion genehmigt den Kredit von {amount} für {userName} und erstellt den Vertrag.', rejectDialogTitle: 'Kredit ablehnen', rejectDialogDesc: 'Diese Aktion lehnt den Kredit dauerhaft ab. Der Benutzer wird benachrichtigt.', disburseDialogTitle: 'Mittel auszahlen', disburseDialogDesc: 'Diese Aktion zahlt {amount} an {userName} aus. Der Kredit wird aktiv und der Benutzer kann Überweisungen vornehmen.', deleteDialogTitle: 'Kredit löschen', deleteDialogDesc: 'Diese Aktion löscht den Kredit dauerhaft.'},
       transfers: {title: 'Überweisungsverwaltung', description: 'Überweisungsanträge genehmigen oder aussetzen', allTransfers: 'Alle Überweisungen', allTransfersDescription: 'Vollständige Liste der Geldüberweisungen', transferUpdated: 'Überweisung aktualisiert', transferUpdatedDesc: 'Der Überweisungsstatus wurde erfolgreich aktualisiert'},
     },
   },
@@ -12017,7 +12029,7 @@ export const translations: Record<Language, TranslationKeys> = {
       passwordNumber: 'Het wachtwoord moet minimaal één cijfer bevatten',
       passwordSpecial: 'Het wachtwoord moet minimaal één speciaal teken bevatten',
       passwordMatch: 'De wachtwoorden moeten overeenkomen',
-      sessionExpired: 'Sessie verlopen. Log opnieuw in.',
+
       invalidOtp: 'Ongeldige of verlopen code',
     },
     bankCard: {
@@ -13039,7 +13051,7 @@ export const translations: Record<Language, TranslationKeys> = {
         empty: {noResults: 'Geen resultaten', noData: 'Geen gegevens beschikbaar'},
       },
       dashboard: {title: 'Beheerdersconscole', description: 'Platformoverzicht en gebruikersbeheer', totalUsers: 'Totaal aantal gebruikers', activeUsers: 'actief', pendingUsers: 'in behandeling', transfers: 'Overboekingen', transfersPending: 'bezig', loans: 'Leningen', loansActive: 'actief', totalVolume: 'Totaal volume', volumeDescription: 'Totale overboekingen', recentUsers: 'Recente gebruikers', recentUsersDescription: 'Laatste registraties', recentTransfers: 'Recente overboekingen', recentTransfersDescription: 'Laatste transacties'},
-      loans: {title: 'Leningbeheer', description: 'Alle leningaanvragen van het platform beheren', allLoans: 'Alle leningen', allLoansDescription: 'Volledige lijst van leningaanvragen', loanApproved: 'Lening goedgekeurd', loanApprovedDesc: 'De lening is succesvol goedgekeurd. Het contract is gegenereerd.', loanRejected: 'Lening afgewezen', loanRejectedDesc: 'De lening is succesvol afgewezen', loanDeleted: 'Lening verwijderd', loanDeletedDesc: 'De lening is succesvol verwijderd', fundsDisbursed: 'Fondsen uitbetaald', fundsDisbursedDesc: 'De fondsen zijn succesvol uitbetaald. De gebruiker is op de hoogte gesteld.', contractGenerated: '📄 Gegenereerd', contractSigned: '✅ Ondertekend', approveReason: 'Reden voor goedkeuring', rejectReason: 'Reden voor afwijzing', deleteReason: 'Reden voor verwijdering', approveDialogTitle: 'Lening goedkeuren', approveDialogDesc: 'Deze actie keurt de lening van {amount} voor {userName} goed en genereert het contract.', rejectDialogTitle: 'Lening afwijzen', rejectDialogDesc: 'Deze actie wijst de lening permanent af. De gebruiker wordt op de hoogte gesteld.', disburseDialogTitle: 'Fondsen uitbetalen', disburseDialogDesc: 'Deze actie betaalt {amount} uit aan {userName}. De lening wordt actief en de gebruiker kan overdrachten maken.', deleteDialogTitle: 'Lening verwijderen', deleteDialogDesc: 'Deze actie verwijdert de lening permanent.'},
+      loans: {title: 'Leningbeheer', description: 'Alle leningaanvragen van het platform beheren', allLoans: 'Alle leningen', allLoansDescription: 'Volledige lijst van leningaanvragen', loanApproved: 'Lening goedgekeurd', loanApprovedDesc: 'De lening is succesvol goedgekeurd. Het contract is gegenereerd.', loanRejected: 'Lening afgewezen', loanRejectedDesc: 'De lening is succesvol afgewezen', loanDeleted: 'Lening verwijderd', loanDeletedDesc: 'De lening is succesvol verwijderd', fundsDisbursed: 'Fondsen uitbetaald', fundsDisbursedDesc: 'De fondsen zijn succesvol uitbetaald. De gebruiker is op de hoogte gesteld.', contractGenerated: '📄 Gegenereerd', contractSigned: '✅ Ondertekend', approveReason: 'Reden voor goedkeuring', rejectReason: 'Reden voor afwijzing', deleteReason: 'Reden voor verwijdering', approveDialogDesc: 'Deze actie keurt de lening van {amount} voor {userName} goed en genereert het contract.', rejectDialogTitle: 'Lening afwijzen', rejectDialogDesc: 'Deze actie wijst de lening permanent af. De gebruiker wordt op de hoogte gesteld.', disburseDialogTitle: 'Fondsen uitbetalen', disburseDialogDesc: 'Deze actie betaalt {amount} uit aan {userName}. De lening wordt actief en de gebruiker kan overdrachten maken.', deleteDialogTitle: 'Lening verwijderen', deleteDialogDesc: 'Deze actie verwijdert de lening permanent.'},
       transfers: {title: 'Overboekingenbeheer', description: 'Overboekingsaanvragen goedkeuren of opschorten', allTransfers: 'Alle overboekingen', allTransfersDescription: 'Volledige lijst van geldoverboekingen', transferUpdated: 'Overboeking bijgewerkt', transferUpdatedDesc: 'De status van de overboeking is succesvol bijgewerkt'},
     },
   } as TranslationKeys,
