@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Ban } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "@/lib/i18n";
 
 export default function AdminTransfers() {
+  const t = useTranslations();
   const { toast } = useToast();
   const { data: transfers, isLoading } = useQuery({
     queryKey: ["/api/admin/transfers"],
@@ -21,14 +23,14 @@ export default function AdminTransfers() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/transfers"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
       toast({
-        title: "Transfert mis à jour",
-        description: "Le statut du transfert a été modifié avec succès",
+        title: t.admin.transfers.transferUpdated,
+        description: t.admin.transfers.transferUpdatedDesc,
       });
     },
     onError: () => {
       toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le transfert",
+        title: t.admin.common.messages.error,
+        description: t.admin.common.messages.cannotUpdate,
         variant: "destructive",
       });
     },
@@ -71,30 +73,30 @@ export default function AdminTransfers() {
   return (
     <div className="p-6 space-y-6" data-testid="page-admin-transfers">
       <div>
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">Gestion des Transferts</h1>
+        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">{t.admin.transfers.title}</h1>
         <p className="text-muted-foreground" data-testid="text-page-description">
-          Valider ou suspendre les demandes de transfert
+          {t.admin.transfers.description}
         </p>
       </div>
 
       <Card data-testid="card-transfers-table">
         <CardHeader>
-          <CardTitle>Tous les Transferts</CardTitle>
-          <CardDescription>Liste complète des transferts de fonds</CardDescription>
+          <CardTitle>{t.admin.transfers.allTransfers}</CardTitle>
+          <CardDescription>{t.admin.transfers.allTransfersDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Utilisateur</TableHead>
-                <TableHead>Destinataire</TableHead>
-                <TableHead>Montant</TableHead>
-                <TableHead>Frais</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Progression</TableHead>
-                <TableHead>Codes</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t.admin.common.labels.user}</TableHead>
+                <TableHead>{t.admin.common.labels.recipient}</TableHead>
+                <TableHead>{t.admin.common.labels.amount}</TableHead>
+                <TableHead>{t.admin.common.labels.fees}</TableHead>
+                <TableHead>{t.admin.common.labels.status}</TableHead>
+                <TableHead>{t.admin.common.labels.progress}</TableHead>
+                <TableHead>{t.admin.common.labels.codes}</TableHead>
+                <TableHead>{t.admin.common.labels.date}</TableHead>
+                <TableHead className="text-right">{t.admin.common.labels.actions}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -125,7 +127,10 @@ export default function AdminTransfers() {
                       }
                       data-testid={`badge-transfer-status-${transfer.id}`}
                     >
-                      {transfer.status}
+                      {transfer.status === 'completed' ? t.admin.common.status.completed :
+                       transfer.status === 'in-progress' ? t.admin.common.status.inProgress :
+                       transfer.status === 'suspended' ? t.admin.common.status.suspended :
+                       t.admin.common.status.pending}
                     </Badge>
                   </TableCell>
                   <TableCell data-testid={`text-transfer-progress-${transfer.id}`}>
@@ -156,7 +161,7 @@ export default function AdminTransfers() {
                           data-testid={`button-approve-${transfer.id}`}
                         >
                           <CheckCircle className="h-4 w-4 mr-1" />
-                          Approuver
+                          {t.admin.common.actions.approve}
                         </Button>
                       )}
                       {(transfer.status === 'pending' || transfer.status === 'in-progress') && (
@@ -168,7 +173,7 @@ export default function AdminTransfers() {
                           data-testid={`button-suspend-${transfer.id}`}
                         >
                           <Ban className="h-4 w-4 mr-1" />
-                          Suspendre
+                          {t.admin.common.actions.suspend}
                         </Button>
                       )}
                     </div>
