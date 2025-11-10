@@ -16,7 +16,7 @@ export default function InfoBanner() {
     },
     {
       icon: Lock,
-      text: "Établissement régulé et supervisé par l'Autorité Bancaire Européenne",
+      text: "Établissement régulé - Conforme RGPD et certifications bancaires",
     },
     {
       icon: Clock,

@@ -6934,7 +6934,7 @@ export const translations: Record<Language, TranslationKeys> = {
       description: 'Su socio de confianza para todos sus proyectos de financiamiento. Soluciones de préstamo adaptadas a particulares y profesionales.',
       phone: '+352 40 63 48',
       email: 'infos@altusfinancegroup.com',
-      address: '75 Avenue des Champs-Élysées, 75008 París',
+      address: '19 Rue Sigismond, L-2537 Luxembourg',
       hoursTitle: 'Horario de Atención',
       hours: {
         weekdays: 'Lun - Vie: 9:00 - 19:00',
@@ -10373,7 +10373,7 @@ export const translations: Record<Language, TranslationKeys> = {
       description: 'Il vostro partner di fiducia per tutti i vostri progetti di finanziamento. Soluzioni di prestito adattate a privati e professionisti.',
       phone: '+352 40 63 48',
       email: 'infos@altusfinancegroup.com',
-      address: '75 Avenue des Champs-Élysées, 75008 Parigi',
+      address: '19 Rue Sigismond, L-2537 Luxembourg',
       hoursTitle: 'Orari di Apertura',
       hours: {
         weekdays: 'Lun - Ven: 9:00 - 19:00',
@@ -13668,7 +13668,7 @@ export const translations: Record<Language, TranslationKeys> = {
       description: 'Uw betrouwbare partner voor al uw financieringsprojecten. Leningsoplossingen aangepast aan particulieren en professionals.',
       phone: '+352 40 63 48',
       email: 'infos@altusfinancegroup.com',
-      address: '75 Avenue des Champs-Élysées, 75008 Parijs',
+      address: '19 Rue Sigismond, L-2537 Luxembourg',
       hoursTitle: 'Openingstijden',
       hours: {
         weekdays: 'Ma - Vr: 9:00 - 19:00',
