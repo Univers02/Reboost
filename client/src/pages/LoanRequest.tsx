@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getLoanOffersByAccountType, type LoanOffer } from '@shared/loan-offers';
 import { useUser, getAccountTypeLabel } from '@/hooks/use-user';
 import { CheckCircle, Info } from 'lucide-react';
-import NewLoanDialog from '@/components/NewLoanDialog';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,48 +14,15 @@ import { useTranslations } from '@/lib/i18n';
 
 export default function LoanRequest() {
   const t = useTranslations();
-  const { data: user, isLoading } = useUser();
+  const { data: user } = useUser();
   const [, setLocation] = useLocation();
-  const [selectedOffer, setSelectedOffer] = useState<LoanOffer | null>(null);
-  const [loanDialogOpen, setLoanDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'individual' | 'business'>('individual');
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      setLocation('/login');
-    }
-  }, [user, isLoading, setLocation]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen">
-        <Header />
-        <main className="pt-24 pb-16 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-muted-foreground">{t.common?.loading || 'Chargement...'}</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
-
-  const accountType = user.accountType === 'business' ? 'business' : 'individual';
   const individualOffers = getLoanOffersByAccountType('individual');
   const businessOffers = getLoanOffersByAccountType('business');
 
   const handleRequestLoan = (offer: LoanOffer) => {
-    if (!user) {
-      setLocation('/login');
-      return;
-    }
-    setSelectedOffer(offer);
-    setLoanDialogOpen(true);
+    setLocation('/login');
   };
 
   const renderOffers = (offers: LoanOffer[], type: 'individual' | 'business') => (
@@ -174,11 +140,6 @@ export default function LoanRequest() {
         </div>
       </main>
       <Footer />
-
-      <NewLoanDialog 
-        open={loanDialogOpen}
-        onOpenChange={setLoanDialogOpen}
-      />
     </div>
   );
 }
