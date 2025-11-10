@@ -1,6 +1,4 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -25,10 +23,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Ban, Trash2, CheckCircle } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AdminLayout } from "@/components/admin";
 
 export default function AdminUsers() {
   const { toast } = useToast();
@@ -135,33 +137,21 @@ export default function AdminUsers() {
 
   if (isLoading) {
     return (
-      <div className="p-6" data-testid="loading-admin-users">
-        <div className="h-8 w-64 bg-muted animate-pulse rounded mb-6" />
-        <Card>
-          <CardHeader>
-            <div className="h-6 w-48 bg-muted animate-pulse rounded" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 bg-muted animate-pulse rounded" />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <AdminLayout
+        title="Gestion des Utilisateurs"
+        description="Gérer tous les comptes utilisateurs de la plateforme"
+      >
+        <div className="space-y-6" data-testid="loading-admin-users">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-16 w-full" />
+          ))}
+        </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="p-6 space-y-6" data-testid="page-admin-users">
-      <div>
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">Gestion des Utilisateurs</h1>
-        <p className="text-muted-foreground" data-testid="text-page-description">
-          Gérer tous les comptes utilisateurs de la plateforme
-        </p>
-      </div>
-
+    <>
       <Dialog open={suspendDialogOpen} onOpenChange={setSuspendDialogOpen}>
         <DialogContent data-testid="dialog-suspend-user">
           <DialogHeader>
@@ -211,123 +201,130 @@ export default function AdminUsers() {
         </DialogContent>
       </Dialog>
 
-      <Card data-testid="card-users-table">
-        <CardHeader>
-          <CardTitle>Tous les Utilisateurs</CardTitle>
-          <CardDescription>Liste complète des comptes utilisateurs</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nom Complet</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Téléphone</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>KYC</TableHead>
-                <TableHead>Solde</TableHead>
-                <TableHead>Prêts</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Array.isArray(users) && users.map((user: any) => (
-                <TableRow key={user.id} data-testid={`row-user-${user.id}`}>
-                  <TableCell className="font-medium" data-testid={`text-user-name-${user.id}`}>
-                    {user.fullName}
-                  </TableCell>
-                  <TableCell data-testid={`text-user-email-${user.id}`}>{user.email}</TableCell>
-                  <TableCell data-testid={`text-user-phone-${user.id}`}>{user.phone || '-'}</TableCell>
-                  <TableCell data-testid={`text-user-type-${user.id}`}>{user.accountType}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        user.status === 'active' ? 'default' :
-                        user.status === 'suspended' ? 'destructive' : 'secondary'
-                      }
-                      data-testid={`badge-user-status-${user.id}`}
-                    >
-                      {user.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={user.kycStatus === 'approved' ? 'default' : 'secondary'}
-                      data-testid={`badge-user-kyc-${user.id}`}
-                    >
-                      {user.kycStatus}
-                    </Badge>
-                  </TableCell>
-                  <TableCell data-testid={`text-user-balance-${user.id}`}>
-                    {user.balance?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) || '0 €'}
-                  </TableCell>
-                  <TableCell data-testid={`text-user-loans-${user.id}`}>{user.loansCount || 0}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      {user.status === 'active' ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleSuspend(user.id)}
-                          disabled={suspendUserMutation.isPending || unblockUserMutation.isPending}
-                          data-testid={`button-suspend-${user.id}`}
-                        >
-                          <Ban className="h-4 w-4 mr-1" />
-                          Suspendre
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleActivate(user.id)}
-                          disabled={suspendUserMutation.isPending || unblockUserMutation.isPending}
-                          data-testid={`button-activate-${user.id}`}
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Activer
-                        </Button>
-                      )}
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            disabled={deleteUserMutation.isPending}
-                            data-testid={`button-delete-${user.id}`}
-                          >
-                            <Trash2 className="h-4 w-4 mr-1" />
-                            Supprimer
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Cette action est irréversible. Cela supprimera définitivement le compte de{' '}
-                              <strong>{user.fullName}</strong> et toutes ses données associées.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel data-testid={`button-cancel-delete-${user.id}`}>Annuler</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDelete(user.id)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              data-testid={`button-confirm-delete-${user.id}`}
-                            >
-                              Supprimer
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
+      <AdminLayout
+        title="Gestion des Utilisateurs"
+        description="Gérer tous les comptes utilisateurs de la plateforme"
+      >
+        <div className="space-y-6" data-testid="page-admin-users">
+          <Card data-testid="card-users-table">
+          <CardHeader>
+            <CardTitle>Tous les Utilisateurs</CardTitle>
+            <CardDescription>Liste complète des comptes utilisateurs</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nom Complet</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Téléphone</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead>KYC</TableHead>
+                  <TableHead>Solde</TableHead>
+                  <TableHead>Prêts</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </div>
+              </TableHeader>
+              <TableBody>
+                {Array.isArray(users) && users.map((user: any) => (
+                  <TableRow key={user.id} data-testid={`row-user-${user.id}`}>
+                    <TableCell className="font-medium" data-testid={`text-user-name-${user.id}`}>
+                      {user.fullName}
+                    </TableCell>
+                    <TableCell data-testid={`text-user-email-${user.id}`}>{user.email}</TableCell>
+                    <TableCell data-testid={`text-user-phone-${user.id}`}>{user.phone || '-'}</TableCell>
+                    <TableCell data-testid={`text-user-type-${user.id}`}>{user.accountType}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          user.status === 'active' ? 'default' :
+                          user.status === 'suspended' ? 'destructive' : 'secondary'
+                        }
+                        data-testid={`badge-user-status-${user.id}`}
+                      >
+                        {user.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={user.kycStatus === 'approved' ? 'default' : 'secondary'}
+                        data-testid={`badge-user-kyc-${user.id}`}
+                      >
+                        {user.kycStatus}
+                      </Badge>
+                    </TableCell>
+                    <TableCell data-testid={`text-user-balance-${user.id}`}>
+                      {user.balance?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) || '0 €'}
+                    </TableCell>
+                    <TableCell data-testid={`text-user-loans-${user.id}`}>{user.loansCount || 0}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        {user.status === 'active' ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleSuspend(user.id)}
+                            disabled={suspendUserMutation.isPending || unblockUserMutation.isPending}
+                            data-testid={`button-suspend-${user.id}`}
+                          >
+                            <Ban className="h-4 w-4 mr-1" />
+                            Suspendre
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleActivate(user.id)}
+                            disabled={suspendUserMutation.isPending || unblockUserMutation.isPending}
+                            data-testid={`button-activate-${user.id}`}
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Activer
+                          </Button>
+                        )}
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              disabled={deleteUserMutation.isPending}
+                              data-testid={`button-delete-${user.id}`}
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Supprimer
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Cette action est irréversible. Cela supprimera définitivement le compte de{' '}
+                                <strong>{user.fullName}</strong> et toutes ses données associées.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel data-testid={`button-cancel-delete-${user.id}`}>Annuler</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(user.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                data-testid={`button-confirm-delete-${user.id}`}
+                              >
+                                Supprimer
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+        </div>
+      </AdminLayout>
+    </>
   );
 }

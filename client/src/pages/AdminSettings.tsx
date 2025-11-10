@@ -9,6 +9,8 @@ import { Save, Send } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
+import { AdminLayout } from "@/components/admin";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminSettings() {
   const { toast } = useToast();
@@ -132,34 +134,27 @@ export default function AdminSettings() {
 
   if (isLoading) {
     return (
-      <div className="p-6" data-testid="loading-admin-settings">
-        <div className="h-8 w-64 bg-muted animate-pulse rounded mb-6" />
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i}>
-              <CardHeader>
-                <div className="h-6 w-48 bg-muted animate-pulse rounded" />
-              </CardHeader>
-              <CardContent>
-                <div className="h-20 bg-muted animate-pulse rounded" />
-              </CardContent>
-            </Card>
-          ))}
+      <AdminLayout
+        title="Paramètres"
+        description="Configurer les frais et les codes de validation"
+      >
+        <div className="space-y-6" data-testid="loading-admin-settings">
+          <div className="grid gap-6 md:grid-cols-2">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-48" />
+            ))}
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="p-6 space-y-6" data-testid="page-admin-settings">
-      <div>
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">Paramètres</h1>
-        <p className="text-muted-foreground" data-testid="text-page-description">
-          Configurer les frais et les codes de validation
-        </p>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
+    <AdminLayout
+      title="Paramètres"
+      description="Configurer les frais et les codes de validation"
+    >
+      <div className="grid gap-6 md:grid-cols-2" data-testid="page-admin-settings">
         <Card data-testid="card-transfer-fee">
           <CardHeader>
             <CardTitle>Frais de Transfert</CardTitle>
@@ -342,6 +337,6 @@ export default function AdminSettings() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

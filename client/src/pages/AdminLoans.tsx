@@ -22,6 +22,8 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { useTranslations } from "@/lib/i18n";
+import { AdminLayout } from "@/components/admin";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminLoans() {
   const t = useTranslations();
@@ -149,34 +151,26 @@ export default function AdminLoans() {
 
   if (isLoading) {
     return (
-      <div className="p-6" data-testid="loading-admin-loans">
-        <div className="h-8 w-64 bg-muted animate-pulse rounded mb-6" />
-        <Card>
-          <CardHeader>
-            <div className="h-6 w-48 bg-muted animate-pulse rounded" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 bg-muted animate-pulse rounded" />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <AdminLayout
+        title={t.admin.loans.title}
+        description={t.admin.loans.description}
+      >
+        <div className="space-y-6" data-testid="loading-admin-loans">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-32" />
+          ))}
+        </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6" data-testid="page-admin-loans">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2" data-testid="text-page-title">{t.admin.loans.title}</h1>
-        <p className="text-sm sm:text-base text-muted-foreground" data-testid="text-page-description">
-          {t.admin.loans.description}
-        </p>
-      </div>
-
-      <Card data-testid="card-loans-table">
+    <AdminLayout
+      title={t.admin.loans.title}
+      description={t.admin.loans.description}
+    >
+      <div className="space-y-6" data-testid="page-admin-loans">
+        <Card data-testid="card-loans-table">
         <CardHeader>
           <CardTitle className="text-lg sm:text-xl">{t.admin.loans.allLoans}</CardTitle>
           <CardDescription className="text-sm">{t.admin.loans.allLoansDescription}</CardDescription>
@@ -623,6 +617,7 @@ export default function AdminLoans() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </AdminLayout>
   );
 }

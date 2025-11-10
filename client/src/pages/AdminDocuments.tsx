@@ -26,6 +26,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { AdminLayout } from "@/components/admin";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface KycDocument {
   id: string;
@@ -193,30 +195,26 @@ export default function AdminDocuments() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6">
-        <Card>
-          <CardContent className="p-8">
-            <div className="text-center text-muted-foreground">Chargement des documents...</div>
-          </CardContent>
-        </Card>
-      </div>
+      <AdminLayout
+        title="Gestion des Documents KYC"
+        description="Gérer les documents d'identité et justificatifs envoyés par les utilisateurs"
+      >
+        <div className="space-y-6">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-32" />
+          ))}
+        </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="text-page-title">
-            Gestion des Documents KYC
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Gérer les documents d'identité et justificatifs envoyés par les utilisateurs
-          </p>
-        </div>
-      </div>
-
-      <Card>
+    <AdminLayout
+      title="Gestion des Documents KYC"
+      description="Gérer les documents d'identité et justificatifs envoyés par les utilisateurs"
+    >
+      <div className="space-y-6">
+        <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
@@ -461,6 +459,7 @@ export default function AdminDocuments() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </AdminLayout>
   );
 }
