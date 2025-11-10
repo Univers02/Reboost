@@ -2410,7 +2410,7 @@ export const translations: Record<Language, TranslationKeys> = {
       benefits: [
         'Accès à plus de 50 institutions financières pour comparer les meilleures offres',
         'Négociation de taux préférentiels grâce à notre volume d\'affaires',
-        'Expertise reconnue dans le courtage de crédit depuis plus de 25 ans'
+        'Expertise reconnue dans le courtage de crédit depuis plus de 15 ans'
       ]
     },
     testimonials: {
