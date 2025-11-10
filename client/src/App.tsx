@@ -8,7 +8,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import PageLoader from '@/components/PageLoader';
 import NotFound from '@/pages/not-found';
 import Home from '@/pages/Home';
-import Dashboard from '@/pages/Dashboard';
+import DashboardWrapper from '@/pages/DashboardWrapper';
 import About from '@/pages/About';
 import HowItWorks from '@/pages/HowItWorks';
 import Products from '@/pages/Products';
@@ -96,7 +96,7 @@ function App() {
                     </div>
                     <main className="flex-1 overflow-auto pb-20 md:pb-0">
                       <Switch>
-                        <Route path="/dashboard" component={Dashboard} />
+                        <Route path="/dashboard" component={DashboardWrapper} />
                         <Route path="/loans" component={IndividualLoans} />
                         <Route path="/transfer/new" component={TransferFlow} />
                         <Route path="/transfer/:id" component={TransferFlow} />
