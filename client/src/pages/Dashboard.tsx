@@ -33,22 +33,24 @@ function DashboardSkeleton() {
   );
 }
 
+// Mock trend data - months will be translated via recharts formatter
 const mockTrendData = [
-  { name: 'Jan', value: 45000 },
-  { name: 'Fév', value: 48000 },
-  { name: 'Mar', value: 47500 },
-  { name: 'Avr', value: 50000 },
-  { name: 'Mai', value: 52000 },
-  { name: 'Juin', value: 51000 },
+  { month: 1, value: 45000 },
+  { month: 2, value: 48000 },
+  { month: 3, value: 47500 },
+  { month: 4, value: 50000 },
+  { month: 5, value: 52000 },
+  { month: 6, value: 51000 },
 ];
 
-const mockCashflowData = [
-  { month: 'Jan', income: 55000, expenses: 42000 },
-  { month: 'Fév', income: 58000, expenses: 45000 },
-  { month: 'Mar', income: 52000, expenses: 43000 },
-  { month: 'Avr', income: 60000, expenses: 48000 },
-  { month: 'Mai', income: 62000, expenses: 50000 },
-  { month: 'Juin', income: 61000, expenses: 49000 },
+// Mock cashflow data - using month names directly from translations
+const getMockCashflowData = (t: ReturnType<typeof useTranslations>) => [
+  { month: t.dashboard.monthJan, income: 55000, expenses: 42000 },
+  { month: t.dashboard.monthFeb, income: 58000, expenses: 45000 },
+  { month: t.dashboard.monthMar, income: 52000, expenses: 43000 },
+  { month: t.dashboard.monthApr, income: 60000, expenses: 48000 },
+  { month: t.dashboard.monthMay, income: 62000, expenses: 50000 },
+  { month: t.dashboard.monthJun, income: 61000, expenses: 49000 },
 ];
 
 export default function Dashboard() {
@@ -57,12 +59,14 @@ export default function Dashboard() {
   const { data: repaymentsData, isLoading: isRepaymentsLoading } = useUpcomingRepaymentsChart();
   const { data: user } = useUser();
   
+  const mockCashflowData = getMockCashflowData(t);
+  
   const getGreeting = () => {
     const hour = new Date().getHours();
-    let greeting = 'Bonjour';
-    if (hour < 12) greeting = 'Bonjour';
-    else if (hour < 18) greeting = 'Bon après-midi';
-    else greeting = 'Bonsoir';
+    let greeting = t.dashboard.goodMorning;
+    if (hour < 12) greeting = t.dashboard.goodMorning;
+    else if (hour < 18) greeting = t.dashboard.goodAfternoon;
+    else greeting = t.dashboard.goodEvening;
     
     if (user) {
       const firstName = user.fullName.split(' ')[0];
@@ -88,8 +92,8 @@ export default function Dashboard() {
     : 0;
 
   const pieData = [
-    { name: 'Utilisé', value: creditUtilization },
-    { name: 'Disponible', value: 100 - creditUtilization },
+    { name: t.dashboard.used, value: creditUtilization },
+    { name: t.dashboard.available, value: 100 - creditUtilization },
   ];
 
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--muted))'];
@@ -109,7 +113,7 @@ export default function Dashboard() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Solde total</p>
+                <p className="text-sm text-muted-foreground mb-2">{t.dashboard.totalBalance}</p>
                 <h2 className="text-4xl md:text-5xl font-bold text-foreground" data-testid="text-total-balance">
                   {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(dashboardData.balance.currentBalance)}
                 </h2>
@@ -117,19 +121,19 @@ export default function Dashboard() {
 
               <div className="flex flex-wrap gap-6" data-testid="section-balance-kpis">
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Crédit disponible</p>
+                  <p className="text-xs text-muted-foreground mb-1">{t.dashboard.availableCredit}</p>
                   <p className="text-lg font-semibold text-foreground" data-testid="text-available-credit">
                     {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(dashboardData.balance.availableCredit)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Prêts actifs</p>
+                  <p className="text-xs text-muted-foreground mb-1">{t.dashboard.activeLoans}</p>
                   <p className="text-lg font-semibold text-foreground" data-testid="text-active-loans-count">
                     {dashboardData.balance.activeLoansCount}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Total emprunté</p>
+                  <p className="text-xs text-muted-foreground mb-1">{t.dashboard.totalBorrowed}</p>
                   <p className="text-lg font-semibold text-foreground" data-testid="text-total-borrowed">
                     {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(dashboardData.balance.totalBorrowed)}
                   </p>
@@ -166,19 +170,19 @@ export default function Dashboard() {
           <Link href="/transfer/new">
             <Button className="gap-2" data-testid="button-new-transfer">
               <Send className="w-4 h-4" />
-              Nouveau transfert
+              {t.dashboard.newTransfer}
             </Button>
           </Link>
           <Link href="/loan-request">
             <Button variant="outline" className="gap-2" data-testid="button-request-loan">
               <Plus className="w-4 h-4" />
-              Demander un prêt
+              {t.dashboard.requestLoan}
             </Button>
           </Link>
           <Link href="/accounts">
             <Button variant="outline" className="gap-2" data-testid="button-manage-accounts">
               <Wallet className="w-4 h-4" />
-              Gérer les comptes
+              {t.dashboard.manageAccounts}
             </Button>
           </Link>
         </div>
@@ -188,8 +192,8 @@ export default function Dashboard() {
           {/* Cashflow Chart */}
           <Card className="p-6 col-span-1 md:col-span-2">
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-foreground mb-1">Flux de trésorerie</h3>
-              <p className="text-sm text-muted-foreground">Revenus et dépenses sur 6 mois</p>
+              <h3 className="text-lg font-semibold text-foreground mb-1">{t.dashboard.cashflow}</h3>
+              <p className="text-sm text-muted-foreground">{t.dashboard.incomeExpensesSixMonths}</p>
             </div>
             <div className="h-64" data-testid="chart-cashflow">
               <ResponsiveContainer width="100%" height="100%">
@@ -229,7 +233,7 @@ export default function Dashboard() {
                     stroke="hsl(var(--accent))" 
                     strokeWidth={2}
                     fill="url(#colorIncome)" 
-                    name="Revenus"
+                    name={t.dashboard.income}
                   />
                   <Area 
                     type="monotone" 
@@ -237,7 +241,7 @@ export default function Dashboard() {
                     stroke="hsl(var(--primary))" 
                     strokeWidth={2}
                     fill="url(#colorExpenses)" 
-                    name="Dépenses"
+                    name={t.dashboard.expenses}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -247,8 +251,8 @@ export default function Dashboard() {
           {/* Credit Utilization */}
           <Card className="p-6">
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-foreground mb-1">Utilisation du crédit</h3>
-              <p className="text-sm text-muted-foreground">Capacité d'emprunt</p>
+              <h3 className="text-lg font-semibold text-foreground mb-1">{t.dashboard.creditUtilization}</h3>
+              <p className="text-sm text-muted-foreground">{t.dashboard.borrowingCapacity}</p>
             </div>
             <div className="flex flex-col items-center justify-center" data-testid="section-credit-utilization">
               <div className="relative w-48 h-48">
@@ -271,18 +275,18 @@ export default function Dashboard() {
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <p className="text-3xl font-bold text-foreground">{creditUtilization.toFixed(0)}%</p>
-                  <p className="text-xs text-muted-foreground">utilisé</p>
+                  <p className="text-xs text-muted-foreground">{t.dashboard.used}</p>
                 </div>
               </div>
               <div className="mt-6 w-full space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Utilisé</span>
+                  <span className="text-muted-foreground">{t.dashboard.used}</span>
                   <span className="font-semibold text-foreground">
                     {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(dashboardData.borrowingCapacity.maxCapacity - dashboardData.borrowingCapacity.currentCapacity)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Disponible</span>
+                  <span className="text-muted-foreground">{t.dashboard.available}</span>
                   <span className="font-semibold text-accent">
                     {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(dashboardData.borrowingCapacity.currentCapacity)}
                   </span>
@@ -298,12 +302,12 @@ export default function Dashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-1">Activité récente</h3>
-                <p className="text-sm text-muted-foreground">Dernières transactions</p>
+                <h3 className="text-lg font-semibold text-foreground mb-1">{t.dashboard.recentActivity}</h3>
+                <p className="text-sm text-muted-foreground">{t.dashboard.latestTransactions}</p>
               </div>
               <Link href="/history">
                 <Button variant="ghost" size="sm" className="gap-1" data-testid="link-view-all-history">
-                  Tout voir
+                  {t.dashboard.viewAll}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
@@ -336,10 +340,10 @@ export default function Dashboard() {
                       transfer.status === 'pending' || transfer.status === 'in-progress' ? 'secondary' : 
                       'destructive'
                     } className="text-xs">
-                      {transfer.status === 'approved' || transfer.status === 'completed' ? 'Terminé' : 
-                       transfer.status === 'pending' ? 'En attente' : 
-                       transfer.status === 'in-progress' ? 'En cours' :
-                       'Rejeté'}
+                      {transfer.status === 'approved' || transfer.status === 'completed' ? t.dashboard.completed : 
+                       transfer.status === 'pending' ? t.dashboard.pending : 
+                       transfer.status === 'in-progress' ? t.dashboard.inProgress :
+                       t.dashboard.rejected}
                     </Badge>
                   </div>
                 </div>
@@ -347,7 +351,7 @@ export default function Dashboard() {
 
               {dashboardData.transfers.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
-                  <p className="text-sm">Aucune transaction récente</p>
+                  <p className="text-sm">{t.dashboard.noRecentTransactions}</p>
                 </div>
               )}
             </div>
@@ -357,12 +361,12 @@ export default function Dashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-1">Prêts actifs</h3>
-                <p className="text-sm text-muted-foreground">Vos emprunts en cours</p>
+                <h3 className="text-lg font-semibold text-foreground mb-1">{t.dashboard.yourActiveLoans}</h3>
+                <p className="text-sm text-muted-foreground">{t.loan.activeLoansDescription || 'Vos emprunts en cours'}</p>
               </div>
               <Link href="/loans">
                 <Button variant="ghost" size="sm" className="gap-1" data-testid="link-view-all-loans">
-                  Tout voir
+                  {t.dashboard.viewAll}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
@@ -385,7 +389,7 @@ export default function Dashboard() {
                         </div>
                         <div>
                           <p className="font-medium text-foreground text-sm">
-                            Prêt actif
+                            {t.dashboard.activeLoan}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {loan.interestRate}% APR
@@ -401,7 +405,7 @@ export default function Dashboard() {
                     
                     <div className="space-y-1">
                       <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Remboursé</span>
+                        <span>{t.dashboard.repaid}</span>
                         <span>{progress.toFixed(0)}%</span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-1.5">
@@ -417,10 +421,10 @@ export default function Dashboard() {
 
               {dashboardData.loans.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
-                  <p className="text-sm">Aucun prêt actif</p>
+                  <p className="text-sm">{t.dashboard.noActiveLoans}</p>
                   <Link href="/loan-request">
                     <Button variant="outline" size="sm" className="mt-4" data-testid="button-request-first-loan">
-                      Demander un prêt
+                      {t.dashboard.requestLoan}
                     </Button>
                   </Link>
                 </div>
@@ -434,8 +438,8 @@ export default function Dashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-1">Prochains remboursements</h3>
-                <p className="text-sm text-muted-foreground">Échéances à venir</p>
+                <h3 className="text-lg font-semibold text-foreground mb-1">{t.dashboard.upcomingRepayments}</h3>
+                <p className="text-sm text-muted-foreground">{t.dashboard.upcomingDueDates}</p>
               </div>
               <Clock className="w-5 h-5 text-muted-foreground" />
             </div>
@@ -467,7 +471,7 @@ export default function Dashboard() {
                     stroke="hsl(var(--primary))" 
                     strokeWidth={2}
                     dot={{ fill: 'hsl(var(--primary))', r: 4 }}
-                    name="Montant"
+                    name={t.dashboard.amount}
                   />
                 </LineChart>
               </ResponsiveContainer>
