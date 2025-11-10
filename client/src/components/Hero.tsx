@@ -68,7 +68,8 @@ export default function Hero() {
               <Link href="/loan-request" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="bg-accent text-accent-foreground hover-elevate active-elevate-2 w-full sm:w-auto text-base px-8 py-6 shadow-xl font-semibold"
+                  className="w-full sm:w-auto text-base px-8 py-6 shadow-xl font-semibold hover-elevate active-elevate-2"
+                  style={{ backgroundColor: 'hsl(var(--gold))', color: 'hsl(var(--gold-foreground))' }}
                   data-testid="button-request-loan"
                 >
                   {t.hero.cta1 || 'Apply Online'}

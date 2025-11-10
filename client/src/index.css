@@ -64,6 +64,10 @@
 
   --accent-foreground: 220 100% 50%;
 
+  --gold: 43 96% 56%;
+
+  --gold-foreground: 0 0% 100%;
+
   --destructive: 358 75% 48%;
 
   --destructive-foreground: 0 0% 100%;
@@ -182,6 +186,10 @@
   --accent: 210 80% 55%;
 
   --accent-foreground: 220 40% 8%;
+
+  --gold: 43 90% 60%;
+
+  --gold-foreground: 220 40% 8%;
 
   --destructive: 358 70% 58%;
 
