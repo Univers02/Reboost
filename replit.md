@@ -36,6 +36,12 @@ Preferred communication style: Simple, everyday language.
   - Marketing components: `IndividualLoanShowcase.tsx` and `BusinessLoanShowcase.tsx` consume catalog data
   - Prevents data duplication across Home page and Products page
   - Consistent CTA behavior across all loan presentations
+**Partners Section (November 2025):** Real bank partner logos displayed on home page in `PartnersSection.tsx`:
+  - Authentic logos: BNP Paribas, HSBC, Santander (SVG from Wikimedia Commons), Société Générale, Crédit Agricole, ING, Deutsche Bank, Credit Suisse (stock images)
+  - Professional grayscale filter with color reveal on hover for visual engagement
+  - Consistent card layout with object-contain sizing and fixed height (h-12)
+  - Assets imported via @assets alias for proper bundling
+  - Supports light/dark themes with white/card background contrast
 
 ### Backend Architecture
 
