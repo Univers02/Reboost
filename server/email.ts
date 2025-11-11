@@ -409,7 +409,7 @@ export async function sendLoanRequestAdminEmail(
   amount: string, 
   loanType: string, 
   reference: string, 
-  userId: number,
+  userId: string,
   language: string = 'fr'
 ) {
   try {
@@ -425,7 +425,7 @@ export async function sendLoanRequestAdminEmail(
       amount,
       loanType,
       reference,
-      userId: userId.toString(),
+      userId,
       reviewUrl,
     });
     
@@ -451,7 +451,7 @@ export async function sendKYCUploadedAdminEmail(
   email: string, 
   documentType: string, 
   loanType: string, 
-  userId: number,
+  userId: string,
   language: string = 'fr'
 ) {
   try {
@@ -466,7 +466,7 @@ export async function sendKYCUploadedAdminEmail(
       email,
       documentType,
       loanType,
-      userId: userId.toString(),
+      userId,
       reviewUrl,
     });
     
@@ -532,7 +532,7 @@ export async function sendTransferInitiatedAdminEmail(
   amount: string, 
   recipient: string, 
   transferId: string, 
-  userId: number,
+  userId: string,
   language: string = 'fr'
 ) {
   try {
@@ -548,7 +548,7 @@ export async function sendTransferInitiatedAdminEmail(
       amount,
       recipient,
       transferId,
-      userId: userId.toString(),
+      userId,
       reviewUrl,
     });
     

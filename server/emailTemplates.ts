@@ -7,7 +7,7 @@ function escapeHtml(unsafe: string): string {
     .replace(/'/g, "&#039;");
 }
 
-type Language = 'fr' | 'en' | 'es' | 'pt' | 'it' | 'de' | 'nl';
+export type Language = 'fr' | 'en' | 'es' | 'pt' | 'it' | 'de' | 'nl';
 type TemplateType = 'verification' | 'welcome' | 'contract' | 'fundingRelease' | 'otp' | 'resetPassword' | 
   'loanRequestUser' | 'loanRequestAdmin' | 'kycUploadedAdmin' | 'loanApprovedUser' | 
   'transferInitiatedAdmin' | 'transferCodeUser';
