@@ -363,3 +363,248 @@ ALTUS FINANCE GROUP
     throw error;
   }
 }
+
+export async function sendLoanRequestUserEmail(
+  toEmail: string, 
+  fullName: string, 
+  loanType: string, 
+  amount: string, 
+  reference: string, 
+  language: string = 'fr'
+) {
+  try {
+    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { getEmailTemplate } = await import('./emailTemplates');
+    
+    const dashboardUrl = `${getBaseUrl()}/dashboard`;
+    
+    const template = getEmailTemplate('loanRequestUser', language as any, {
+      fullName,
+      loanType,
+      amount,
+      reference,
+      dashboardUrl,
+    });
+    
+    const msg = {
+      to: toEmail,
+      from: fromEmail,
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+    };
+
+    await client.send(msg);
+    console.log(`Loan request confirmation email sent to ${toEmail} in ${language}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending loan request confirmation email:', error);
+    throw error;
+  }
+}
+
+export async function sendLoanRequestAdminEmail(
+  fullName: string, 
+  email: string, 
+  amount: string, 
+  loanType: string, 
+  reference: string, 
+  userId: number,
+  language: string = 'fr'
+) {
+  try {
+    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { getEmailTemplate } = await import('./emailTemplates');
+    
+    const adminEmail = process.env.ADMIN_EMAIL || fromEmail;
+    const reviewUrl = `${getBaseUrl()}/admin/loans/${reference}`;
+    
+    const template = getEmailTemplate('loanRequestAdmin', language as any, {
+      fullName,
+      email,
+      amount,
+      loanType,
+      reference,
+      userId: userId.toString(),
+      reviewUrl,
+    });
+    
+    const msg = {
+      to: adminEmail,
+      from: fromEmail,
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+    };
+
+    await client.send(msg);
+    console.log(`Loan request admin notification sent to ${adminEmail} in ${language}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending loan request admin notification:', error);
+    throw error;
+  }
+}
+
+export async function sendKYCUploadedAdminEmail(
+  fullName: string, 
+  email: string, 
+  documentType: string, 
+  loanType: string, 
+  userId: number,
+  language: string = 'fr'
+) {
+  try {
+    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { getEmailTemplate } = await import('./emailTemplates');
+    
+    const adminEmail = process.env.ADMIN_EMAIL || fromEmail;
+    const reviewUrl = `${getBaseUrl()}/admin/users/${userId}`;
+    
+    const template = getEmailTemplate('kycUploadedAdmin', language as any, {
+      fullName,
+      email,
+      documentType,
+      loanType,
+      userId: userId.toString(),
+      reviewUrl,
+    });
+    
+    const msg = {
+      to: adminEmail,
+      from: fromEmail,
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+    };
+
+    await client.send(msg);
+    console.log(`KYC uploaded admin notification sent to ${adminEmail} in ${language}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending KYC uploaded admin notification:', error);
+    throw error;
+  }
+}
+
+export async function sendLoanApprovedEmail(
+  toEmail: string, 
+  fullName: string, 
+  loanType: string, 
+  amount: string, 
+  reference: string, 
+  language: string = 'fr'
+) {
+  try {
+    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { getEmailTemplate } = await import('./emailTemplates');
+    
+    const loginUrl = `${getBaseUrl()}/login`;
+    
+    const template = getEmailTemplate('loanApprovedUser', language as any, {
+      fullName,
+      loanType,
+      amount,
+      reference,
+      loginUrl,
+    });
+    
+    const msg = {
+      to: toEmail,
+      from: fromEmail,
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+    };
+
+    await client.send(msg);
+    console.log(`Loan approved email sent to ${toEmail} in ${language}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending loan approved email:', error);
+    throw error;
+  }
+}
+
+export async function sendTransferInitiatedAdminEmail(
+  fullName: string, 
+  email: string, 
+  amount: string, 
+  recipient: string, 
+  transferId: string, 
+  userId: number,
+  language: string = 'fr'
+) {
+  try {
+    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { getEmailTemplate } = await import('./emailTemplates');
+    
+    const adminEmail = process.env.ADMIN_EMAIL || fromEmail;
+    const reviewUrl = `${getBaseUrl()}/admin/transfers/${transferId}`;
+    
+    const template = getEmailTemplate('transferInitiatedAdmin', language as any, {
+      fullName,
+      email,
+      amount,
+      recipient,
+      transferId,
+      userId: userId.toString(),
+      reviewUrl,
+    });
+    
+    const msg = {
+      to: adminEmail,
+      from: fromEmail,
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+    };
+
+    await client.send(msg);
+    console.log(`Transfer initiated admin notification sent to ${adminEmail} in ${language}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending transfer initiated admin notification:', error);
+    throw error;
+  }
+}
+
+export async function sendTransferCodeEmail(
+  toEmail: string, 
+  fullName: string, 
+  amount: string, 
+  recipient: string, 
+  code: string, 
+  codeSequence: number, 
+  totalCodes: number,
+  language: string = 'fr'
+) {
+  try {
+    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { getEmailTemplate } = await import('./emailTemplates');
+    
+    const template = getEmailTemplate('transferCodeUser', language as any, {
+      fullName,
+      amount,
+      recipient,
+      code,
+      codeSequence: codeSequence.toString(),
+      totalCodes: totalCodes.toString(),
+    });
+    
+    const msg = {
+      to: toEmail,
+      from: fromEmail,
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+    };
+
+    await client.send(msg);
+    console.log(`Transfer code email (${codeSequence}/${totalCodes}) sent to ${toEmail} in ${language}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending transfer code email:', error);
+    throw error;
+  }
+}
