@@ -94,7 +94,7 @@ function App() {
                     <div className="px-4 pt-4">
                       <NotificationBanner />
                     </div>
-                    <main className="flex-1 overflow-auto pb-20 md:pb-0">
+                    <main className="flex-1 overflow-auto pb-20 md:pb-0 bg-slate-50 dark:bg-slate-950">
                       <Switch>
                         <Route path="/dashboard" component={DashboardWrapper} />
                         <Route path="/loans" component={IndividualLoans} />

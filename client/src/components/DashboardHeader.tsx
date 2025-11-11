@@ -10,10 +10,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useUser, getUserInitials, useUserProfilePhotoUrl } from '@/hooks/use-user';
 import { useTranslations } from '@/lib/i18n';
-import { Bell, Settings, LogOut, User, ChevronDown } from 'lucide-react';
+import { Settings, LogOut, User, ChevronDown } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { Badge } from '@/components/ui/badge';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import NotificationBell from '@/components/NotificationBell';
 
 interface DashboardHeaderProps {
   title?: string;
@@ -48,20 +48,7 @@ export default function DashboardHeader({ title, subtitle }: DashboardHeaderProp
         </div>
 
         <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative rounded-full hover-elevate"
-            data-testid="button-notifications"
-          >
-            <Bell className="h-5 w-5 text-[#64748B]" />
-            <Badge 
-              variant="destructive" 
-              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px]"
-            >
-              3
-            </Badge>
-          </Button>
+          <NotificationBell />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
