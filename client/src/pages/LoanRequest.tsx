@@ -10,16 +10,18 @@ import { CheckCircle, Info } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useTranslations } from '@/lib/i18n';
+import { useTranslations, useLanguage } from '@/lib/i18n';
+import { getTranslatedLoanOffers } from '@/lib/loan-offer-i18n';
 
 export default function LoanRequest() {
   const t = useTranslations();
+  const { language } = useLanguage();
   const { data: user } = useUser();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<'individual' | 'business'>('individual');
 
-  const individualOffers = getLoanOffersByAccountType('individual');
-  const businessOffers = getLoanOffersByAccountType('business');
+  const individualOffers = getTranslatedLoanOffers(getLoanOffersByAccountType('individual'), language);
+  const businessOffers = getTranslatedLoanOffers(getLoanOffersByAccountType('business'), language);
 
   const handleRequestLoan = (offer: LoanOffer) => {
     setLocation('/login');

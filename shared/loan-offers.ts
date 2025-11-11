@@ -3,8 +3,23 @@ import type { LucideIcon } from 'lucide-react';
 
 export type LoanOfferType = 'individual' | 'business';
 
+export type LoanOfferTranslationKey = 
+  | 'personalLoan'
+  | 'mortgageLoan'
+  | 'autoLoan'
+  | 'studentLoan'
+  | 'greenLoan'
+  | 'renovationLoan'
+  | 'businessLoan'
+  | 'cashFlowCredit'
+  | 'equipmentFinancing'
+  | 'commercialPropertyLoan'
+  | 'lineOfCredit'
+  | 'vehicleFleetLoan';
+
 export interface LoanOffer {
   id: string;
+  translationKey: LoanOfferTranslationKey;
   icon: LucideIcon;
   title: string;
   description: string;
@@ -17,9 +32,25 @@ export interface LoanOffer {
   bgColor: string;
 }
 
+export const loanOfferTranslationMap: Record<string, LoanOfferTranslationKey> = {
+  'personal-loan': 'personalLoan',
+  'mortgage-loan': 'mortgageLoan',
+  'auto-loan': 'autoLoan',
+  'student-loan': 'studentLoan',
+  'green-loan': 'greenLoan',
+  'renovation-loan': 'renovationLoan',
+  'business-loan': 'businessLoan',
+  'cash-flow-credit': 'cashFlowCredit',
+  'equipment-financing': 'equipmentFinancing',
+  'commercial-property-loan': 'commercialPropertyLoan',
+  'line-of-credit': 'lineOfCredit',
+  'vehicle-fleet-loan': 'vehicleFleetLoan',
+};
+
 export const individualLoanOffers: LoanOffer[] = [
   {
     id: 'personal-loan',
+    translationKey: 'personalLoan',
     icon: Wallet,
     title: 'Prêt Personnel',
     description: 'Financement flexible pour tous vos projets personnels',
@@ -33,6 +64,7 @@ export const individualLoanOffers: LoanOffer[] = [
   },
   {
     id: 'mortgage-loan',
+    translationKey: 'mortgageLoan',
     icon: Home,
     title: 'Prêt Immobilier',
     description: 'Financez l\'achat de votre résidence principale ou secondaire',
@@ -46,6 +78,7 @@ export const individualLoanOffers: LoanOffer[] = [
   },
   {
     id: 'auto-loan',
+    translationKey: 'autoLoan',
     icon: Car,
     title: 'Crédit Auto',
     description: 'Achetez votre véhicule neuf ou d\'occasion',
@@ -59,6 +92,7 @@ export const individualLoanOffers: LoanOffer[] = [
   },
   {
     id: 'student-loan',
+    translationKey: 'studentLoan',
     icon: GraduationCap,
     title: 'Prêt Étudiant',
     description: 'Financez vos études avec des conditions avantageuses',
@@ -72,6 +106,7 @@ export const individualLoanOffers: LoanOffer[] = [
   },
   {
     id: 'green-loan',
+    translationKey: 'greenLoan',
     icon: Leaf,
     title: 'Prêt Vert',
     description: 'Financez vos projets de rénovation énergétique',
@@ -85,6 +120,7 @@ export const individualLoanOffers: LoanOffer[] = [
   },
   {
     id: 'renovation-loan',
+    translationKey: 'renovationLoan',
     icon: Hammer,
     title: 'Prêt Travaux',
     description: 'Rénovez et améliorez votre logement',
@@ -101,6 +137,7 @@ export const individualLoanOffers: LoanOffer[] = [
 export const businessLoanOffers: LoanOffer[] = [
   {
     id: 'business-loan',
+    translationKey: 'businessLoan',
     icon: Building2,
     title: 'Prêt Professionnel',
     description: 'Financement pour vos projets d\'entreprise, développement et trésorerie',
@@ -114,6 +151,7 @@ export const businessLoanOffers: LoanOffer[] = [
   },
   {
     id: 'cash-flow-credit',
+    translationKey: 'cashFlowCredit',
     icon: TrendingUp,
     title: 'Crédit de Trésorerie',
     description: 'Solution rapide pour gérer vos besoins en fonds de roulement',
@@ -127,6 +165,7 @@ export const businessLoanOffers: LoanOffer[] = [
   },
   {
     id: 'equipment-financing',
+    translationKey: 'equipmentFinancing',
     icon: Wrench,
     title: 'Financement Équipement',
     description: 'Achetez vos équipements professionnels et matériels',
@@ -140,6 +179,7 @@ export const businessLoanOffers: LoanOffer[] = [
   },
   {
     id: 'commercial-property-loan',
+    translationKey: 'commercialPropertyLoan',
     icon: Factory,
     title: 'Prêt Immobilier Pro',
     description: 'Acquérez vos locaux, bureaux ou entrepôts professionnels',
@@ -153,6 +193,7 @@ export const businessLoanOffers: LoanOffer[] = [
   },
   {
     id: 'line-of-credit',
+    translationKey: 'lineOfCredit',
     icon: CreditCard,
     title: 'Ligne de Crédit',
     description: 'Crédit renouvelable pour vos besoins ponctuels',
@@ -166,6 +207,7 @@ export const businessLoanOffers: LoanOffer[] = [
   },
   {
     id: 'vehicle-fleet-loan',
+    translationKey: 'vehicleFleetLoan',
     icon: Truck,
     title: 'Crédit Véhicule Pro',
     description: 'Financez votre flotte automobile ou véhicules utilitaires',

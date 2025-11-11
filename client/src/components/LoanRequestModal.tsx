@@ -17,6 +17,7 @@ import { getRequiredDocuments, calculateInterestRate, getLoanOfferLimits } from 
 import { Loader2, Upload, X, FileText, CheckCircle2 } from 'lucide-react';
 import type { User } from '@shared/schema';
 import { useTranslations, useLanguage } from '@/lib/i18n';
+import { getTranslatedLoanOffers } from '@/lib/loan-offer-i18n';
 
 interface LoanRequestModalProps {
   open: boolean;
@@ -166,7 +167,7 @@ export function LoanRequestModal({ open, onOpenChange, user }: LoanRequestModalP
   const [selectedLoanType, setSelectedLoanType] = useState<string | null>(null);
 
   const accountType = user.accountType === 'business' ? 'business' : 'individual';
-  const loanOffers = getLoanOffersByAccountType(accountType);
+  const loanOffers = getTranslatedLoanOffers(getLoanOffersByAccountType(accountType), language);
   const requiredDocuments = getRequiredDocuments(accountType);
   const documentLabels = getDocumentLabels(language);
 

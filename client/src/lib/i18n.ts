@@ -1327,6 +1327,20 @@ type TranslationKeys = {
     advantagesLabel: string;
     requestButton: string;
     loginToRequest: string;
+    types: {
+      personalLoan: { title: string; description: string; features: string[] };
+      mortgageLoan: { title: string; description: string; features: string[] };
+      autoLoan: { title: string; description: string; features: string[] };
+      studentLoan: { title: string; description: string; features: string[] };
+      greenLoan: { title: string; description: string; features: string[] };
+      renovationLoan: { title: string; description: string; features: string[] };
+      businessLoan: { title: string; description: string; features: string[] };
+      cashFlowCredit: { title: string; description: string; features: string[] };
+      equipmentFinancing: { title: string; description: string; features: string[] };
+      commercialPropertyLoan: { title: string; description: string; features: string[] };
+      lineOfCredit: { title: string; description: string; features: string[] };
+      vehicleFleetLoan: { title: string; description: string; features: string[] };
+    };
   };
   cardTermsContent: {
     title: string;
@@ -3222,6 +3236,68 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Avantages',
       requestButton: 'Demander ce prêt',
       loginToRequest: 'Se connecter pour demander',
+      types: {
+        personalLoan: {
+          title: 'Prêt Personnel',
+          description: 'Financement flexible pour tous vos projets personnels',
+          features: ['Réponse rapide', 'Sans justificatif d\'utilisation', 'Remboursement flexible'],
+        },
+        mortgageLoan: {
+          title: 'Prêt Immobilier',
+          description: 'Financez l\'achat de votre résidence principale ou secondaire',
+          features: ['Taux fixe ou variable', 'Jusqu\'à 80% du montant', 'Assurance incluse'],
+        },
+        autoLoan: {
+          title: 'Crédit Auto',
+          description: 'Achetez votre véhicule neuf ou d\'occasion',
+          features: ['Déblocage rapide', 'Possibilité de remboursement anticipé', 'Assurance optionnelle'],
+        },
+        studentLoan: {
+          title: 'Prêt Étudiant',
+          description: 'Financez vos études avec des conditions avantageuses',
+          features: ['Différé de remboursement', 'Taux préférentiels', 'Sans caution parentale possible'],
+        },
+        greenLoan: {
+          title: 'Prêt Vert',
+          description: 'Financez vos projets de rénovation énergétique',
+          features: ['Taux réduit', 'Éligible aux aides d\'État', 'Financement éco-responsable'],
+        },
+        renovationLoan: {
+          title: 'Prêt Travaux',
+          description: 'Rénovez et améliorez votre logement',
+          features: ['Sans hypothèque jusqu\'à 75k€', 'Déblocage progressif possible', 'Déduction fiscale possible'],
+        },
+        businessLoan: {
+          title: 'Prêt Professionnel',
+          description: 'Financement pour vos projets d\'entreprise, développement et trésorerie',
+          features: ['Réponse sous 48h', 'Taux fixe', 'Remboursement flexible'],
+        },
+        cashFlowCredit: {
+          title: 'Crédit de Trésorerie',
+          description: 'Solution rapide pour gérer vos besoins en fonds de roulement',
+          features: ['Déblocage rapide', 'Sans garantie jusqu\'à 50k€', 'Flexible'],
+        },
+        equipmentFinancing: {
+          title: 'Financement Équipement',
+          description: 'Achetez vos équipements professionnels et matériels',
+          features: ['Jusqu\'à 100% du montant', 'Option leasing', 'Déduction fiscale'],
+        },
+        commercialPropertyLoan: {
+          title: 'Prêt Immobilier Pro',
+          description: 'Acquérez vos locaux, bureaux ou entrepôts professionnels',
+          features: ['Durée longue', 'Apport à partir de 20%', 'Taux compétitif'],
+        },
+        lineOfCredit: {
+          title: 'Ligne de Crédit',
+          description: 'Crédit renouvelable pour vos besoins ponctuels',
+          features: ['Disponible 24/7', 'Remboursement libre', 'Renouvellement auto'],
+        },
+        vehicleFleetLoan: {
+          title: 'Crédit Véhicule Pro',
+          description: 'Financez votre flotte automobile ou véhicules utilitaires',
+          features: ['LOA ou crédit classique', 'Option rachat', 'Assurance incluse'],
+        },
+      },
     },
     cardTermsContent: {
       title: 'Conditions Générales d\'Utilisation - Carte Virtuelle ALTUS',
@@ -5122,6 +5198,68 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Advantages',
       requestButton: 'Request this Loan',
       loginToRequest: 'Login to Request',
+      types: {
+        personalLoan: {
+          title: 'Personal Loan',
+          description: 'Flexible financing for all your personal projects',
+          features: ['Quick response', 'No usage justification required', 'Flexible repayment'],
+        },
+        mortgageLoan: {
+          title: 'Mortgage Loan',
+          description: 'Finance the purchase of your primary or secondary residence',
+          features: ['Fixed or variable rate', 'Up to 80% of amount', 'Insurance included'],
+        },
+        autoLoan: {
+          title: 'Auto Loan',
+          description: 'Purchase your new or used vehicle',
+          features: ['Fast disbursement', 'Early repayment option', 'Optional insurance'],
+        },
+        studentLoan: {
+          title: 'Student Loan',
+          description: 'Finance your studies with advantageous conditions',
+          features: ['Deferred repayment', 'Preferential rates', 'Parental guarantee optional'],
+        },
+        greenLoan: {
+          title: 'Green Loan',
+          description: 'Finance your energy renovation projects',
+          features: ['Reduced rate', 'Eligible for government aid', 'Eco-responsible financing'],
+        },
+        renovationLoan: {
+          title: 'Renovation Loan',
+          description: 'Renovate and improve your home',
+          features: ['No mortgage up to 75k', 'Progressive disbursement possible', 'Possible tax deduction'],
+        },
+        businessLoan: {
+          title: 'Business Loan',
+          description: 'Financing for your business projects, development and cash flow',
+          features: ['Response within 48h', 'Fixed rate', 'Flexible repayment'],
+        },
+        cashFlowCredit: {
+          title: 'Cash Flow Credit',
+          description: 'Quick solution to manage your working capital needs',
+          features: ['Fast disbursement', 'No guarantee up to 50k', 'Flexible'],
+        },
+        equipmentFinancing: {
+          title: 'Equipment Financing',
+          description: 'Purchase your professional equipment and materials',
+          features: ['Up to 100% of amount', 'Leasing option', 'Tax deduction'],
+        },
+        commercialPropertyLoan: {
+          title: 'Commercial Property Loan',
+          description: 'Acquire your professional premises, offices or warehouses',
+          features: ['Long duration', 'Down payment from 20%', 'Competitive rate'],
+        },
+        lineOfCredit: {
+          title: 'Line of Credit',
+          description: 'Revolving credit for your occasional needs',
+          features: ['Available 24/7', 'Free repayment', 'Auto renewal'],
+        },
+        vehicleFleetLoan: {
+          title: 'Commercial Vehicle Loan',
+          description: 'Finance your vehicle fleet or commercial vehicles',
+          features: ['Lease or traditional credit', 'Buyback option', 'Insurance included'],
+        },
+      },
     },
     cardTermsContent: {
       title: 'Terms and Conditions - ALTUS Virtual Card',
@@ -6922,6 +7060,68 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Ventajas',
       requestButton: 'Solicitar este Préstamo',
       loginToRequest: 'Iniciar Sesión para Solicitar',
+      types: {
+        personalLoan: {
+          title: 'Préstamo Personal',
+          description: 'Financiamiento flexible para todos sus proyectos personales',
+          features: ['Respuesta rápida', 'Sin justificación de uso', 'Reembolso flexible'],
+        },
+        mortgageLoan: {
+          title: 'Préstamo Hipotecario',
+          description: 'Financie la compra de su residencia principal o secundaria',
+          features: ['Tasa fija o variable', 'Hasta el 80% del monto', 'Seguro incluido'],
+        },
+        autoLoan: {
+          title: 'Crédito Auto',
+          description: 'Compre su vehículo nuevo o usado',
+          features: ['Desembolso rápido', 'Posibilidad de reembolso anticipado', 'Seguro opcional'],
+        },
+        studentLoan: {
+          title: 'Préstamo Estudiantil',
+          description: 'Financie sus estudios con condiciones ventajosas',
+          features: ['Reembolso diferido', 'Tasas preferenciales', 'Garantía parental opcional'],
+        },
+        greenLoan: {
+          title: 'Préstamo Verde',
+          description: 'Financie sus proyectos de renovación energética',
+          features: ['Tasa reducida', 'Elegible para ayudas estatales', 'Financiamiento eco-responsable'],
+        },
+        renovationLoan: {
+          title: 'Préstamo para Reformas',
+          description: 'Renueve y mejore su vivienda',
+          features: ['Sin hipoteca hasta 75k€', 'Desembolso progresivo posible', 'Deducción fiscal posible'],
+        },
+        businessLoan: {
+          title: 'Préstamo Empresarial',
+          description: 'Financiamiento para sus proyectos empresariales, desarrollo y tesorería',
+          features: ['Respuesta en 48h', 'Tasa fija', 'Reembolso flexible'],
+        },
+        cashFlowCredit: {
+          title: 'Crédito de Tesorería',
+          description: 'Solución rápida para gestionar sus necesidades de capital de trabajo',
+          features: ['Desembolso rápido', 'Sin garantía hasta 50k€', 'Flexible'],
+        },
+        equipmentFinancing: {
+          title: 'Financiamiento de Equipos',
+          description: 'Compre sus equipos y materiales profesionales',
+          features: ['Hasta el 100% del monto', 'Opción de arrendamiento', 'Deducción fiscal'],
+        },
+        commercialPropertyLoan: {
+          title: 'Préstamo Inmobiliario Comercial',
+          description: 'Adquiera sus locales profesionales, oficinas o almacenes',
+          features: ['Duración larga', 'Entrada desde el 20%', 'Tasa competitiva'],
+        },
+        lineOfCredit: {
+          title: 'Línea de Crédito',
+          description: 'Crédito renovable para sus necesidades puntuales',
+          features: ['Disponible 24/7', 'Reembolso libre', 'Renovación automática'],
+        },
+        vehicleFleetLoan: {
+          title: 'Crédito para Flota de Vehículos',
+          description: 'Financie su flota automotriz o vehículos utilitarios',
+          features: ['Arrendamiento o crédito tradicional', 'Opción de recompra', 'Seguro incluido'],
+        },
+      },
     },
     cardTermsContent: {
       title: 'Condiciones Generales de Uso - Tarjeta Virtual ALTUS',
@@ -8759,6 +8959,68 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Vantagens',
       requestButton: 'Solicitar este Empréstimo',
       loginToRequest: 'Entrar para Solicitar',
+      types: {
+        personalLoan: {
+          title: 'Empréstimo Pessoal',
+          description: 'Financiamento flexível para todos os seus projetos pessoais',
+          features: ['Resposta rápida', 'Sem justificativa de uso', 'Reembolso flexível'],
+        },
+        mortgageLoan: {
+          title: 'Empréstimo Imobiliário',
+          description: 'Financie a compra de sua residência principal ou secundária',
+          features: ['Taxa fixa ou variável', 'Até 80% do valor', 'Seguro incluído'],
+        },
+        autoLoan: {
+          title: 'Crédito Auto',
+          description: 'Compre seu veículo novo ou usado',
+          features: ['Liberação rápida', 'Possibilidade de reembolso antecipado', 'Seguro opcional'],
+        },
+        studentLoan: {
+          title: 'Empréstimo Estudantil',
+          description: 'Financie seus estudos com condições vantajosas',
+          features: ['Reembolso diferido', 'Taxas preferenciais', 'Garantia parental opcional'],
+        },
+        greenLoan: {
+          title: 'Empréstimo Verde',
+          description: 'Financie seus projetos de renovação energética',
+          features: ['Taxa reduzida', 'Elegível para auxílios estatais', 'Financiamento eco-responsável'],
+        },
+        renovationLoan: {
+          title: 'Empréstimo para Obras',
+          description: 'Renove e melhore sua residência',
+          features: ['Sem hipoteca até 75k€', 'Liberação progressiva possível', 'Dedução fiscal possível'],
+        },
+        businessLoan: {
+          title: 'Empréstimo Empresarial',
+          description: 'Financiamento para seus projetos empresariais, desenvolvimento e tesouraria',
+          features: ['Resposta em 48h', 'Taxa fixa', 'Reembolso flexível'],
+        },
+        cashFlowCredit: {
+          title: 'Crédito de Tesouraria',
+          description: 'Solução rápida para gerenciar suas necessidades de capital de giro',
+          features: ['Liberação rápida', 'Sem garantia até 50k€', 'Flexível'],
+        },
+        equipmentFinancing: {
+          title: 'Financiamento de Equipamentos',
+          description: 'Compre seus equipamentos e materiais profissionais',
+          features: ['Até 100% do valor', 'Opção de leasing', 'Dedução fiscal'],
+        },
+        commercialPropertyLoan: {
+          title: 'Empréstimo Imobiliário Comercial',
+          description: 'Adquira seus locais profissionais, escritórios ou armazéns',
+          features: ['Duração longa', 'Entrada a partir de 20%', 'Taxa competitiva'],
+        },
+        lineOfCredit: {
+          title: 'Linha de Crédito',
+          description: 'Crédito renovável para suas necessidades pontuais',
+          features: ['Disponível 24/7', 'Reembolso livre', 'Renovação automática'],
+        },
+        vehicleFleetLoan: {
+          title: 'Crédito para Frota de Veículos',
+          description: 'Financie sua frota automotiva ou veículos utilitários',
+          features: ['Leasing ou crédito tradicional', 'Opção de recompra', 'Seguro incluído'],
+        },
+      },
     },
     cardTermsContent: {
       title: 'Termos e Condições de Uso - Cartão Virtual ALTUS',
@@ -10478,6 +10740,68 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Vantaggi',
       requestButton: 'Richiedi questo prestito',
       loginToRequest: 'Accedi per richiedere',
+      types: {
+        personalLoan: {
+          title: 'Prestito Personale',
+          description: 'Finanziamento flessibile per tutti i tuoi progetti personali',
+          features: ['Risposta rapida', 'Senza giustificazione d\'uso', 'Rimborso flessibile'],
+        },
+        mortgageLoan: {
+          title: 'Mutuo Immobiliare',
+          description: 'Finanzia l\'acquisto della tua residenza principale o secondaria',
+          features: ['Tasso fisso o variabile', 'Fino all\'80% dell\'importo', 'Assicurazione inclusa'],
+        },
+        autoLoan: {
+          title: 'Credito Auto',
+          description: 'Acquista il tuo veicolo nuovo o usato',
+          features: ['Erogazione rapida', 'Possibilità di rimborso anticipato', 'Assicurazione opzionale'],
+        },
+        studentLoan: {
+          title: 'Prestito Studenti',
+          description: 'Finanzia i tuoi studi con condizioni vantaggiose',
+          features: ['Rimborso differito', 'Tassi preferenziali', 'Garanzia parentale opzionale'],
+        },
+        greenLoan: {
+          title: 'Prestito Verde',
+          description: 'Finanzia i tuoi progetti di ristrutturazione energetica',
+          features: ['Tasso ridotto', 'Ammissibile agli aiuti statali', 'Finanziamento eco-responsabile'],
+        },
+        renovationLoan: {
+          title: 'Prestito Ristrutturazione',
+          description: 'Rinnova e migliora la tua abitazione',
+          features: ['Senza ipoteca fino a 75k€', 'Erogazione progressiva possibile', 'Deduzione fiscale possibile'],
+        },
+        businessLoan: {
+          title: 'Prestito Aziendale',
+          description: 'Finanziamento per i tuoi progetti aziendali, sviluppo e tesoreria',
+          features: ['Risposta entro 48h', 'Tasso fisso', 'Rimborso flessibile'],
+        },
+        cashFlowCredit: {
+          title: 'Credito di Tesoreria',
+          description: 'Soluzione rapida per gestire le tue esigenze di capitale circolante',
+          features: ['Erogazione rapida', 'Senza garanzia fino a 50k€', 'Flessibile'],
+        },
+        equipmentFinancing: {
+          title: 'Finanziamento Attrezzature',
+          description: 'Acquista le tue attrezzature e materiali professionali',
+          features: ['Fino al 100% dell\'importo', 'Opzione leasing', 'Deduzione fiscale'],
+        },
+        commercialPropertyLoan: {
+          title: 'Mutuo Immobiliare Commerciale',
+          description: 'Acquisisci i tuoi locali professionali, uffici o magazzini',
+          features: ['Durata lunga', 'Acconto dal 20%', 'Tasso competitivo'],
+        },
+        lineOfCredit: {
+          title: 'Linea di Credito',
+          description: 'Credito rinnovabile per le tue esigenze occasionali',
+          features: ['Disponibile 24/7', 'Rimborso libero', 'Rinnovo automatico'],
+        },
+        vehicleFleetLoan: {
+          title: 'Credito Flotta Veicoli',
+          description: 'Finanzia la tua flotta automobilistica o veicoli commerciali',
+          features: ['Leasing o credito tradizionale', 'Opzione di riacquisto', 'Assicurazione inclusa'],
+        },
+      },
     },
     cardTermsContent: {
       title: 'Condizioni Generali d\'Uso - Carta Virtuale ALTUS',
@@ -12197,6 +12521,68 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Vorteile',
       requestButton: 'Diesen Kredit beantragen',
       loginToRequest: 'Anmelden zum Beantragen',
+      types: {
+        personalLoan: {
+          title: 'Privatkredit',
+          description: 'Flexible Finanzierung für alle Ihre persönlichen Projekte',
+          features: ['Schnelle Antwort', 'Keine Verwendungsnachweise erforderlich', 'Flexible Rückzahlung'],
+        },
+        mortgageLoan: {
+          title: 'Hypothekendarlehen',
+          description: 'Finanzieren Sie den Kauf Ihrer Haupt- oder Zweitwohnung',
+          features: ['Fester oder variabler Zinssatz', 'Bis zu 80% des Betrags', 'Versicherung inklusive'],
+        },
+        autoLoan: {
+          title: 'Autokredit',
+          description: 'Kaufen Sie Ihr neues oder gebrauchtes Fahrzeug',
+          features: ['Schnelle Auszahlung', 'Vorzeitige Rückzahlung möglich', 'Versicherung optional'],
+        },
+        studentLoan: {
+          title: 'Studentendarlehen',
+          description: 'Finanzieren Sie Ihr Studium zu vorteilhaften Konditionen',
+          features: ['Aufgeschobene Rückzahlung', 'Vorzugszinsen', 'Elternbürgschaft optional'],
+        },
+        greenLoan: {
+          title: 'Grüner Kredit',
+          description: 'Finanzieren Sie Ihre energetischen Sanierungsprojekte',
+          features: ['Reduzierter Zinssatz', 'Förderfähig für staatliche Beihilfen', 'Umweltfreundliche Finanzierung'],
+        },
+        renovationLoan: {
+          title: 'Renovierungskredit',
+          description: 'Renovieren und verbessern Sie Ihr Zuhause',
+          features: ['Keine Hypothek bis 75k€', 'Stufenweise Auszahlung möglich', 'Steuerabzug möglich'],
+        },
+        businessLoan: {
+          title: 'Geschäftskredit',
+          description: 'Finanzierung für Ihre Unternehmensprojekte, Entwicklung und Liquidität',
+          features: ['Antwort innerhalb 48h', 'Fester Zinssatz', 'Flexible Rückzahlung'],
+        },
+        cashFlowCredit: {
+          title: 'Liquiditätskredit',
+          description: 'Schnelle Lösung zur Verwaltung Ihres Betriebskapitalbedarfs',
+          features: ['Schnelle Auszahlung', 'Keine Sicherheit bis 50k€', 'Flexibel'],
+        },
+        equipmentFinancing: {
+          title: 'Ausrüstungsfinanzierung',
+          description: 'Kaufen Sie Ihre professionelle Ausrüstung und Materialien',
+          features: ['Bis zu 100% des Betrags', 'Leasing-Option', 'Steuerabzug'],
+        },
+        commercialPropertyLoan: {
+          title: 'Gewerbeimmobilienkredit',
+          description: 'Erwerben Sie Ihre Geschäftsräume, Büros oder Lagerhallen',
+          features: ['Lange Laufzeit', 'Anzahlung ab 20%', 'Wettbewerbsfähiger Zinssatz'],
+        },
+        lineOfCredit: {
+          title: 'Kreditlinie',
+          description: 'Revolvierender Kredit für Ihren gelegentlichen Bedarf',
+          features: ['Verfügbar 24/7', 'Freie Rückzahlung', 'Automatische Verlängerung'],
+        },
+        vehicleFleetLoan: {
+          title: 'Firmenfahrzeugkredit',
+          description: 'Finanzieren Sie Ihre Fahrzeugflotte oder Nutzfahrzeuge',
+          features: ['Leasing oder traditioneller Kredit', 'Rückkaufoption', 'Versicherung inklusive'],
+        },
+      },
     },
     cardTermsContent: {
       title: 'Allgemeine Nutzungsbedingungen - ALTUS Virtuelle Karte',
@@ -13885,6 +14271,68 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Voordelen',
       requestButton: 'Deze lening aanvragen',
       loginToRequest: 'Inloggen om aan te vragen',
+      types: {
+        personalLoan: {
+          title: 'Persoonlijke Lening',
+          description: 'Flexibele financiering voor uw persoonlijke projecten',
+          features: ['Snel antwoord', 'Geen gebruiksverantwoording vereist', 'Flexibele terugbetaling'],
+        },
+        mortgageLoan: {
+          title: 'Hypothecaire Lening',
+          description: 'Financier de aankoop van uw hoofd- of tweede verblijf',
+          features: ['Vast of variabel tarief', 'Tot 80% van het bedrag', 'Verzekering inbegrepen'],
+        },
+        autoLoan: {
+          title: 'Autolening',
+          description: 'Koop uw nieuwe of tweedehands voertuig',
+          features: ['Snelle uitbetaling', 'Mogelijkheid tot vervroegde terugbetaling', 'Optionele verzekering'],
+        },
+        studentLoan: {
+          title: 'Studentenlening',
+          description: 'Financier uw studie met voordelige voorwaarden',
+          features: ['Uitgestelde terugbetaling', 'Preferentiële tarieven', 'Ouderborgstelling optioneel'],
+        },
+        greenLoan: {
+          title: 'Groene Lening',
+          description: 'Financier uw energierenovatieprojecten',
+          features: ['Verlaagd tarief', 'In aanmerking voor staatssteun', 'Milieuvriendelijke financiering'],
+        },
+        renovationLoan: {
+          title: 'Renovatielening',
+          description: 'Renoveer en verbeter uw woning',
+          features: ['Geen hypotheek tot 75k€', 'Geleidelijke uitbetaling mogelijk', 'Mogelijke belastingaftrek'],
+        },
+        businessLoan: {
+          title: 'Zakelijke Lening',
+          description: 'Financiering voor uw bedrijfsprojecten, ontwikkeling en liquiditeit',
+          features: ['Antwoord binnen 48u', 'Vast tarief', 'Flexibele terugbetaling'],
+        },
+        cashFlowCredit: {
+          title: 'Liquiditeitskrediet',
+          description: 'Snelle oplossing voor uw werkkapitaalbehoeften',
+          features: ['Snelle uitbetaling', 'Geen zekerheid tot 50k€', 'Flexibel'],
+        },
+        equipmentFinancing: {
+          title: 'Apparatuurfinanciering',
+          description: 'Koop uw professionele apparatuur en materialen',
+          features: ['Tot 100% van het bedrag', 'Leasing optie', 'Belastingaftrek'],
+        },
+        commercialPropertyLoan: {
+          title: 'Commercieel Vastgoedkrediet',
+          description: 'Verkrijg uw bedrijfsruimten, kantoren of magazijnen',
+          features: ['Lange looptijd', 'Aanbetaling vanaf 20%', 'Concurrerend tarief'],
+        },
+        lineOfCredit: {
+          title: 'Kredietlijn',
+          description: 'Doorlopend krediet voor uw incidentele behoeften',
+          features: ['Beschikbaar 24/7', 'Vrije terugbetaling', 'Automatische verlenging'],
+        },
+        vehicleFleetLoan: {
+          title: 'Wagenparkkrediet',
+          description: 'Financier uw wagenpark of bedrijfsvoertuigen',
+          features: ['Leasing of traditioneel krediet', 'Terugkoopoptie', 'Verzekering inbegrepen'],
+        },
+      },
     },
     cardTermsContent: {
       title: 'Algemene Gebruiksvoorwaarden - ALTUS Virtuele Kaart',
