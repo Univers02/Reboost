@@ -899,6 +899,34 @@ type TranslationKeys = {
       transferError: string;
       transferErrorDesc: string;
     };
+    loanRequestModal: {
+      title: string;
+      description: string;
+      loanType: string;
+      selectLoanTypePlaceholder: string;
+      loanAmount: string;
+      duration: string;
+      durationMonths: string;
+      months: string;
+      interestRate: string;
+      estimatedMonthlyPayment: string;
+      requiredDocuments: string;
+      requiredDocumentsDescription: string;
+      required: string;
+      optional: string;
+      attach: string;
+      cancel: string;
+      submit: string;
+      validationError: string;
+      requestSent: string;
+      requestSentDescription: string;
+      error: string;
+      errorDescription: string;
+      fileTooLarge: string;
+      fileTooLargeDescription: string;
+      missingDocuments: string;
+      missingDocumentsPrefix: string;
+    };
     cardTerms: {
       title: string;
       acceptTerms: string;
@@ -2751,6 +2779,34 @@ export const translations: Record<Language, TranslationKeys> = {
         transferSuccessDesc: 'Votre demande de transfert a été créée avec succès.',
         transferError: 'Erreur',
         transferErrorDesc: 'Impossible de créer le transfert.',
+      },
+      loanRequestModal: {
+        title: 'Demander un prêt',
+        description: 'Remplissez le formulaire ci-dessous et joignez les documents requis pour soumettre votre demande de prêt.',
+        loanType: 'Type de prêt',
+        selectLoanTypePlaceholder: 'Sélectionnez un type de prêt',
+        loanAmount: 'Montant du prêt',
+        duration: 'Durée',
+        durationMonths: 'Durée (mois)',
+        months: 'mois',
+        interestRate: 'Taux d\'intérêt',
+        estimatedMonthlyPayment: 'Paiement mensuel estimé',
+        requiredDocuments: 'Documents requis',
+        requiredDocumentsDescription: 'Veuillez joindre tous les documents marqués comme requis pour finaliser votre demande.',
+        required: 'Requis',
+        optional: 'Optionnel',
+        attach: 'Joindre',
+        cancel: 'Annuler',
+        submit: 'Envoyer la demande',
+        validationError: 'Veuillez sélectionner un type de prêt',
+        requestSent: 'Demande envoyée',
+        requestSentDescription: 'Votre demande de prêt a été envoyée avec succès. Vous recevrez une réponse sous 48h.',
+        error: 'Erreur',
+        errorDescription: 'Une erreur est survenue lors de l\'envoi de votre demande.',
+        fileTooLarge: 'Fichier trop volumineux',
+        fileTooLargeDescription: 'La taille maximale par fichier est de 10MB.',
+        missingDocuments: 'Documents manquants',
+        missingDocumentsPrefix: 'Veuillez joindre tous les documents requis:',
       },
       cardTerms: {
         title: 'Conditions générales de la carte bancaire',
