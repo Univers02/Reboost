@@ -1469,10 +1469,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      if (document.fileUrl.startsWith('http://') || document.fileUrl.startsWith('https://')) {
+        return res.redirect(document.fileUrl);
+      }
+
       const filePath = path.join(uploadsDir, document.fileUrl);
       
       if (!fs.existsSync(filePath)) {
-        return res.status(404).json({ error: 'Fichier non trouvé sur le serveur' });
+        console.error(`[KYC DOWNLOAD ERROR] File not found: ${filePath}`);
+        console.error(`[KYC DOWNLOAD ERROR] Document ID: ${document.id}, FileUrl: ${document.fileUrl}`);
+        return res.status(404).json({ 
+          error: 'Le fichier n\'est pas disponible sur le serveur. Il a peut-être été supprimé ou n\'a jamais été stocké correctement. Veuillez contacter le support ou re-télécharger le document.' 
+        });
       }
 
       res.download(filePath, document.fileName, (err) => {
