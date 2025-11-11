@@ -24,6 +24,7 @@ export default function AppSidebar() {
   const profilePhotoUrl = useUserProfilePhotoUrl();
 
   const isAdminPath = location.startsWith('/admin');
+  const isAdmin = user?.role === 'admin';
 
   const handleLogout = () => {
     setLocation('/');
@@ -47,7 +48,7 @@ export default function AppSidebar() {
     { title: t.nav.reports, url: '/admin/reports', icon: BarChart },
   ];
 
-  const currentMenuItems = isAdminPath ? adminMenuItems : menuItems;
+  const currentMenuItems = (isAdminPath && isAdmin) ? adminMenuItems : menuItems;
 
   return (
     <Sidebar>
