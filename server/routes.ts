@@ -1465,6 +1465,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           validatedData.documentType,
           validatedData.loanType
         );
+
+        try {
+          const { sendKYCUploadedAdminEmail } = await import('./email');
+          await sendKYCUploadedAdminEmail(
+            user.fullName,
+            user.email,
+            validatedData.documentType,
+            validatedData.loanType,
+            user.id,
+            user.preferredLanguage || 'fr'
+          );
+          console.log(`KYC upload admin email sent for user ${user.id}`);
+        } catch (emailError) {
+          console.error('Error sending KYC upload admin email:', emailError);
+        }
       }
 
       res.status(201).json({ 
@@ -2315,17 +2330,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const loanCodes = await storage.getLoanTransferCodes(loanId);
-      if (!loanCodes || loanCodes.length === 0) {
-        return res.status(400).json({ 
-          error: 'Aucun code de validation n\'est disponible pour ce prêt. Veuillez contacter l\'administrateur.' 
-        });
-      }
-
       const unconsumedCodes = loanCodes.filter(code => !code.consumedAt);
+      
       if (unconsumedCodes.length === 0) {
-        return res.status(400).json({ 
-          error: 'Tous les codes de validation ont déjà été utilisés pour ce prêt.' 
-        });
+        if (loanCodes.length === 0) {
+          return res.status(400).json({ 
+            error: 'Aucun code de validation n\'a été généré pour ce prêt. Le contrat n\'a peut-être pas encore été confirmé. Veuillez contacter l\'administrateur.' 
+          });
+        } else {
+          return res.status(400).json({ 
+            error: 'Tous les codes de validation ont déjà été utilisés pour ce prêt. Vous ne pouvez plus initier de transfert avec ce prêt.' 
+          });
+        }
       }
       
       const settingFee = await storage.getAdminSetting('default_transfer_fee');
@@ -2463,6 +2479,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!transfer.loanId) {
         return res.status(400).json({ 
           error: 'Ce transfert n\'est pas associé à un prêt. Impossible de valider les codes.' 
+        });
+      }
+
+      const expectedSequence = transfer.codesValidated + 1;
+      if (sequence !== expectedSequence) {
+        await storage.createTransferEvent({
+          transferId: transfer.id,
+          eventType: 'validation_failed',
+          message: `Tentative de validation hors séquence: attendu ${expectedSequence}, reçu ${sequence}`,
+          metadata: { sequence, expectedSequence, loanId: transfer.loanId },
+        });
+        return res.status(400).json({ 
+          error: `Vous devez valider le code #${expectedSequence} avant de valider le code #${sequence}.` 
         });
       }
 
@@ -3635,16 +3664,30 @@ Tous les codes de validation ont été vérifiés avec succès.`,
         return res.status(404).json({ error: 'Prêt associé non trouvé' });
       }
 
+      const allLoanCodes = await storage.getLoanTransferCodes(transfer.loanId);
+      if (allLoanCodes.length === 0) {
+        return res.status(400).json({ 
+          error: 'Aucun code de validation n\'a été généré pour ce prêt. Le contrat n\'a peut-être pas encore été confirmé.' 
+        });
+      }
+
+      const unconsumedCodes = allLoanCodes.filter(c => !c.consumedAt);
+      if (unconsumedCodes.length === 0) {
+        return res.status(400).json({ 
+          error: 'Tous les codes de validation ont déjà été utilisés pour ce prêt.' 
+        });
+      }
+
       const code = await storage.getLoanTransferCodeBySequence(transfer.loanId, validatedData.sequence);
       if (!code) {
         return res.status(404).json({ 
-          error: `Code de validation #${validatedData.sequence} non trouvé pour ce prêt. Vérifiez que le contrat a été confirmé et que les codes ont été générés.` 
+          error: `Code de validation #${validatedData.sequence} non trouvé pour ce prêt. Les codes disponibles sont de 1 à ${allLoanCodes.length}.` 
         });
       }
 
       if (code.consumedAt) {
-        return res.status(400).json({ 
-          error: `Le code de validation #${validatedData.sequence} a déjà été utilisé le ${code.consumedAt.toLocaleString('fr-FR')}.` 
+        return res.status(409).json({ 
+          error: `Le code de validation #${validatedData.sequence} a déjà été utilisé le ${code.consumedAt.toLocaleString('fr-FR')}. Veuillez transmettre le prochain code.` 
         });
       }
 
