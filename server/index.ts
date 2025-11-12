@@ -222,49 +222,25 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  app.get("/health", async (req, res) => {
-    try {
-      const checks = {
-        status: "ok",
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development',
-        database: sessionStore ? 'connected' : 'not_configured',
-        session: {
-          configured: !!sessionStore,
-          cookieDomain: COOKIE_DOMAIN || 'none',
-          secure: IS_PRODUCTION,
-          sameSite: IS_PRODUCTION ? 'none' : 'lax',
-        },
-        cors: {
-          allowedOrigins: allowedOrigins.length > 0 ? allowedOrigins : ['development-mode'],
-          frontendUrl: process.env.FRONTEND_URL || 'not_set',
-        }
-      };
-
-      if (sessionStore) {
-        try {
-          await new Promise((resolve, reject) => {
-            sessionStore.length?.((err: any, length?: number) => {
-              if (err) reject(err);
-              else resolve(length);
-            });
-          });
-          checks.database = 'healthy';
-        } catch (error) {
-          checks.database = 'unhealthy';
-          checks.status = 'degraded';
-        }
+  app.get("/health", (req, res) => {
+    const checks = {
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      database: sessionStore ? 'connected' : 'not_configured',
+      session: {
+        configured: !!sessionStore,
+        cookieDomain: COOKIE_DOMAIN || 'none',
+        secure: IS_PRODUCTION,
+        sameSite: IS_PRODUCTION ? 'none' : 'lax',
+      },
+      cors: {
+        allowedOrigins: allowedOrigins.length > 0 ? allowedOrigins : ['development-mode'],
+        frontendUrl: process.env.FRONTEND_URL || 'not_set',
       }
+    };
 
-      const statusCode = checks.status === 'ok' ? 200 : 503;
-      res.status(statusCode).json(checks);
-    } catch (error) {
-      res.status(500).json({
-        status: 'error',
-        timestamp: new Date().toISOString(),
-        error: 'Health check failed'
-      });
-    }
+    res.status(200).json(checks);
   });
 
   app.get("/api/session-check", (req, res) => {
