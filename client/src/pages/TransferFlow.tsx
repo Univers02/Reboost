@@ -32,6 +32,7 @@ export default function TransferFlow() {
   const [simulatedProgress, setSimulatedProgress] = useState(10);
   const [isPausedForCode, setIsPausedForCode] = useState(false);
   const [currentCodeSequence, setCurrentCodeSequence] = useState(1);
+  const [lastValidatedSequence, setLastValidatedSequence] = useState(0);
   
   const verificationIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -96,6 +97,7 @@ export default function TransferFlow() {
         description: `${data.message}${contextInfo}`,
       });
       
+      setLastValidatedSequence(currentCodeSequence);
       setIsPausedForCode(false);
       setCurrentCodeSequence(prev => prev + 1);
       
@@ -177,6 +179,8 @@ export default function TransferFlow() {
       
       const targetPercent = nextCode.pausePercent || 90;
       
+      const justValidated = lastValidatedSequence === nextCode.sequence;
+      
       if (simulatedProgress < targetPercent && !isPausedForCode) {
         if (progressIntervalRef.current) {
           clearInterval(progressIntervalRef.current);
@@ -199,7 +203,7 @@ export default function TransferFlow() {
             return next;
           });
         }, 200);
-      } else if (simulatedProgress >= targetPercent && !isPausedForCode) {
+      } else if (simulatedProgress >= targetPercent && !isPausedForCode && !justValidated) {
         setIsPausedForCode(true);
       }
       
@@ -210,7 +214,7 @@ export default function TransferFlow() {
         }
       };
     }
-  }, [step, transferData, simulatedProgress, isPausedForCode]);
+  }, [step, transferData, simulatedProgress, isPausedForCode, lastValidatedSequence]);
 
   useEffect(() => {
     if (transferData?.transfer) {
@@ -578,22 +582,22 @@ export default function TransferFlow() {
           <CardContent className="space-y-6">
             <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-4 rounded-lg">
               <p className="text-sm text-green-900 dark:text-green-100">
-                {t.transferFlow.complete.successMessage}
+                Votre transfert a été effectué avec succès. Les fonds seront disponibles sous 24 à 72 heures.
               </p>
             </div>
 
             {transferData?.transfer && (
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t.transferFlow.complete.recipient}</span>
+                  <span className="text-muted-foreground">{t.transferFlow.complete.recipientLabel}</span>
                   <span className="font-medium" data-testid="text-recipient">{transferData.transfer.recipient}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t.transferFlow.complete.amount}</span>
+                  <span className="text-muted-foreground">{t.transferFlow.complete.amountLabel}</span>
                   <span className="font-medium" data-testid="text-amount">{transferData.transfer.amount} EUR</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t.transferFlow.complete.reference}</span>
+                  <span className="text-muted-foreground">Référence</span>
                   <span className="font-mono text-xs" data-testid="text-reference">{transferData.transfer.id}</span>
                 </div>
               </div>
@@ -604,7 +608,7 @@ export default function TransferFlow() {
               className="w-full"
               data-testid="button-return-dashboard"
             >
-              {t.transferFlow.complete.returnButton}
+              Retour au tableau de bord
             </Button>
           </CardContent>
         </Card>
