@@ -6,6 +6,22 @@ ALTUS is a multi-language professional loan management platform designed for bus
 
 ## Recent Changes
 
+### Transfer Automatic Progression System (November 2025)
+**Automatic visual progression with pause checkpoints:** Implemented a sophisticated transfer progression system that simulates real-time fund transfer with strategic pause points requiring validation codes.
+
+**Key Changes:**
+- **API Endpoint:** Modified `/api/transfers/:id` to retrieve validation codes from associated loan with `pausePercent` values assigned to each code.
+- **Automatic Progression:** Transfers now visually progress automatically (0.5% increment every 200ms) from 10% to 100%.
+- **Pause Mechanism:** Progression automatically stops at predefined random percentages (e.g., 12%, 34%, 55%, 78%, 92%) corresponding to validation codes.
+- **Code Validation:** At each pause, users must enter the correct validation code to unlock progression to the next checkpoint.
+- **State Management:** Implemented `lastValidatedSequence` tracking mechanism to prevent re-blocking after code validation while waiting for backend data refresh.
+- **Frontend Component:** Completely rewrote `TransferFlow.tsx` with:
+  - `useEffect` hook managing automatic progression interval
+  - Smart pause detection based on `pausePercent` from validation codes
+  - Local state synchronization with backend transfer data
+  - Progressive unlocking as codes are validated in sequence
+- **User Experience:** Clear visual feedback showing "Transfert en pause. Veuillez entrer le code..." at each checkpoint with smooth progression animation.
+
 ### Loan Workflow Enhancement (November 2025)
 **Implementation of 3-stage contract lifecycle:** The loan application workflow has been refined with a dual-state model separating loan lifecycle (`status`) from contract review steps (`contractStatus`). This provides clearer tracking and proper separation of concerns.
 
