@@ -100,7 +100,7 @@ export default function NewLoanDialog({ open, onOpenChange }: NewLoanDialogProps
     const duration = parseInt(formData.duration);
     if (!formData.duration || duration <= 0) {
       newErrors.duration = t.dialogs.newLoan.errors.durationMustBePositive;
-    } else if (duration > 120) {
+    } else if (duration > 360) {
       newErrors.duration = t.dialogs.newLoan.errors.durationMaxExceeded;
     }
 
@@ -381,8 +381,6 @@ export default function NewLoanDialog({ open, onOpenChange }: NewLoanDialogProps
                 <Input
                   id="duration"
                   type="number"
-                  min="1"
-                  max="120"
                   placeholder="60"
                   value={formData.duration}
                   onChange={(e) => {
