@@ -2509,7 +2509,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const newCodesValidated = transfer.codesValidated + 1;
       const isComplete = newCodesValidated >= transfer.requiredCodes;
       
-      const newProgress = isComplete ? 100 : Math.min(10 + (newCodesValidated * Math.floor(80 / transfer.requiredCodes)), 90);
+      const currentCodePercent = validatedCode.pausePercent || Math.min(10 + (newCodesValidated * Math.floor(80 / transfer.requiredCodes)), 90);
+      const newProgress = isComplete ? 100 : currentCodePercent;
       const newStatus = isComplete ? 'completed' : 'pending';
       const completedAt = isComplete ? new Date() : undefined;
 
@@ -3340,13 +3341,32 @@ Tous les codes de validation ont été vérifiés avec succès.`,
 
       await notifyLoanFundsAvailable(loan.userId, loan.id, loan.amount);
 
+      const codesListFormatted = generatedCodes
+        .map((c, idx) => `\n${idx + 1}. **${c.codeContext}** - Code: ${c.code} - Pause à ${c.pausePercent}%`)
+        .join('');
+
       await storage.createNotification({
         userId: req.session.userId!,
         type: 'admin_message_sent',
-        title: 'Codes de transfert générés',
-        message: `Les codes de transfert pour ${userName} (Prêt ${loan.amount} EUR) ont été générés avec succès et sont prêts à l'usage. ${generatedCodes.length} codes créés.`,
+        title: 'Codes de transfert générés avec pourcentages automatiques',
+        message: `Les codes de transfert pour ${userName} (Prêt ${loan.amount} EUR) ont été générés avec des pourcentages de pause aléatoires. Transmettez-les manuellement au moment approprié.
+
+**Liste des codes de validation:**${codesListFormatted}
+
+**Note:** Le transfert se mettra automatiquement en pause à chaque pourcentage indiqué.`,
         severity: 'success',
-        metadata: { loanId: loan.id, userName, codesCount: generatedCodes.length, amount: loan.amount },
+        metadata: { 
+          loanId: loan.id, 
+          userName, 
+          codesCount: generatedCodes.length, 
+          amount: loan.amount,
+          codes: generatedCodes.map(c => ({ 
+            sequence: c.sequence, 
+            code: c.code, 
+            pausePercent: c.pausePercent,
+            context: c.codeContext 
+          }))
+        },
       });
 
       await storage.createAuditLog({
