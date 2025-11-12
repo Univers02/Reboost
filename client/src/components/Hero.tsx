@@ -69,7 +69,7 @@ export default function Hero() {
                 <Button
                   size="lg"
                   className="w-full sm:w-auto text-base px-8 py-6 shadow-xl font-semibold hover-elevate active-elevate-2"
-                  style={{ backgroundColor: 'hsl(var(--gold))', color: 'hsl(var(--gold-foreground))' }}
+                  style={{ backgroundColor: '#FF9933', color: '#1a3a6b' }}
                   data-testid="button-request-loan"
                 >
                   {t.hero.cta1 || 'Apply Online'}
