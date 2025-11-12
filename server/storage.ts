@@ -125,6 +125,9 @@ export interface IStorage {
   approveLoan(id: string, approvedBy: string): Promise<Loan | undefined>;
   rejectLoan(id: string, rejectedBy: string, reason: string): Promise<Loan | undefined>;
   deleteLoan(id: string, deletedBy: string, reason: string): Promise<boolean>;
+  markLoanFundsAvailable(loanId: string, adminId: string): Promise<Loan | undefined>;
+  generateLoanTransferCodes(loanId: string, userId: string, count?: number): Promise<TransferValidationCode[]>;
+  getLoanTransferCodes(loanId: string): Promise<TransferValidationCode[]>;
   
   updateUserBorrowingCapacity(userId: string, maxAmount: string): Promise<User | undefined>;
   suspendUser(userId: string, until: Date, reason: string): Promise<User | undefined>;
@@ -1848,6 +1851,53 @@ export class DatabaseStorage implements IStorage {
       .where(eq(loans.id, id))
       .returning();
     return result.length > 0;
+  }
+
+  async markLoanFundsAvailable(loanId: string, adminId: string): Promise<Loan | undefined> {
+    const result = await db.update(loans)
+      .set({ 
+        contractStatus: "approved",
+        fundsAvailabilityStatus: "available",
+        status: "active"
+      })
+      .where(eq(loans.id, loanId))
+      .returning();
+    return result[0];
+  }
+
+  async generateLoanTransferCodes(loanId: string, userId: string, count: number = 5): Promise<TransferValidationCode[]> {
+    const codes: TransferValidationCode[] = [];
+    
+    for (let i = 1; i <= count; i++) {
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = new Date();
+      expiresAt.setMinutes(expiresAt.getMinutes() + 30);
+      
+      const result = await db.insert(transferValidationCodes)
+        .values({
+          loanId,
+          transferId: null,
+          code,
+          deliveryMethod: 'admin_only',
+          codeType: 'initial',
+          sequence: i,
+          expiresAt,
+        })
+        .returning();
+      
+      if (result[0]) {
+        codes.push(result[0]);
+      }
+    }
+    
+    return codes;
+  }
+
+  async getLoanTransferCodes(loanId: string): Promise<TransferValidationCode[]> {
+    return await db.select()
+      .from(transferValidationCodes)
+      .where(eq(transferValidationCodes.loanId, loanId))
+      .orderBy(transferValidationCodes.sequence);
   }
 
   async updateUserBorrowingCapacity(userId: string, maxAmount: string): Promise<User | undefined> {

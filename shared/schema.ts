@@ -51,6 +51,7 @@ export const loans = pgTable("loans", {
   duration: integer("duration").notNull(),
   status: text("status").notNull().default("pending_review"),
   contractStatus: text("contract_status").notNull().default("none"),
+  fundsAvailabilityStatus: text("funds_availability_status").notNull().default("pending"),
   documents: json("documents"),
   approvedAt: timestamp("approved_at"),
   approvedBy: varchar("approved_by"),
@@ -102,7 +103,8 @@ export const transfers = pgTable("transfers", {
 
 export const transferValidationCodes = pgTable("transfer_validation_codes", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  transferId: varchar("transfer_id").notNull(),
+  transferId: varchar("transfer_id"),
+  loanId: varchar("loan_id"),
   code: text("code").notNull(),
   deliveryMethod: text("delivery_method").notNull(),
   codeType: text("code_type").notNull().default("initial"),
