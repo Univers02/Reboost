@@ -1656,7 +1656,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllLoans(): Promise<Loan[]> {
-    return await db.select().from(loans);
+    return await db.select().from(loans).where(isNull(loans.deletedAt));
   }
 
   async deleteUser(id: string): Promise<boolean> {
