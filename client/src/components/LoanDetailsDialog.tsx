@@ -2,11 +2,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, TrendingUp, DollarSign, Download, Upload, FileText, CheckCircle2 } from 'lucide-react';
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { apiRequest, queryClient, getApiUrl } from '@/lib/queryClient';
+import { Calendar, TrendingUp, DollarSign, FileText, ArrowRight } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
+import { useLocation } from 'wouter';
 
 interface Loan {
   id: string;
@@ -26,9 +24,8 @@ interface LoanDetailsDialogProps {
 }
 
 export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDetailsDialogProps) {
-  const [isUploading, setIsUploading] = useState(false);
-  const { toast } = useToast();
   const t = useTranslations();
+  const [, setLocation] = useLocation();
 
   if (!loan) return null;
 
@@ -42,86 +39,9 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
   const progress = (loan.totalRepaid / loan.amount) * 100;
   const remainingAmount = loan.amount - loan.totalRepaid;
 
-  const handleContractDownload = async () => {
-    try {
-      const contractUrl = getApiUrl(`/api/loans/${loan.id}/contract`);
-      window.open(contractUrl, '_blank');
-      toast({
-        title: t.loan.downloadContract,
-        description: t.loan.downloading,
-      });
-    } catch (error) {
-      toast({
-        title: t.common.error,
-        description: t.messages.errorUpdatingProfile,
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const handleSignedContractUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (file.type !== 'application/pdf') {
-      toast({
-        title: t.common.error,
-        description: t.messages.invalidFileType,
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      toast({
-        title: t.common.error,
-        description: t.messages.fileTooLarge,
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setIsUploading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('signedContract', file);
-
-      const csrfToken = await fetch(getApiUrl('/api/csrf-token')).then((res) => res.json()).then((data) => data.csrfToken);
-
-      const response = await fetch(getApiUrl(`/api/loans/${loan.id}/upload-signed-contract`), {
-        method: 'POST',
-        headers: {
-          'X-CSRF-Token': csrfToken,
-        },
-        body: formData,
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || t.messages.errorUploadingAvatar);
-      }
-
-      await queryClient.invalidateQueries({ queryKey: ['/api/loans'] });
-      await queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
-
-      toast({
-        title: t.common.success,
-        description: t.loan.uploading,
-      });
-
-      onOpenChange(false);
-    } catch (error: any) {
-      toast({
-        title: t.common.error,
-        description: error.message || t.messages.errorUpdatingProfile,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsUploading(false);
-      event.target.value = '';
-    }
+  const handleGoToContracts = () => {
+    onOpenChange(false);
+    setLocation('/contracts');
   };
 
   const getStatusText = (status: string) => {
@@ -153,84 +73,29 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
             <Badge variant={getStatusVariant(loan.status)}>{getStatusText(loan.status)}</Badge>
           </div>
 
-          {loan.status === 'approved' && loan.contractUrl && !loan.signedContractUrl && (
-            <div className="border-2 border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950 rounded-lg p-4 space-y-4">
+          {loan.status === 'approved' && (
+            <div className="border-2 border-primary/20 bg-primary/5 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <FileText className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+                <FileText className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
-                  <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1 text-base">
+                  <h4 className="font-semibold mb-1 text-base">
                     {t.loan.loanApproved}
                   </h4>
-                  <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-3">
-                    {t.loan.approvalInstructions}
+                  <p className="text-sm text-muted-foreground mb-3">
+                    {t.contracts?.description || 'Téléchargez, signez et renvoyez votre contrat de prêt en toute sécurité.'}
                   </p>
-                  <ol className="text-sm text-yellow-700 dark:text-yellow-300 mb-4 space-y-1 list-decimal list-inside">
-                    <li>{t.loan.approvalStep1}</li>
-                    <li>{t.loan.approvalStep2}</li>
-                    <li>{t.loan.approvalStep3}</li>
-                  </ol>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Button
-                      onClick={handleContractDownload}
-                      size="sm"
-                      className="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-xs sm:text-sm"
-                      data-testid="button-download-contract"
-                    >
-                      <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                      {t.loan.downloadContractButton}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="relative border-yellow-300 dark:border-yellow-700 text-xs sm:text-sm"
-                      disabled={isUploading}
-                      data-testid="button-upload-signed-contract"
-                    >
-                      <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                      {isUploading ? t.loan.uploading2 : t.loan.uploadContractButton}
-                      <input
-                        type="file"
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                        accept=".pdf"
-                        onChange={handleSignedContractUpload}
-                        disabled={isUploading}
-                        data-testid="input-signed-contract"
-                      />
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={handleGoToContracts}
+                    size="sm"
+                    variant="default"
+                    className="gap-2"
+                    data-testid="button-go-to-contracts"
+                  >
+                    {t.nav.contracts || 'Gérer les contrats'}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
-            </div>
-          )}
-
-          {(loan as any).contractStatus === 'awaiting_admin_review' && loan.signedContractUrl && (
-            <div className="border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950 rounded-lg p-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-                <div>
-                  <h4 className="font-semibold text-green-900 dark:text-green-100">
-                    {t.common.success}
-                  </h4>
-                  <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                    Votre contrat signé a été reçu et est en cours de vérification.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {loan.contractUrl && loan.status !== 'approved' && (loan as any).contractStatus !== 'awaiting_admin_review' && (
-            <div className="flex justify-center">
-              <Button
-                onClick={handleContractDownload}
-                variant="outline"
-                size="sm"
-                className="text-xs sm:text-sm"
-                data-testid="button-view-contract"
-              >
-                <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                {t.dashboard.viewDetails}
-              </Button>
             </div>
           )}
 
