@@ -407,39 +407,37 @@ export default function AdminLoans() {
                       </>
                     )}
 
-                    {(loan as any).contractStatus === 'awaiting_admin_review' && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="default"
-                            size="sm"
-                            className="w-full justify-start"
-                            data-testid={`button-confirm-contract-mobile-${loan.id}`}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="w-full justify-start"
+                          data-testid={`button-confirm-contract-mobile-${loan.id}`}
+                        >
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Confirmer le contrat
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Confirmer le contrat signé</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Cette action va confirmer le contrat signé par {loan.userName} et générer automatiquement 5 codes de validation de transfert. Les fonds seront ensuite prêts pour le déblocage.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>{t.admin.common.actions.cancel}</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => confirmContractMutation.mutate(loan.id)}
+                            disabled={confirmContractMutation.isPending}
+                            data-testid={`button-confirm-confirm-contract-mobile-${loan.id}`}
                           >
-                            <CheckCircle className="h-4 w-4 mr-2" />
-                            Confirmer le contrat
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Confirmer le contrat signé</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Cette action va confirmer le contrat signé par {loan.userName} et générer automatiquement 5 codes de validation de transfert. Les fonds seront ensuite prêts pour le déblocage.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>{t.admin.common.actions.cancel}</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => confirmContractMutation.mutate(loan.id)}
-                              disabled={confirmContractMutation.isPending}
-                              data-testid={`button-confirm-confirm-contract-mobile-${loan.id}`}
-                            >
-                              Confirmer
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
+                            Confirmer
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
 
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
@@ -639,38 +637,36 @@ export default function AdminLoans() {
                         </>
                       )}
 
-                      {(loan as any).contractStatus === 'awaiting_admin_review' && (
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="default"
-                              size="sm"
-                              data-testid={`button-confirm-contract-${loan.id}`}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            data-testid={`button-confirm-contract-${loan.id}`}
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Confirmer
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirmer le contrat signé</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Cette action va confirmer le contrat signé par {loan.userName} et générer automatiquement 5 codes de validation de transfert. Les fonds seront ensuite prêts pour le déblocage.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>{t.admin.common.actions.cancel}</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => confirmContractMutation.mutate(loan.id)}
+                              disabled={confirmContractMutation.isPending}
+                              data-testid={`button-confirm-confirm-contract-${loan.id}`}
                             >
-                              <CheckCircle className="h-4 w-4 mr-1" />
                               Confirmer
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Confirmer le contrat signé</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Cette action va confirmer le contrat signé par {loan.userName} et générer automatiquement 5 codes de validation de transfert. Les fonds seront ensuite prêts pour le déblocage.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>{t.admin.common.actions.cancel}</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => confirmContractMutation.mutate(loan.id)}
-                                disabled={confirmContractMutation.isPending}
-                                data-testid={`button-confirm-confirm-contract-${loan.id}`}
-                              >
-                                Confirmer
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      )}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
 
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
