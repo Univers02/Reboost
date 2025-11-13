@@ -1985,89 +1985,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/loans/:id/upload-signed-contract", requireAuth, requireCSRF, uploadLimiter, uploadSignedContract.single('signedContract'), async (req, res) => {
+    let tempFilePath: string | null = null;
+    
     try {
       if (!req.file) {
         return res.status(400).json({ error: 'Aucun fichier fourni' });
       }
 
+      tempFilePath = req.file.path;
+
       const loan = await storage.getLoan(req.params.id);
       if (!loan) {
-        if (req.file) {
-          try {
-            await fs.promises.unlink(req.file.path);
-          } catch (cleanupError) {
-            console.error('Error cleaning up file:', cleanupError);
-          }
-        }
         return res.status(404).json({ error: 'Prêt non trouvé' });
       }
 
       if (loan.userId !== req.session.userId) {
-        if (req.file) {
-          try {
-            await fs.promises.unlink(req.file.path);
-          } catch (cleanupError) {
-            console.error('Error cleaning up file:', cleanupError);
-          }
-        }
         return res.status(403).json({ error: 'Accès refusé' });
       }
 
       if (loan.status !== 'approved') {
-        if (req.file) {
-          try {
-            await fs.promises.unlink(req.file.path);
-          } catch (cleanupError) {
-            console.error('Error cleaning up file:', cleanupError);
-          }
-        }
         return res.status(400).json({ error: 'Ce prêt n\'est pas en statut approuvé' });
       }
 
       const fileType = await fileTypeFromFile(req.file.path);
       if (!fileType || fileType.ext !== 'pdf') {
-        try {
-          await fs.promises.unlink(req.file.path);
-        } catch (cleanupError) {
-          console.error('Error cleaning up file:', cleanupError);
-        }
         return res.status(400).json({ error: 'Type de fichier invalide. Seuls les PDF sont acceptés.' });
       }
 
-      const uploadPromise = new Promise<{ url: string; publicId: string }>((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: 'signed_contracts',
-            resource_type: 'raw',
-            public_id: `contract_${req.params.id}_${randomUUID()}`,
-            type: 'upload',
-          },
-          (error: any, result: any) => {
-            if (error) {
-              reject(error);
-            } else if (result) {
-              resolve({ url: result.secure_url, publicId: result.public_id });
-            } else {
-              reject(new Error('Upload failed without error or result'));
-            }
-          }
-        );
-        
-        fs.createReadStream(req.file!.path).pipe(uploadStream);
-      });
-
-      const { url: signedContractUrl, publicId: signedContractPublicId } = await uploadPromise;
-
-      try {
-        await fs.promises.unlink(req.file.path);
-      } catch (cleanupError) {
-        console.error('Error deleting temp file:', cleanupError);
+      const user = await storage.getUser(loan.userId);
+      if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
+
+      const fileBuffer = await fs.promises.readFile(req.file.path);
       
+      const { sendSignedContractToAdmins } = await import('./email');
+      await sendSignedContractToAdmins(
+        user.fullName,
+        user.email,
+        loan.id,
+        loan.amount,
+        fileBuffer,
+        req.file.originalname,
+        'application/pdf',
+        user.preferredLanguage || 'fr'
+      );
+
       const updated = await storage.updateLoan(req.params.id, {
-        signedContractUrl,
-        signedContractCloudinaryPublicId: signedContractPublicId,
         contractStatus: 'awaiting_admin_review',
+        signedContractUrl: null,
+        signedContractCloudinaryPublicId: null,
       });
 
       await notifyLoanContractSigned(loan.userId, loan.id, loan.amount);
@@ -2080,15 +2047,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         severity: 'info',
       });
 
-      const user = await storage.getUser(loan.userId);
-      if (user) {
-        await notifyAdminsSignedContractReceived(
-          user.id,
-          user.fullName,
-          loan.id,
-          loan.amount
-        );
-      }
+      await notifyAdminsSignedContractReceived(
+        user.id,
+        user.fullName,
+        loan.id,
+        loan.amount
+      );
 
       await storage.createAuditLog({
         actorId: req.session.userId!,
@@ -2096,29 +2060,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'upload_signed_contract',
         entityType: 'loan',
         entityId: req.params.id,
-        metadata: { filename: req.file.filename },
+        metadata: { filename: req.file.originalname, deliveredViaEmail: true },
       });
 
       res.json({ 
         success: true, 
         loan: updated,
-        message: 'Contrat signé téléchargé avec succès'
+        message: 'Contrat signé envoyé avec succès par email aux administrateurs'
       });
     } catch (error: any) {
-      if (req.file) {
-        try {
-          await fs.promises.unlink(req.file.path);
-        } catch (cleanupError) {
-          console.error('Error cleaning up file:', cleanupError);
-        }
-      }
-
       if (error.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({ error: 'Fichier trop volumineux. La taille maximale est de 10MB.' });
       }
 
       console.error('Signed contract upload error:', error);
-      res.status(500).json({ error: 'Erreur lors du téléchargement du contrat signé' });
+      res.status(500).json({ error: 'Erreur lors de l\'envoi du contrat signé' });
+    } finally {
+      if (tempFilePath) {
+        try {
+          await fs.promises.unlink(tempFilePath);
+          console.log(`✓ Temporary file deleted: ${tempFilePath}`);
+        } catch (cleanupError) {
+          console.error('Error cleaning up temp file:', cleanupError);
+        }
+      }
     }
   });
 

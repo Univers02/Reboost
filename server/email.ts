@@ -805,3 +805,182 @@ export async function sendTransferCodesAdminEmail(
     throw error;
   }
 }
+
+export async function sendSignedContractToAdmins(
+  userFullName: string,
+  userEmail: string,
+  loanId: string,
+  amount: string,
+  fileBuffer: Buffer,
+  fileName: string,
+  mimeType: string,
+  language: string = 'fr'
+) {
+  try {
+    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { storage } = await import('./storage');
+    
+    // Get admin email from env or fetch admin users from database
+    let adminEmails: string[] = [];
+    const adminEmailEnv = process.env.ADMIN_EMAIL || process.env.SENDGRID_ADMIN_EMAILS;
+    
+    if (adminEmailEnv) {
+      adminEmails = adminEmailEnv.split(',').map(e => e.trim());
+    } else {
+      // Fallback: fetch all admin users from database
+      const allUsers = await storage.getAllUsers();
+      const admins = allUsers.filter(u => u.role === 'admin');
+      adminEmails = admins.map(a => a.email);
+    }
+    
+    if (adminEmails.length === 0) {
+      adminEmails = [fromEmail];
+    }
+    
+    const reviewUrl = `${getBaseUrl()}/admin/loans`;
+    const safeName = escapeHtml(userFullName);
+    const safeEmail = escapeHtml(userEmail);
+    
+    const subject = language === 'en' 
+      ? `Signed Contract Received - Loan #${loanId}`
+      : `Contrat signé reçu - Prêt #${loanId}`;
+    
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f4f4f4; padding: 20px 0;">
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <tr>
+            <td style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">📄 ${language === 'en' ? 'Signed Contract Received' : 'Contrat signé reçu'}</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 40px 30px;">
+              <h2 style="color: #1f2937; font-size: 20px; margin: 0 0 20px 0;">${language === 'en' ? 'Loan Details:' : 'Détails du prêt :'}</h2>
+              
+              <table cellpadding="8" cellspacing="0" border="0" width="100%" style="margin-bottom: 30px;">
+                <tr>
+                  <td style="color: #6b7280; font-weight: bold; width: 180px;">${language === 'en' ? 'Borrower:' : 'Emprunteur :'}</td>
+                  <td style="color: #1f2937;">${safeName}</td>
+                </tr>
+                <tr>
+                  <td style="color: #6b7280; font-weight: bold;">${language === 'en' ? 'Email:' : 'Email :'}</td>
+                  <td style="color: #1f2937;"><a href="mailto:${safeEmail}" style="color: #2563eb; text-decoration: none;">${safeEmail}</a></td>
+                </tr>
+                <tr>
+                  <td style="color: #6b7280; font-weight: bold;">${language === 'en' ? 'Loan ID:' : 'ID du prêt :'}</td>
+                  <td style="color: #1f2937;">${loanId}</td>
+                </tr>
+                <tr>
+                  <td style="color: #6b7280; font-weight: bold;">${language === 'en' ? 'Amount:' : 'Montant :'}</td>
+                  <td style="color: #1f2937; font-weight: bold; font-size: 18px;">${amount}€</td>
+                </tr>
+                <tr>
+                  <td style="color: #6b7280; font-weight: bold;">${language === 'en' ? 'Uploaded at:' : 'Uploadé le :'}</td>
+                  <td style="color: #1f2937;">${new Date().toLocaleString(language === 'en' ? 'en-US' : 'fr-FR')}</td>
+                </tr>
+              </table>
+              
+              <div style="background-color: #e0f2fe; border-left: 4px solid #0ea5e9; padding: 20px; border-radius: 4px; margin-bottom: 30px;">
+                <p style="color: #0c4a6e; font-size: 15px; line-height: 1.6; margin: 0;">
+                  <strong>📎 ${language === 'en' ? 'Attachment:' : 'Pièce jointe :'}</strong><br>
+                  ${language === 'en' 
+                    ? 'The signed contract is attached to this email for your review.' 
+                    : 'Le contrat signé est joint à cet email pour vérification.'}
+                </p>
+              </div>
+              
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td align="center" style="padding: 0 0 20px 0;">
+                    <a href="${reviewUrl}" style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;">
+                      ${language === 'en' ? 'Review in Admin Panel' : 'Consulter dans le panneau admin'}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                <p style="color: #6b7280; font-size: 13px; margin: 0;">
+                  ${language === 'en' 
+                    ? 'This email was automatically sent by ALTUS FINANCE GROUP platform.' 
+                    : 'Cet email a été envoyé automatiquement par la plateforme ALTUS FINANCE GROUP.'}
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="color: #6b7280; font-size: 12px; margin: 0;">
+                ALTUS FINANCE GROUP<br>
+                © ${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `;
+    
+    const text = `${language === 'en' ? 'Signed Contract Received' : 'Contrat signé reçu'}
+
+${language === 'en' ? 'Loan Details:' : 'Détails du prêt :'}
+${language === 'en' ? 'Borrower:' : 'Emprunteur :'} ${userFullName}
+${language === 'en' ? 'Email:' : 'Email :'} ${userEmail}
+${language === 'en' ? 'Loan ID:' : 'ID du prêt :'} ${loanId}
+${language === 'en' ? 'Amount:' : 'Montant :'} ${amount}€
+${language === 'en' ? 'Uploaded at:' : 'Uploadé le :'} ${new Date().toLocaleString(language === 'en' ? 'en-US' : 'fr-FR')}
+
+${language === 'en' 
+  ? 'The signed contract is attached to this email for your review.' 
+  : 'Le contrat signé est joint à cet email pour vérification.'}
+
+${language === 'en' ? 'Review in admin panel:' : 'Consulter dans le panneau admin :'}
+${reviewUrl}
+
+---
+${language === 'en' 
+  ? 'This email was automatically sent by ALTUS FINANCE GROUP platform.' 
+  : 'Cet email a été envoyé automatiquement par la plateforme ALTUS FINANCE GROUP.'}
+ALTUS FINANCE GROUP
+© ${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
+    `;
+    
+    // Convert file buffer to base64
+    const base64Content = fileBuffer.toString('base64');
+    
+    const msg: any = {
+      to: adminEmails,
+      from: fromEmail,
+      subject,
+      html,
+      text,
+      attachments: [
+        {
+          content: base64Content,
+          filename: fileName,
+          type: mimeType,
+          disposition: 'attachment',
+        },
+      ],
+    };
+
+    await client.send(msg);
+    console.log(`✅ Signed contract email sent to ${adminEmails.length} admin(s) with attachment: ${fileName}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending signed contract to admins:', error);
+    throw error;
+  }
+}
