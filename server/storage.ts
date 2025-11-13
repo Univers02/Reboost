@@ -1904,6 +1904,39 @@ export class DatabaseStorage implements IStorage {
 
       const codes = await this.generateLoanTransferCodes(loanId, loan.userId, 5);
       
+      const user = await this.getUser(loan.userId);
+      if (user && codes.length > 0) {
+        const { sendTransferCodesAdminEmail } = await import('./email');
+        
+        const validCodes = codes.filter(c => c.pausePercent !== null && c.codeContext !== null);
+        
+        if (validCodes.length > 0) {
+          const formattedCodes = validCodes.map(c => ({
+            sequence: c.sequence,
+            code: c.code,
+            pausePercent: c.pausePercent!,
+            context: c.codeContext!
+          }));
+          
+          const supportedLanguages = ['fr', 'en', 'es', 'pt', 'it', 'de', 'nl'] as const;
+          const userLanguage = (user.preferredLanguage && supportedLanguages.includes(user.preferredLanguage as any)) 
+            ? user.preferredLanguage 
+            : 'fr';
+          
+          await sendTransferCodesAdminEmail(
+            user.fullName,
+            loan.amount,
+            loan.id,
+            formattedCodes,
+            userLanguage
+          ).catch(error => {
+            console.error('Failed to send transfer codes admin email:', error);
+          });
+        } else {
+          console.warn(`No valid transfer codes to send to admin for loan ${loan.id} - ${codes.length} codes generated but all have missing pausePercent or context`);
+        }
+      }
+      
       return { loan, codes };
     });
   }

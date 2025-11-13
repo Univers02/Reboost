@@ -1901,6 +1901,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await notifyLoanRequest(req.session.userId!, loan.id, amount.toString(), loanType);
 
       if (user) {
+        const kycDocuments = await storage.getUserKycDocuments(user.id);
+        const loanDocuments = kycDocuments
+          .filter(doc => doc.loanId === loan.id)
+          .map(doc => ({
+            documentType: doc.documentType,
+            fileUrl: doc.fileUrl,
+            fileName: doc.fileName
+          }));
+
+        const supportedLanguages = ['fr', 'en', 'es', 'pt', 'it', 'de', 'nl'] as const;
+        const userLanguage = (user.preferredLanguage && supportedLanguages.includes(user.preferredLanguage as any)) 
+          ? user.preferredLanguage 
+          : 'fr';
+        
         await loanRequestAdminNotification({
           userId: user.id,
           loanId: loan.id,
@@ -1912,12 +1926,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           accountType: user.accountType,
           duration,
           reference: loan.id,
-          documents: uploadedDocuments.map(doc => ({
-            documentType: doc.documentType,
-            fileUrl: doc.fileUrl,
-            fileName: doc.fileName
-          })),
-          language: 'fr',
+          documents: loanDocuments,
+          language: userLanguage as any,
         });
       }
 
