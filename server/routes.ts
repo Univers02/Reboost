@@ -15,6 +15,7 @@ import { fileTypeFromFile } from "file-type";
 import { db } from "./db";
 import { generateAndSendOTP, verifyOTP } from "./services/otp";
 import { generateTwoFactorSecret, generateQRCode, verifyTwoFactorToken } from "./services/twoFactor";
+import jwt from "jsonwebtoken";
 import { 
   notifyLoanApproved, 
   notifyLoanRejected, 
@@ -39,6 +40,11 @@ import { PassThrough } from "stream";
 export async function registerRoutes(app: Express): Promise<Server> {
   // SÉCURITÉ: Accès aux fichiers via endpoints protégés uniquement
   // app.use('/uploads', express.static(...)); // ❌ SUPPRIMÉ - Exposition publique dangereuse
+
+  // Génère un secret fort pour signer les liens de téléchargement temporaires
+  // Régénéré à chaque démarrage du serveur (acceptable car les tokens n'ont qu'une durée de vie de 5 min)
+  const DOWNLOAD_SECRET = randomBytes(64).toString('hex');
+  const CONTRACTS_DIR = path.join(process.cwd(), 'uploads', 'contracts');
 
   const generateCSRFToken = (): string => {
     return randomBytes(32).toString('hex');
@@ -1823,6 +1829,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ✅ NOUVEAU : Génère un lien temporaire signé pour télécharger le contrat (valide 5 min)
+  app.get("/api/contracts/:loanId/link", requireAuth, async (req, res) => {
+    try {
+      const { loanId } = req.params;
+      
+      const loan = await storage.getLoan(loanId);
+      if (!loan) {
+        return res.status(404).json({ error: 'Prêt non trouvé' });
+      }
+
+      // Vérifie que le contrat appartient bien à l'utilisateur connecté
+      if (loan.userId !== req.session.userId) {
+        const user = await storage.getUser(req.session.userId!);
+        if (!user || user.role !== 'admin') {
+          return res.status(403).json({ error: 'Accès non autorisé' });
+        }
+      }
+
+      if (!loan.contractUrl) {
+        return res.status(404).json({ error: 'Aucun contrat disponible pour ce prêt' });
+      }
+
+      // Génère un token JWT temporaire (valide 5 minutes)
+      const token = jwt.sign(
+        { 
+          filePath: loan.contractUrl, 
+          userId: req.session.userId,
+          loanId: loan.id 
+        },
+        DOWNLOAD_SECRET,
+        { expiresIn: '5m' }
+      );
+
+      const baseUrl = process.env.NODE_ENV === 'production' 
+        ? `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`
+        : '';
+      
+      const signedUrl = `${baseUrl}/api/contracts/signed/${token}`;
+      
+      res.json({ signedUrl });
+    } catch (error) {
+      console.error('Erreur génération lien de téléchargement:', error);
+      res.status(500).json({ error: 'Erreur lors de la génération du lien de téléchargement' });
+    }
+  });
+
+  // ✅ NOUVEAU : Télécharge le contrat via un lien signé temporaire
+  app.get("/api/contracts/signed/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      
+      // Vérifie et décode le token JWT
+      const decoded = jwt.verify(token, DOWNLOAD_SECRET) as { 
+        filePath: string; 
+        userId: string; 
+        loanId: string;
+      };
+
+      // Sécurité: Vérifie que le fichier existe et est dans le bon répertoire
+      const filePath = path.resolve(CONTRACTS_DIR, path.basename(decoded.filePath));
+      
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'Fichier de contrat introuvable' });
+      }
+
+      // Télécharge le contrat avec un nom personnalisé
+      const filename = `contrat_pret_${decoded.loanId}.pdf`;
+      res.download(filePath, filename, (err) => {
+        if (err) {
+          console.error('Erreur téléchargement contrat:', err);
+          if (!res.headersSent) {
+            res.status(500).json({ error: 'Erreur lors du téléchargement' });
+          }
+        }
+      });
+    } catch (error: any) {
+      console.error('Erreur lien signé:', error);
+      if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+        return res.status(403).json({ error: 'Lien invalide ou expiré. Veuillez générer un nouveau lien.' });
+      }
+      return res.status(500).json({ error: 'Erreur lors du téléchargement du contrat' });
+    }
+  });
+
+  // ⚠️ ANCIEN ENDPOINT (gardé pour compatibilité mais devrait utiliser les nouveaux endpoints)
   app.get("/api/loans/:id/contract", requireAuth, async (req, res) => {
     try {
       const loan = await storage.getLoan(req.params.id);

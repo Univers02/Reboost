@@ -62,9 +62,28 @@ export default function ContractNotificationManager() {
         dismissible: false,
         link: {
           text: 'Voir le contrat',
-          onClick: () => {
-            const contractUrl = getApiUrl(`/api/loans/${loan.id}/contract`);
-            window.open(contractUrl, '_blank');
+          onClick: async () => {
+            try {
+              // Génère un lien signé temporaire (valide 5 min)
+              const response = await fetch(getApiUrl(`/api/contracts/${loan.id}/link`), {
+                credentials: 'include',
+              });
+
+              if (!response.ok) {
+                const error = await response.json();
+                console.error('Erreur génération lien:', error);
+                alert('Erreur lors de la génération du lien de téléchargement. Veuillez réessayer.');
+                return;
+              }
+
+              const { signedUrl } = await response.json();
+              
+              // Ouvre le lien signé dans un nouvel onglet
+              window.open(signedUrl, '_blank');
+            } catch (error) {
+              console.error('Erreur téléchargement contrat:', error);
+              alert('Erreur lors du téléchargement du contrat. Veuillez réessayer.');
+            }
           },
         },
       });
