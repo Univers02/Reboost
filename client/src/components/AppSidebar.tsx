@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Home, CreditCard, ArrowRightLeft, History, Settings, LogOut, ShieldCheck, Users, FileText, BarChart, Building2 } from 'lucide-react';
+import { Home, CreditCard, ArrowRightLeft, History, Settings, LogOut, ShieldCheck, Users, FileText, BarChart, Building2, Plus } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { useLocation } from 'wouter';
 import { useUser, getUserInitials, getAccountTypeLabel, useUserProfilePhotoUrl } from '@/hooks/use-user';
@@ -30,9 +30,14 @@ export default function AppSidebar() {
     setLocation('/');
   };
 
-  const menuItems = [
+  const loanMenuItems = [
+    { title: t.nav.myLoans || 'Mes prêts', url: '/loans', icon: CreditCard },
+    { title: t.nav.newLoan || 'Demande de prêt', url: '/loans/new', icon: Plus },
+    { title: t.nav.contracts || 'Contrats', url: '/contracts', icon: FileText },
+  ];
+
+  const generalMenuItems = [
     { title: t.nav.dashboard, url: '/dashboard', icon: Home },
-    { title: t.nav.loans, url: '/loans', icon: CreditCard },
     { title: t.nav.transfers, url: '/transfers', icon: ArrowRightLeft },
     { title: t.bankAccounts.title, url: '/accounts', icon: Building2 },
     { title: t.nav.history, url: '/history', icon: History },
@@ -48,44 +53,101 @@ export default function AppSidebar() {
     { title: t.nav.reports, url: '/admin/reports', icon: BarChart },
   ];
 
-  const currentMenuItems = (isAdminPath && isAdmin) ? adminMenuItems : menuItems;
-
   return (
     <Sidebar>
       <SidebarContent>
-        <SidebarGroup>
-          <div className="px-4 py-6 mb-4 flex items-center justify-center" data-testid="sidebar-logo">
-            <img 
-              src={logoUrl} 
-              alt="Altus Finance Group Logo" 
-              className="w-48 h-48 object-contain"
-            />
-          </div>
-          <SidebarGroupLabel className="text-sm font-semibold px-4 py-2">
-            {t.nav.dashboard}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {currentMenuItems.map((item) => {
-                const isActive = location === item.url;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      onClick={() => setLocation(item.url)}
-                    >
-                      <a href={item.url} data-testid={`link-${item.url.slice(1)}`} className="flex items-center gap-3">
-                        <item.icon size={20} />
-                        <span>{item.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <div className="px-4 py-6 mb-4 flex items-center justify-center" data-testid="sidebar-logo">
+          <img 
+            src={logoUrl} 
+            alt="Altus Finance Group Logo" 
+            className="w-48 h-48 object-contain"
+          />
+        </div>
+
+        {(isAdminPath && isAdmin) ? (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sm font-semibold px-4 py-2">
+              Administration
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {adminMenuItems.map((item) => {
+                  const isActive = location === item.url;
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        onClick={() => setLocation(item.url)}
+                      >
+                        <a href={item.url} data-testid={`link-${item.url.slice(1)}`} className="flex items-center gap-3">
+                          <item.icon size={20} />
+                          <span>{item.title}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ) : (
+          <>
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-sm font-semibold px-4 py-2">
+                {t.nav.dashboard}
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {generalMenuItems.map((item) => {
+                    const isActive = location === item.url;
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={isActive}
+                          onClick={() => setLocation(item.url)}
+                        >
+                          <a href={item.url} data-testid={`link-${item.url.slice(1)}`} className="flex items-center gap-3">
+                            <item.icon size={20} />
+                            <span>{item.title}</span>
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-sm font-semibold px-4 py-2">
+                {t.nav.loansSection || 'Prêts'}
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {loanMenuItems.map((item) => {
+                    const isActive = location === item.url;
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={isActive}
+                          onClick={() => setLocation(item.url)}
+                        >
+                          <a href={item.url} data-testid={`link-${item.url.slice(1).replace(/\//g, '-')}`} className="flex items-center gap-3">
+                            <item.icon size={20} />
+                            <span>{item.title}</span>
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>

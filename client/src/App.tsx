@@ -39,6 +39,7 @@ import Transfers from '@/pages/Transfers';
 import BankAccounts from '@/pages/BankAccounts';
 import History from '@/pages/History';
 import Settings from '@/pages/Settings';
+import Contracts from '@/pages/Contracts';
 import AppSidebar from '@/components/AppSidebar';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -102,6 +103,7 @@ function App() {
                         <Route path="/dashboard" component={DashboardWrapper} />
                         <Route path="/loans" component={IndividualLoans} />
                         <Route path="/loans/new" component={LoanRequestDashboard} />
+                        <Route path="/contracts" component={Contracts} />
                         <Route path="/transfer/new" component={TransferFlow} />
                         <Route path="/transfer/:id" component={TransferFlow} />
                         <Route path="/transfers" component={Transfers} />

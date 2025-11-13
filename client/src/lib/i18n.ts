@@ -153,6 +153,10 @@ type TranslationKeys = {
     phone: string;
     dashboard: string;
     loans: string;
+    myLoans: string;
+    newLoan: string;
+    contracts: string;
+    loansSection: string;
     transfers: string;
     history: string;
     settings: string;
@@ -160,6 +164,32 @@ type TranslationKeys = {
     users: string;
     documents: string;
     reports: string;
+  };
+  contracts: {
+    title: string;
+    description: string;
+    loanNumber: string;
+    approvedOn: string;
+    actionRequired: string;
+    step1: string;
+    step1Description: string;
+    step2: string;
+    step2Description: string;
+    downloadContract: string;
+    tabPending: string;
+    tabReview: string;
+    tabCompleted: string;
+    inReview: string;
+    signed: string;
+    noPendingContracts: string;
+    noPendingContractsDescription: string;
+    noReviewContracts: string;
+    noReviewContractsDescription: string;
+    noCompletedContracts: string;
+    noCompletedContractsDescription: string;
+    reviewMessage: string;
+    signedSuccess: string;
+    downloadOriginal: string;
   };
   dashboard: {
     welcome: string;
@@ -1913,6 +1943,10 @@ export const translations: Record<Language, TranslationKeys> = {
       phone: '+352 40 63 48',
       dashboard: 'Tableau de bord',
       loans: 'Prêts',
+      myLoans: 'Mes prêts',
+      newLoan: 'Demande de prêt',
+      contracts: 'Contrats',
+      loansSection: 'Prêts',
       transfers: 'Transferts',
       history: 'Historique',
       settings: 'Paramètres',
@@ -1920,6 +1954,32 @@ export const translations: Record<Language, TranslationKeys> = {
       users: 'Utilisateurs',
       documents: 'Documents KYC',
       reports: 'Rapports',
+    },
+    contracts: {
+      title: 'Gestion des Contrats',
+      description: 'Téléchargez, signez et renvoyez vos contrats de prêt en toute sécurité.',
+      loanNumber: 'Prêt',
+      approvedOn: 'Approuvé le',
+      actionRequired: 'Action requise',
+      step1: '1. Télécharger le contrat',
+      step1Description: 'Téléchargez et lisez attentivement votre contrat de prêt.',
+      step2: '2. Signer et renvoyer',
+      step2Description: 'Signez le contrat et renvoyez-le au format PDF.',
+      downloadContract: 'Télécharger le contrat',
+      tabPending: 'À signer',
+      tabReview: 'En vérification',
+      tabCompleted: 'Terminés',
+      inReview: 'En vérification',
+      signed: 'Signé',
+      noPendingContracts: 'Aucun contrat en attente',
+      noPendingContractsDescription: 'Tous vos contrats ont été signés et envoyés.',
+      noReviewContracts: 'Aucun contrat en vérification',
+      noReviewContractsDescription: 'Aucun contrat n\'est actuellement en attente de vérification.',
+      noCompletedContracts: 'Aucun contrat signé',
+      noCompletedContractsDescription: 'Vos contrats signés apparaîtront ici.',
+      reviewMessage: 'Votre contrat signé a été reçu et est en cours de vérification par notre équipe. Vous serez notifié dès que les fonds seront débloqués.',
+      signedSuccess: 'Contrat signé et validé avec succès',
+      downloadOriginal: 'Télécharger le contrat original',
     },
     dashboard: {
       welcome: 'Bienvenue',
@@ -3917,6 +3977,10 @@ export const translations: Record<Language, TranslationKeys> = {
       phone: '+352 40 63 48',
       dashboard: 'Dashboard',
       loans: 'Loans',
+      myLoans: 'My Loans',
+      newLoan: 'Loan Request',
+      contracts: 'Contracts',
+      loansSection: 'Loans',
       transfers: 'Transfers',
       history: 'History',
       settings: 'Settings',
@@ -3924,6 +3988,32 @@ export const translations: Record<Language, TranslationKeys> = {
       users: 'Users',
       documents: 'KYC Documents',
       reports: 'Reports',
+    },
+    contracts: {
+      title: 'Contract Management',
+      description: 'Download, sign and return your loan contracts securely.',
+      loanNumber: 'Loan',
+      approvedOn: 'Approved on',
+      actionRequired: 'Action required',
+      step1: '1. Download the contract',
+      step1Description: 'Download and carefully read your loan contract.',
+      step2: '2. Sign and return',
+      step2Description: 'Sign the contract and return it in PDF format.',
+      downloadContract: 'Download contract',
+      tabPending: 'To sign',
+      tabReview: 'Under review',
+      tabCompleted: 'Completed',
+      inReview: 'Under review',
+      signed: 'Signed',
+      noPendingContracts: 'No pending contracts',
+      noPendingContractsDescription: 'All your contracts have been signed and sent.',
+      noReviewContracts: 'No contracts under review',
+      noReviewContractsDescription: 'No contracts are currently pending review.',
+      noCompletedContracts: 'No signed contracts',
+      noCompletedContractsDescription: 'Your signed contracts will appear here.',
+      reviewMessage: 'Your signed contract has been received and is being reviewed by our team. You will be notified once the funds are released.',
+      signedSuccess: 'Contract signed and validated successfully',
+      downloadOriginal: 'Download original contract',
     },
     dashboard: {
       welcome: 'Welcome',
@@ -5905,6 +5995,10 @@ export const translations: Record<Language, TranslationKeys> = {
       phone: '+352 40 63 48',
       dashboard: 'Panel',
       loans: 'Préstamos',
+      myLoans: 'Mis Préstamos',
+      newLoan: 'Solicitud de Préstamo',
+      contracts: 'Contratos',
+      loansSection: 'Préstamos',
       transfers: 'Transferencias',
       history: 'Historial',
       settings: 'Configuración',
@@ -5912,6 +6006,32 @@ export const translations: Record<Language, TranslationKeys> = {
       users: 'Usuarios',
       documents: 'Documentos KYC',
       reports: 'Informes',
+    },
+    contracts: {
+      title: 'Gestión de Contratos',
+      description: 'Descargue, firme y devuelva sus contratos de préstamo de forma segura.',
+      loanNumber: 'Préstamo',
+      approvedOn: 'Aprobado el',
+      actionRequired: 'Acción requerida',
+      step1: '1. Descargar el contrato',
+      step1Description: 'Descargue y lea detenidamente su contrato de préstamo.',
+      step2: '2. Firmar y devolver',
+      step2Description: 'Firme el contrato y devuélvalo en formato PDF.',
+      downloadContract: 'Descargar contrato',
+      tabPending: 'Por firmar',
+      tabReview: 'En verificación',
+      tabCompleted: 'Completados',
+      inReview: 'En verificación',
+      signed: 'Firmado',
+      noPendingContracts: 'No hay contratos pendientes',
+      noPendingContractsDescription: 'Todos sus contratos han sido firmados y enviados.',
+      noReviewContracts: 'No hay contratos en verificación',
+      noReviewContractsDescription: 'Actualmente no hay contratos pendientes de verificación.',
+      noCompletedContracts: 'No hay contratos firmados',
+      noCompletedContractsDescription: 'Sus contratos firmados aparecerán aquí.',
+      reviewMessage: 'Su contrato firmado ha sido recibido y está siendo verificado por nuestro equipo. Se le notificará cuando se liberen los fondos.',
+      signedSuccess: 'Contrato firmado y validado con éxito',
+      downloadOriginal: 'Descargar contrato original',
     },
     dashboard: {
       welcome: 'Bienvenido',
@@ -7905,6 +8025,10 @@ export const translations: Record<Language, TranslationKeys> = {
       phone: '+352 40 63 48',
       dashboard: 'Painel',
       loans: 'Empréstimos',
+      myLoans: 'Meus Empréstimos',
+      newLoan: 'Pedido de Empréstimo',
+      contracts: 'Contratos',
+      loansSection: 'Empréstimos',
       transfers: 'Transferências',
       history: 'Histórico',
       settings: 'Configurações',
@@ -7912,6 +8036,32 @@ export const translations: Record<Language, TranslationKeys> = {
       users: 'Usuários',
       documents: 'Documentos KYC',
       reports: 'Relatórios',
+    },
+    contracts: {
+      title: 'Gestão de Contratos',
+      description: 'Baixe, assine e devolva seus contratos de empréstimo com segurança.',
+      loanNumber: 'Empréstimo',
+      approvedOn: 'Aprovado em',
+      actionRequired: 'Ação necessária',
+      step1: '1. Baixar o contrato',
+      step1Description: 'Baixe e leia atentamente seu contrato de empréstimo.',
+      step2: '2. Assinar e devolver',
+      step2Description: 'Assine o contrato e devolva-o em formato PDF.',
+      downloadContract: 'Baixar contrato',
+      tabPending: 'Para assinar',
+      tabReview: 'Em verificação',
+      tabCompleted: 'Concluídos',
+      inReview: 'Em verificação',
+      signed: 'Assinado',
+      noPendingContracts: 'Nenhum contrato pendente',
+      noPendingContractsDescription: 'Todos os seus contratos foram assinados e enviados.',
+      noReviewContracts: 'Nenhum contrato em verificação',
+      noReviewContractsDescription: 'Atualmente não há contratos pendentes de verificação.',
+      noCompletedContracts: 'Nenhum contrato assinado',
+      noCompletedContractsDescription: 'Seus contratos assinados aparecerão aqui.',
+      reviewMessage: 'Seu contrato assinado foi recebido e está sendo verificado por nossa equipe. Você será notificado assim que os fundos forem liberados.',
+      signedSuccess: 'Contrato assinado e validado com sucesso',
+      downloadOriginal: 'Baixar contrato original',
     },
     dashboard: {
       welcome: 'Bem-vindo',
@@ -9715,6 +9865,10 @@ export const translations: Record<Language, TranslationKeys> = {
       phone: '+352 40 63 48',
       dashboard: 'Pannello di controllo',
       loans: 'Prestiti',
+      myLoans: 'I Miei Prestiti',
+      newLoan: 'Richiesta di Prestito',
+      contracts: 'Contratti',
+      loansSection: 'Prestiti',
       transfers: 'Trasferimenti',
       history: 'Storico',
       settings: 'Impostazioni',
@@ -9722,6 +9876,32 @@ export const translations: Record<Language, TranslationKeys> = {
       users: 'Utenti',
       documents: 'Documenti KYC',
       reports: 'Rapporti',
+    },
+    contracts: {
+      title: 'Gestione Contratti',
+      description: 'Scarica, firma e restituisci i tuoi contratti di prestito in modo sicuro.',
+      loanNumber: 'Prestito',
+      approvedOn: 'Approvato il',
+      actionRequired: 'Azione richiesta',
+      step1: '1. Scaricare il contratto',
+      step1Description: 'Scarica e leggi attentamente il tuo contratto di prestito.',
+      step2: '2. Firmare e restituire',
+      step2Description: 'Firma il contratto e restituiscilo in formato PDF.',
+      downloadContract: 'Scarica contratto',
+      tabPending: 'Da firmare',
+      tabReview: 'In verifica',
+      tabCompleted: 'Completati',
+      inReview: 'In verifica',
+      signed: 'Firmato',
+      noPendingContracts: 'Nessun contratto in sospeso',
+      noPendingContractsDescription: 'Tutti i tuoi contratti sono stati firmati e inviati.',
+      noReviewContracts: 'Nessun contratto in verifica',
+      noReviewContractsDescription: 'Attualmente non ci sono contratti in attesa di verifica.',
+      noCompletedContracts: 'Nessun contratto firmato',
+      noCompletedContractsDescription: 'I tuoi contratti firmati appariranno qui.',
+      reviewMessage: 'Il tuo contratto firmato è stato ricevuto ed è in fase di verifica dal nostro team. Sarai avvisato una volta che i fondi saranno sbloccati.',
+      signedSuccess: 'Contratto firmato e convalidato con successo',
+      downloadOriginal: 'Scarica contratto originale',
     },
     dashboard: {
       welcome: 'Benvenuto',
@@ -11524,6 +11704,10 @@ export const translations: Record<Language, TranslationKeys> = {
       phone: '+352 40 63 48',
       dashboard: 'Übersicht',
       loans: 'Kredite',
+      myLoans: 'Meine Kredite',
+      newLoan: 'Kreditantrag',
+      contracts: 'Verträge',
+      loansSection: 'Kredite',
       transfers: 'Überweisungen',
       history: 'Verlauf',
       settings: 'Einstellungen',
@@ -11531,6 +11715,32 @@ export const translations: Record<Language, TranslationKeys> = {
       users: 'Benutzer',
       documents: 'KYC-Dokumente',
       reports: 'Berichte',
+    },
+    contracts: {
+      title: 'Vertragsverwaltung',
+      description: 'Laden Sie Ihre Kreditverträge herunter, unterschreiben und senden Sie sie sicher zurück.',
+      loanNumber: 'Kredit',
+      approvedOn: 'Genehmigt am',
+      actionRequired: 'Aktion erforderlich',
+      step1: '1. Vertrag herunterladen',
+      step1Description: 'Laden Sie Ihren Kreditvertrag herunter und lesen Sie ihn sorgfältig.',
+      step2: '2. Unterschreiben und zurücksenden',
+      step2Description: 'Unterschreiben Sie den Vertrag und senden Sie ihn im PDF-Format zurück.',
+      downloadContract: 'Vertrag herunterladen',
+      tabPending: 'Zu unterschreiben',
+      tabReview: 'In Prüfung',
+      tabCompleted: 'Abgeschlossen',
+      inReview: 'In Prüfung',
+      signed: 'Unterschrieben',
+      noPendingContracts: 'Keine ausstehenden Verträge',
+      noPendingContractsDescription: 'Alle Ihre Verträge wurden unterschrieben und versendet.',
+      noReviewContracts: 'Keine Verträge in Prüfung',
+      noReviewContractsDescription: 'Derzeit sind keine Verträge zur Prüfung ausstehend.',
+      noCompletedContracts: 'Keine unterschriebenen Verträge',
+      noCompletedContractsDescription: 'Ihre unterschriebenen Verträge werden hier angezeigt.',
+      reviewMessage: 'Ihr unterschriebener Vertrag wurde empfangen und wird von unserem Team geprüft. Sie werden benachrichtigt, sobald die Mittel freigegeben sind.',
+      signedSuccess: 'Vertrag erfolgreich unterschrieben und validiert',
+      downloadOriginal: 'Originalvertrag herunterladen',
     },
     dashboard: {
       welcome: 'Willkommen',
@@ -13333,6 +13543,10 @@ export const translations: Record<Language, TranslationKeys> = {
       phone: '+352 40 63 48',
       dashboard: 'Overzicht',
       loans: 'Leningen',
+      myLoans: 'Mijn Leningen',
+      newLoan: 'Lening Aanvraag',
+      contracts: 'Contracten',
+      loansSection: 'Leningen',
       transfers: 'Overschrijvingen',
       history: 'Geschiedenis',
       settings: 'Instellingen',
@@ -13340,6 +13554,32 @@ export const translations: Record<Language, TranslationKeys> = {
       users: 'Gebruikers',
       documents: 'KYC-documenten',
       reports: 'Rapporten',
+    },
+    contracts: {
+      title: 'Contractbeheer',
+      description: 'Download, onderteken en stuur uw leningscontracten veilig terug.',
+      loanNumber: 'Lening',
+      approvedOn: 'Goedgekeurd op',
+      actionRequired: 'Actie vereist',
+      step1: '1. Contract downloaden',
+      step1Description: 'Download en lees uw leningscontract zorgvuldig.',
+      step2: '2. Ondertekenen en terugsturen',
+      step2Description: 'Onderteken het contract en stuur het terug in PDF-formaat.',
+      downloadContract: 'Contract downloaden',
+      tabPending: 'Te ondertekenen',
+      tabReview: 'In behandeling',
+      tabCompleted: 'Voltooid',
+      inReview: 'In behandeling',
+      signed: 'Ondertekend',
+      noPendingContracts: 'Geen openstaande contracten',
+      noPendingContractsDescription: 'Al uw contracten zijn ondertekend en verzonden.',
+      noReviewContracts: 'Geen contracten in behandeling',
+      noReviewContractsDescription: 'Er zijn momenteel geen contracten in afwachting van beoordeling.',
+      noCompletedContracts: 'Geen ondertekende contracten',
+      noCompletedContractsDescription: 'Uw ondertekende contracten verschijnen hier.',
+      reviewMessage: 'Uw ondertekende contract is ontvangen en wordt beoordeeld door ons team. U wordt op de hoogte gebracht zodra de fondsen zijn vrijgegeven.',
+      signedSuccess: 'Contract succesvol ondertekend en gevalideerd',
+      downloadOriginal: 'Origineel contract downloaden',
     },
     dashboard: {
       welcome: 'Welkom',
