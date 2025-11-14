@@ -50,6 +50,7 @@ import SessionMonitor from '@/components/SessionMonitor';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import ContractNotificationManager from '@/components/ContractNotificationManager';
 import UserSessionTracker from '@/components/UserSessionTracker';
+import { LoanDialogProvider } from '@/contexts/LoanDialogContext';
 
 function App() {
   const style = {
@@ -84,48 +85,50 @@ function App() {
             <Route path="/loan-request" component={LoanRequest} />
             <Route path="/loans/:slug" component={LoanDetail} />
             <Route>
-              <SidebarProvider style={style as React.CSSProperties}>
-                <div className="flex h-screen w-full">
-                  <AppSidebar />
-                  <div className="flex flex-col flex-1">
-                    <header className="flex items-center justify-between p-4 border-b bg-white dark:bg-slate-900 sticky top-0 z-50">
-                      <SidebarTrigger data-testid="button-sidebar-toggle" />
-                      <div className="flex items-center gap-3">
-                        <LanguageSwitcher />
-                        <ThemeToggle />
-                        <NotificationBell />
-                        <UserProfileHeader />
+              <LoanDialogProvider>
+                <SidebarProvider style={style as React.CSSProperties}>
+                  <div className="flex h-screen w-full">
+                    <AppSidebar />
+                    <div className="flex flex-col flex-1">
+                      <header className="flex items-center justify-between p-4 border-b bg-white dark:bg-slate-900 sticky top-0 z-50">
+                        <SidebarTrigger data-testid="button-sidebar-toggle" />
+                        <div className="flex items-center gap-3">
+                          <LanguageSwitcher />
+                          <ThemeToggle />
+                          <NotificationBell />
+                          <UserProfileHeader />
+                        </div>
+                      </header>
+                      <div className="px-4 pt-4">
+                        <NotificationBanner />
                       </div>
-                    </header>
-                    <div className="px-4 pt-4">
-                      <NotificationBanner />
+                      <main className="flex-1 overflow-auto pb-20 md:pb-0 bg-slate-50 dark:bg-slate-950">
+                        <Switch>
+                          <Route path="/dashboard" component={DashboardWrapper} />
+                          <Route path="/loans" component={IndividualLoans} />
+                          <Route path="/loans/new" component={LoanRequestDashboard} />
+                          <Route path="/contracts" component={Contracts} />
+                          <Route path="/transfer/new" component={TransferFlow} />
+                          <Route path="/transfer/:id" component={TransferFlow} />
+                          <Route path="/transfers" component={Transfers} />
+                          <Route path="/accounts" component={BankAccounts} />
+                          <Route path="/history" component={History} />
+                          <Route path="/settings" component={Settings} />
+                          <Route path="/security/2fa" component={TwoFactorSetup} />
+                          <Route path="/admin" component={AdminDashboard} />
+                          <Route path="/admin/users" component={AdminUsers} />
+                          <Route path="/admin/loans" component={AdminLoans} />
+                          <Route path="/admin/transfers" component={AdminTransfers} />
+                          <Route path="/admin/settings" component={AdminSettings} />
+                          <Route path="/admin/reports" component={AdminReports} />
+                          <Route component={NotFound} />
+                        </Switch>
+                      </main>
+                      <MobileBottomNav />
                     </div>
-                    <main className="flex-1 overflow-auto pb-20 md:pb-0 bg-slate-50 dark:bg-slate-950">
-                      <Switch>
-                        <Route path="/dashboard" component={DashboardWrapper} />
-                        <Route path="/loans" component={IndividualLoans} />
-                        <Route path="/loans/new" component={LoanRequestDashboard} />
-                        <Route path="/contracts" component={Contracts} />
-                        <Route path="/transfer/new" component={TransferFlow} />
-                        <Route path="/transfer/:id" component={TransferFlow} />
-                        <Route path="/transfers" component={Transfers} />
-                        <Route path="/accounts" component={BankAccounts} />
-                        <Route path="/history" component={History} />
-                        <Route path="/settings" component={Settings} />
-                        <Route path="/security/2fa" component={TwoFactorSetup} />
-                        <Route path="/admin" component={AdminDashboard} />
-                        <Route path="/admin/users" component={AdminUsers} />
-                        <Route path="/admin/loans" component={AdminLoans} />
-                        <Route path="/admin/transfers" component={AdminTransfers} />
-                        <Route path="/admin/settings" component={AdminSettings} />
-                        <Route path="/admin/reports" component={AdminReports} />
-                        <Route component={NotFound} />
-                      </Switch>
-                    </main>
-                    <MobileBottomNav />
                   </div>
-                </div>
-              </SidebarProvider>
+                </SidebarProvider>
+              </LoanDialogProvider>
             </Route>
           </Switch>
           <Toaster />

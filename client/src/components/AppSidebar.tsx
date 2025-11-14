@@ -15,6 +15,7 @@ import { useTranslations } from '@/lib/i18n';
 import { useLocation } from 'wouter';
 import { useUser, getUserInitials, getAccountTypeLabel, useUserProfilePhotoUrl } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useLoanDialog } from '@/contexts/LoanDialogContext';
 import logoUrl from '@assets/Logo_1762619815448.jpeg';
 
 export default function AppSidebar() {
@@ -22,6 +23,7 @@ export default function AppSidebar() {
   const [location, setLocation] = useLocation();
   const { data: user, isLoading: isUserLoading } = useUser();
   const profilePhotoUrl = useUserProfilePhotoUrl();
+  const { openDialog } = useLoanDialog();
 
   const isAdminPath = location.startsWith('/admin');
   const isAdmin = user?.role === 'admin';
@@ -32,7 +34,7 @@ export default function AppSidebar() {
 
   const loanMenuItems = [
     { title: t.nav.myLoans || 'Mes prêts', url: '/loans', icon: CreditCard },
-    { title: t.nav.newLoan || 'Demande de prêt', url: '/loans/new', icon: Plus },
+    { title: t.nav.newLoan || 'Demande de prêt', url: null, icon: Plus, action: openDialog },
     { title: t.nav.contracts || 'Contrats', url: '/contracts', icon: FileText },
   ];
 
@@ -100,15 +102,31 @@ export default function AppSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {loanMenuItems.map((item) => {
-                    const isActive = location === item.url;
+                    const isActive = item.url ? location === item.url : false;
+                    
+                    if (item.action) {
+                      return (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton
+                            isActive={isActive}
+                            onClick={item.action}
+                            data-testid="button-new-loan"
+                          >
+                            <item.icon size={20} />
+                            <span>{item.title}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    }
+                    
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                           asChild
                           isActive={isActive}
-                          onClick={() => setLocation(item.url)}
+                          onClick={() => item.url && setLocation(item.url)}
                         >
-                          <a href={item.url} data-testid={`link-${item.url.slice(1).replace(/\//g, '-')}`} className="flex items-center gap-3">
+                          <a href={item.url!} data-testid={`link-${item.url!.slice(1).replace(/\//g, '-')}`} className="flex items-center gap-3">
                             <item.icon size={20} />
                             <span>{item.title}</span>
                           </a>

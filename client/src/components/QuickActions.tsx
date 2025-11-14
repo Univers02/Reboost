@@ -4,13 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/lib/i18n';
 import { Plus, ArrowRightLeft, History } from 'lucide-react';
-import NewLoanDialog from './NewLoanDialog';
+import { useLoanDialog } from '@/contexts/LoanDialogContext';
 import TransactionHistoryDialog from './TransactionHistoryDialog';
 
 export default function QuickActions() {
   const t = useTranslations();
   const [, setLocation] = useLocation();
-  const [loanDialogOpen, setLoanDialogOpen] = useState(false);
+  const { openDialog } = useLoanDialog();
   const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
 
   return (
@@ -24,7 +24,7 @@ export default function QuickActions() {
             className="w-full justify-start gap-2 h-9 text-sm"
             variant="default"
             data-testid="button-new-loan"
-            onClick={() => setLoanDialogOpen(true)}
+            onClick={openDialog}
           >
             <Plus className="h-4 w-4" />
             {t.dashboard.newLoan}
@@ -50,7 +50,6 @@ export default function QuickActions() {
         </CardContent>
       </Card>
 
-      <NewLoanDialog open={loanDialogOpen} onOpenChange={setLoanDialogOpen} />
       <TransactionHistoryDialog open={historyDialogOpen} onOpenChange={setHistoryDialogOpen} />
     </>
   );
