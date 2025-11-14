@@ -9,6 +9,7 @@ interface Loan {
   status: string;
   contractUrl?: string | null;
   signedContractUrl?: string | null;
+  contractStatus?: string | null;
   amount: string | number;
 }
 
@@ -38,6 +39,8 @@ export default function ContractNotificationManager() {
         loan.status === 'approved' &&
         loan.contractUrl &&
         !loan.signedContractUrl &&
+        loan.contractStatus !== 'awaiting_admin_confirmation' &&
+        loan.contractStatus !== 'approved' &&
         !downloadedContracts.has(loan.id)
     );
 
@@ -111,6 +114,8 @@ export default function ContractNotificationManager() {
         loan.status === 'approved' &&
         loan.contractUrl &&
         !loan.signedContractUrl &&
+        loan.contractStatus !== 'awaiting_admin_confirmation' &&
+        loan.contractStatus !== 'approved' &&
         downloadedContracts.has(loan.id)
     );
 
