@@ -60,10 +60,22 @@ export default function TransferFlow() {
 
   const initiateMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiRequest('POST', '/api/transfers/initiate', data);
+      const csrfRes = await fetch('/api/csrf-token', { credentials: 'include' });
+      const { csrfToken } = await csrfRes.json();
+      
+      const response = await fetch('/api/transfers/initiate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
+        credentials: 'include',
+        body: JSON.stringify(data),
+      });
+      
       const result = await response.json();
       
-      if (!response.ok && result.redirect && result.existingTransferId) {
+      if (response.status === 409 && result.redirect && result.existingTransferId) {
         return { redirect: true, existingTransferId: result.existingTransferId };
       }
       
