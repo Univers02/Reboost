@@ -24,7 +24,6 @@ export default function TransferFlow() {
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
   const [externalAccountId, setExternalAccountId] = useState('');
-  const [loanId, setLoanId] = useState('');
   const [validationCode, setValidationCode] = useState('');
   const [transferId, setTransferId] = useState(params?.id || '');
   const [verificationProgress, setVerificationProgress] = useState(0);
@@ -239,11 +238,21 @@ export default function TransferFlow() {
       return;
     }
 
-    if (!loanId) {
+    if (!externalAccountId || externalAccountId === 'none') {
       toast({
         variant: 'destructive',
         title: t.transferFlow.toast.error,
-        description: 'Veuillez sélectionner un prêt actif pour initier le transfert.',
+        description: 'Veuillez sélectionner un compte externe.',
+      });
+      return;
+    }
+
+    const activeLoan = activeLoans?.[0];
+    if (!activeLoan) {
+      toast({
+        variant: 'destructive',
+        title: t.transferFlow.toast.error,
+        description: 'Aucun prêt actif disponible.',
       });
       return;
     }
@@ -251,8 +260,8 @@ export default function TransferFlow() {
     initiateMutation.mutate({
       amount: parseFloat(amount),
       recipient,
-      loanId,
-      externalAccountId: externalAccountId && externalAccountId !== 'none' ? externalAccountId : null,
+      loanId: activeLoan.id,
+      externalAccountId,
     });
   };
 
@@ -306,38 +315,12 @@ export default function TransferFlow() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="loan">Prêt actif *</Label>
-              <Select value={loanId} onValueChange={setLoanId}>
-                <SelectTrigger data-testid="select-loan">
-                  <SelectValue placeholder="Sélectionnez le prêt pour ce transfert" />
-                </SelectTrigger>
-                <SelectContent>
-                  {!activeLoans || activeLoans.length === 0 ? (
-                    <SelectItem value="none" disabled>Aucun prêt actif disponible</SelectItem>
-                  ) : (
-                    activeLoans.map((loan) => (
-                      <SelectItem key={loan.id} value={loan.id}>
-                        Prêt #{loan.reference} - {parseFloat(loan.amount).toFixed(2)} EUR ({loan.loanType})
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-              {activeLoans && activeLoans.length === 0 && (
-                <p className="text-sm text-destructive">
-                  Vous devez avoir un prêt actif avec contrat confirmé pour initier un transfert.
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="account">{t.transferFlow.form.accountLabel}</Label>
+              <Label htmlFor="account">Compte externe *</Label>
               <Select value={externalAccountId} onValueChange={setExternalAccountId}>
                 <SelectTrigger data-testid="select-account">
-                  <SelectValue placeholder={t.transferFlow.form.accountPlaceholder} />
+                  <SelectValue placeholder="Sélectionner un compte" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">{t.transferFlow.form.noAccount}</SelectItem>
                   {externalAccounts?.map((account) => (
                     <SelectItem key={account.id} value={account.id}>
                       {account.accountLabel} - {account.iban}
