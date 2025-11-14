@@ -569,22 +569,6 @@ export default function TransferFlow() {
                 </p>
               </div>
             )}
-
-            {transferData?.events && transferData.events.length > 0 && (
-              <div className="mt-6 space-y-2">
-                <h3 className="font-semibold text-sm">Historique</h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto" data-testid="list-events">
-                  {transferData.events.slice(0, 5).map((event: any) => (
-                    <div key={event.id} className="text-sm border-l-2 border-primary pl-3 py-1">
-                      <p className="font-medium">{event.message}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(event.createdAt).toLocaleString('fr-FR')}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
