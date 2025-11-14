@@ -2321,7 +2321,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.createTransferEvent({
         transferId: transfer.id,
         eventType: 'initiated',
-        message: `Transfert initié - ${codesCount} codes de validation générés pour ce transfert uniquement`,
+        message: 'Virement initié - Traitement sécurisé en cours',
         metadata: { loanId, codesCount, transferId: transfer.id },
       });
 
@@ -2403,7 +2403,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.createTransferEvent({
         transferId: transfer.id,
         eventType: 'code_sent',
-        message: `Code de validation ${nextSequence}/${transfer.requiredCodes} envoyé avec frais associé`,
+        message: 'Code de sécurité généré',
         metadata: { method: req.body.method || 'email', sequence: nextSequence, feeId: fee.id },
       });
 
@@ -2440,7 +2440,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.createTransferEvent({
           transferId: transfer.id,
           eventType: 'validation_failed',
-          message: `Tentative de validation hors séquence: attendu ${expectedSequence}, reçu ${sequence}`,
+          message: 'Erreur de séquence de validation',
           metadata: { sequence, expectedSequence, loanId: transfer.loanId },
         });
         return res.status(400).json({ 
@@ -2453,10 +2453,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.createTransferEvent({
           transferId: transfer.id,
           eventType: 'validation_failed',
-          message: 'Code de validation incorrect ou déjà utilisé',
+          message: 'Autorisation de sécurité refusée',
           metadata: { sequence, loanId: transfer.loanId },
         });
-        return res.status(400).json({ error: 'Code de validation incorrect ou déjà utilisé' });
+        return res.status(400).json({ error: 'Code de sécurité incorrect ou déjà utilisé' });
       }
 
       const newCodesValidated = transfer.codesValidated + 1;
@@ -2479,7 +2479,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.createTransferEvent({
         transferId: transfer.id,
         eventType: 'code_validated',
-        message: `Code ${newCodesValidated}/${transfer.requiredCodes} validé avec succès`,
+        message: 'Autorisation de sécurité validée',
         metadata: { sequence, codesValidated: newCodesValidated },
       });
 
@@ -2487,7 +2487,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.createTransferEvent({
           transferId: transfer.id,
           eventType: 'completed',
-          message: 'Transfert complété avec succès - Tous les codes ont été validés',
+          message: 'Virement exécuté avec succès',
           metadata: { totalValidations: newCodesValidated, completedAt },
         });
 
@@ -3782,7 +3782,7 @@ Tous les codes de validation ont été vérifiés avec succès.`,
         await storage.createTransferEvent({
           transferId: transfer.id,
           eventType: 'pause_validation_failed',
-          message: 'Code de déblocage incorrect ou expiré',
+          message: 'Code de sécurité incorrect',
           metadata: { pausePercent: transfer.pausePercent },
         });
         return res.status(400).json({ error: 'Invalid or expired code' });
@@ -3799,7 +3799,7 @@ Tous les codes de validation ont été vérifiés avec succès.`,
       await storage.createTransferEvent({
         transferId: transfer.id,
         eventType: 'pause_unlocked',
-        message: `Transfert débloqué - reprise de la progression`,
+        message: 'Virement débloqué - Traitement en cours',
         metadata: { previousPausePercent: transfer.pausePercent },
       });
 
@@ -3822,7 +3822,7 @@ Tous les codes de validation ont été vérifiés avec succès.`,
           await storage.createTransferEvent({
             transferId: transfer.id,
             eventType: 'paused',
-            message: `Transfert en pause à ${nextPausePercent}% - Code de déblocage requis`,
+            message: 'Virement en attente de validation',
             metadata: { pausePercent: nextPausePercent },
           });
 
@@ -3848,7 +3848,7 @@ Tous les codes de validation ont été vérifiés avec succès.`,
           await storage.createTransferEvent({
             transferId: transfer.id,
             eventType: 'completed',
-            message: 'Transfert complété avec succès',
+            message: 'Virement exécuté avec succès',
             metadata: null,
           });
         }, 3000);
