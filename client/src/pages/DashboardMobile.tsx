@@ -19,6 +19,7 @@ import { Link } from 'wouter';
 import { motion } from 'framer-motion';
 import MobileSidebar from '@/components/MobileSidebar';
 import { LoanRequestModal } from '@/components/LoanRequestModal';
+import InfoBanner from '@/components/InfoBanner';
 import { useState } from 'react';
 
 function DashboardMobileSkeleton() {
@@ -133,31 +134,34 @@ export default function DashboardMobile() {
   return (
     <div className="min-h-screen bg-[#F8F9FB] dark:bg-background pb-20">
       {/* Header */}
-      <div className="bg-white dark:bg-card sticky top-0 z-40 border-b border-border/50">
-        <div className="flex items-center justify-between p-4">
-          <MobileSidebar />
-          <div className="flex-1 ml-3">
-            <p className="text-sm text-muted-foreground" data-testid="text-welcome">{t.dashboard.welcome}</p>
-            <p className="font-semibold text-base text-foreground" data-testid="text-username">{firstName}</p>
+      <div className="sticky top-0 z-40">
+        <InfoBanner />
+        <div className="bg-white dark:bg-card border-b border-border/50">
+          <div className="flex items-center justify-between p-4">
+            <MobileSidebar />
+            <div className="flex-1 ml-3">
+              <p className="text-sm text-muted-foreground" data-testid="text-welcome">{t.dashboard.welcome}</p>
+              <p className="font-semibold text-base text-foreground" data-testid="text-username">{firstName}</p>
+            </div>
+            <motion.div whileTap={{ scale: 0.95 }}>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative"
+                data-testid="button-notifications"
+              >
+                <Bell className="w-5 h-5 text-muted-foreground" />
+                {hasNotifications && (
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full animate-pulse-ring" />
+                )}
+              </Button>
+            </motion.div>
+            <Avatar className="w-9 h-9 ml-2 border border-border/50">
+              <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+                {getInitials()}
+              </AvatarFallback>
+            </Avatar>
           </div>
-          <motion.div whileTap={{ scale: 0.95 }}>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="relative"
-              data-testid="button-notifications"
-            >
-              <Bell className="w-5 h-5 text-muted-foreground" />
-              {hasNotifications && (
-                <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full animate-pulse-ring" />
-              )}
-            </Button>
-          </motion.div>
-          <Avatar className="w-9 h-9 ml-2 border border-border/50">
-            <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
-              {getInitials()}
-            </AvatarFallback>
-          </Avatar>
         </div>
       </div>
 
