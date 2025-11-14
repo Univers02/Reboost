@@ -10,12 +10,11 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Home, CreditCard, ArrowRightLeft, History, Settings, LogOut, ShieldCheck, Users, FileText, BarChart, Building2, Plus } from 'lucide-react';
+import { Home, CreditCard, ArrowRightLeft, History, Settings, LogOut, ShieldCheck, Users, FileText, BarChart, Building2 } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { useLocation } from 'wouter';
 import { useUser, getUserInitials, getAccountTypeLabel, useUserProfilePhotoUrl } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useLoanDialog } from '@/contexts/LoanDialogContext';
 import logoUrl from '@assets/Logo_1762619815448.jpeg';
 
 export default function AppSidebar() {
@@ -23,7 +22,6 @@ export default function AppSidebar() {
   const [location, setLocation] = useLocation();
   const { data: user, isLoading: isUserLoading } = useUser();
   const profilePhotoUrl = useUserProfilePhotoUrl();
-  const { openDialog } = useLoanDialog();
 
   const isAdminPath = location.startsWith('/admin');
   const isAdmin = user?.role === 'admin';
@@ -34,7 +32,6 @@ export default function AppSidebar() {
 
   const loanMenuItems = [
     { title: t.nav.myLoans || 'Mes prêts', url: '/loans', icon: CreditCard },
-    { title: t.nav.newLoan || 'Demande de prêt', url: null, icon: Plus, action: openDialog },
     { title: t.nav.contracts || 'Contrats', url: '/contracts', icon: FileText },
   ];
 
@@ -100,14 +97,14 @@ export default function AppSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {loanMenuItems.map((item) => {
-                    const isActive = item.url ? location === item.url : false;
+                    const isActive = location === item.url;
                     
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                           isActive={isActive}
-                          onClick={item.action || (() => item.url && setLocation(item.url))}
-                          data-testid={item.action ? 'button-new-loan' : `button-${item.url!.slice(1).replace(/\//g, '-')}`}
+                          onClick={() => setLocation(item.url)}
+                          data-testid={`button-${item.url.slice(1).replace(/\//g, '-')}`}
                         >
                           <item.icon size={20} />
                           <span>{item.title}</span>
