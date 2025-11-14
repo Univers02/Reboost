@@ -63,16 +63,14 @@ export default function TransferFlow() {
       if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
       
       setTransferId(data.transfer.id);
-      setCurrentCodeSequence(1);
-      setVerificationProgress(0);
-      setSimulatedProgress(10);
-      setIsPausedForCode(false);
-      setLocation(`/transfer/${data.transfer.id}`);
-      setStep('verification');
       toast({
         title: t.transferFlow.toast.initiated,
-        description: t.transferFlow.toast.initiatedDesc,
+        description: 'Transfert créé avec succès. Consultation des codes de validation...',
       });
+      
+      setTimeout(() => {
+        setLocation(`/transfer/${data.transfer.id}/codes`);
+      }, 1000);
     },
     onError: () => {
       toast({
