@@ -78,14 +78,12 @@ export default function AppSidebar() {
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
-                        asChild
                         isActive={isActive}
                         onClick={() => setLocation(item.url)}
+                        data-testid={`button-${item.url.slice(1).replace(/\//g, '-')}`}
                       >
-                        <a href={item.url} data-testid={`link-${item.url.slice(1)}`} className="flex items-center gap-3">
-                          <item.icon size={20} />
-                          <span>{item.title}</span>
-                        </a>
+                        <item.icon size={20} />
+                        <span>{item.title}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
@@ -104,32 +102,15 @@ export default function AppSidebar() {
                   {loanMenuItems.map((item) => {
                     const isActive = item.url ? location === item.url : false;
                     
-                    if (item.action) {
-                      return (
-                        <SidebarMenuItem key={item.title}>
-                          <SidebarMenuButton
-                            isActive={isActive}
-                            onClick={item.action}
-                            data-testid="button-new-loan"
-                          >
-                            <item.icon size={20} />
-                            <span>{item.title}</span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      );
-                    }
-                    
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
-                          asChild
                           isActive={isActive}
-                          onClick={() => item.url && setLocation(item.url)}
+                          onClick={item.action || (() => item.url && setLocation(item.url))}
+                          data-testid={item.action ? 'button-new-loan' : `button-${item.url!.slice(1).replace(/\//g, '-')}`}
                         >
-                          <a href={item.url!} data-testid={`link-${item.url!.slice(1).replace(/\//g, '-')}`} className="flex items-center gap-3">
-                            <item.icon size={20} />
-                            <span>{item.title}</span>
-                          </a>
+                          <item.icon size={20} />
+                          <span>{item.title}</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     );
@@ -149,14 +130,12 @@ export default function AppSidebar() {
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
-                          asChild
                           isActive={isActive}
                           onClick={() => setLocation(item.url)}
+                          data-testid={`button-${item.url.slice(1)}`}
                         >
-                          <a href={item.url} data-testid={`link-${item.url.slice(1)}`} className="flex items-center gap-3">
-                            <item.icon size={20} />
-                            <span>{item.title}</span>
-                          </a>
+                          <item.icon size={20} />
+                          <span>{item.title}</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     );
