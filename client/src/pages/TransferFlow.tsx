@@ -1,18 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRoute, useLocation } from 'wouter';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest, queryClient } from '@/lib/queryClient';
-import { ArrowLeft, CheckCircle2, Clock, Send, Shield, AlertCircle, Loader2 } from 'lucide-react';
+import { apiRequest } from '@/lib/queryClient';
+import { ArrowLeft, CheckCircle2, Clock, Send, Shield, AlertCircle, Loader2, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { TransferDetailsResponse, ExternalAccount, TransferValidationCode } from '@shared/schema';
 import { useTranslations } from '@/lib/i18n';
+import { DashboardCard, SectionTitle } from '@/components/fintech';
 
 export default function TransferFlow() {
   const [, params] = useRoute('/transfer/:id');
@@ -320,27 +320,32 @@ export default function TransferFlow() {
 
   if (step === 'form') {
     return (
-      <div className="p-6 md:p-8 max-w-2xl mx-auto">
+      <div className="p-6 md:p-8 max-w-3xl mx-auto space-y-6">
         <Button 
           variant="ghost" 
           onClick={() => setLocation('/dashboard')}
-          className="mb-4"
+          className="mb-2"
           data-testid="button-back"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           {t.transferFlow.backToDashboard}
         </Button>
 
-        <Card data-testid="card-transfer-form">
-          <CardHeader>
-            <CardTitle>{t.transferFlow.form.title}</CardTitle>
-            <CardDescription>
-              {t.transferFlow.form.subtitle}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+        <SectionTitle
+          title={t.transferFlow.form.title}
+          subtitle={t.transferFlow.form.subtitle}
+        />
+
+        <DashboardCard 
+          icon={Send}
+          iconColor="text-primary"
+          testId="card-transfer-form"
+        >
+          <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="amount">{t.transferFlow.form.amountLabel}</Label>
+              <Label htmlFor="amount" className="text-sm font-medium">
+                {t.transferFlow.form.amountLabel}
+              </Label>
               <Input
                 id="amount"
                 type="number"
@@ -351,13 +356,15 @@ export default function TransferFlow() {
                 className="cursor-not-allowed opacity-75 bg-muted"
                 data-testid="input-amount"
               />
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Montant fixe basé sur votre prêt actif (non modifiable)
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="account">Compte externe *</Label>
+              <Label htmlFor="account" className="text-sm font-medium">
+                Compte externe *
+              </Label>
               <Select value={externalAccountId} onValueChange={setExternalAccountId}>
                 <SelectTrigger data-testid="select-account">
                   <SelectValue placeholder="Sélectionner un compte" />
@@ -373,7 +380,9 @@ export default function TransferFlow() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="recipient">{t.transferFlow.form.recipientLabel}</Label>
+              <Label htmlFor="recipient" className="text-sm font-medium">
+                {t.transferFlow.form.recipientLabel}
+              </Label>
               <Input
                 id="recipient"
                 placeholder={t.transferFlow.form.recipientPlaceholder}
@@ -387,37 +396,37 @@ export default function TransferFlow() {
               onClick={handleInitiate}
               disabled={initiateMutation.isPending}
               className="w-full"
+              size="lg"
               data-testid="button-initiate"
             >
               {initiateMutation.isPending ? t.transferFlow.form.initiating : t.transferFlow.form.initiateButton}
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </DashboardCard>
       </div>
     );
   }
 
   if (step === 'verification') {
     return (
-      <div className="p-6 md:p-8 max-w-2xl mx-auto">
-        <Card data-testid="card-verification" className="border-blue-200 dark:border-blue-800">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <div className="relative">
-                <Shield className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-pulse" />
-                <div className="absolute inset-0 bg-blue-400 dark:bg-blue-600 rounded-full opacity-25 animate-ping"></div>
-              </div>
-              {t.transferFlow.verification.title}
-            </CardTitle>
-            <CardDescription>
-              {t.transferFlow.verification.subtitle}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+      <div className="p-6 md:p-8 max-w-3xl mx-auto space-y-6">
+        <SectionTitle
+          title={t.transferFlow.verification.title}
+          subtitle={t.transferFlow.verification.subtitle}
+        />
+        <DashboardCard 
+          icon={Shield}
+          iconColor="text-blue-600 dark:text-blue-400"
+          testId="card-verification"
+        >
+          <div className="space-y-6">
             <Alert className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800" data-testid="alert-verification">
-              <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <AlertTriangle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <AlertDescription className="text-blue-900 dark:text-blue-100">
-                <strong className="text-lg">⚠️ {t.transferFlow.verification.doNotClose}</strong>
+                <strong className="text-lg flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5" />
+                  {t.transferFlow.verification.doNotClose}
+                </strong>
                 <p className="mt-2">
                   {t.transferFlow.verification.doNotCloseDesc}
                 </p>
@@ -462,8 +471,8 @@ export default function TransferFlow() {
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </DashboardCard>
       </div>
     );
   }
@@ -477,27 +486,17 @@ export default function TransferFlow() {
     const nextCode = sortedCodes[validatedCount];
 
     return (
-      <div className="p-6 md:p-8 max-w-2xl mx-auto">
-        <Card data-testid="card-progress">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              {isPausedForCode ? (
-                <>
-                  <AlertCircle className="w-6 h-6 text-orange-500" />
-                  Vérification de sécurité
-                </>
-              ) : (
-                <>
-                  <Loader2 className="w-6 h-6 text-primary animate-spin" />
-                  Virement en cours de traitement
-                </>
-              )}
-            </CardTitle>
-            <CardDescription>
-              {transfer?.recipient && `Vers: ${transfer.recipient}`}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+      <div className="p-6 md:p-8 max-w-3xl mx-auto space-y-6">
+        <SectionTitle
+          title={isPausedForCode ? "Vérification de sécurité" : "Virement en cours de traitement"}
+          subtitle={transfer?.recipient ? `Vers: ${transfer.recipient}` : undefined}
+        />
+        <DashboardCard 
+          icon={isPausedForCode ? AlertCircle : Loader2}
+          iconColor={isPausedForCode ? "text-orange-500" : "text-primary"}
+          testId="card-progress"
+        >
+          <div className="space-y-6">
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span>Traitement du virement</span>
@@ -569,26 +568,25 @@ export default function TransferFlow() {
                 </p>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </DashboardCard>
       </div>
     );
   }
 
   if (step === 'complete') {
     return (
-      <div className="p-6 md:p-8 max-w-2xl mx-auto">
-        <Card data-testid="card-complete" className="border-green-200 dark:border-green-800">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
-              <CheckCircle2 className="w-6 h-6" />
-              {t.transferFlow.complete.title}
-            </CardTitle>
-            <CardDescription>
-              {t.transferFlow.complete.subtitle}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+      <div className="p-6 md:p-8 max-w-3xl mx-auto space-y-6">
+        <SectionTitle
+          title={t.transferFlow.complete.title}
+          subtitle={t.transferFlow.complete.subtitle}
+        />
+        <DashboardCard 
+          icon={CheckCircle2}
+          iconColor="text-green-600 dark:text-green-400"
+          testId="card-complete"
+        >
+          <div className="space-y-6">
             <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-4 rounded-lg">
               <p className="text-sm text-green-900 dark:text-green-100">
                 Votre transfert a été effectué avec succès. Les fonds seront disponibles sous 24 à 72 heures.
@@ -615,12 +613,13 @@ export default function TransferFlow() {
             <Button 
               onClick={() => setLocation('/dashboard')}
               className="w-full"
+              size="lg"
               data-testid="button-return-dashboard"
             >
               Retour au tableau de bord
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </DashboardCard>
       </div>
     );
   }
