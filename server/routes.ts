@@ -2468,10 +2468,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const newCodesValidated = transfer.codesValidated + 1;
       const isComplete = newCodesValidated >= transfer.requiredCodes;
       
-      const currentCodePercent = validatedCode.pausePercent || Math.min(10 + (newCodesValidated * Math.floor(80 / transfer.requiredCodes)), 90);
-      const newProgress = isComplete ? 100 : currentCodePercent;
-      const newStatus = isComplete ? 'completed' : 'pending';
+      let newProgress: number;
+      let newStatus: string;
+      let isPaused: boolean;
+      let pausePercent: number | null = null;
       const completedAt = isComplete ? new Date() : undefined;
+
+      if (isComplete) {
+        newProgress = 100;
+        newStatus = 'completed';
+        isPaused = false;
+        pausePercent = null;
+      } else {
+        const allCodes = await storage.getLoanTransferCodes(transfer.loanId);
+        const sortedCodes = allCodes.filter(c => c.transferId === transfer.id).sort((a, b) => a.sequence - b.sequence);
+        const nextCode = sortedCodes.find(c => c.sequence === newCodesValidated + 1);
+        
+        if (nextCode && nextCode.pausePercent) {
+          newProgress = nextCode.pausePercent;
+          pausePercent = nextCode.pausePercent;
+          isPaused = true;
+          newStatus = 'in_progress';
+        } else {
+          const currentCodePercent = validatedCode.pausePercent || Math.min(10 + (newCodesValidated * Math.floor(80 / transfer.requiredCodes)), 90);
+          newProgress = currentCodePercent;
+          isPaused = false;
+          newStatus = 'pending';
+        }
+      }
 
       await storage.updateTransfer(transfer.id, {
         codesValidated: newCodesValidated,
@@ -2480,6 +2504,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currentStep: Math.min(newCodesValidated, transfer.requiredCodes),
         approvedAt: isComplete ? new Date() : transfer.approvedAt,
         completedAt,
+        isPaused,
+        pausePercent,
       });
 
       await storage.createTransferEvent({
@@ -2488,6 +2514,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: 'Autorisation de sécurité validée',
         metadata: { sequence, codesValidated: newCodesValidated },
       });
+
+      if (!isComplete && isPaused && pausePercent) {
+        await storage.createTransferEvent({
+          transferId: transfer.id,
+          eventType: 'paused_automatically',
+          message: `Transfert mis en pause automatiquement à ${pausePercent}%`,
+          metadata: { pausePercent, nextSequence: newCodesValidated + 1 },
+        });
+
+        await storage.createAdminMessage({
+          userId: transfer.userId,
+          transferId: transfer.id,
+          subject: `Transfert en pause à ${pausePercent}%`,
+          content: `Votre transfert est en pause à ${pausePercent}%. Vous devez fournir le code de validation #${newCodesValidated + 1} pour continuer. Contactez le service client pour obtenir ce code.`,
+          severity: 'info',
+        });
+      }
 
       if (isComplete) {
         await storage.createTransferEvent({
@@ -2601,11 +2644,17 @@ Tous les codes de validation ont été vérifiés avec succès.`,
 
       res.json({ 
         success: true,
-        message: `Code validé (${newCodesValidated}/${transfer.requiredCodes})`,
+        message: isComplete 
+          ? 'Transfert complété avec succès' 
+          : isPaused 
+            ? `Code validé - Transfert en pause à ${pausePercent}%` 
+            : `Code validé (${newCodesValidated}/${transfer.requiredCodes})`,
         isComplete,
+        isPaused,
         progress: newProgress,
+        pausePercent: isPaused ? pausePercent : null,
+        nextSequence: isComplete ? null : newCodesValidated + 1,
         codeContext: validatedCode.codeContext || `Code de validation ${newCodesValidated}`,
-        pausePercent: validatedCode.pausePercent,
       });
     } catch (error) {
       console.error('Code validation error:', error);
