@@ -425,10 +425,9 @@ export async function sendLoanRequestAdminEmail(
   try {
     const { client, fromEmail } = await getUncachableSendGridClient();
     const { getEmailTemplate } = await import('./emailTemplates');
-    const { validateAndCleanFile, deleteTemporaryFile } = await import('./fileValidator');
     const fs = await import('fs/promises');
     const path = await import('path');
-    const { randomUUID } = await import('crypto');
+    const { fileTypeFromFile } = await import('file-type');
     
     const adminEmail = process.env.ADMIN_EMAIL || fromEmail;
     const reviewUrl = `${getBaseUrl()}/admin/loans/${reference}`;
@@ -454,9 +453,6 @@ export async function sendLoanRequestAdminEmail(
       disposition: string;
     }> = [];
 
-    const tempDir = path.join(process.cwd(), 'uploads');
-    await fs.mkdir(tempDir, { recursive: true });
-
     for (const doc of documents) {
       try {
         // Lire le fichier depuis le système de fichiers local
@@ -467,23 +463,24 @@ export async function sendLoanRequestAdminEmail(
           continue;
         }
 
-        // Lire le fichier
+        // Lire le fichier (déjà validé et nettoyé lors de l'upload)
         const buffer = await fs.readFile(filePath);
         
-        // Valider et nettoyer le fichier
-        const cleanedFile = await validateAndCleanFile(filePath, doc.fileName);
+        // Détecter le type MIME
+        const fileType = await fileTypeFromFile(filePath);
+        const mimeType = fileType?.mime || 'application/octet-stream';
         
         // Convertir en base64 pour SendGrid
-        const base64Content = cleanedFile.buffer.toString('base64');
+        const base64Content = buffer.toString('base64');
         
         attachments.push({
           content: base64Content,
-          filename: cleanedFile.filename,
-          type: cleanedFile.mimeType,
+          filename: doc.fileName,
+          type: mimeType,
           disposition: 'attachment'
         });
         
-        console.log(`✓ Document cleaned and validated: ${cleanedFile.filename}`);
+        console.log(`✓ Document attached: ${doc.fileName}`);
       } catch (error: any) {
         console.error(`Error processing document ${doc.fileName}:`, error.message || error);
       }
