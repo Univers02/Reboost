@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
-import { Menu, X, ChevronDown, Globe, Sparkles } from 'lucide-react';
+import { Menu, X, ChevronDown, Globe, Sparkles, ChevronRight } from 'lucide-react';
 import { useTranslations, useLanguage, type Language } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 const languages: { code: Language; name: string; flag: string }[] = [
   { code: 'fr', name: 'FR', flag: '🇫🇷' },
@@ -18,6 +19,8 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
+  const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const moreMenuRef = useRef<HTMLDivElement>(null);
   const langMenuRef = useRef<HTMLDivElement>(null);
@@ -73,7 +76,11 @@ export default function Header() {
     }
   }, [moreMenuOpen, langMenuOpen]);
 
-  const closeMobileMenu = () => setMobileMenuOpen(false);
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+    setMobileMoreOpen(false);
+    setMobileLangOpen(false);
+  };
 
   const currentLang = languages.find(lang => lang.code === language) || languages[0];
 
@@ -301,7 +308,7 @@ export default function Header() {
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto py-6 px-6">
+              <div className="flex-1 overflow-y-auto py-4 px-4">
                 <nav className="space-y-1">
                   <Link href="/" onClick={closeMobileMenu}>
                     <span className="block px-4 py-3 text-base font-semibold text-gray-900 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors cursor-pointer" data-testid="link-home-mobile">
@@ -327,57 +334,72 @@ export default function Header() {
                     </span>
                   </Link>
 
-                  <div className="pt-4 mt-4 border-t border-gray-100">
-                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      {t.nav.moreInfo}
-                    </div>
-                    
-                    <Link href="/resources" onClick={closeMobileMenu}>
-                      <span className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors cursor-pointer" data-testid="link-faq-mobile">
-                        {t.nav.faq}
-                      </span>
-                    </Link>
+                  <div className="pt-3 mt-3">
+                    <Collapsible open={mobileMoreOpen} onOpenChange={setMobileMoreOpen}>
+                      <CollapsibleTrigger className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors" data-testid="button-more-mobile">
+                        <span>{t.nav.moreInfo}</span>
+                        <ChevronRight className={`w-4 h-4 transition-transform ${mobileMoreOpen ? 'rotate-90' : ''}`} />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-1 space-y-1">
+                        <Link href="/resources" onClick={closeMobileMenu}>
+                          <span className="block px-4 py-2.5 ml-4 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors cursor-pointer" data-testid="link-faq-mobile">
+                            {t.nav.faq}
+                          </span>
+                        </Link>
 
-                    <Link href="/about" onClick={closeMobileMenu}>
-                      <span className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors cursor-pointer" data-testid="link-about-mobile">
-                        {t.nav.about}
-                      </span>
-                    </Link>
+                        <Link href="/about" onClick={closeMobileMenu}>
+                          <span className="block px-4 py-2.5 ml-4 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors cursor-pointer" data-testid="link-about-mobile">
+                            {t.nav.about}
+                          </span>
+                        </Link>
 
-                    <Link href="/terms" onClick={closeMobileMenu}>
-                      <span className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors cursor-pointer" data-testid="link-terms-mobile">
-                        {t.footer.legalLinks.terms}
-                      </span>
-                    </Link>
+                        <Link href="/terms" onClick={closeMobileMenu}>
+                          <span className="block px-4 py-2.5 ml-4 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors cursor-pointer" data-testid="link-terms-mobile">
+                            {t.footer.legalLinks.terms}
+                          </span>
+                        </Link>
 
-                    <Link href="/privacy" onClick={closeMobileMenu}>
-                      <span className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors cursor-pointer" data-testid="link-privacy-mobile">
-                        {t.footer.legalLinks.privacy}
-                      </span>
-                    </Link>
+                        <Link href="/privacy" onClick={closeMobileMenu}>
+                          <span className="block px-4 py-2.5 ml-4 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors cursor-pointer" data-testid="link-privacy-mobile">
+                            {t.footer.legalLinks.privacy}
+                          </span>
+                        </Link>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-gray-100">
-                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      {t.nav.language}
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {languages.map((lang) => (
-                        <button
-                          key={lang.code}
-                          onClick={() => setLanguage(lang.code)}
-                          className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                            language === lang.code
-                              ? 'bg-[#005DFF] text-white'
-                              : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                          }`}
-                          data-testid={`button-language-${lang.code}-mobile`}
-                        >
-                          <span className="text-lg">{lang.flag}</span>
-                          <span>{lang.name}</span>
-                        </button>
-                      ))}
-                    </div>
+                  <div className="pt-3 mt-3">
+                    <Collapsible open={mobileLangOpen} onOpenChange={setMobileLangOpen}>
+                      <CollapsibleTrigger className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-[#005DFF] rounded-lg transition-colors" data-testid="button-language-mobile">
+                        <div className="flex items-center gap-2">
+                          <Globe className="w-4 h-4" />
+                          <span>{t.nav.language}</span>
+                          <span className="text-lg">{currentLang.flag}</span>
+                          <span className="text-sm font-medium">{currentLang.name}</span>
+                        </div>
+                        <ChevronRight className={`w-4 h-4 transition-transform ${mobileLangOpen ? 'rotate-90' : ''}`} />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-1 space-y-1">
+                        {languages.map((lang) => (
+                          <button
+                            key={lang.code}
+                            onClick={() => {
+                              setLanguage(lang.code);
+                              setMobileLangOpen(false);
+                            }}
+                            className={`w-full flex items-center gap-2 px-4 py-2.5 ml-4 rounded-lg text-sm font-medium transition-colors ${
+                              language === lang.code
+                                ? 'bg-[#005DFF] text-white'
+                                : 'text-gray-700 hover:bg-gray-50 hover:text-[#005DFF]'
+                            }`}
+                            data-testid={`button-language-${lang.code}-mobile`}
+                          >
+                            <span className="text-lg">{lang.flag}</span>
+                            <span>{lang.name}</span>
+                          </button>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
                   </div>
                 </nav>
               </div>
