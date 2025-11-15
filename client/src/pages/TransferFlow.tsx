@@ -587,196 +587,274 @@ export default function TransferFlow() {
       { 
         label: 'Initialisation du transfert', 
         completed: simulatedProgress > 0,
-        threshold: 0
+        inProgress: simulatedProgress > 0 && simulatedProgress <= 20
       },
       { 
         label: 'Contrôle KYC & AML', 
         completed: simulatedProgress > 20,
-        threshold: 20
+        inProgress: simulatedProgress > 20 && simulatedProgress <= 40
       },
       { 
         label: 'Vérification des fonds', 
         completed: simulatedProgress > 40,
-        threshold: 40
+        inProgress: simulatedProgress > 40 && simulatedProgress <= 60
       },
       { 
         label: 'Validation bancaire', 
         completed: simulatedProgress > 60,
-        threshold: 60
+        inProgress: simulatedProgress > 60 && simulatedProgress < 100
       },
       { 
         label: 'Finalisation & Release', 
         completed: simulatedProgress >= 100,
-        threshold: 100
+        inProgress: false
       },
     ];
 
     return (
       <div className="min-h-screen bg-background">
-        <div className="p-4 sm:p-6 md:p-8 max-w-5xl mx-auto space-y-6 sm:space-y-8 animate-fade-in">
-          <div className="flex items-center justify-center gap-3 sm:gap-6 mb-6 sm:mb-8">
-            <div className="flex flex-col items-center">
-              <div className="w-14 h-14 sm:w-20 sm:h-20 bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl sm:rounded-2xl flex items-center justify-center border border-primary/10">
-                <Building className="w-6 h-6 sm:w-10 sm:h-10 text-primary" />
+        <div className="p-4 sm:p-6 md:p-10 max-w-7xl mx-auto space-y-6 sm:space-y-8 animate-fade-in">
+          
+          {/* BANNIÈRE HORIZONTALE AVEC FLUX ANIMÉ */}
+          <div className="w-full bg-gradient-to-r from-blue-50 via-cyan-50 to-blue-50 dark:from-blue-950/30 dark:via-cyan-950/30 dark:to-blue-950/30 rounded-2xl p-6 sm:p-8 border border-blue-100 dark:border-blue-900/50 shadow-sm">
+            <div className="flex items-center justify-center gap-6 sm:gap-12">
+              {/* Banque expéditrice */}
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center border-2 border-blue-200 dark:border-blue-800 shadow-md">
+                  <Building className="w-8 h-8 sm:w-10 sm:h-10 text-[#2563EB]" />
+                </div>
+                <p className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mt-3">ALTUS</p>
               </div>
-              <p className="text-xs sm:text-sm font-medium text-foreground mt-2 sm:mt-3">Compte ALTUS</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <ArrowRight className="w-6 h-6 sm:w-10 sm:h-10 text-primary animate-pulse" />
-              <p className="text-xs text-muted-foreground mt-1 sm:mt-2 hidden sm:block">En transit</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-14 h-14 sm:w-20 sm:h-20 bg-gradient-to-br from-green-500/20 to-green-500/5 rounded-xl sm:rounded-2xl flex items-center justify-center border border-green-500/10">
-                <Building className="w-6 h-6 sm:w-10 sm:h-10 text-green-600 dark:text-green-400" />
+
+              {/* Animation du flux */}
+              <div className="flex items-center gap-2 relative">
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse"></div>
+                  <div className="w-2 h-2 rounded-full bg-[#0EA5E9] animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                </div>
+                <ArrowRight className="w-6 h-6 sm:w-8 sm:h-8 text-[#2563EB] animate-pulse" />
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-[#0EA5E9] animate-pulse" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse" style={{ animationDelay: '0.3s' }}></div>
+                  <div className="w-2 h-2 rounded-full bg-[#0EA5E9] animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                </div>
               </div>
-              <p className="text-xs sm:text-sm font-medium text-foreground mt-2 sm:mt-3">{transfer?.recipient?.split(' ')[0] || 'Banque'}</p>
+
+              {/* Banque destinataire */}
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center border-2 border-cyan-200 dark:border-cyan-800 shadow-md">
+                  <Building className="w-8 h-8 sm:w-10 sm:h-10 text-[#0EA5E9]" />
+                </div>
+                <p className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mt-3">
+                  {transfer?.recipient?.split(' ')[0] || 'Banque'}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-              Suivi du Transfert
-            </h1>
-            <p className="text-sm sm:text-base text-muted-foreground">
-              Votre transfert est en cours de traitement sécurisé.
-            </p>
-          </div>
+          {/* LAYOUT DEUX COLONNES */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+            
+            {/* COLONNE GAUCHE - Informations du transfert */}
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 sm:p-10 border border-gray-100 dark:border-gray-800 space-y-6">
+              <div className="space-y-6">
+                {/* Montant du transfert */}
+                <div className="text-center pb-6 border-b border-gray-200 dark:border-gray-700">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Montant du transfert</p>
+                  <p className="text-5xl sm:text-6xl font-bold text-gray-900 dark:text-gray-100">
+                    {transfer?.amount || '0'}<span className="text-3xl sm:text-4xl ml-2">€</span>
+                  </p>
+                </div>
 
-          <DashboardCard 
-            title="Informations du transfert"
-            icon={Send}
-            iconColor="text-primary"
-            className="bg-gradient-to-br from-primary/5 via-background to-background"
-          >
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Montant</p>
-                <p className="text-xl sm:text-2xl font-bold text-foreground break-all">{transfer?.amount || '0'} €</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">De</p>
-                <p className="text-xs sm:text-sm font-semibold">Compte ALTUS</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Vers</p>
-                <p className="text-xs sm:text-sm font-semibold break-words">{transfer?.recipient || 'Banque SEPA'}</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Référence</p>
-                <p className="text-xs font-mono font-semibold break-all">{transfer?.id || 'TRX-2025-00000'}</p>
-              </div>
-            </div>
-          </DashboardCard>
+                {/* Expéditeur */}
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                    <Send className="w-5 h-5 text-[#2563EB]" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Expéditeur</p>
+                    <p className="text-base font-semibold text-gray-900 dark:text-gray-100">Compte ALTUS Finance</p>
+                  </div>
+                </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            <DashboardCard 
-              title="Progression"
-              icon={TrendingUp}
-              iconColor="text-green-600 dark:text-green-400"
-              className="bg-gradient-to-br from-green-500/5 via-background to-background"
-            >
-              <div className="space-y-4">
-                {progressSteps.map((step, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 rounded-xl hover-elevate transition-all">
-                    <div className="mt-1">
-                      {step.completed ? (
-                        <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center">
-                          <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
-                        </div>
-                      ) : (
-                        <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">
-                          <Circle className="w-3 h-3 text-muted-foreground" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className={`text-sm font-medium ${step.completed ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {step.label}
+                {/* Destinataire */}
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center flex-shrink-0">
+                    <Building className="w-5 h-5 text-[#0EA5E9]" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Destinataire</p>
+                    <p className="text-base font-semibold text-gray-900 dark:text-gray-100 break-words">
+                      {transfer?.recipient || 'Banque SEPA'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Référence */}
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center flex-shrink-0">
+                    <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Référence</p>
+                    <p className="text-sm font-mono font-semibold text-gray-900 dark:text-gray-100 break-all">
+                      {transfer?.id || 'TRX-2025-00000'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Message de sécurité */}
+              <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  Votre transfert est en cours de traitement sécurisé
+                </p>
+                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-xl p-4 border border-blue-100 dark:border-blue-900/50">
+                  <div className="flex items-center gap-3">
+                    <Lock className="w-5 h-5 text-[#2563EB] flex-shrink-0" />
+                    <div>
+                      <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">
+                        Sécurisé AES-256 + Authentification en cascades
                       </p>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
-            </DashboardCard>
+            </div>
 
-            <DashboardCard className="bg-gradient-to-br from-primary/5 via-background to-background">
-              <div className="flex flex-col items-center justify-center py-6 sm:py-8">
-                <div className="relative w-48 h-48 sm:w-56 sm:h-56">
-                  <svg className="w-full h-full transform -rotate-90">
-                    <circle
-                      cx="112"
-                      cy="112"
-                      r="100"
-                      stroke="currentColor"
-                      strokeWidth="12"
-                      fill="none"
-                      className="text-muted/20"
-                    />
-                    <circle
-                      cx="112"
-                      cy="112"
-                      r="100"
-                      stroke="currentColor"
-                      strokeWidth="12"
-                      fill="none"
-                      strokeDasharray={`${2 * Math.PI * 100}`}
-                      strokeDashoffset={`${2 * Math.PI * 100 * (1 - simulatedProgress / 100)}`}
-                      className="text-primary transition-all duration-700 ease-out"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-5xl font-bold text-foreground">{Math.round(simulatedProgress)}%</span>
-                    <span className="text-sm text-muted-foreground mt-2">Progression</span>
-                    <span className="text-xs text-muted-foreground">du transfert</span>
+            {/* COLONNE DROITE - Progression circulaire */}
+            <div className="space-y-6">
+              
+              {/* Carte avec progression circulaire */}
+              <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-gray-800">
+                <div className="flex flex-col items-center">
+                  {/* Cercle de progression */}
+                  <div className="relative w-56 h-56 mb-6">
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle
+                        cx="112"
+                        cy="112"
+                        r="100"
+                        stroke="currentColor"
+                        strokeWidth="14"
+                        fill="none"
+                        className="text-gray-200 dark:text-gray-700"
+                      />
+                      <defs>
+                        <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#2563EB" />
+                          <stop offset="100%" stopColor="#0EA5E9" />
+                        </linearGradient>
+                      </defs>
+                      <circle
+                        cx="112"
+                        cy="112"
+                        r="100"
+                        stroke="url(#progressGradient)"
+                        strokeWidth="14"
+                        fill="none"
+                        strokeDasharray={`${2 * Math.PI * 100}`}
+                        strokeDashoffset={`${2 * Math.PI * 100 * (1 - simulatedProgress / 100)}`}
+                        className="transition-all duration-700 ease-out"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-5xl font-bold bg-gradient-to-r from-[#2563EB] to-[#0EA5E9] bg-clip-text text-transparent">
+                        {Math.round(simulatedProgress)}%
+                      </span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400 mt-2">Progression</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-500">du transfert</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </DashboardCard>
-          </div>
 
-          <DashboardCard 
-            icon={Lock}
-            iconColor="text-blue-600 dark:text-blue-400"
-            className="bg-gradient-to-br from-blue-500/5 via-background to-background border-blue-200/20 dark:border-blue-800/20"
-          >
-            <div className="flex items-start gap-3">
-              <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                  Sécurisé par protocoles bancaires
-                </p>
-                <p className="text-xs text-blue-800 dark:text-blue-200">
-                  AES-256 + authentification en cascades conforme aux normes européennes
-                </p>
+              {/* Liste des étapes */}
+              <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 sm:p-8 border border-gray-100 dark:border-gray-800">
+                <div className="space-y-4">
+                  {progressSteps.map((stepItem, index) => (
+                    <div 
+                      key={index} 
+                      className="flex items-start gap-3 p-3 rounded-xl transition-all hover-elevate"
+                    >
+                      <div className="mt-0.5">
+                        {stepItem.completed ? (
+                          <div className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                            <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+                          </div>
+                        ) : stepItem.inProgress ? (
+                          <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                            <div className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse"></div>
+                          </div>
+                        ) : (
+                          <div className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                            <Circle className="w-3 h-3 text-gray-400 dark:text-gray-600" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className={`text-sm font-medium ${
+                          stepItem.completed 
+                            ? 'text-gray-900 dark:text-gray-100' 
+                            : stepItem.inProgress 
+                            ? 'text-[#2563EB]' 
+                            : 'text-gray-400 dark:text-gray-600'
+                        }`}>
+                          {stepItem.label}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Section sécurité */}
+              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-start gap-3">
+                  <Lock className="w-5 h-5 text-[#2563EB] mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                      Sécurisé par protocoles bancaires
+                    </p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      Chiffrement AES-256 et authentification multi-niveaux conformes aux standards européens
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          </DashboardCard>
+          </div>
 
+          {/* Section de validation de code (si nécessaire) */}
           {isPausedForCode && nextCode && (
-            <DashboardCard 
-              title="Vérification de sécurité requise"
-              icon={AlertCircle}
-              iconColor="text-orange-600 dark:text-orange-400"
-              className="bg-gradient-to-br from-orange-500/10 via-background to-background border-orange-200/30 dark:border-orange-800/30"
-            >
-              <div className="space-y-4">
-                <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-xl p-4">
-                  <p className="text-sm text-orange-900 dark:text-orange-100">
-                    Pour des raisons de sécurité, veuillez saisir le code de vérification qui vous a été transmis
-                  </p>
-                  {nextCode.codeContext && (
-                    <p className="text-xs text-orange-700 dark:text-orange-300 mt-2 italic">
-                      {nextCode.codeContext}
+            <div className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 rounded-2xl shadow-lg p-6 sm:p-8 border border-orange-200 dark:border-orange-800">
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
+                    <AlertCircle className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
+                      Vérification de sécurité requise
+                    </h3>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                      Pour des raisons de sécurité, veuillez saisir le code de vérification qui vous a été transmis
                     </p>
-                  )}
-                  <p className="text-xs text-orange-700 dark:text-orange-300 mt-2">
-                    Le code de sécurité vous sera communiqué par votre conseiller
-                  </p>
+                    {nextCode.codeContext && (
+                      <p className="text-xs text-orange-700 dark:text-orange-300 italic">
+                        {nextCode.codeContext}
+                      </p>
+                    )}
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                      Le code de sécurité vous sera communiqué par votre conseiller
+                    </p>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="pause-code" className="text-sm font-medium">
+                <div className="max-w-md mx-auto space-y-4">
+                  <Label htmlFor="pause-code" className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Code de validation (6 chiffres)
                   </Label>
                   <Input
@@ -786,13 +864,11 @@ export default function TransferFlow() {
                     value={validationCode}
                     onChange={(e) => setValidationCode(e.target.value.replace(/\D/g, ''))}
                     placeholder="••••••"
-                    className="font-mono text-2xl text-center tracking-widest h-14"
+                    className="font-mono text-3xl text-center tracking-widest h-16 bg-white dark:bg-gray-800"
                     data-testid="input-pause-code"
                   />
-                </div>
-
-                <Button
-                  onClick={handleValidateCode}
+                  <Button
+                    onClick={handleValidateCode}
                   disabled={validateMutation.isPending || !validationCode || validationCode.length !== 6}
                   className="w-full shadow-lg"
                   size="lg"
@@ -811,7 +887,8 @@ export default function TransferFlow() {
                   )}
                 </Button>
               </div>
-            </DashboardCard>
+            </div>
+          </div>
           )}
         </div>
       </div>

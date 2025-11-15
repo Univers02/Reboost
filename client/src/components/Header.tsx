@@ -18,9 +18,12 @@ const languages: { code: Language; name: string; flag: string }[] = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
+  const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const moreMenuRef = useRef<HTMLDivElement>(null);
+  const langMenuRef = useRef<HTMLDivElement>(null);
   const t = useTranslations();
   const { language, setLanguage } = useLanguage();
   const [, setLocation] = useLocation();
@@ -38,6 +41,9 @@ export default function Header() {
     const handleClickOutside = (event: MouseEvent) => {
       if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
         setMoreMenuOpen(false);
+      }
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
+        setLangMenuOpen(false);
       }
     };
 
@@ -60,15 +66,16 @@ export default function Header() {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (moreMenuOpen) setMoreMenuOpen(false);
+        if (langMenuOpen) setLangMenuOpen(false);
         if (mobileMenuOpen) setMobileMenuOpen(false);
       }
     };
 
-    if (moreMenuOpen || mobileMenuOpen) {
+    if (moreMenuOpen || langMenuOpen || mobileMenuOpen) {
       document.addEventListener('keydown', handleEscape);
       return () => document.removeEventListener('keydown', handleEscape);
     }
-  }, [moreMenuOpen, mobileMenuOpen]);
+  }, [moreMenuOpen, langMenuOpen, mobileMenuOpen]);
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
@@ -218,28 +225,45 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* Desktop Language Selector (Horizontal Scroll) + CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* Horizontal Language Selector */}
-            <div className="flex items-center gap-2 px-3 py-2 bg-gray-50/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
-              <Globe className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" />
-              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hidden max-w-[280px]">
-                {languages.map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 flex-shrink-0 ${
-                      language === lang.code
-                        ? 'bg-[#005DFF] text-white shadow-md scale-105'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-slate-700/60'
-                    }`}
-                    data-testid={`button-language-${lang.code}`}
-                  >
-                    <span>{lang.flag}</span>
-                    <span>{lang.name}</span>
-                  </button>
-                ))}
-              </div>
+            <div className="relative" ref={langMenuRef}>
+              <button
+                onClick={() => setLangMenuOpen(!langMenuOpen)}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-primary/5 rounded-lg transition-all duration-300 group"
+                data-testid="button-language-selector"
+              >
+                <Globe className="w-4 h-4 group-hover:text-primary transition-colors" />
+                <span className="text-lg">{currentLang.flag}</span>
+                <span className="group-hover:text-primary transition-colors">{currentLang.name}</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${langMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {langMenuOpen && (
+                <div className="absolute top-full right-0 mt-3 w-52 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 py-2 animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        setLanguage(lang.code);
+                        setLangMenuOpen(false);
+                      }}
+                      className={`relative w-full flex items-center gap-3 px-5 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                        language === lang.code
+                          ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-lg'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-primary/10 hover:text-primary'
+                      }`}
+                      data-testid={`button-language-${lang.code}`}
+                    >
+                      <span className="text-lg">{lang.flag}</span>
+                      <span>{lang.name}</span>
+                      {language === lang.code && (
+                        <span className="ml-auto w-2 h-2 rounded-full bg-white" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <Link href="/login">
