@@ -1,12 +1,13 @@
 import HeroCarousel from '@/components/HeroCarousel';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import InfoBarPremium from '@/components/ui/InfoBarPremium';
-import ExpertiseSection from '@/components/ui/ExpertiseSection';
-import HowItWorks from '@/components/ui/HowItWorks';
-import Testimonials from '@/components/ui/Testimonials';
-import SecuritySection from '@/components/ui/SecuritySection';
-import FinalCTA from '@/components/ui/FinalCTA';
+import StatsSection from '@/components/premium/StatsSection';
+import StorytellingSection from '@/components/premium/StorytellingSection';
+import ExpertisesModern from '@/components/premium/ExpertisesModern';
+import TimelineSection from '@/components/premium/TimelineSection';
+import TestimonialsSlider from '@/components/premium/TestimonialsSlider';
+import BankingSecurity from '@/components/premium/BankingSecurity';
+import FinalCTASection from '@/components/premium/FinalCTASection';
+import FooterPremium from '@/components/premium/FooterPremium';
 import SEO from '@/components/SEO';
 import { organizationSchema, websiteSchema } from '@/lib/seo-data';
 import { getKeywordsByPage } from '@/lib/seo-keywords';
@@ -25,20 +26,20 @@ export default function Home() {
         structuredData={[organizationSchema, websiteSchema]}
       />
       <Header />
+      
+      {/* Hero section préservée */}
       <HeroCarousel />
       
-      {/* Nouveau design premium 2025 */}
-      <InfoBarPremium />
-
-      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-16 py-16">
-        <ExpertiseSection />
-        <HowItWorks />
-        <Testimonials />
-        <SecuritySection />
-        <FinalCTA />
-      </main>
-
-      <Footer />
+      {/* Design Fintech 2025 Premium */}
+      <StatsSection />
+      <StorytellingSection />
+      <ExpertisesModern />
+      <TimelineSection />
+      <TestimonialsSlider />
+      <BankingSecurity />
+      <FinalCTASection />
+      
+      <FooterPremium />
     </div>
   );
 }
