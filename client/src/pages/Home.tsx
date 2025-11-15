@@ -1,5 +1,6 @@
 import HeroCarousel from '@/components/HeroCarousel';
 import Header from '@/components/Header';
+import { TrustInfoBar } from '@/components/premium/TrustInfoBar';
 import StatsSection from '@/components/premium/StatsSection';
 import StorytellingSection from '@/components/premium/StorytellingSection';
 import ExpertisesModern from '@/components/premium/ExpertisesModern';
@@ -25,6 +26,10 @@ export default function Home() {
         path="/"
         structuredData={[organizationSchema, websiteSchema]}
       />
+      
+      {/* Trust Information Bar - Fintech 2025 Style */}
+      <TrustInfoBar />
+      
       <Header />
       
       {/* Hero section préservée */}

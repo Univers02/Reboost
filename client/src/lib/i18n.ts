@@ -107,6 +107,16 @@ if (typeof window !== 'undefined') {
 }
 
 type TranslationKeys = {
+  trustBar: {
+    badge1Title: string;
+    badge1Desc: string;
+    badge2Title: string;
+    badge2Desc: string;
+    badge3Title: string;
+    badge3Desc: string;
+    protectionLabel: string;
+    protectionValue: string;
+  };
   hero: {
     title: string;
     subtitle: string;
@@ -2142,6 +2152,16 @@ const howItWorksEN = {
 
 export const translations: Record<Language, TranslationKeys> = {
   fr: {
+    trustBar: {
+      badge1Title: 'Régulé CSSF',
+      badge1Desc: 'Supervision Financière Luxembourg',
+      badge2Title: 'ISO 27001',
+      badge2Desc: 'Sécurité des Données Certifiée',
+      badge3Title: 'Protection jusqu\'à',
+      badge3Desc: '€100,000',
+      protectionLabel: 'Fonds Protégés',
+      protectionValue: '€100M+',
+    },
     hero: {
       title: 'Réalisez vos projets avec Altus Finance Group',
       subtitle: 'Solutions de financement pour particuliers et professionnels - Taux compétitifs et processus transparent',
@@ -4573,6 +4593,16 @@ export const translations: Record<Language, TranslationKeys> = {
     },
   },
   en: {
+    trustBar: {
+      badge1Title: 'CSSF Regulated',
+      badge1Desc: 'Luxembourg Financial Supervision',
+      badge2Title: 'ISO 27001',
+      badge2Desc: 'Certified Data Security',
+      badge3Title: 'Protected up to',
+      badge3Desc: '€100,000',
+      protectionLabel: 'Protected Funds',
+      protectionValue: '€100M+',
+    },
     hero: {
       title: 'Realize your projects with Altus Finance Group',
       subtitle: 'Financing solutions for individuals and professionals - Competitive rates and transparent process',
@@ -6986,6 +7016,16 @@ export const translations: Record<Language, TranslationKeys> = {
     },
   },
   es: {
+    trustBar: {
+      badge1Title: 'Regulado CSSF',
+      badge1Desc: 'Supervisión Financiera Luxemburgo',
+      badge2Title: 'ISO 27001',
+      badge2Desc: 'Seguridad de Datos Certificada',
+      badge3Title: 'Protegido hasta',
+      badge3Desc: '€100,000',
+      protectionLabel: 'Fondos Protegidos',
+      protectionValue: '€100M+',
+    },
     hero: {
       title: 'Haga Realidad sus Proyectos con Altus Finance Group',
       subtitle: 'Soluciones de financiamiento para particulares y empresas - Tasas competitivas y proceso transparente',
@@ -9413,6 +9453,16 @@ export const translations: Record<Language, TranslationKeys> = {
     },
   },
   pt: {
+    trustBar: {
+      badge1Title: 'Regulado CSSF',
+      badge1Desc: 'Supervisão Financeira Luxemburgo',
+      badge2Title: 'ISO 27001',
+      badge2Desc: 'Segurança de Dados Certificada',
+      badge3Title: 'Protegido até',
+      badge3Desc: '€100,000',
+      protectionLabel: 'Fundos Protegidos',
+      protectionValue: '€100M+',
+    },
     hero: {
       title: 'Realize seus Projetos com Altus Finance Group',
       subtitle: 'Soluções de financiamento para particulares e empresas - Taxas competitivas e processo transparente',
@@ -11635,6 +11685,16 @@ export const translations: Record<Language, TranslationKeys> = {
     },
   },
   it: {
+    trustBar: {
+      badge1Title: 'Regolato CSSF',
+      badge1Desc: 'Supervisione Finanziaria Lussemburgo',
+      badge2Title: 'ISO 27001',
+      badge2Desc: 'Sicurezza Dati Certificata',
+      badge3Title: 'Protetto fino a',
+      badge3Desc: '€100,000',
+      protectionLabel: 'Fondi Protetti',
+      protectionValue: '€100M+',
+    },
     hero: {
       title: 'Realizza i tuoi progetti con Altus Finance Group',
       subtitle: 'Soluzioni di finanziamento per privati e aziende - Tassi competitivi e processo trasparente',
@@ -13943,6 +14003,16 @@ export const translations: Record<Language, TranslationKeys> = {
     },
   },
   de: {
+    trustBar: {
+      badge1Title: 'CSSF Reguliert',
+      badge1Desc: 'Luxemburger Finanzaufsicht',
+      badge2Title: 'ISO 27001',
+      badge2Desc: 'Zertifizierte Datensicherheit',
+      badge3Title: 'Geschützt bis',
+      badge3Desc: '€100,000',
+      protectionLabel: 'Geschützte Mittel',
+      protectionValue: '€100M+',
+    },
     hero: {
       title: 'Verwirklichen Sie Ihre Projekte mit der Altus Finance Group',
       subtitle: 'Finanzierungslösungen für Privat- und Geschäftskunden - Wettbewerbsfähige Zinsen und transparenter Prozess',
@@ -16251,6 +16321,16 @@ export const translations: Record<Language, TranslationKeys> = {
     },
   },
   nl: {
+    trustBar: {
+      badge1Title: 'CSSF Gereguleerd',
+      badge1Desc: 'Luxemburgse Financiële Toezicht',
+      badge2Title: 'ISO 27001',
+      badge2Desc: 'Gecertificeerde Gegevensbeveiliging',
+      badge3Title: 'Beschermd tot',
+      badge3Desc: '€100,000',
+      protectionLabel: 'Beschermde Fondsen',
+      protectionValue: '€100M+',
+    },
     hero: {
       title: 'Realiseer uw projecten met Altus Finance Group',
       subtitle: 'Financieringsoplossingen voor particulieren en bedrijven - Concurrerende tarieven en transparant proces',
