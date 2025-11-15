@@ -257,8 +257,10 @@ type TranslationKeys = {
     pageDescription: string;
     tabMyLoans: string;
     tabCalculator: string;
+    amount: string;
     interestRate: string;
     nextPayment: string;
+    viewAll: string;
     status: string;
     downloadContract: string;
     uploadSignedContract: string;
@@ -278,6 +280,8 @@ type TranslationKeys = {
     uploading2: string;
   };
   transfer: {
+    pageTitle: string;
+    pageDescription: string;
     searchPlaceholder: string;
     allStatuses: string;
     filterTitle: string;
@@ -285,6 +289,8 @@ type TranslationKeys = {
     noTransfersFound: string;
     noTransfersMessage: string;
     createTransfer: string;
+    newTransfer: string;
+    requestSubmitted: string;
     documentVerification: string;
     complianceCheck: string;
     approvalPending: string;
@@ -303,9 +309,14 @@ type TranslationKeys = {
     processingComplete: string;
   };
   history: {
+    pageTitle: string;
+    pageDescription: string;
     totalCredits: string;
     totalDebits: string;
     totalTransactions: string;
+    filterTitle: string;
+    filterDescription: string;
+    searchPlaceholder: string;
     filterType: string;
     allTypes: string;
     typeCredit: string;
@@ -318,6 +329,7 @@ type TranslationKeys = {
   fee: {
     type: string;
     reason: string;
+    amount: string;
     date: string;
     downloadStatement: string;
     loanFees: string;
@@ -336,6 +348,9 @@ type TranslationKeys = {
     error: string;
     success: string;
     active: string;
+    pending: string;
+    completed: string;
+    suspended: string;
     saving: string;
     cancel: string;
     save: string;
@@ -347,6 +362,7 @@ type TranslationKeys = {
   settings: {
     title: string;
     profile: string;
+    notifications: string;
     security: string;
     appearance: string;
     personalInfo: string;
@@ -387,6 +403,7 @@ type TranslationKeys = {
     languageSettings: string;
     chooseLanguage: string;
     changePhoto: string;
+    uploading: string;
     twoFactorAuth: string;
     twoFactorAuthDesc: string;
     twoFactorEnabled: string;
@@ -425,6 +442,7 @@ type TranslationKeys = {
     fileTooLarge: string;
   };
   about: {
+    title: string;
     subtitle: string;
     mission: string;
     missionText: string;
@@ -436,6 +454,8 @@ type TranslationKeys = {
     };
   };
   howItWorks: {
+    title: string;
+    subtitle: string;
     step1Title: string;
     step1Desc: string;
     step2Title: string;
@@ -463,8 +483,11 @@ type TranslationKeys = {
     professionalsTitle: string;
     requiredTag: string;
     eligibility: {
+      personal: Array<{ label: string; required: boolean }>;
+      professional: Array<{ label: string; required: boolean }>;
     };
     securityTitle: string;
+    security: {
       dataProtectionTitle: string;
       dataProtectionItems: string[];
       guaranteesTitle: string;
@@ -476,6 +499,8 @@ type TranslationKeys = {
     ctaContactButton: string;
   };
   products: {
+    title: string;
+    subtitle: string;
     businessTitle: string;
     businessSubtitle: string;
     termLoans: string;
@@ -488,11 +513,19 @@ type TranslationKeys = {
     invoiceFactoringDesc: string;
   };
   contact: {
+    title: string;
+    subtitle: string;
     name: string;
+    email: string;
+    phone: string;
     message: string;
     send: string;
+    success: string;
+    error: string;
   };
   resources: {
+    title: string;
+    subtitle: string;
     faqTitle: string;
     faqs: {
       question: string;
@@ -502,6 +535,7 @@ type TranslationKeys = {
   legal: {
     termsTitle: string;
     privacyTitle: string;
+    lastUpdated: string;
     terms: {
       section1Title: string;
       section1Content: string;
@@ -517,13 +551,27 @@ type TranslationKeys = {
       section6Content: string;
     };
     privacy: {
+      section1Title: string;
+      section1Content: string;
+      section2Title: string;
+      section2Content: string;
       section2List: string[];
+      section3Title: string;
+      section3Content: string;
       section3List: string[];
+      section4Title: string;
+      section4Content: string;
+      section5Title: string;
+      section5Content: string;
+      section6Title: string;
+      section6Content: string;
       section7Title: string;
       section7Content: string;
     };
   };
   individualLoans: {
+    title: string;
+    subtitle: string;
     personalLoan: string;
     personalLoanDesc: string;
     mortgageLoan: string;
@@ -538,22 +586,29 @@ type TranslationKeys = {
     renovationLoanDesc: string;
     miscellaneousCredit: string;
     miscellaneousCreditDesc: string;
+    amount: string;
     rate: string;
     duration: string;
     rateDisclaimer: string;
     compareLoans: string;
   };
   businessLoans: {
+    title: string;
+    subtitle: string;
     businessLoan: string;
     businessLoanDesc: string;
     businessLoanFeatures: string[];
     cashFlowCredit: string;
     cashFlowCreditDesc: string;
     cashFlowCreditFeatures: string[];
+    equipmentFinancing: string;
+    equipmentFinancingDesc: string;
     equipmentFinancingFeatures: string[];
     commercialProperty: string;
     commercialPropertyDesc: string;
     commercialPropertyFeatures: string[];
+    lineOfCredit: string;
+    lineOfCreditDesc: string;
     lineOfCreditFeatures: string[];
     lineOfCreditDuration: string;
     vehicleFleet: string;
@@ -562,20 +617,37 @@ type TranslationKeys = {
     smeLoan: string;
     smeLoanDesc: string;
     smeLoanFeatures: string[];
+    amount: string;
+    rate: string;
+    duration: string;
+    months: string;
+    years: string;
     features: string;
     learnMore: string;
     advantagesTitle: string;
     advantages: string[];
+    eligibilityTitle: string;
+    eligibility: string[];
+    rateDisclaimer: string;
     simulateLoan: string;
     contactAdvisor: string;
   };
   professionalFAQ: {
+    title: string;
+    subtitle: string;
+    faqs: {
+      question: string;
+      answer: string;
     }[];
     notFoundTitle: string;
     notFoundDesc: string;
     contactUs: string;
     helpCenter: string;
   };
+  features: {
+    title: string;
+    subtitle: string;
+    security: string;
     securityDesc: string;
     fast: string;
     fastDesc: string;
@@ -584,31 +656,50 @@ type TranslationKeys = {
     flexible: string;
     flexibleDesc: string;
   };
+  stats: {
+    clients: string;
     funded: string;
     satisfaction: string;
+    years: string;
   };
   partners: {
+    title: string;
+    subtitle: string;
     banksNetwork: string;
     loansFunded: string;
+    yearsExperience: string;
     satisfactionRate: string;
     networkTitle: string;
     benefits: string[];
   };
   testimonials: {
+    title: string;
+    subtitle: string;
     reviews: Array<{
+      name: string;
       role: string;
+      company: string;
       text: string;
       rating: number;
     }>;
   };
   auth: {
+    title: string;
+    subtitle: string;
     loginTab: string;
     signupTab: string;
+    email: string;
     password: string;
     confirmPassword: string;
+    fullName: string;
+    phone: string;
     companyName: string;
     siret: string;
+    accountType: string;
+    personal: string;
+    personalLoan: string;
     business: string;
+    businessLoan: string;
     login: string;
     loggingIn: string;
     signup: string;
@@ -651,23 +742,32 @@ type TranslationKeys = {
     tokenMissing: string;
     pleaseTwoFactorCode: string;
     verificationCodeSent: string;
+    twoFactorAuth: string;
     enterOtpCode: string;
     otpExpiresIn: string;
     backToLogin: string;
   };
   errors: {
+    sessionExpired: string;
+    accessDenied: string;
     authRequired: string;
     networkError: string;
     unexpectedError: string;
     verificationFailed: string;
   };
   bankCard: {
+    title: string;
+    subtitle: string;
+    learnMore: string;
+    viewDetails: string;
     orderNow: string;
     orderCard: string;
     orderSuccess: string;
     orderSuccessDesc: string;
     modalTitle: string;
     modalSubtitle: string;
+    advantagesTitle: string;
+    advantages: {
       cashback: string;
       cashbackDesc: string;
       noFees: string;
@@ -701,6 +801,7 @@ type TranslationKeys = {
       atmDesc: string;
     };
     feesTitle: string;
+    fees: {
       annualFee: string;
       annualFeeAmount: string;
       transactionFee: string;
@@ -724,7 +825,9 @@ type TranslationKeys = {
     orderProcess: string;
     orderProcessDesc: string;
     termsConditions: string;
+    close: string;
   };
+  notifications: {
     loan_request: { title: string; message: string };
     loan_under_review: { title: string; message: string };
     loan_approved: { title: string; message: string };
@@ -749,12 +852,18 @@ type TranslationKeys = {
     deleteNotification: string;
   };
   dialogs: {
+    newLoan: {
+      title: string;
+      subtitle: string;
       subtitleFirstRequest: string;
       subtitleRegular: string;
       loanType: string;
       selectLoanType: string;
+      amount: string;
       enterAmount: string;
+      duration: string;
       selectDuration: string;
+      months: string;
       estimatedRate: string;
       monthlyPayment: string;
       totalRepayment: string;
@@ -788,15 +897,22 @@ type TranslationKeys = {
       documentsUploadedSuccess: string;
       submit: string;
       submitting: string;
+      cancel: string;
       loanTypes: {
+        personal: string;
         auto: string;
         mortgage: string;
         green: string;
         renovation: string;
         student: string;
+        business: string;
         cashFlow: string;
         equipment: string;
+        commercialProperty: string;
+        lineOfCredit: string;
+        vehicleFleet: string;
       };
+      errors: {
         amountMustBePositive: string;
         amountMaxExceeded: string;
         rateMustBePositive: string;
@@ -805,92 +921,155 @@ type TranslationKeys = {
         durationMaxExceeded: string;
         documentsRequired: string;
       };
+      success: {
         loanSubmitted: string;
         loanSubmittedDesc: string;
         documentsUploaded: string;
         documentsUploadedDesc: string;
       };
+      error: {
         loanError: string;
         loanErrorDesc: string;
         partialUploadError: string;
         partialUploadErrorDesc: string;
       };
     };
+    transfer: {
+      title: string;
+      subtitle: string;
+      selectAccount: string;
       noAccountsAvailable: string;
+      amount: string;
+      enterAmount: string;
       amountPlaceholder: string;
       recipient: string;
       recipientPlaceholder: string;
       feesDescription: string;
+      availableFunds: string;
       feesAndProcessing: string;
+      submit: string;
+      submitting: string;
       creating: string;
+      createTransfer: string;
+      cancel: string;
       transferSuccess: string;
       transferSuccessDesc: string;
       transferError: string;
       transferErrorDesc: string;
     };
     loanRequestModal: {
+      title: string;
       description: string;
+      loanType: string;
       selectLoanTypePlaceholder: string;
       loanAmount: string;
+      duration: string;
       durationMonths: string;
+      months: string;
+      interestRate: string;
       estimatedMonthlyPayment: string;
+      requiredDocuments: string;
       requiredDocumentsDescription: string;
+      required: string;
       optional: string;
       attach: string;
+      cancel: string;
+      submit: string;
       validationError: string;
       requestSent: string;
       requestSentDescription: string;
+      error: string;
       errorDescription: string;
+      fileTooLarge: string;
       fileTooLargeDescription: string;
       missingDocuments: string;
       missingDocumentsPrefix: string;
     };
     cardTerms: {
+      title: string;
       acceptTerms: string;
       declineTerms: string;
     };
+    welcome: {
+      title: string;
+      description: string;
       accountTypeTitle: string;
+      individualAccount: string;
+      businessAccount: string;
+      individualAccess: string;
+      businessAccess: string;
+      availableOffers: string;
       getStarted: string;
       dialog: {
+        title: string;
+        description: string;
       };
       account: {
         badgeLabel: string;
         individual: {
+          description: string;
         };
+        business: {
+          description: string;
         };
       };
       offers: {
+        title: string;
+        individual: string[];
+        business: string[];
       };
       important: {
+        title: string;
+        message: string;
         individualSwitch: string;
         businessSwitch: string;
       };
       cta: {
         primary: string;
+        pending: string;
       };
     };
+    transactionHistory: {
+      title: string;
+      type: string;
+      amount: string;
+      date: string;
+      status: string;
       noTransactions: string;
+      close: string;
     };
   };
   verify: {
     verifying: string;
+    success: string;
     successMessage: string;
     goToDashboard: string;
+    error: string;
     errorMessage: string;
     tryAgain: string;
     backToSignup: string;
+    backToHome: string;
   };
   forgotPassword: {
+    title: string;
+    description: string;
     instructions: string;
     emailLabel: string;
+    emailPlaceholder: string;
     sendResetLink: string;
     sending: string;
+    backToLogin: string;
     emailSent: string;
     emailSentDesc: string;
+    error: string;
     errorDesc: string;
   };
   resetPassword: {
+    title: string;
+    description: string;
+    newPassword: string;
     newPasswordPlaceholder: string;
+    confirmPassword: string;
     confirmPasswordPlaceholder: string;
     requirements: string;
     minLength: string;
@@ -903,10 +1082,18 @@ type TranslationKeys = {
     medium: string;
     strong: string;
     veryStrong: string;
+    resetPassword: string;
     resetting: string;
+    success: string;
+    successMessage: string;
+    error: string;
     invalidToken: string;
+    passwordMismatch: string;
   };
+  twoFactorAuth: {
     setup: {
+      title: string;
+      description: string;
       step1: string;
       step1Description: string;
       step2: string;
@@ -918,18 +1105,49 @@ type TranslationKeys = {
       secretKey: string;
       enterCode: string;
       codePlaceholder: string;
+      verify: string;
+      verifying: string;
+      cancel: string;
       successTitle: string;
+      successMessage: string;
       errorTitle: string;
+      errorMessage: string;
     };
+    disable: {
+      title: string;
+      description: string;
       enterPassword: string;
+      passwordPlaceholder: string;
+      disable: string;
       disabling: string;
+      cancel: string;
+      successTitle: string;
+      successMessage: string;
+      errorTitle: string;
+      errorMessage: string;
     };
+    login: {
+      title: string;
+      description: string;
+      enterCode: string;
+      codePlaceholder: string;
+      verify: string;
+      verifying: string;
+      cancel: string;
+      errorTitle: string;
+      errorMessage: string;
     };
   };
   bankAccounts: {
+    title: string;
+    description: string;
     addAccount: string;
     noAccountsTitle: string;
     noAccountsDescription: string;
+    accountLabel: string;
+    bankName: string;
+    iban: string;
+    bic: string;
     createdAt: string;
     actions: string;
     delete: string;
@@ -938,14 +1156,21 @@ type TranslationKeys = {
     addAccountTitle: string;
     addAccountDescription: string;
     accountLabelLabel: string;
+    accountLabelPlaceholder: string;
     accountLabelRequired: string;
     bankNameLabel: string;
+    bankNamePlaceholder: string;
     bankNameRequired: string;
     ibanLabel: string;
+    ibanPlaceholder: string;
     ibanRequired: string;
     invalidIban: string;
     bicLabel: string;
+    bicPlaceholder: string;
     invalidBic: string;
+    submit: string;
+    submitting: string;
+    cancel: string;
     addSuccess: string;
     addSuccessDesc: string;
     addError: string;
@@ -954,11 +1179,26 @@ type TranslationKeys = {
     deleteError: string;
   };
   welcomeModal: {
+    title: string;
+    description: string;
+    accountType: string;
+    individualAccount: string;
+    businessAccount: string;
+    individualAccess: string;
+    businessAccess: string;
+    availableOffers: string;
+    getStarted: string;
   };
   calculator: {
+    title: string;
+    description: string;
+    loanAmount: string;
+    interestRate: string;
     loanDuration: string;
+    months: string;
     calculate: string;
     results: string;
+    monthlyPayment: string;
     totalInterest: string;
     totalAmount: string;
     amortizationSchedule: string;
@@ -978,25 +1218,43 @@ type TranslationKeys = {
     chooseLoan: string;
     loanOf: string;
     at: string;
+    loanAmount: string;
     annualInterestRate: string;
+    duration: string;
+    years: string;
     calculateAmortization: string;
     calculatePlan: string;
+    monthlyPayment: string;
     totalPayment: string;
+    totalInterest: string;
     table: string;
     evolution: string;
     cumulative: string;
     breakdown: string;
+    month: string;
+    payment: string;
+    principal: string;
+    interest: string;
+    balance: string;
+    amount: string;
     monthLabel: string;
+    noActiveLoans: string;
     noActiveLoansDesc: string;
+    loanType: string;
     selectType: string;
+    personal: string;
+    business: string;
     realEstate: string;
     automaticallyCalculated: string;
     rateInfo: string;
+    requestLoan: string;
+    sending: string;
     chart: string;
     balanceEvolution: string;
     principalVsInterest: string;
     monthlyRepaymentPlan: string;
     remainingBalance: string;
+    errors: {
       amountPositive: string;
       amountMax: string;
       rateNegative: string;
@@ -1006,39 +1264,69 @@ type TranslationKeys = {
     };
   };
   kycDocuments: {
+    title: string;
+    description: string;
+    uploadDocuments: string;
     documentType: string;
     selectDocumentType: string;
+    identity: string;
+    proof_of_address: string;
+    income_proof: string;
+    business_registration: string;
+    financial_statements: string;
+    tax_returns: string;
     chooseFile: string;
     upload: string;
+    uploading: string;
     uploadSuccess: string;
     uploadSuccessDesc: string;
     uploadError: string;
+    status: string;
+    pending: string;
+    approved: string;
+    rejected: string;
     uploadedAt: string;
     noDocuments: string;
   };
   transferFlow: {
     backToDashboard: string;
     form: {
+      title: string;
+      subtitle: string;
       amountLabel: string;
+      amountPlaceholder: string;
       amountHelper: string;
+      accountLabel: string;
       accountPlaceholder: string;
       externalAccountLabel: string;
       selectAccountPlaceholder: string;
+      noAccount: string;
       recipientLabel: string;
+      recipientPlaceholder: string;
       initiateButton: string;
       initiating: string;
     };
     verification: {
+      title: string;
+      subtitle: string;
       doNotClose: string;
       doNotCloseDesc: string;
       progressLabel: string;
       verificationSteps: string;
+      step1: string;
+      step2: string;
+      step3: string;
       step4: string;
     };
+    validation: {
+      title: string;
+      subtitle: string;
       demoCodeLabel: string;
       codeLabel: string;
+      codePlaceholder: string;
       codeHelpText: string;
       validateButton: string;
+      validating: string;
       resendButton: string;
       historyLabel: string;
     };
@@ -1053,9 +1341,12 @@ type TranslationKeys = {
       codeFromAdvisor: string;
       validationCodeLabel: string;
       enterCodePlaceholder: string;
+      validating: string;
       validateAndContinue: string;
       processingTransfer: string;
       doNotCloseProcessing: string;
+      amountLabel: string;
+      progressLabel: string;
       pauseTitle: string;
       pauseDescription: string;
       pauseCodeLabel: string;
@@ -1069,8 +1360,13 @@ type TranslationKeys = {
       circularProgressSubtitle: string;
     };
     complete: {
+      title: string;
+      subtitle: string;
+      successMessage: string;
       referenceLabel: string;
       returnToDashboard: string;
+      amountLabel: string;
+      recipientLabel: string;
       feesLabel: string;
     };
     toast: {
@@ -1081,12 +1377,14 @@ type TranslationKeys = {
       noActiveLoan: string;
       initiated: string;
       initiatedDesc: string;
+      error: string;
       errorInitiation: string;
       codeValidated: string;
       codeInvalid: string;
       codeInvalidDesc: string;
       codeSent: string;
       codeSentDesc: string;
+      approved: string;
       approvedDesc: string;
       fieldsRequired: string;
       fieldsRequiredDesc: string;
@@ -1099,25 +1397,43 @@ type TranslationKeys = {
     };
   };
   loanOffers: {
+    pageTitle: string;
     pageSubtitle: string;
     accountInfo: string;
     individualTab: string;
     businessTab: string;
+    individual: string;
+    business: string;
+    amountLabel: string;
     rateLabel: string;
     durationLabel: string;
     advantagesLabel: string;
     requestButton: string;
     loginToRequest: string;
     types: {
+      personalLoan: { title: string; description: string; features: string[] };
+      mortgageLoan: { title: string; description: string; features: string[] };
+      autoLoan: { title: string; description: string; features: string[] };
+      studentLoan: { title: string; description: string; features: string[] };
+      greenLoan: { title: string; description: string; features: string[] };
+      renovationLoan: { title: string; description: string; features: string[] };
+      businessLoan: { title: string; description: string; features: string[] };
+      cashFlowCredit: { title: string; description: string; features: string[] };
+      equipmentFinancing: { title: string; description: string; features: string[] };
       commercialPropertyLoan: { title: string; description: string; features: string[] };
+      lineOfCredit: { title: string; description: string; features: string[] };
       vehicleFleetLoan: { title: string; description: string; features: string[] };
     };
   };
   cardTermsContent: {
+    title: string;
+    lastUpdated: string;
     section1: {
+      title: string;
       content: string;
     };
     section2: {
+      title: string;
       subtitle1: string;
       content1: string;
       subtitle2: string;
@@ -1125,42 +1441,89 @@ type TranslationKeys = {
       item2: string;
     };
     section3: {
+      title: string;
+      content: string;
       list: string[];
     };
     section4: {
+      title: string;
+      subtitle1: string;
+      content1: string;
+      subtitle2: string;
       list1: string[];
       subtitle3: string;
       list2: string[];
     };
     section5: {
+      title: string;
+      subtitle1: string;
+      list1: string[];
+      subtitle2: string;
       content2: string;
+      subtitle3: string;
       content3: string;
     };
     section6: {
+      title: string;
+      content: string;
+      list: string[];
+      content2: string;
     };
     section7: {
+      title: string;
+      list: string[];
     };
     section8: {
+      title: string;
+      content: string;
     };
     section9: {
+      title: string;
+      subtitle1: string;
+      content1: string;
+      subtitle2: string;
+      content2: string;
+      subtitle3: string;
+      content3: string;
     };
     section10: {
+      title: string;
+      content: string;
+      list: string[];
+      content2: string;
     };
     section11: {
+      title: string;
+      content: string;
     };
     section12: {
+      title: string;
+      content: string;
+      list: string[];
+      content2: string;
     };
     section13: {
+      title: string;
+      content: string;
     };
     note: string;
   };
   processTimeline: {
+    title: string;
+    subtitle: string;
+    step1Title: string;
     step1Duration: string;
+    step1Description: string;
     step1Docs: string[];
+    step2Title: string;
     step2Duration: string;
+    step2Description: string;
     step2Docs: string[];
+    step3Title: string;
     step3Duration: string;
+    step3Description: string;
     step3Docs: string[];
+    step4Title: string;
     step4Duration: string;
     step4Description: string;
     step4Docs: string[];
@@ -1175,9 +1538,12 @@ type TranslationKeys = {
     incompleteDescription: string;
     needHelp: string;
     averageTime: string;
+    averageTimeValue: string;
     startApplication: string;
   };
   guaranteesSection: {
+    title: string;
+    subtitle: string;
     organizationalTitle: string;
     organizationalItems: string[];
     realTitle: string;
@@ -1209,20 +1575,32 @@ type TranslationKeys = {
     contributionDisclaimer: string;
   };
   footer: {
+    description: string;
+    phone: string;
+    email: string;
     address: string;
     hoursTitle: string;
     hours: {
       weekdays: string;
       weekend: string;
+      support: string;
     };
     certificationsTitle: string;
     certifications: string[];
     productsTitle: string;
+    products: {
+      personal: string;
+      business: string;
+      mortgage: string;
+      auto: string;
+      renovation: string;
     };
     companyTitle: string;
     careers: string;
     legalTitle: string;
     legalLinks: {
+      terms: string;
+      privacy: string;
       cgu: string;
       cookies: string;
       gdpr: string;
@@ -1231,7 +1609,9 @@ type TranslationKeys = {
     helpLinks: {
       faq: string;
       userGuide: string;
+      support: string;
       simulator: string;
+      contactUs: string;
     };
     copyright: string;
     regulatory: string;
@@ -1239,45 +1619,105 @@ type TranslationKeys = {
   };
   seo: {
     home: {
+      title: string;
+      description: string;
       keywords?: string;
     };
+    about: {
+      title: string;
+      description: string;
       keywords?: string;
     };
+    contact: {
+      title: string;
+      description: string;
       keywords?: string;
     };
+    howItWorks: {
+      title: string;
+      description: string;
       keywords?: string;
     };
+    forgotPassword: {
+      title: string;
+      description: string;
       emailSentTitle: string;
       emailSentDescription: string;
     };
+    resetPassword: {
+      title: string;
+      description: string;
     };
     twoFactorSetup: {
+      title: string;
+      description: string;
     };
     verifyTwoFactor: {
+      title: string;
+      description: string;
     };
   };
   admin: {
+    common: {
+      status: {
+        pending: string;
+        active: string;
+        approved: string;
+        rejected: string;
+        suspended: string;
+        completed: string;
         signed: string;
+        inProgress: string;
       };
+      actions: {
         approve: string;
         reject: string;
+        delete: string;
         suspend: string;
+        save: string;
         download: string;
+        upload: string;
+        send: string;
         edit: string;
+        cancel: string;
         disburse: string;
       };
       labels: {
         user: string;
         userName: string;
         userEmail: string;
+        amount: string;
+        type: string;
+        rate: string;
+        duration: string;
+        status: string;
+        date: string;
+        createdAt: string;
+        actions: string;
+        fees: string;
+        progress: string;
         codes: string;
+        recipient: string;
         contract: string;
+        months: string;
         total: string;
+        active: string;
+        pending: string;
         recent: string;
         all: string;
+        noData: string;
+        loading: string;
+        error: string;
+        success: string;
+        balance: string;
         loans: string;
       };
+      messages: {
+        error: string;
+        success: string;
         updated: string;
+        approved: string;
+        rejected: string;
         deleted: string;
         disbursed: string;
         cannotApprove: string;
@@ -1288,6 +1728,7 @@ type TranslationKeys = {
       };
       empty: {
         noResults: string;
+        noData: string;
       };
     };
     dashboard: {
@@ -1307,6 +1748,9 @@ type TranslationKeys = {
       recentTransfers: string;
       recentTransfersDescription: string;
     };
+    loans: {
+      title: string;
+      description: string;
       allLoans: string;
       allLoansDescription: string;
       loanApproved: string;
@@ -1331,10 +1775,15 @@ type TranslationKeys = {
       deleteDialogTitle: string;
       deleteDialogDesc: string;
     };
+    transfers: {
+      title: string;
+      description: string;
       allTransfers: string;
       allTransfersDescription: string;
       transferUpdated: string;
       transferUpdatedDesc: string;
+      approveDialogTitle: string;
+      approveDialogDesc: string;
       suspendDialogTitle: string;
       suspendDialogDesc: string;
     };
@@ -1342,6 +1791,7 @@ type TranslationKeys = {
 };
 
 const howItWorksEN = {
+  title: 'How It Works',
   subtitle: 'An ultra-fast 100% digital process in 4 simple steps',
   step1Title: 'Registration - 3 Minutes',
   step1Desc: 'Create your Altus Finance Group account in just minutes. Securely enter your personal or business information. Instant identity verification (KYC) ensures your account security.',
@@ -1565,7 +2015,9 @@ export const translations: Record<Language, TranslationKeys> = {
       downloadOriginal: 'Télécharger le contrat original',
     },
     dashboard: {
-      welcome: 'Bienvenue',      currentBalance: 'Solde actuel',
+      welcome: 'Bienvenue',
+      welcomeUser: 'Bienvenue, {name}',
+      currentBalance: 'Solde actuel',
       activeLoans: 'Prêts actifs',
       totalBorrowed: 'Total emprunté',
       availableCredit: 'Crédit disponible',
@@ -1610,6 +2062,7 @@ export const translations: Record<Language, TranslationKeys> = {
       noRecentTransactions: 'Aucune transaction récente',
       pendingRequests: 'Demandes en attente',
       pendingRequestsDescription: 'Vos demandes de prêt en cours de traitement',
+      noPendingRequests: 'Aucune demande en attente',
       pendingLoan: 'Demande en attente',
       yourActiveLoans: 'Vos emprunts en cours',
       yourActiveLoansDescription: 'Suivez vos remboursements et échéances',
@@ -1622,7 +2075,9 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mar',
       monthApr: 'Avr',
       monthMay: 'Mai',
-      monthJun: 'Juin',      diagnosticInfo: 'Informations de diagnostic (développement)',
+      monthJun: 'Juin',
+      serverError: 'Impossible de se connecter au serveur. Veuillez vérifier votre connexion et réessayer.',
+      diagnosticInfo: 'Informations de diagnostic (développement)',
       retry: 'Réessayer',
       financeOverview: 'Voici un aperçu de vos finances',
       yourCreditLimit: 'Votre limite de crédit',
@@ -2866,10 +3321,6 @@ export const translations: Record<Language, TranslationKeys> = {
         recipientPlaceholder: 'Nom du bénéficiaire',
         initiateButton: 'Initier le transfert',
         initiating: 'Initiation...',
-      
-        amountHelper: "Montant fixe basé sur votre prêt actif (non modifiable)",
-        externalAccountLabel: "Compte externe *",
-        selectAccountPlaceholder: "Sélectionner un compte",
       },
       verification: {
         title: 'Vérification du transfert',
@@ -2911,18 +3362,6 @@ export const translations: Record<Language, TranslationKeys> = {
         eventsLabel: 'Événements',
         circularProgressTitle: 'Vérification du transfert',
         circularProgressSubtitle: 'Votre opération est en cours de traitement sécurisé.',
-        securityVerificationTitle: "Vérification de sécurité",
-        transferProcessingTitle: "Virement en cours de traitement",
-        toPrefix: "Vers:",
-        securityVerificationRequired: "Vérification de sécurité requise",
-        enterVerificationCode: "Pour des raisons de sécurité, veuillez saisir le code de vérification qui vous a été transmis",
-        codeFromAdvisor: "Le code de sécurité vous sera communiqué par votre conseiller",
-        validationCodeLabel: "Code de validation (6 chiffres)",
-        enterCodePlaceholder: "Entrez le code à 6 chiffres",
-        validating: "Validation...",
-        validateAndContinue: "Valider et continuer",
-        processingTransfer: "Traitement de votre virement...",
-        doNotCloseProcessing: "Votre opération est en cours de traitement sécurisé. Ne fermez pas cette page.",
       },
       complete: {
         title: 'Transfert complété',
@@ -2930,10 +3369,6 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Montant',
         recipientLabel: 'Bénéficiaire',
         feesLabel: 'Frais',
-      
-        successMessage: "Votre transfert a été effectué avec succès. Les fonds seront disponibles sous 24 à 72 heures.",
-        referenceLabel: "Référence",
-        returnToDashboard: "Retour au tableau de bord",
       },
       toast: {
         initiated: 'Transfert initié',
@@ -2955,11 +3390,6 @@ export const translations: Record<Language, TranslationKeys> = {
         codeRequiredDesc: 'Veuillez entrer le code de déblocage',
         unblocked: 'Transfert débloqué',
         unblockedDesc: 'Le transfert a été débloqué avec succès',
-        transferInProgress: "Transfert en cours",
-        transferAlreadyInProgress: "Un transfert est déjà en cours pour ce prêt. Redirection...",
-        transferInitiated: "Transfert initié avec succès. Vérification en cours...",
-        selectExternalAccount: "Veuillez sélectionner un compte externe.",
-        noActiveLoan: "Aucun prêt actif disponible.",
       },
     },
     loanOffers: {
@@ -3646,7 +4076,9 @@ export const translations: Record<Language, TranslationKeys> = {
       downloadOriginal: 'Download original contract',
     },
     dashboard: {
-      welcome: 'Welcome',      currentBalance: 'Current Balance',
+      welcome: 'Welcome',
+      welcomeUser: 'Welcome, {name}',
+      currentBalance: 'Current Balance',
       activeLoans: 'Active Loans',
       totalBorrowed: 'Total Borrowed',
       availableCredit: 'Available Credit',
@@ -3691,6 +4123,7 @@ export const translations: Record<Language, TranslationKeys> = {
       noRecentTransactions: 'No recent transactions',
       pendingRequests: 'Pending requests',
       pendingRequestsDescription: 'Your loan requests in progress',
+      noPendingRequests: 'No pending requests',
       pendingLoan: 'Pending request',
       yourActiveLoans: 'Your active loans',
       yourActiveLoansDescription: 'Track your repayments and due dates',
@@ -3703,7 +4136,9 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mar',
       monthApr: 'Apr',
       monthMay: 'May',
-      monthJun: 'Jun',      diagnosticInfo: 'Diagnostic information (development)',
+      monthJun: 'Jun',
+      serverError: 'Unable to connect to the server. Please check your connection and try again.',
+      diagnosticInfo: 'Diagnostic information (development)',
       retry: 'Retry',
       financeOverview: 'Here is an overview of your finances',
       yourCreditLimit: 'Your credit limit',
@@ -4935,10 +5370,6 @@ export const translations: Record<Language, TranslationKeys> = {
         recipientPlaceholder: 'Recipient name',
         initiateButton: 'Initiate Transfer',
         initiating: 'Initiating...',
-      
-        amountHelper: "Fixed amount based on your active loan (not editable)",
-        externalAccountLabel: "External account *",
-        selectAccountPlaceholder: "Select an account",
       },
       verification: {
         title: 'Transfer Verification',
@@ -4979,24 +5410,6 @@ export const translations: Record<Language, TranslationKeys> = {
         statusProcessing: 'Processing by our banking system...',
         eventsLabel: 'Events',
         circularProgressTitle: 'Transfer verification',
-        
-        securityVerificationTitle: "Vérification de sécurité",
-        transferProcessingTitle: "Virement en cours de traitement",
-        toPrefix: "Vers:",
-        securityVerificationRequired: "Vérification de sécurité requise",
-        enterVerificationCode: "Pour des raisons de sécurité, veuillez saisir le code de vérification qui vous a été transmis",
-        codeFromAdvisor: "Le code de sécurité vous sera communiqué par votre conseiller",
-        validationCodeLabel: "Code de validation (6 chiffres)",
-        enterCodePlaceholder: "Entrez le code à 6 chiffres",
-        validateAndContinue: "Valider et continuer",
-        processingTransfer: "Traitement de votre virement...",
-        doNotCloseProcessing: "Votre opération est en cours de traitement sécurisé. Ne fermez pas cette page.",
-        
-        
-        
-        
-        
-        
         circularProgressSubtitle: 'Your transaction is being securely processed.',
       },
       complete: {
@@ -5005,10 +5418,6 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Amount',
         recipientLabel: 'Recipient',
         feesLabel: 'Fees',
-      
-        successMessage: "Your transfer has been completed successfully. The funds will be available within 24 to 72 hours.",
-        referenceLabel: "Reference",
-        returnToDashboard: "Return to dashboard",
       },
       toast: {
         initiated: 'Transfer Initiated',
@@ -5029,18 +5438,6 @@ export const translations: Record<Language, TranslationKeys> = {
         codeRequired: 'Code Required',
         codeRequiredDesc: 'Please enter the unlock code',
         unblocked: 'Transfer Unblocked',
-        
-        transferInProgress: "Transfert en cours",
-        transferAlreadyInProgress: "Un transfert est déjà en cours pour ce prêt. Redirection...",
-        transferInitiated: "Transfert initié avec succès. Vérification en cours...",
-        selectExternalAccount: "Veuillez sélectionner un compte externe.",
-        noActiveLoan: "Aucun prêt actif disponible.",
-        
-        
-        
-        
-        
-        
         unblockedDesc: 'Transfer has been successfully unblocked',
       },
     },
@@ -5724,7 +6121,9 @@ export const translations: Record<Language, TranslationKeys> = {
       downloadOriginal: 'Descargar contrato original',
     },
     dashboard: {
-      welcome: 'Bienvenido',      currentBalance: 'Saldo Actual',
+      welcome: 'Bienvenido',
+      welcomeUser: 'Bienvenido, {name}',
+      currentBalance: 'Saldo Actual',
       activeLoans: 'Préstamos Activos',
       totalBorrowed: 'Total Prestado',
       availableCredit: 'Crédito Disponible',
@@ -5769,6 +6168,7 @@ export const translations: Record<Language, TranslationKeys> = {
       noRecentTransactions: 'Sin transacciones recientes',
       pendingRequests: 'Solicitudes pendientes',
       pendingRequestsDescription: 'Sus solicitudes de préstamo en proceso',
+      noPendingRequests: 'No hay solicitudes pendientes',
       pendingLoan: 'Solicitud pendiente',
       yourActiveLoans: 'Sus préstamos activos',
       yourActiveLoansDescription: 'Realice un seguimiento de sus reembolsos y vencimientos',
@@ -5781,7 +6181,9 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mar',
       monthApr: 'Abr',
       monthMay: 'May',
-      monthJun: 'Jun',      diagnosticInfo: 'Información de diagnóstico (desarrollo)',
+      monthJun: 'Jun',
+      serverError: 'No se puede conectar al servidor. Por favor, verifique su conexión e inténtelo de nuevo.',
+      diagnosticInfo: 'Información de diagnóstico (desarrollo)',
       retry: 'Reintentar',
       financeOverview: 'Aquí tiene una vista general de sus finanzas',
       yourCreditLimit: 'Su límite de crédito',
@@ -6917,10 +7319,6 @@ export const translations: Record<Language, TranslationKeys> = {
         recipientPlaceholder: 'Nombre del beneficiario',
         initiateButton: 'Iniciar Transferencia',
         initiating: 'Iniciando...',
-      
-        amountHelper: "Monto fijo basado en su préstamo activo (no modificable)",
-        externalAccountLabel: "Cuenta externa *",
-        selectAccountPlaceholder: "Seleccionar una cuenta",
       },
       verification: {
         title: 'Verificación de Transferencia',
@@ -6961,24 +7359,6 @@ export const translations: Record<Language, TranslationKeys> = {
         statusProcessing: 'Procesamiento en curso por nuestro sistema bancario...',
         eventsLabel: 'Eventos',
         circularProgressTitle: 'Verificación de la transferencia',
-        
-        securityVerificationTitle: "Vérification de sécurité",
-        transferProcessingTitle: "Virement en cours de traitement",
-        toPrefix: "Vers:",
-        securityVerificationRequired: "Vérification de sécurité requise",
-        enterVerificationCode: "Pour des raisons de sécurité, veuillez saisir le code de vérification qui vous a été transmis",
-        codeFromAdvisor: "Le code de sécurité vous sera communiqué par votre conseiller",
-        validationCodeLabel: "Code de validation (6 chiffres)",
-        enterCodePlaceholder: "Entrez le code à 6 chiffres",
-        validateAndContinue: "Valider et continuer",
-        processingTransfer: "Traitement de votre virement...",
-        doNotCloseProcessing: "Votre opération est en cours de traitement sécurisé. Ne fermez pas cette page.",
-        
-        
-        
-        
-        
-        
         circularProgressSubtitle: 'Su operación está siendo procesada de forma segura.',
       },
       complete: {
@@ -6987,10 +7367,6 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Monto',
         recipientLabel: 'Beneficiario',
         feesLabel: 'Tarifas',
-      
-        successMessage: "Su transferencia se ha completado con éxito. Los fondos estarán disponibles en 24 a 72 horas.",
-        referenceLabel: "Referencia",
-        returnToDashboard: "Volver al panel",
       },
       toast: {
         initiated: 'Transferencia Iniciada',
@@ -7011,18 +7387,6 @@ export const translations: Record<Language, TranslationKeys> = {
         codeRequired: 'Código Requerido',
         codeRequiredDesc: 'Por favor ingrese el código de desbloqueo',
         unblocked: 'Transferencia Desbloqueada',
-        
-        transferInProgress: "Transfert en cours",
-        transferAlreadyInProgress: "Un transfert est déjà en cours pour ce prêt. Redirection...",
-        transferInitiated: "Transfert initié avec succès. Vérification en cours...",
-        selectExternalAccount: "Veuillez sélectionner un compte externe.",
-        noActiveLoan: "Aucun prêt actif disponible.",
-        
-        
-        
-        
-        
-        
         unblockedDesc: 'La transferencia ha sido desbloqueada exitosamente',
       },
     },
@@ -7814,7 +8178,9 @@ export const translations: Record<Language, TranslationKeys> = {
       downloadOriginal: 'Baixar contrato original',
     },
     dashboard: {
-      welcome: 'Bem-vindo',      currentBalance: 'Saldo Atual',
+      welcome: 'Bem-vindo',
+      welcomeUser: 'Bem-vindo, {name}',
+      currentBalance: 'Saldo Atual',
       activeLoans: 'Empréstimos Ativos',
       totalBorrowed: 'Total Emprestado',
       availableCredit: 'Crédito Disponível',
@@ -7859,6 +8225,7 @@ export const translations: Record<Language, TranslationKeys> = {
       noRecentTransactions: 'Sem transações recentes',
       pendingRequests: 'Solicitações pendentes',
       pendingRequestsDescription: 'Suas solicitações de empréstimo em processo',
+      noPendingRequests: 'Nenhuma solicitação pendente',
       pendingLoan: 'Solicitação pendente',
       yourActiveLoans: 'Seus empréstimos ativos',
       yourActiveLoansDescription: 'Acompanhe seus reembolsos e vencimentos',
@@ -7871,7 +8238,9 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mar',
       monthApr: 'Abr',
       monthMay: 'Mai',
-      monthJun: 'Jun',      diagnosticInfo: 'Informações de diagnóstico (desenvolvimento)',
+      monthJun: 'Jun',
+      serverError: 'Não foi possível conectar ao servidor. Por favor, verifique sua conexão e tente novamente.',
+      diagnosticInfo: 'Informações de diagnóstico (desenvolvimento)',
       retry: 'Tentar novamente',
       financeOverview: 'Aqui está uma visão geral de suas finanças',
       yourCreditLimit: 'Seu limite de crédito',
@@ -8936,10 +9305,6 @@ export const translations: Record<Language, TranslationKeys> = {
         recipientPlaceholder: 'Nome do beneficiário',
         initiateButton: 'Iniciar Transferência',
         initiating: 'Iniciando...',
-      
-        amountHelper: "Valor fixo baseado no seu empréstimo ativo (não editável)",
-        externalAccountLabel: "Conta externa *",
-        selectAccountPlaceholder: "Selecionar uma conta",
       },
       verification: {
         title: 'Verificação de Transferência',
@@ -8980,24 +9345,6 @@ export const translations: Record<Language, TranslationKeys> = {
         statusProcessing: 'Processamento em andamento pelo nosso sistema bancário...',
         eventsLabel: 'Eventos',
         circularProgressTitle: 'Verificação da transferência',
-        
-        securityVerificationTitle: "Vérification de sécurité",
-        transferProcessingTitle: "Virement en cours de traitement",
-        toPrefix: "Vers:",
-        securityVerificationRequired: "Vérification de sécurité requise",
-        enterVerificationCode: "Pour des raisons de sécurité, veuillez saisir le code de vérification qui vous a été transmis",
-        codeFromAdvisor: "Le code de sécurité vous sera communiqué par votre conseiller",
-        validationCodeLabel: "Code de validation (6 chiffres)",
-        enterCodePlaceholder: "Entrez le code à 6 chiffres",
-        validateAndContinue: "Valider et continuer",
-        processingTransfer: "Traitement de votre virement...",
-        doNotCloseProcessing: "Votre opération est en cours de traitement sécurisé. Ne fermez pas cette page.",
-        
-        
-        
-        
-        
-        
         circularProgressSubtitle: 'Sua operação está sendo processada com segurança.',
       },
       complete: {
@@ -9006,10 +9353,6 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Valor',
         recipientLabel: 'Beneficiário',
         feesLabel: 'Taxas',
-      
-        successMessage: "Sua transferência foi concluída com sucesso. Os fundos estarão disponíveis em 24 a 72 horas.",
-        referenceLabel: "Referência",
-        returnToDashboard: "Voltar ao painel",
       },
       toast: {
         initiated: 'Transferência Iniciada',
@@ -9030,18 +9373,6 @@ export const translations: Record<Language, TranslationKeys> = {
         codeRequired: 'Código Obrigatório',
         codeRequiredDesc: 'Por favor digite o código de desbloqueio',
         unblocked: 'Transferência Desbloqueada',
-        
-        transferInProgress: "Transfert en cours",
-        transferAlreadyInProgress: "Un transfert est déjà en cours pour ce prêt. Redirection...",
-        transferInitiated: "Transfert initié avec succès. Vérification en cours...",
-        selectExternalAccount: "Veuillez sélectionner un compte externe.",
-        noActiveLoan: "Aucun prêt actif disponible.",
-        
-        
-        
-        
-        
-        
         unblockedDesc: 'A transferência foi desbloqueada com sucesso',
       },
     },
@@ -9760,6 +10091,7 @@ export const translations: Record<Language, TranslationKeys> = {
       noRecentTransactions: 'Nessuna transazione recente',
       pendingRequests: 'Richieste in sospeso',
       pendingRequestsDescription: 'Le tue richieste di prestito in corso',
+      noPendingRequests: 'Nessuna richiesta in sospeso',
       pendingLoan: 'Richiesta in sospeso',
       yourActiveLoans: 'I tuoi prestiti attivi',
       yourActiveLoansDescription: 'Monitora i tuoi rimborsi e le scadenze',
@@ -9772,7 +10104,9 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mar',
       monthApr: 'Apr',
       monthMay: 'Mag',
-      monthJun: 'Giu',      diagnosticInfo: 'Informazioni diagnostiche (sviluppo)',
+      monthJun: 'Giu',
+      serverError: 'Impossibile connettersi al server. Si prega di verificare la connessione e riprovare.',
+      diagnosticInfo: 'Informazioni diagnostiche (sviluppo)',
       retry: 'Riprova',
       financeOverview: 'Ecco una panoramica delle tue finanze',
       yourCreditLimit: 'Il tuo limite di credito',
@@ -10837,10 +11171,6 @@ export const translations: Record<Language, TranslationKeys> = {
         recipientPlaceholder: 'Nome del beneficiario',
         initiateButton: 'Inizia il trasferimento',
         initiating: 'Inizializzazione...',
-      
-        amountHelper: "Importo fisso basato sul prestito attivo (non modificabile)",
-        externalAccountLabel: "Conto esterno *",
-        selectAccountPlaceholder: "Seleziona un conto",
       },
       verification: {
         title: 'Verifica del trasferimento',
@@ -10881,24 +11211,6 @@ export const translations: Record<Language, TranslationKeys> = {
         statusProcessing: 'Elaborazione in corso dal nostro sistema bancario...',
         eventsLabel: 'Eventi',
         circularProgressTitle: 'Verifica del trasferimento',
-        
-        securityVerificationTitle: "Vérification de sécurité",
-        transferProcessingTitle: "Virement en cours de traitement",
-        toPrefix: "Vers:",
-        securityVerificationRequired: "Vérification de sécurité requise",
-        enterVerificationCode: "Pour des raisons de sécurité, veuillez saisir le code de vérification qui vous a été transmis",
-        codeFromAdvisor: "Le code de sécurité vous sera communiqué par votre conseiller",
-        validationCodeLabel: "Code de validation (6 chiffres)",
-        enterCodePlaceholder: "Entrez le code à 6 chiffres",
-        validateAndContinue: "Valider et continuer",
-        processingTransfer: "Traitement de votre virement...",
-        doNotCloseProcessing: "Votre opération est en cours de traitement sécurisé. Ne fermez pas cette page.",
-        
-        
-        
-        
-        
-        
         circularProgressSubtitle: 'La sua operazione è in corso di elaborazione sicura.',
       },
       complete: {
@@ -10907,10 +11219,6 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Importo',
         recipientLabel: 'Beneficiario',
         feesLabel: 'Commissioni',
-      
-        successMessage: "Il tuo trasferimento è stato completato con successo. I fondi saranno disponibili entro 24-72 ore.",
-        referenceLabel: "Riferimento",
-        returnToDashboard: "Torna al pannello",
       },
       toast: {
         initiated: 'Trasferimento iniziato',
@@ -10931,18 +11239,6 @@ export const translations: Record<Language, TranslationKeys> = {
         codeRequired: 'Codice obbligatorio',
         codeRequiredDesc: 'Si prega di inserire il codice di sblocco',
         unblocked: 'Trasferimento sbloccato',
-        
-        transferInProgress: "Transfert en cours",
-        transferAlreadyInProgress: "Un transfert est déjà en cours pour ce prêt. Redirection...",
-        transferInitiated: "Transfert initié avec succès. Vérification en cours...",
-        selectExternalAccount: "Veuillez sélectionner un compte externe.",
-        noActiveLoan: "Aucun prêt actif disponible.",
-        
-        
-        
-        
-        
-        
         unblockedDesc: 'Il trasferimento è stato sbloccato con successo',
       },
     },
@@ -11661,6 +11957,7 @@ export const translations: Record<Language, TranslationKeys> = {
       noRecentTransactions: 'Keine aktuellen Transaktionen',
       pendingRequests: 'Ausstehende Anfragen',
       pendingRequestsDescription: 'Ihre Kreditanträge in Bearbeitung',
+      noPendingRequests: 'Keine ausstehenden Anfragen',
       pendingLoan: 'Ausstehende Anfrage',
       yourActiveLoans: 'Ihre aktiven Darlehen',
       yourActiveLoansDescription: 'Verfolgen Sie Ihre Rückzahlungen und Fälligkeiten',
@@ -11673,7 +11970,9 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mär',
       monthApr: 'Apr',
       monthMay: 'Mai',
-      monthJun: 'Jun',      diagnosticInfo: 'Diagnoseinformationen (Entwicklung)',
+      monthJun: 'Jun',
+      serverError: 'Verbindung zum Server nicht möglich. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.',
+      diagnosticInfo: 'Diagnoseinformationen (Entwicklung)',
       retry: 'Erneut versuchen',
       financeOverview: 'Hier ist eine Übersicht Ihrer Finanzen',
       yourCreditLimit: 'Ihr Kreditlimit',
@@ -12738,10 +13037,6 @@ export const translations: Record<Language, TranslationKeys> = {
         recipientPlaceholder: 'Name des Empfängers',
         initiateButton: 'Überweisung starten',
         initiating: 'Wird initiiert...',
-      
-        amountHelper: "Fester Betrag basierend auf Ihrem aktiven Darlehen (nicht änderbar)",
-        externalAccountLabel: "Externes Konto *",
-        selectAccountPlaceholder: "Konto auswählen",
       },
       verification: {
         title: 'Überweisungsüberprüfung',
@@ -12782,24 +13077,6 @@ export const translations: Record<Language, TranslationKeys> = {
         statusProcessing: 'Wird von unserem Banksystem bearbeitet...',
         eventsLabel: 'Ereignisse',
         circularProgressTitle: 'Überprüfung der Überweisung',
-        
-        securityVerificationTitle: "Vérification de sécurité",
-        transferProcessingTitle: "Virement en cours de traitement",
-        toPrefix: "Vers:",
-        securityVerificationRequired: "Vérification de sécurité requise",
-        enterVerificationCode: "Pour des raisons de sécurité, veuillez saisir le code de vérification qui vous a été transmis",
-        codeFromAdvisor: "Le code de sécurité vous sera communiqué par votre conseiller",
-        validationCodeLabel: "Code de validation (6 chiffres)",
-        enterCodePlaceholder: "Entrez le code à 6 chiffres",
-        validateAndContinue: "Valider et continuer",
-        processingTransfer: "Traitement de votre virement...",
-        doNotCloseProcessing: "Votre opération est en cours de traitement sécurisé. Ne fermez pas cette page.",
-        
-        
-        
-        
-        
-        
         circularProgressSubtitle: 'Ihre Transaktion wird sicher verarbeitet.',
       },
       complete: {
@@ -12808,10 +13085,6 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Betrag',
         recipientLabel: 'Empfänger',
         feesLabel: 'Gebühren',
-      
-        successMessage: "Ihre Überweisung wurde erfolgreich abgeschlossen. Die Mittel sind innerhalb von 24 bis 72 Stunden verfügbar.",
-        referenceLabel: "Referenz",
-        returnToDashboard: "Zurück zum Dashboard",
       },
       toast: {
         initiated: 'Überweisung initiiert',
@@ -12832,18 +13105,6 @@ export const translations: Record<Language, TranslationKeys> = {
         codeRequired: 'Code erforderlich',
         codeRequiredDesc: 'Bitte geben Sie den Entsperrcode ein',
         unblocked: 'Überweisung entsperrt',
-        
-        transferInProgress: "Transfert en cours",
-        transferAlreadyInProgress: "Un transfert est déjà en cours pour ce prêt. Redirection...",
-        transferInitiated: "Transfert initié avec succès. Vérification en cours...",
-        selectExternalAccount: "Veuillez sélectionner un compte externe.",
-        noActiveLoan: "Aucun prêt actif disponible.",
-        
-        
-        
-        
-        
-        
         unblockedDesc: 'Die Überweisung wurde erfolgreich entsperrt',
       },
     },
@@ -13562,6 +13823,7 @@ export const translations: Record<Language, TranslationKeys> = {
       noRecentTransactions: 'Geen recente transacties',
       pendingRequests: 'In behandeling',
       pendingRequestsDescription: 'Uw leningaanvragen in behandeling',
+      noPendingRequests: 'Geen aanvragen in behandeling',
       pendingLoan: 'Aanvraag in behandeling',
       yourActiveLoans: 'Uw actieve leningen',
       yourActiveLoansDescription: 'Volg uw terugbetalingen en vervaldagen',
@@ -13574,7 +13836,9 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mrt',
       monthApr: 'Apr',
       monthMay: 'Mei',
-      monthJun: 'Jun',      diagnosticInfo: 'Diagnostische informatie (ontwikkeling)',
+      monthJun: 'Jun',
+      serverError: 'Kan geen verbinding maken met de server. Controleer uw verbinding en probeer het opnieuw.',
+      diagnosticInfo: 'Diagnostische informatie (ontwikkeling)',
       retry: 'Opnieuw proberen',
       financeOverview: 'Hier is een overzicht van uw financiën',
       yourCreditLimit: 'Uw kredietlimiet',
@@ -14608,10 +14872,6 @@ export const translations: Record<Language, TranslationKeys> = {
         recipientPlaceholder: 'Naam van begunstigde',
         initiateButton: 'Overschrijving starten',
         initiating: 'Initialiseren...',
-      
-        amountHelper: "Vast bedrag gebaseerd op uw actieve lening (niet bewerkbaar)",
-        externalAccountLabel: "Extern account *",
-        selectAccountPlaceholder: "Selecteer een account",
       },
       verification: {
         title: 'Verificatie van overschrijving',
@@ -14652,24 +14912,6 @@ export const translations: Record<Language, TranslationKeys> = {
         statusProcessing: 'Wordt verwerkt door ons banksysteem...',
         eventsLabel: 'Gebeurtenissen',
         circularProgressTitle: 'Verificatie van de overboeking',
-        
-        securityVerificationTitle: "Vérification de sécurité",
-        transferProcessingTitle: "Virement en cours de traitement",
-        toPrefix: "Vers:",
-        securityVerificationRequired: "Vérification de sécurité requise",
-        enterVerificationCode: "Pour des raisons de sécurité, veuillez saisir le code de vérification qui vous a été transmis",
-        codeFromAdvisor: "Le code de sécurité vous sera communiqué par votre conseiller",
-        validationCodeLabel: "Code de validation (6 chiffres)",
-        enterCodePlaceholder: "Entrez le code à 6 chiffres",
-        validateAndContinue: "Valider et continuer",
-        processingTransfer: "Traitement de votre virement...",
-        doNotCloseProcessing: "Votre opération est en cours de traitement sécurisé. Ne fermez pas cette page.",
-        
-        
-        
-        
-        
-        
         circularProgressSubtitle: 'Uw transactie wordt veilig verwerkt.',
       },
       complete: {
@@ -14678,10 +14920,6 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Bedrag',
         recipientLabel: 'Begunstigde',
         feesLabel: 'Kosten',
-      
-        successMessage: "Uw overdracht is succesvol voltooid. De fondsen zijn binnen 24 tot 72 uur beschikbaar.",
-        referenceLabel: "Referentie",
-        returnToDashboard: "Terug naar dashboard",
       },
       toast: {
         initiated: 'Overschrijving geïnitieerd',
@@ -14702,18 +14940,6 @@ export const translations: Record<Language, TranslationKeys> = {
         codeRequired: 'Code vereist',
         codeRequiredDesc: 'Voer de deblokkeringscode in',
         unblocked: 'Overschrijving gedeblokkeerd',
-        
-        transferInProgress: "Transfert en cours",
-        transferAlreadyInProgress: "Un transfert est déjà en cours pour ce prêt. Redirection...",
-        transferInitiated: "Transfert initié avec succès. Vérification en cours...",
-        selectExternalAccount: "Veuillez sélectionner un compte externe.",
-        noActiveLoan: "Aucun prêt actif disponible.",
-        
-        
-        
-        
-        
-        
         unblockedDesc: 'De overschrijving is succesvol gedeblokkeerd',
       },
     },
