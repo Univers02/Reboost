@@ -9,8 +9,10 @@ export default function VideoTemoignage() {
   return (
     <video
       controls
-      className="w-full h-auto"
+      preload="metadata"
+      className="w-full h-auto rounded-3xl"
       data-testid="video-testimonial"
+      style={{ backgroundColor: '#000' }}
     >
       <source src="/videos/video-temoignage.mp4" type="video/mp4" />
 
