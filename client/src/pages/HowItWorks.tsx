@@ -90,7 +90,7 @@ export default function HowItWorks() {
           >
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-indigo-100 mb-6">
               <Sparkles className="w-4 h-4 text-indigo-600 mr-2" />
-              <span className="text-sm font-semibold text-indigo-600">Processus 100% Digital</span>
+              <span className="text-sm font-semibold text-indigo-600">Processus 100% Numérique</span>
             </div>
             
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-indigo-900 to-gray-900 bg-clip-text text-transparent">
