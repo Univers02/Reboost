@@ -1,201 +1,124 @@
 import * as fs from 'fs';
 
 const newTranslations = {
-  goodMorning: {
-    es: 'Buenos días',
-    pt: 'Bom dia',
-    it: 'Buongiorno',
-    de: 'Guten Morgen',
-    nl: 'Goedemorgen',
+  serverError: {
+    es: 'No se puede conectar al servidor. Por favor, verifique su conexión e inténtelo de nuevo.',
+    pt: 'Não foi possível conectar ao servidor. Por favor, verifique sua conexão e tente novamente.',
+    it: 'Impossibile connettersi al server. Si prega di verificare la connessione e riprovare.',
+    de: 'Verbindung zum Server nicht möglich. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.',
+    nl: 'Kan geen verbinding maken met de server. Controleer uw verbinding en probeer het opnieuw.',
   },
-  goodAfternoon: {
-    es: 'Buenas tardes',
-    pt: 'Boa tarde',
-    it: 'Buon pomeriggio',
-    de: 'Guten Nachmittag',
-    nl: 'Goedemiddag',
+  diagnosticInfo: {
+    es: 'Información de diagnóstico (desarrollo)',
+    pt: 'Informações de diagnóstico (desenvolvimento)',
+    it: 'Informazioni diagnostiche (sviluppo)',
+    de: 'Diagnoseinformationen (Entwicklung)',
+    nl: 'Diagnostische informatie (ontwikkeling)',
   },
-  goodEvening: {
-    es: 'Buenas noches',
-    pt: 'Boa noite',
-    it: 'Buonasera',
-    de: 'Guten Abend',
-    nl: 'Goedenavond',
+  retry: {
+    es: 'Reintentar',
+    pt: 'Tentar novamente',
+    it: 'Riprova',
+    de: 'Erneut versuchen',
+    nl: 'Opnieuw proberen',
   },
-  totalBalance: {
-    es: 'Saldo total',
-    pt: 'Saldo total',
-    it: 'Saldo totale',
-    de: 'Gesamtsaldo',
-    nl: 'Totaal saldo',
+  financeOverview: {
+    es: 'Aquí tiene una vista general de sus finanzas',
+    pt: 'Aqui está uma visão geral de suas finanças',
+    it: 'Ecco una panoramica delle tue finanze',
+    de: 'Hier ist eine Übersicht Ihrer Finanzen',
+    nl: 'Hier is een overzicht van uw financiën',
   },
-  newTransfer: {
-    es: 'Nueva transferencia',
-    pt: 'Nova transferência',
-    it: 'Nuovo bonifico',
-    de: 'Neue Überweisung',
-    nl: 'Nieuwe overboeking',
+  yourCreditLimit: {
+    es: 'Su límite de crédito',
+    pt: 'Seu limite de crédito',
+    it: 'Il tuo limite di credito',
+    de: 'Ihr Kreditlimit',
+    nl: 'Uw kredietlimiet',
   },
-  requestLoan: {
-    es: 'Solicitar un préstamo',
-    pt: 'Solicitar um empréstimo',
-    it: 'Richiedere un prestito',
-    de: 'Kredit beantragen',
-    nl: 'Lening aanvragen',
+  maximum: {
+    es: 'Máximo',
+    pt: 'Máximo',
+    it: 'Massimo',
+    de: 'Maximum',
+    nl: 'Maximum',
   },
-  manageAccounts: {
-    es: 'Gestionar cuentas',
-    pt: 'Gerenciar contas',
-    it: 'Gestisci conti',
-    de: 'Konten verwalten',
-    nl: 'Rekeningen beheren',
+  activeLoanSingular: {
+    es: 'préstamo activo',
+    pt: 'empréstimo ativo',
+    it: 'prestito attivo',
+    de: 'aktives Darlehen',
+    nl: 'actieve lening',
   },
-  cashflow: {
-    es: 'Flujo de caja',
-    pt: 'Fluxo de caixa',
-    it: 'Flusso di cassa',
-    de: 'Cashflow',
-    nl: 'Cashflow',
+  activeLoansPlural: {
+    es: 'préstamos activos',
+    pt: 'empréstimos ativos',
+    it: 'prestiti attivi',
+    de: 'aktive Darlehen',
+    nl: 'actieve leningen',
   },
-  incomeExpensesSixMonths: {
-    es: 'Ingresos y gastos en 6 meses',
-    pt: 'Receitas e despesas em 6 meses',
-    it: 'Entrate e uscite in 6 mesi',
-    de: 'Einnahmen und Ausgaben über 6 Monate',
-    nl: 'Inkomsten en uitgaven over 6 maanden',
+  loanNumber: {
+    es: 'Préstamo #',
+    pt: 'Empréstimo #',
+    it: 'Prestito #',
+    de: 'Darlehen #',
+    nl: 'Lening #',
   },
-  income: {
-    es: 'Ingresos',
-    pt: 'Receitas',
-    it: 'Entrate',
-    de: 'Einnahmen',
-    nl: 'Inkomsten',
+  progression: {
+    es: 'Progreso',
+    pt: 'Progresso',
+    it: 'Progresso',
+    de: 'Fortschritt',
+    nl: 'Voortgang',
   },
-  expenses: {
-    es: 'Gastos',
-    pt: 'Despesas',
-    it: 'Uscite',
-    de: 'Ausgaben',
-    nl: 'Uitgaven',
+  nextSixMonths: {
+    es: 'Próximos 6 meses',
+    pt: 'Próximos 6 meses',
+    it: 'Prossimi 6 mesi',
+    de: 'Nächste 6 Monate',
+    nl: 'Volgende 6 maanden',
   },
-  creditUtilization: {
-    es: 'Utilización del crédito',
-    pt: 'Utilização de crédito',
-    it: 'Utilizzo del credito',
-    de: 'Kreditauslastung',
-    nl: 'Kredietgebruik',
+  repayment: {
+    es: 'Reembolso',
+    pt: 'Reembolso',
+    it: 'Rimborso',
+    de: 'Rückzahlung',
+    nl: 'Terugbetaling',
   },
-  used: {
-    es: 'utilizado',
-    pt: 'utilizado',
-    it: 'utilizzato',
-    de: 'verwendet',
-    nl: 'gebruikt',
+  noUpcomingRepayments: {
+    es: 'Sin reembolsos próximos',
+    pt: 'Sem reembolsos próximos',
+    it: 'Nessun rimborso imminente',
+    de: 'Keine bevorstehenden Rückzahlungen',
+    nl: 'Geen aankomende terugbetalingen',
   },
-  recentActivity: {
-    es: 'Actividad reciente',
-    pt: 'Atividade recente',
-    it: 'Attività recente',
-    de: 'Neueste Aktivität',
-    nl: 'Recente activiteit',
+  pendingContracts: {
+    es: 'Contratos pendientes',
+    pt: 'Contratos pendentes',
+    it: 'Contratti in sospeso',
+    de: 'Ausstehende Verträge',
+    nl: 'Openstaande contracten',
   },
-  latestTransactions: {
-    es: 'Últimas transacciones',
-    pt: 'Últimas transações',
-    it: 'Ultime transazioni',
-    de: 'Neueste Transaktionen',
-    nl: 'Laatste transacties',
+  contractsToSign: {
+    es: 'contrato(s) para firmar',
+    pt: 'contrato(s) para assinar',
+    it: 'contratto/i da firmare',
+    de: 'Vertrag/Verträge zu unterschreiben',
+    nl: 'contract(en) te ondertekenen',
   },
-  viewAll: {
-    es: 'Ver todo',
-    pt: 'Ver tudo',
-    it: 'Vedi tutto',
-    de: 'Alle anzeigen',
-    nl: 'Bekijk alles',
+  generatedOn: {
+    es: 'Generado el',
+    pt: 'Gerado em',
+    it: 'Generato il',
+    de: 'Erstellt am',
+    nl: 'Gegenereerd op',
   },
-  noRecentTransactions: {
-    es: 'Sin transacciones recientes',
-    pt: 'Sem transações recentes',
-    it: 'Nessuna transazione recente',
-    de: 'Keine aktuellen Transaktionen',
-    nl: 'Geen recente transacties',
-  },
-  yourActiveLoans: {
-    es: 'Sus préstamos activos',
-    pt: 'Seus empréstimos ativos',
-    it: 'I tuoi prestiti attivi',
-    de: 'Ihre aktiven Darlehen',
-    nl: 'Uw actieve leningen',
-  },
-  activeLoan: {
-    es: 'Préstamo activo',
-    pt: 'Empréstimo ativo',
-    it: 'Prestito attivo',
-    de: 'Aktives Darlehen',
-    nl: 'Actieve lening',
-  },
-  repaid: {
-    es: 'Reembolsado',
-    pt: 'Reembolsado',
-    it: 'Rimborsato',
-    de: 'Zurückgezahlt',
-    nl: 'Terugbetaald',
-  },
-  upcomingDueDates: {
-    es: 'Próximos vencimientos',
-    pt: 'Próximos vencimentos',
-    it: 'Prossime scadenze',
-    de: 'Bevorstehende Fälligkeiten',
-    nl: 'Aankomende vervaldagen',
-  },
-  amount: {
-    es: 'Cantidad',
-    pt: 'Quantia',
-    it: 'Importo',
-    de: 'Betrag',
-    nl: 'Bedrag',
-  },
-  monthJan: {
-    es: 'Ene',
-    pt: 'Jan',
-    it: 'Gen',
-    de: 'Jan',
-    nl: 'Jan',
-  },
-  monthFeb: {
-    es: 'Feb',
-    pt: 'Fev',
-    it: 'Feb',
-    de: 'Feb',
-    nl: 'Feb',
-  },
-  monthMar: {
-    es: 'Mar',
-    pt: 'Mar',
-    it: 'Mar',
-    de: 'Mär',
-    nl: 'Mrt',
-  },
-  monthApr: {
-    es: 'Abr',
-    pt: 'Abr',
-    it: 'Apr',
-    de: 'Apr',
-    nl: 'Apr',
-  },
-  monthMay: {
-    es: 'May',
-    pt: 'Mai',
-    it: 'Mag',
-    de: 'Mai',
-    nl: 'Mei',
-  },
-  monthJun: {
-    es: 'Jun',
-    pt: 'Jun',
-    it: 'Giu',
-    de: 'Jun',
-    nl: 'Jun',
+  view: {
+    es: 'Ver',
+    pt: 'Ver',
+    it: 'Vedi',
+    de: 'Ansehen',
+    nl: 'Bekijken',
   },
 };
 
@@ -205,12 +128,12 @@ let content = fs.readFileSync(filePath, 'utf8');
 const languages = ['es', 'pt', 'it', 'de', 'nl'];
 
 for (const lang of languages) {
-  // Find the dashboard section for this language
-  const dashboardRegex = new RegExp(`(${lang}:.*?dashboard: \\{[^}]*?moreTransfers: [^,]*,)\\s*(\\})`, 's');
+  // Find the dashboard section for this language and locate monthJun
+  const dashboardRegex = new RegExp(`(${lang}:.*?dashboard: \\{[^}]*?monthJun: '[^']*',)`, 's');
   
   const match = content.match(dashboardRegex);
   if (!match) {
-    console.error(`Could not find dashboard section for ${lang}`);
+    console.error(`Could not find monthJun in dashboard section for ${lang}`);
     continue;
   }
 
@@ -219,8 +142,8 @@ for (const lang of languages) {
     return `      ${key}: '${newTranslations[key][lang]}',`;
   }).join('\n');
 
-  // Replace the closing brace with new keys + closing brace
-  content = content.replace(dashboardRegex, `$1\n${newKeys}\n    $2`);
+  // Replace after monthJun with new keys
+  content = content.replace(dashboardRegex, `$1\n${newKeys}`);
   
   console.log(`✓ Added translations for ${lang}`);
 }
