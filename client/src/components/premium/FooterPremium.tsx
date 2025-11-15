@@ -57,13 +57,13 @@ export default function FooterPremium() {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-indigo-400" />
-                <a href="tel:+33123456789" className="hover:text-white transition-colors" data-testid="link-footer-phone">
-                  +33 1 23 45 67 89
+                <a href="tel:+35240634" className="hover:text-white transition-colors" data-testid="link-footer-phone">
+                  +352 40 63 48
                 </a>
               </div>
               <div className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 text-indigo-400 mt-0.5" />
-                <span>123 Avenue des Champs-Élysées<br />75008 Paris, France</span>
+                <span>19 Rue Sigismond<br />L-2537 Luxembourg</span>
               </div>
             </div>
           </div>
