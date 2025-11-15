@@ -27,11 +27,13 @@ export default function Products() {
         structuredData={loanProductSchema(language)}
       />
       <Header />
-      <main className="pt-24 pb-16">
+      <main className="pt-24 pb-16 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t.products.title}</h1>
-            <p className="text-xl text-muted-foreground">{t.products.subtitle}</p>
+          <div className="max-w-4xl mx-auto text-center mb-20">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              {t.products.title}
+            </h1>
+            <p className="text-xl text-gray-600 leading-relaxed">{t.products.subtitle}</p>
           </div>
 
           {/* Individual Loans Section */}
@@ -40,32 +42,32 @@ export default function Products() {
               <h2 className="text-3xl sm:text-4xl font-bold mb-3" data-testid="heading-individual-loans">{t.individualLoans.title}</h2>
               <p className="text-lg text-muted-foreground">{t.individualLoans.subtitle}</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
               {individualProducts.map((product, index) => {
                 const Icon = product.icon;
                 return (
-                  <Card key={index} className="p-6" data-testid={`card-individual-loan-${index}`}>
-                    <div className={`${product.bgColor} p-3 rounded-lg w-fit mb-4`}>
+                  <Card key={index} className="p-8 bg-white hover:shadow-xl transition-all duration-300 hover:-translate-y-1" data-testid={`card-individual-loan-${index}`}>
+                    <div className={`${product.bgColor} p-4 rounded-xl w-fit mb-6`}>
                       <Icon className={`w-8 h-8 ${product.color}`} />
                     </div>
-                    <h3 className="text-xl font-bold mb-2">{product.title}</h3>
-                    <p className="text-muted-foreground text-sm mb-4">{product.description}</p>
-                    <div className="space-y-2 mb-4 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Montant:</span>
-                        <span className="font-semibold">{product.amount}</span>
+                    <h3 className="text-xl font-bold mb-3">{product.title}</h3>
+                    <p className="text-gray-600 text-sm mb-6 leading-relaxed">{product.description}</p>
+                    <div className="space-y-3 mb-6 text-sm border-t pt-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-500">Montant:</span>
+                        <span className="font-bold text-gray-900">{product.amount}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Taux:</span>
-                        <span className="font-semibold">{product.rate}</span>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-500">Taux:</span>
+                        <span className="font-bold text-[#005DFF]">{product.rate}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Durée:</span>
-                        <span className="font-semibold">{product.duration}</span>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-500">Durée:</span>
+                        <span className="font-bold text-gray-900">{product.duration}</span>
                       </div>
                     </div>
                     <Link href="/loan-request" className="block">
-                      <Button className="w-full" size="sm" data-testid={`button-apply-individual-${index}`}>{t.hero.cta1}</Button>
+                      <Button className="w-full bg-[#005DFF] hover:bg-[#0052E0]" data-testid={`button-apply-individual-${index}`}>{t.hero.cta1}</Button>
                     </Link>
                   </Card>
                 );
@@ -88,38 +90,38 @@ export default function Products() {
                 const Icon = product.icon;
                 const features = product.featuresKey ? (t.businessLoans as any)[product.featuresKey] : [];
                 return (
-                  <Card key={index} className="p-8" data-testid={`card-business-loan-${index}`}>
-                    <div className={`${product.bgColor} p-3 rounded-lg w-fit mb-4`}>
+                  <Card key={index} className="p-10 bg-white hover:shadow-xl transition-all duration-300 hover:-translate-y-1" data-testid={`card-business-loan-${index}`}>
+                    <div className={`${product.bgColor} p-4 rounded-xl w-fit mb-6`}>
                       <Icon className={`w-10 h-10 ${product.color}`} />
                     </div>
-                    <h3 className="text-2xl font-bold mb-3">{product.title}</h3>
-                    <p className="text-muted-foreground mb-6">{product.description}</p>
-                    <div className="space-y-2 mb-4 text-sm border-b pb-4">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Montant:</span>
-                        <span className="font-semibold">{product.amount}</span>
+                    <h3 className="text-2xl font-bold mb-4">{product.title}</h3>
+                    <p className="text-gray-600 mb-8 leading-relaxed">{product.description}</p>
+                    <div className="space-y-3 mb-6 text-sm border-t border-b py-6">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-500">Montant:</span>
+                        <span className="font-bold text-gray-900">{product.amount}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Taux:</span>
-                        <span className="font-semibold">{product.rate}</span>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-500">Taux:</span>
+                        <span className="font-bold text-[#005DFF]">{product.rate}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Durée:</span>
-                        <span className="font-semibold">{product.duration}</span>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-500">Durée:</span>
+                        <span className="font-bold text-gray-900">{product.duration}</span>
                       </div>
                     </div>
                     {features && features.length > 0 && (
-                      <ul className="space-y-2 mb-6">
+                      <ul className="space-y-3 mb-8">
                         {features.map((feature: string, idx: number) => (
-                          <li key={idx} className="flex items-center text-sm">
-                            <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                          <li key={idx} className="flex items-start text-sm text-gray-700">
+                            <span className="w-2 h-2 bg-[#005DFF] rounded-full mr-3 mt-1.5 flex-shrink-0"></span>
                             {feature}
                           </li>
                         ))}
                       </ul>
                     )}
                     <Link href="/loan-request" className="block">
-                      <Button className="w-full" data-testid={`button-apply-business-${index}`}>{t.hero.cta1}</Button>
+                      <Button className="w-full bg-[#005DFF] hover:bg-[#0052E0]" data-testid={`button-apply-business-${index}`}>{t.hero.cta1}</Button>
                     </Link>
                   </Card>
                 );

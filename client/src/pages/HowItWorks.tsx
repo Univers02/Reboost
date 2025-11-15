@@ -62,43 +62,51 @@ export default function HowItWorks() {
         path="/how-it-works"
       />
       <Header />
-      <main className="pt-24 pb-16">
+      <main className="pt-24 pb-16 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t.howItWorks.title || 'Comment Ça Marche ?'}</h1>
-            <p className="text-xl text-muted-foreground">
-              {t.howItWorks.subtitle || 'Un parcours simplifié de la demande au déblocage des fonds'}
+          <div className="max-w-4xl mx-auto text-center mb-20">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              {t.howItWorks.title || 'Comment Ça Marche ?'}
+            </h1>
+            <p className="text-xl text-gray-600 leading-relaxed">
+              {t.howItWorks.subtitle || 'Un processus simple, transparent et 100% digital'}
             </p>
           </div>
 
-          <div className="max-w-6xl mx-auto mb-20">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {steps.map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <Card key={index} className="p-6 relative hover:shadow-lg transition-shadow" data-testid={`card-step-${index}`}>
-                    <div className="absolute -top-3 left-6 bg-primary text-primary-foreground w-10 h-10 rounded-full flex items-center justify-center font-bold">
-                      {index + 1}
-                    </div>
-                    <div className="mt-4">
-                      <Icon className="w-10 h-10 mb-4 text-primary" />
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-lg font-bold">{step.title}</h3>
-                        <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-full">
-                          <Clock className="w-3 h-3 inline mr-1" />
-                          {step.duration}
-                        </span>
+          <div className="max-w-7xl mx-auto mb-24">
+            <div className="relative">
+              <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-[#005DFF]/20 via-[#005DFF]/40 to-[#005DFF]/20 -translate-y-1/2" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+                {steps.map((step, index) => {
+                  const Icon = step.icon;
+                  return (
+                    <Card key={index} className="p-8 relative hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white" data-testid={`card-step-${index}`}>
+                      <div className="absolute -top-4 -left-4 bg-gradient-to-br from-[#005DFF] to-[#0052E0] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-lg">
+                        {index + 1}
                       </div>
-                      <p className="text-sm text-muted-foreground">{step.description}</p>
-                    </div>
-                  </Card>
-                );
-              })}
+                      <div className="mt-2">
+                        <div className="bg-[#005DFF]/10 p-4 rounded-xl w-fit mb-6">
+                          <Icon className="w-8 h-8 text-[#005DFF]" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-3">{step.title}</h3>
+                        <p className="text-sm text-gray-600 mb-4 leading-relaxed">{step.description}</p>
+                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 text-gray-700 font-semibold text-xs w-fit">
+                          <Clock className="w-4 h-4 text-[#005DFF]" />
+                          {step.duration}
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
             </div>
-            <div className="mt-8 text-center">
-              <p className="text-sm text-muted-foreground">
-                ⏱️ <strong>{t.howItWorks.averageTimePrefix}</strong> {t.howItWorks.averageTimeValue}
-              </p>
+            <div className="mt-12 text-center">
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-[#005DFF]/10 border border-[#005DFF]/20">
+                <Clock className="w-5 h-5 text-[#005DFF]" />
+                <p className="text-sm font-semibold text-gray-800">
+                  {t.howItWorks.averageTimePrefix} <span className="text-[#005DFF]">{t.howItWorks.averageTimeValue}</span>
+                </p>
+              </div>
             </div>
           </div>
 
@@ -110,30 +118,34 @@ export default function HowItWorks() {
               </p>
             </div>
             <div className="grid md:grid-cols-2 gap-8">
-              <Card className="p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <Users className="w-8 h-8 text-primary" />
+              <Card className="p-10 bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="bg-[#005DFF]/10 p-3 rounded-xl">
+                    <Users className="w-8 h-8 text-[#005DFF]" />
+                  </div>
                   <h3 className="text-2xl font-bold">{t.howItWorks.personalLoanTitle}</h3>
                 </div>
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   {t.howItWorks.documents.personal.map((doc, idx) => (
                     <li key={idx} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{doc}</span>
+                      <CheckCircle className="w-5 h-5 text-[#00C48C] mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-gray-700 leading-relaxed">{doc}</span>
                     </li>
                   ))}
                 </ul>
               </Card>
-              <Card className="p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <Briefcase className="w-8 h-8 text-primary" />
+              <Card className="p-10 bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="bg-[#005DFF]/10 p-3 rounded-xl">
+                    <Briefcase className="w-8 h-8 text-[#005DFF]" />
+                  </div>
                   <h3 className="text-2xl font-bold">{t.howItWorks.businessLoanTitle}</h3>
                 </div>
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   {t.howItWorks.documents.professional.map((doc, idx) => (
                     <li key={idx} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{doc}</span>
+                      <CheckCircle className="w-5 h-5 text-[#00C48C] mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-gray-700 leading-relaxed">{doc}</span>
                     </li>
                   ))}
                 </ul>

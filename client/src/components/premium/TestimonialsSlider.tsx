@@ -11,28 +11,56 @@ const testimonials = [
     role: "CEO, TechStart",
     image: "https://i.pravatar.cc/150?img=1",
     rating: 5,
-    text: "Altus Finance Group a été un véritable partenaire dans notre développement. Processus rapide, conseillers à l'écoute, et des solutions vraiment adaptées à nos besoins."
+    text: "Altus Finance Group a été un véritable partenaire dans notre développement. Processus rapide, conseillers à l'écoute, et des solutions vraiment adaptées."
   },
   {
     name: "Marc Dubois",
-    role: "Entrepreneur",
+    role: "Entrepreneur Immobilier",
     image: "https://i.pravatar.cc/150?img=12",
     rating: 5,
-    text: "J'ai pu concrétiser mon projet immobilier grâce à leur accompagnement personnalisé. L'interface digitale est moderne et le suivi est impeccable."
+    text: "J'ai pu concrétiser mon projet immobilier grâce à leur accompagnement personnalisé. Interface digitale moderne et suivi impeccable."
   },
   {
     name: "Isabelle Renaud",
-    role: "Directrice Financière",
+    role: "Directrice Financière, PME",
     image: "https://i.pravatar.cc/150?img=5",
     rating: 5,
-    text: "Nous avons consolidé nos dettes avec Altus. L'équipe a été très professionnelle, transparente et nous a proposé des conditions optimales."
+    text: "Consolidation de dettes réalisée avec professionnalisme. Équipe transparente et conditions optimales pour notre entreprise."
   },
   {
     name: "Thomas Lefèvre",
     role: "Fondateur, GreenTech",
     image: "https://i.pravatar.cc/150?img=13",
     rating: 5,
-    text: "Excellent service ! Ils ont compris nos enjeux et nous ont accompagnés de A à Z. Je recommande vivement pour tout projet de financement professionnel."
+    text: "Excellent service ! Ils ont compris nos enjeux et nous ont accompagnés de A à Z. Je recommande vivement."
+  },
+  {
+    name: "Caroline Mercier",
+    role: "Consultante Indépendante",
+    image: "https://i.pravatar.cc/150?img=20",
+    rating: 5,
+    text: "Financement obtenu en 48h pour développer mon activité. Plateforme intuitive et équipe très réactive. Parfait pour les indépendants."
+  },
+  {
+    name: "Laurent Bertrand",
+    role: "Dirigeant, RestauGourmet",
+    image: "https://i.pravatar.cc/150?img=33",
+    rating: 5,
+    text: "Grâce à Altus, j'ai pu ouvrir mon second restaurant. Des solutions flexibles adaptées aux besoins des commerçants."
+  },
+  {
+    name: "Émilie Rousseau",
+    role: "Particulier",
+    image: "https://i.pravatar.cc/150?img=9",
+    rating: 5,
+    text: "Prêt personnel pour mes travaux obtenu rapidement. Conseils clairs, taux compétitif et accompagnement humain. Très satisfaite."
+  },
+  {
+    name: "Philippe Morel",
+    role: "PDG, InnovateTech",
+    image: "https://i.pravatar.cc/150?img=51",
+    rating: 5,
+    text: "Partenaire financier de confiance pour notre scale-up. Réactivité exceptionnelle et compréhension fine de nos enjeux tech."
   }
 ];
 

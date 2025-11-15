@@ -22,7 +22,7 @@ export default function HeroCarousel() {
   const currentSlides = t.hero.slides.slice(0, slideImages.length);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div className="relative h-[500px] md:h-[550px] w-full overflow-hidden">
       {/* Slides */}
       {currentSlides.map((_, i) => (
         <div
@@ -41,32 +41,32 @@ export default function HeroCarousel() {
           />
 
           {/* Gradient overlay - Premium banking colors */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0d0f3b]/80 to-[#4b3bff]/40"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0d0f3b]/85 to-[#4b3bff]/45"></div>
         </div>
       ))}
 
       {/* CONTENT */}
       <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-10 lg:px-24 text-white max-w-5xl z-10">
         <h1 
-          className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)] animate-fade-in"
+          className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)] animate-fade-in"
           data-testid="text-hero-title"
         >
           {t.hero.slides[index]?.title}
         </h1>
 
         <p 
-          className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-2xl text-gray-100 max-w-3xl animate-fade-in delay-300 leading-relaxed"
+          className="mt-3 sm:mt-4 text-base sm:text-lg lg:text-xl text-gray-100 max-w-2xl animate-fade-in delay-300 leading-relaxed"
           data-testid="text-hero-subtitle"
         >
           {t.hero.slides[index]?.subtitle}
         </p>
 
         {/* CTA Buttons */}
-        <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-4 animate-fade-in delay-500">
+        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 animate-fade-in delay-500">
           <button
-            onClick={() => setLocation("/apply")}
-            className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg bg-[#4b3bff] font-semibold text-base sm:text-lg shadow-lg
-              hover:bg-[#564dff] hover:shadow-[0_0_20px_rgba(75,59,255,0.5)]
+            onClick={() => setLocation("/loan-request")}
+            className="px-6 sm:px-7 py-3 rounded-lg bg-[#005DFF] font-semibold text-base shadow-lg
+              hover:bg-[#0052E0] hover:shadow-[0_0_20px_rgba(0,93,255,0.4)]
               transition-all duration-300 transform hover:scale-105"
             data-testid="button-apply-loan"
           >
@@ -74,8 +74,8 @@ export default function HeroCarousel() {
           </button>
 
           <button
-            onClick={() => setLocation("/about")}
-            className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg border-2 border-white/40 font-semibold text-base sm:text-lg backdrop-blur-sm
+            onClick={() => setLocation("/how-it-works")}
+            className="px-6 sm:px-7 py-3 rounded-lg border-2 border-white/40 font-semibold text-base backdrop-blur-sm
               hover:bg-white/10 hover:border-white/60 transition-all duration-300"
             data-testid="button-learn-more"
           >
@@ -85,7 +85,7 @@ export default function HeroCarousel() {
       </div>
 
       {/* Slide indicators */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
         {currentSlides.map((_, i) => (
           <button
             key={i}
@@ -100,21 +100,6 @@ export default function HeroCarousel() {
             data-testid={`indicator-slide-${i}`}
           />
         ))}
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 right-8 animate-bounce hidden lg:block">
-        <svg
-          className="w-6 h-6 text-white/60"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-        </svg>
       </div>
     </div>
   );
