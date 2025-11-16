@@ -260,12 +260,11 @@ app.use((req, res, next) => {
     });
   });
 
+  // Only setup Vite in development (local dev server)
+  // In production, backend serves API only. Frontend is deployed separately on Vercel.
   if (process.env.NODE_ENV === "development") {
     const { setupVite } = await import("./vite");
     await setupVite(app, server);
-  } else {
-    const { serveStatic } = await import("./vite");
-    serveStatic(app);
   }
 
   const port = process.env.PORT ? Number(process.env.PORT) : 5000;

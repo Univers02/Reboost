@@ -1,31 +1,62 @@
-# ✅ Correction du Problème Render
+# ✅ Correction des Problèmes Render
 
-## 🚨 Erreur Identifiée
+## 🚨 Erreurs Identifiées
 
+### Erreur 1 : Module manquant
 ```
 Error: Cannot find module '/opt/render/project/src/dist/index.js'
 ```
 
-### Cause
-Le script `start` cherchait un fichier **compilé** (`dist/index.js`) qui n'existait pas car Render n'avait **pas exécuté la build command**.
+**Cause** : Le script `start` cherchait un fichier **compilé** (`dist/index.js`) qui n'existait pas.
+
+### Erreur 2 : Vite manquant en production
+```
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /opt/render/project/src/server/vite.ts
+```
+
+**Cause** : Le backend essayait d'importer Vite en production, mais Vite est dans `devDependencies` (et ne devrait pas être en production).
 
 ---
 
-## ✅ Solution Appliquée
+## ✅ Solutions Appliquées
 
-J'ai modifié `package.json` pour utiliser **tsx directement** en production :
+### Solution 1 : Utiliser tsx directement
 
-### Avant (ne fonctionnait pas) :
-```json
-"start": "NODE_ENV=production node dist/index.js"
-```
-❌ Nécessite un build avec esbuild → Le fichier n'existe jamais → Échec
+**`package.json` modifié** :
 
-### Après (fonctionne maintenant) :
 ```json
 "start": "NODE_ENV=production tsx server/index.ts"
 ```
-✅ Exécute directement le TypeScript → Pas de build nécessaire → Succès
+
+✅ Plus besoin de build → Plus simple → Fonctionne immédiatement
+
+### Solution 2 : Retirer Vite en production
+
+**`server/index.ts` modifié** :
+
+```typescript
+// Avant (importait Vite en production) ❌
+if (process.env.NODE_ENV === "development") {
+  const { setupVite } = await import("./vite");
+  await setupVite(app, server);
+} else {
+  const { serveStatic } = await import("./vite"); // ❌ Erreur !
+  serveStatic(app);
+}
+
+// Après (Vite uniquement en dev) ✅
+if (process.env.NODE_ENV === "development") {
+  const { setupVite } = await import("./vite");
+  await setupVite(app, server);
+}
+// En production, le backend sert uniquement l'API
+// Le frontend est déployé séparément sur Vercel
+```
+
+**Architecture de production** :
+- 🔹 **Render** : Backend API uniquement (`api.altusfinancegroup.com`)
+- 🔹 **Vercel** : Frontend React (`altusfinancegroup.com`)
+- 🔹 Communication : Le frontend appelle l'API backend via CORS
 
 ---
 
