@@ -526,49 +526,91 @@ function calculateTotalRepayment(principal: number, annualRate: number, months: 
 }
 
 export async function generateContractPDF(user: User, loan: Loan): Promise<string> {
+  console.log('=== DÉBUT GÉNÉRATION CONTRAT PDF ===');
+  console.log(`Loan ID: ${loan.id}, User: ${user.fullName}, Amount: ${loan.amount}`);
+  
   const contractDate = new Date().toLocaleDateString('fr-FR', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   });
 
+  console.log('✓ Template HTML généré');
+
   const htmlContent = getContractTemplate({ user, loan, contractDate });
 
   const uploadsDir = path.join(process.cwd(), 'uploads', 'contracts');
+  console.log(`Vérification répertoire: ${uploadsDir}`);
+  
   if (!fs.existsSync(uploadsDir)) {
+    console.log('Création du répertoire uploads/contracts...');
     fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('✓ Répertoire créé');
+  } else {
+    console.log('✓ Répertoire existe déjà');
   }
 
   const filename = `contrat_${loan.id}_${Date.now()}.pdf`;
   const filepath = path.join(uploadsDir, filename);
+  console.log(`Chemin du fichier PDF: ${filepath}`);
 
   let chromiumPath = '/nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium';
+  console.log(`Chemin Chromium par défaut: ${chromiumPath}`);
   
   try {
+    console.log('Recherche de Chromium sur le système...');
     const whichResult = execSync('which chromium || which chromium-browser || which google-chrome', { encoding: 'utf-8' }).trim();
     if (whichResult) {
       chromiumPath = whichResult;
+      console.log(`✓ Chromium trouvé: ${chromiumPath}`);
+    } else {
+      console.log('⚠ Aucun Chromium trouvé par "which", utilisation du chemin par défaut');
     }
   } catch (e) {
+    console.log(`⚠ Erreur lors de la recherche de Chromium: ${e}`);
+    console.log('Utilisation du chemin par défaut');
   }
 
-  const browser = await puppeteer.launch({
-    executablePath: chromiumPath,
-    headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--disable-software-rasterizer',
-      '--disable-dev-tools'
-    ]
-  });
+  console.log('Vérification de l\'existence de Chromium...');
+  if (fs.existsSync(chromiumPath)) {
+    console.log(`✓ Chromium existe à: ${chromiumPath}`);
+  } else {
+    console.error(`✗ ERREUR: Chromium n'existe PAS à: ${chromiumPath}`);
+    throw new Error(`Chromium introuvable au chemin: ${chromiumPath}`);
+  }
+
+  console.log('Lancement de Puppeteer...');
+  let browser;
+  try {
+    browser = await puppeteer.launch({
+      executablePath: chromiumPath,
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-software-rasterizer',
+        '--disable-dev-tools'
+      ]
+    });
+    console.log('✓ Browser Puppeteer lancé avec succès');
+  } catch (launchError) {
+    console.error('✗ ERREUR lors du lancement de Puppeteer:');
+    console.error(launchError);
+    throw launchError;
+  }
 
   try {
+    console.log('Création d\'une nouvelle page...');
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    console.log('✓ Page créée');
     
+    console.log('Chargement du contenu HTML...');
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    console.log('✓ Contenu HTML chargé');
+    
+    console.log('Génération du PDF...');
     await page.pdf({
       path: filepath,
       format: 'A4',
@@ -580,9 +622,17 @@ export async function generateContractPDF(user: User, loan: Loan): Promise<strin
         left: '0'
       }
     });
+    console.log(`✓ PDF généré avec succès: ${filename}`);
 
+    console.log('=== FIN GÉNÉRATION CONTRAT PDF - SUCCÈS ===');
     return `/uploads/contracts/${filename}`;
+  } catch (pdfError) {
+    console.error('✗ ERREUR lors de la génération du PDF:');
+    console.error(pdfError);
+    throw pdfError;
   } finally {
+    console.log('Fermeture du browser...');
     await browser.close();
+    console.log('✓ Browser fermé');
   }
 }

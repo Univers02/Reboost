@@ -3202,25 +3202,40 @@ Tous les codes de validation ont été vérifiés avec succès.`,
 
   app.post("/api/admin/loans/:id/approve", requireAdmin, requireCSRF, adminLimiter, async (req, res) => {
     try {
+      console.log(`\n========================================`);
+      console.log(`APPROBATION DE PRÊT - ID: ${req.params.id}`);
+      console.log(`========================================`);
+      
       const loan = await storage.getLoan(req.params.id);
       if (!loan) {
+        console.error(`✗ Prêt non trouvé: ${req.params.id}`);
         return res.status(404).json({ error: 'Loan not found' });
       }
+      console.log(`✓ Prêt trouvé: ${loan.id}, Montant: ${loan.amount}`);
 
       const user = await storage.getUser(loan.userId);
       if (!user) {
+        console.error(`✗ Utilisateur non trouvé: ${loan.userId}`);
         return res.status(404).json({ error: 'User not found' });
       }
+      console.log(`✓ Utilisateur trouvé: ${user.fullName} (${user.email})`);
 
       let contractUrl: string | null = null;
       let contractGenerated = false;
 
+      console.log('\n--- Début génération de contrat PDF ---');
       try {
         const { generateContractPDF } = await import('./services/contractGenerator');
         contractUrl = await generateContractPDF(user, loan);
         contractGenerated = true;
-      } catch (contractError) {
-        console.error('Failed to generate contract PDF, continuing with loan approval:', contractError);
+        console.log(`✓ SUCCÈS: Contrat généré à ${contractUrl}`);
+      } catch (contractError: any) {
+        console.error('\n✗✗✗ ERREUR LORS DE LA GÉNÉRATION DU CONTRAT PDF ✗✗✗');
+        console.error('Type d\'erreur:', contractError?.name);
+        console.error('Message d\'erreur:', contractError?.message);
+        console.error('Stack trace:', contractError?.stack);
+        console.error('Erreur complète:', JSON.stringify(contractError, Object.getOwnPropertyNames(contractError), 2));
+        console.error('✗✗✗ FIN DE L\'ERREUR ✗✗✗\n');
         contractGenerated = false;
       }
 
