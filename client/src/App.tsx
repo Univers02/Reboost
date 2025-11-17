@@ -24,13 +24,7 @@ import TwoFactorSetup from '@/pages/TwoFactorSetup';
 import VerifyTwoFactor from '@/pages/VerifyTwoFactor';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
-import AdminDashboard from '@/pages/AdminDashboard';
-import AdminUsers from '@/pages/AdminUsers';
-import AdminLoans from '@/pages/AdminLoans';
-import AdminTransfers from '@/pages/AdminTransfers';
-import AdminSettings from '@/pages/AdminSettings';
-import AdminReports from '@/pages/AdminReports';
-import AdminDocuments from '@/pages/AdminDocuments';
+import AdminSimple from '@/pages/AdminSimple';
 import IndividualLoans from '@/pages/IndividualLoans';
 import LoanRequestDashboard from '@/pages/LoanRequestDashboard';
 import TransferFlow from '@/pages/TransferFlow';
@@ -125,12 +119,8 @@ function App() {
                           <Route path="/history" component={History} />
                           <Route path="/settings" component={Settings} />
                           <Route path="/security/2fa" component={TwoFactorSetup} />
-                          <Route path="/admin" component={AdminDashboard} />
-                          <Route path="/admin/users" component={AdminUsers} />
-                          <Route path="/admin/loans" component={AdminLoans} />
-                          <Route path="/admin/transfers" component={AdminTransfers} />
-                          <Route path="/admin/settings" component={AdminSettings} />
-                          <Route path="/admin/reports" component={AdminReports} />
+                          <Route path="/admin" component={AdminSimple} />
+                          <Route path="/admin/:any*" component={AdminSimple} />
                           <Route component={NotFound} />
                         </Switch>
                       </main>
