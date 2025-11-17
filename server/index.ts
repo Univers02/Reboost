@@ -63,6 +63,8 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
   ? [
       'https://altusfinancegroup.com',
       'https://www.altusfinancegroup.com',
+      'https://altusfinancesgroup.com',
+      'https://www.altusfinancesgroup.com',
       process.env.FRONTEND_URL
     ].filter(Boolean)
   : ['http://localhost:5000', 'http://localhost:5173', 'http://127.0.0.1:5000'];
