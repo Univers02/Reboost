@@ -554,36 +554,44 @@ export async function generateContractPDF(user: User, loan: Loan): Promise<strin
   const filepath = path.join(uploadsDir, filename);
   console.log(`Chemin du fichier PDF: ${filepath}`);
 
-  let chromiumPath = '/nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium';
-  console.log(`Chemin Chromium par défaut: ${chromiumPath}`);
+  let chromiumPath: string | undefined = undefined;
+  let useDefaultChromium = false;
   
+  console.log('Recherche de Chromium sur le système...');
+  
+  // Essayer de trouver Chromium sur le système
   try {
-    console.log('Recherche de Chromium sur le système...');
     const whichResult = execSync('which chromium || which chromium-browser || which google-chrome', { encoding: 'utf-8' }).trim();
-    if (whichResult) {
+    if (whichResult && fs.existsSync(whichResult)) {
       chromiumPath = whichResult;
-      console.log(`✓ Chromium trouvé: ${chromiumPath}`);
-    } else {
-      console.log('⚠ Aucun Chromium trouvé par "which", utilisation du chemin par défaut');
+      console.log(`✓ Chromium trouvé sur le système: ${chromiumPath}`);
     }
   } catch (e) {
-    console.log(`⚠ Erreur lors de la recherche de Chromium: ${e}`);
-    console.log('Utilisation du chemin par défaut');
+    console.log('⚠ Aucun Chromium trouvé par "which"');
   }
-
-  console.log('Vérification de l\'existence de Chromium...');
-  if (fs.existsSync(chromiumPath)) {
-    console.log(`✓ Chromium existe à: ${chromiumPath}`);
-  } else {
-    console.error(`✗ ERREUR: Chromium n'existe PAS à: ${chromiumPath}`);
-    throw new Error(`Chromium introuvable au chemin: ${chromiumPath}`);
+  
+  // Si non trouvé, essayer le chemin Nix (pour Replit)
+  if (!chromiumPath) {
+    const nixChromiumPath = '/nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium';
+    console.log(`Vérification du chemin Nix: ${nixChromiumPath}`);
+    if (fs.existsSync(nixChromiumPath)) {
+      chromiumPath = nixChromiumPath;
+      console.log(`✓ Chromium Nix trouvé: ${chromiumPath}`);
+    } else {
+      console.log('⚠ Chromium Nix non trouvé');
+    }
+  }
+  
+  // Si toujours pas trouvé, utiliser le Chromium embarqué de Puppeteer
+  if (!chromiumPath) {
+    console.log('ℹ Aucun Chromium système trouvé, utilisation du Chromium embarqué de Puppeteer');
+    useDefaultChromium = true;
   }
 
   console.log('Lancement de Puppeteer...');
   let browser;
   try {
-    browser = await puppeteer.launch({
-      executablePath: chromiumPath,
+    const launchOptions: any = {
       headless: true,
       args: [
         '--no-sandbox',
@@ -593,7 +601,17 @@ export async function generateContractPDF(user: User, loan: Loan): Promise<strin
         '--disable-software-rasterizer',
         '--disable-dev-tools'
       ]
-    });
+    };
+    
+    // Si on a trouvé un chemin custom, l'utiliser
+    if (chromiumPath && !useDefaultChromium) {
+      launchOptions.executablePath = chromiumPath;
+      console.log(`Utilisation de Chromium custom: ${chromiumPath}`);
+    } else {
+      console.log('Utilisation du Chromium embarqué de Puppeteer (défaut)');
+    }
+    
+    browser = await puppeteer.launch(launchOptions);
     console.log('✓ Browser Puppeteer lancé avec succès');
   } catch (launchError) {
     console.error('✗ ERREUR lors du lancement de Puppeteer:');
