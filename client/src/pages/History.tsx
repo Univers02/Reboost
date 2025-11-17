@@ -123,7 +123,7 @@ export default function History() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <div className="p-6 md:p-8 max-w-[1400px] mx-auto space-y-8 animate-fade-in">
         {/* Header */}
         <SectionTitle

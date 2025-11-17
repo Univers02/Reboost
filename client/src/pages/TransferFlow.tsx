@@ -322,7 +322,7 @@ export default function TransferFlow() {
 
   if (step === 'form') {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="bg-background">
         <div className="p-4 sm:p-6 md:p-8 max-w-5xl mx-auto space-y-6 sm:space-y-8 animate-fade-in">
           <Button 
             variant="ghost" 
@@ -653,7 +653,7 @@ export default function TransferFlow() {
     ];
 
     return (
-      <div className="min-h-screen bg-background">
+      <div className="bg-background">
         <div className="p-4 sm:p-6 md:p-10 max-w-7xl mx-auto space-y-6 sm:space-y-8 animate-fade-in">
           
           {/* BANNIÈRE HORIZONTALE AVEC FLUX ANIMÉ */}

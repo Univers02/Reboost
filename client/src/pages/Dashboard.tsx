@@ -138,7 +138,7 @@ export default function Dashboard() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 max-w-[1600px] mx-auto animate-fade-in">
         {/* Hero Section - Greeting */}
         <div className="space-y-1">
