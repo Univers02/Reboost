@@ -8,10 +8,10 @@
       "has": [
         {
           "type": "host",
-          "value": "www.altusfinancesgroup.com"
+          "value": "www.altusfinancegroup.com"
         }
       ],
-      "destination": "https://altusfinancesgroup.com/:path*",
+      "destination": "https://altusfinancegroup.com/:path*",
       "permanent": true
     }
   ],

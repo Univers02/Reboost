@@ -479,8 +479,8 @@ const getContractTemplate = (data: ContractData): string => {
     <p style="margin: 8px 0;">
       Capital social: 1 000 000 € • RCS Luxembourg B123456<br>
       Siège social: 19 Rue Sigismond, L-2537 Luxembourg<br>
-      Tél: +352 40 63 48 • Email: infos@altusfinancesgroup.com<br>
-      www.altusfinancesgroup.com
+      Tél: +352 40 63 48 • Email: infos@altusfinancegroup.com<br>
+      www.altusfinancegroup.com
     </p>
     <p style="margin-top: 15px; font-size: 8pt; font-style: italic;">
       Ce document est confidentiel et destiné exclusivement à son destinataire.<br>

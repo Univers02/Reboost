@@ -44,7 +44,7 @@ if (!process.env.SESSION_SECRET) {
   console.warn('WARNING: Using default SESSION_SECRET. Set SESSION_SECRET environment variable for production.');
 }
 
-const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || (process.env.NODE_ENV === 'production' ? '.altusfinancesgroup.com' : undefined);
+const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || (process.env.NODE_ENV === 'production' ? '.altusfinancegroup.com' : undefined);
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 if (!IS_PRODUCTION) {
@@ -61,6 +61,8 @@ if (!IS_PRODUCTION) {
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
   ? [
+      'https://altusfinancegroup.com',
+      'https://www.altusfinancegroup.com',
       'https://altusfinancesgroup.com',
       'https://www.altusfinancesgroup.com',
       process.env.FRONTEND_URL

@@ -585,7 +585,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       if (process.env.NODE_ENV === 'production') {
-        const cookieDomain = process.env.COOKIE_DOMAIN || '.altusfinancesgroup.com';
+        const cookieDomain = process.env.COOKIE_DOMAIN || '.altusfinancegroup.com';
         console.log(`[AUTH SUCCESS] User authenticated successfully`);
         console.log(`[AUTH SUCCESS] Session created and will be sent as cookie`);
         console.log(`[AUTH SUCCESS] Cookie domain: ${cookieDomain}`);
@@ -659,7 +659,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       if (process.env.NODE_ENV === 'production') {
-        const cookieDomain = process.env.COOKIE_DOMAIN || '.altusfinancesgroup.com';
+        const cookieDomain = process.env.COOKIE_DOMAIN || '.altusfinancegroup.com';
         console.log(`[AUTH SUCCESS] User authenticated successfully`);
         console.log(`[AUTH SUCCESS] Session created and will be sent as cookie`);
         console.log(`[AUTH SUCCESS] Cookie domain: ${cookieDomain}`);
@@ -932,7 +932,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       if (process.env.NODE_ENV === 'production') {
-        const cookieDomain = process.env.COOKIE_DOMAIN || '.altusfinancesgroup.com';
+        const cookieDomain = process.env.COOKIE_DOMAIN || '.altusfinancegroup.com';
         console.log(`[EMAIL VERIFY SUCCESS] Email verified and user auto-logged in`);
         console.log(`[EMAIL VERIFY SUCCESS] Session created and will be sent as cookie`);
         console.log(`[EMAIL VERIFY SUCCESS] Cookie domain: ${cookieDomain}`);
@@ -2278,55 +2278,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { amount, externalAccountId, recipient, loanId } = req.body;
       
-      console.log('🔵 [TRANSFER INITIATE] Request received', {
-        userId: req.session.userId,
-        loanId,
-        amount,
-        recipient,
-        hasExternalAccount: !!externalAccountId
-      });
-      
       if (!loanId) {
-        console.log('❌ [TRANSFER INITIATE] REJECTED: Missing loanId');
         return res.status(400).json({ error: 'Le prêt (loanId) est requis pour initier un transfert' });
       }
 
       const loan = await storage.getLoan(loanId);
       if (!loan) {
-        console.log('❌ [TRANSFER INITIATE] REJECTED: Loan not found', { loanId });
         return res.status(404).json({ error: 'Prêt non trouvé' });
       }
-      
-      console.log('🔵 [TRANSFER INITIATE] Loan found', {
-        loanId: loan.id,
-        loanAmount: loan.amount,
-        loanStatus: loan.status,
-        fundsAvailabilityStatus: loan.fundsAvailabilityStatus,
-        userId: loan.userId,
-        requestingUserId: req.session.userId
-      });
 
       if (loan.userId !== req.session.userId) {
-        console.log('❌ [TRANSFER INITIATE] REJECTED: Loan ownership mismatch', {
-          loanUserId: loan.userId,
-          sessionUserId: req.session.userId
-        });
         return res.status(403).json({ error: 'Accès refusé - ce prêt ne vous appartient pas' });
       }
 
       if (loan.fundsAvailabilityStatus !== 'available') {
-        console.log('❌ [TRANSFER INITIATE] REJECTED: Funds not available', {
-          loanId: loan.id,
-          currentStatus: loan.fundsAvailabilityStatus,
-          requiredStatus: 'available',
-          loanStatus: loan.status
-        });
         return res.status(400).json({ 
           error: 'Les fonds ne sont pas encore disponibles pour ce prêt. Veuillez attendre la confirmation du contrat par l\'administrateur.' 
         });
       }
-      
-      console.log('✅ [TRANSFER INITIATE] All validations passed, creating transfer...');
       
       const settingFee = await storage.getAdminSetting('default_transfer_fee');
       const feeAmount = (settingFee?.settingValue as any)?.amount || 25;
@@ -2385,33 +2354,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         metadata: { loanId, codesCount, transferId: transfer.id },
       });
 
-      console.log('✅ [TRANSFER INITIATE] SUCCESS - Transfer created', {
-        transferId: transfer.id,
-        userId: req.session.userId,
-        loanId,
-        amount: amount.toString()
-      });
-
       res.status(201).json({ 
         transfer,
         message: `Transfert initié avec succès. L'administrateur vous transmettra les codes de validation un par un. Ces codes sont uniques et ne peuvent être utilisés que pour ce transfert.`,
         codesRequired: codesCount,
       });
     } catch (error: any) {
-      console.error('❌ [TRANSFER INITIATE] ERROR:', {
-        errorMessage: error.message,
-        errorStack: error.stack,
-        errorName: error.name,
-        existingTransferId: error.existingTransferId,
-        userId: req.session.userId,
-        requestBody: req.body
-      });
+      console.error('Transfer initiation error:', error);
       
       if (error.existingTransferId) {
-        console.log('⚠️ [TRANSFER INITIATE] REJECTED: Transfer already in progress', {
-          existingTransferId: error.existingTransferId,
-          loanId: req.body.loanId
-        });
         return res.status(409).json({ 
           error: 'Un transfert est déjà en cours pour ce prêt',
           existingTransferId: error.existingTransferId,
@@ -2419,7 +2370,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      console.error('❌ [TRANSFER INITIATE] FAILED - Returning generic error to client');
       res.status(400).json({ error: 'Failed to initiate transfer' });
     }
   });
@@ -4079,14 +4029,14 @@ Disallow: /settings
 Disallow: /transfers
 Disallow: /loans/request
 
-Sitemap: ${process.env.VITE_SITE_URL || 'https://www.altusfinancesgroup.com'}/sitemap.xml`;
+Sitemap: ${process.env.VITE_SITE_URL || 'https://www.altusfinancegroup.com'}/sitemap.xml`;
     
     res.type('text/plain');
     res.send(robots);
   });
 
   app.get("/sitemap.xml", (req, res) => {
-    const baseUrl = process.env.VITE_SITE_URL || 'https://www.altusfinancesgroup.com';
+    const baseUrl = process.env.VITE_SITE_URL || 'https://www.altusfinancegroup.com';
     const currentDate = new Date().toISOString().split('T')[0];
     
     const urls = [
