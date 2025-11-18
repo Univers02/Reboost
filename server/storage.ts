@@ -1586,7 +1586,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(loans.userId, userId),
-          eq(loans.status, 'approved'),
+          eq(loans.status, 'active'),
           eq(loans.fundsAvailabilityStatus, 'available'),
           isNull(loans.deletedAt),
           notExists(
