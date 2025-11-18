@@ -2275,32 +2275,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/transfers/initiate", requireAuth, requireCSRF, transferLimiter, async (req, res) => {
+    const requestId = `REQ-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    const startTime = Date.now();
+    
+    console.log('========================================');
+    console.log(`[TRANSFER-INITIATE] ${requestId} - DÉBUT`);
+    console.log(`[TRANSFER-INITIATE] ${requestId} - Timestamp: ${new Date().toISOString()}`);
+    console.log(`[TRANSFER-INITIATE] ${requestId} - UserId: ${req.session.userId}`);
+    console.log(`[TRANSFER-INITIATE] ${requestId} - Request body:`, JSON.stringify(req.body, null, 2));
+    
     try {
       const { amount, externalAccountId, recipient, loanId } = req.body;
       
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 1: Validation loanId`);
       if (!loanId) {
+        console.error(`[TRANSFER-INITIATE] ${requestId} - ERREUR: loanId manquant`);
         return res.status(400).json({ error: 'Le prêt (loanId) est requis pour initier un transfert' });
       }
 
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 2: Récupération du prêt (loanId: ${loanId})`);
       const loan = await storage.getLoan(loanId);
       if (!loan) {
+        console.error(`[TRANSFER-INITIATE] ${requestId} - ERREUR: Prêt non trouvé (loanId: ${loanId})`);
         return res.status(404).json({ error: 'Prêt non trouvé' });
       }
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Prêt trouvé:`, JSON.stringify({ 
+        loanId: loan.id, 
+        userId: loan.userId, 
+        status: loan.status,
+        fundsAvailabilityStatus: loan.fundsAvailabilityStatus 
+      }));
 
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 3: Vérification propriétaire du prêt`);
       if (loan.userId !== req.session.userId) {
+        console.error(`[TRANSFER-INITIATE] ${requestId} - ERREUR: Accès refusé - loan.userId: ${loan.userId} vs session.userId: ${req.session.userId}`);
         return res.status(403).json({ error: 'Accès refusé - ce prêt ne vous appartient pas' });
       }
 
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 4: Vérification disponibilité des fonds`);
       if (loan.fundsAvailabilityStatus !== 'available') {
+        console.error(`[TRANSFER-INITIATE] ${requestId} - ERREUR: Fonds non disponibles - status: ${loan.fundsAvailabilityStatus}`);
         return res.status(400).json({ 
           error: 'Les fonds ne sont pas encore disponibles pour ce prêt. Veuillez attendre la confirmation du contrat par l\'administrateur.' 
         });
       }
       
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 5: Récupération des frais de transfert`);
       const settingFee = await storage.getAdminSetting('default_transfer_fee');
       const feeAmount = (settingFee?.settingValue as any)?.amount || 25;
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Frais de transfert: ${feeAmount}€`);
       
       const codesCount = 6;
+      
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 6: Création du transfert et des codes`);
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Paramètres transfert:`, JSON.stringify({
+        userId: req.session.userId,
+        loanId,
+        externalAccountId: externalAccountId || null,
+        amount: amount.toString(),
+        recipient,
+        feeAmount: feeAmount.toString(),
+        codesCount
+      }));
       
       const { transfer, codes: generatedCodes } = await storage.createTransferWithCodes({
         userId: req.session.userId!,
@@ -2315,11 +2351,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         requiredCodes: codesCount,
         codesValidated: 0,
       }, codesCount);
+      
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Transfert créé avec succès - ID: ${transfer.id}`);
+      console.log(`[TRANSFER-INITIATE] ${requestId} - ${generatedCodes.length} codes générés`);
 
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 7: Notification utilisateur`);
       await notifyTransferInitiated(req.session.userId!, transfer.id, amount.toString(), recipient);
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Notification utilisateur envoyée`);
 
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 8: Récupération des infos utilisateur`);
       const user = await storage.getUser(req.session.userId!);
       if (user) {
+        console.log(`[TRANSFER-INITIATE] ${requestId} - Utilisateur: ${user.fullName} (${user.email})`);
+        
+        console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 9: Notification administrateurs`);
         await notifyAdminsNewTransfer(
           user.id,
           user.fullName,
@@ -2327,7 +2372,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           amount.toString(),
           recipient
         );
+        console.log(`[TRANSFER-INITIATE] ${requestId} - Notification admins envoyée`);
 
+        console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 10: Envoi email codes à l'admin`);
         try {
           const { sendTransferCodesAdminEmail } = await import('./email');
           await sendTransferCodesAdminEmail(
@@ -2342,17 +2389,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
             })),
             user.preferredLanguage || 'fr'
           );
+          console.log(`[TRANSFER-INITIATE] ${requestId} - Email codes admin envoyé avec succès`);
         } catch (emailError) {
-          console.error('Failed to send transfer codes admin email:', emailError);
+          console.error(`[TRANSFER-INITIATE] ${requestId} - ERREUR envoi email codes admin:`, emailError);
+          console.error(`[TRANSFER-INITIATE] ${requestId} - Stack trace:`, (emailError as Error).stack);
         }
+      } else {
+        console.warn(`[TRANSFER-INITIATE] ${requestId} - AVERTISSEMENT: Utilisateur non trouvé pour userId: ${req.session.userId}`);
       }
 
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 11: Création événement transfert`);
       await storage.createTransferEvent({
         transferId: transfer.id,
         eventType: 'initiated',
         message: 'Virement initié - Traitement sécurisé en cours',
         metadata: { loanId, codesCount, transferId: transfer.id },
       });
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Événement créé`);
+
+      const duration = Date.now() - startTime;
+      console.log(`[TRANSFER-INITIATE] ${requestId} - SUCCÈS - Durée totale: ${duration}ms`);
+      console.log('========================================');
 
       res.status(201).json({ 
         transfer,
@@ -2360,9 +2417,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         codesRequired: codesCount,
       });
     } catch (error: any) {
-      console.error('Transfer initiation error:', error);
+      const duration = Date.now() - startTime;
+      console.error('========================================');
+      console.error(`[TRANSFER-INITIATE] ${requestId} - ÉCHEC - Durée: ${duration}ms`);
+      console.error(`[TRANSFER-INITIATE] ${requestId} - Type d'erreur:`, error?.constructor?.name || 'Unknown');
+      console.error(`[TRANSFER-INITIATE] ${requestId} - Message d'erreur:`, error?.message || 'No message');
+      console.error(`[TRANSFER-INITIATE] ${requestId} - Erreur complète:`, JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+      console.error(`[TRANSFER-INITIATE] ${requestId} - Stack trace:`, error?.stack);
+      
+      if (error.code) {
+        console.error(`[TRANSFER-INITIATE] ${requestId} - Code erreur:`, error.code);
+      }
+      if (error.detail) {
+        console.error(`[TRANSFER-INITIATE] ${requestId} - Détail erreur:`, error.detail);
+      }
+      if (error.constraint) {
+        console.error(`[TRANSFER-INITIATE] ${requestId} - Contrainte violée:`, error.constraint);
+      }
+      
+      console.error('========================================');
       
       if (error.existingTransferId) {
+        console.log(`[TRANSFER-INITIATE] ${requestId} - Transfert existant détecté: ${error.existingTransferId}`);
         return res.status(409).json({ 
           error: 'Un transfert est déjà en cours pour ce prêt',
           existingTransferId: error.existingTransferId,
