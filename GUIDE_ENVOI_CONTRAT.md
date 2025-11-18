@@ -17,7 +17,7 @@
 
 1. Déconnectez-vous de votre compte utilisateur
 2. Connectez-vous en tant qu'admin :
-   - Email : `admin@altusfinancegroup.com`
+   - Email : `admin@altusfinancesgroup.com`
    - Mot de passe : (celui que vous avez configuré)
 
 3. Allez dans **"Admin Panel"** (panneau admin)
@@ -82,8 +82,8 @@ Reconnectez-vous en tant qu'**UTILISATEUR** :
 **Les admins reçoivent un email comme ceci :**
 
 ```
-De : ALTUS FINANCE GROUP <noreply@altusfinancegroup.com>
-À : admin@altusfinancegroup.com
+De : ALTUS FINANCE GROUP <noreply@altusfinancesgroup.com>
+À : admin@altusfinancesgroup.com
 
 Sujet : 📄 Contrat signé reçu - Prêt #237241b8
 
@@ -121,7 +121,7 @@ Le bouton d'upload apparaît seulement quand :
 ## 🔧 COMMENT TESTER MAINTENANT ?
 
 ### Option A : Approuver votre propre prêt (pour tester)
-1. **Se connecter en admin** : `admin@altusfinancegroup.com`
+1. **Se connecter en admin** : `admin@altusfinancesgroup.com`
 2. **Approuver le prêt** dans Admin Panel → Loans
 3. **Se reconnecter en utilisateur**
 4. **Voir le bouton d'upload** dans le dashboard

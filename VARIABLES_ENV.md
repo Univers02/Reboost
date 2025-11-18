@@ -7,8 +7,8 @@
 ### Variables OBLIGATOIRES
 
 ```bash
-VITE_API_URL=https://api.altusfinancegroup.com
-VITE_SITE_URL=https://altusfinancegroup.com
+VITE_API_URL=https://api.altusfinancesgroup.com
+VITE_SITE_URL=https://altusfinancesgroup.com
 ```
 
 ---
@@ -32,8 +32,8 @@ SESSION_SECRET=VOTRE_CLE_SECRETE_ALEATOIRE_32_CARACTERES_MINIMUM
 DATABASE_URL=postgresql://...
 
 # CORS et Cookies - Cross-domain
-FRONTEND_URL=https://altusfinancegroup.com
-COOKIE_DOMAIN=.altusfinancegroup.com
+FRONTEND_URL=https://altusfinancesgroup.com
+COOKIE_DOMAIN=.altusfinancesgroup.com
 ```
 
 ### Variables OPTIONNELLES - Fonctionnalités additionnelles
@@ -46,10 +46,10 @@ CLOUDINARY_API_SECRET=votre_cloudinary_api_secret
 
 # SendGrid - Envoi d'emails (OTP, notifications, vérification)
 SENDGRID_API_KEY=SG.votre_sendgrid_api_key
-SENDGRID_FROM_EMAIL=noreply@altusfinancegroup.com
+SENDGRID_FROM_EMAIL=noreply@altusfinancesgroup.com
 
 # Admin - Email pour notifications
-ADMIN_EMAIL=admin@altusfinancegroup.com
+ADMIN_EMAIL=admin@altusfinancesgroup.com
 
 # Port (Render définit automatiquement, optionnel)
 PORT=10000
@@ -76,7 +76,7 @@ openssl rand -base64 32
 ```bash
 # Dans le code, vérifier que les variables sont bien utilisées
 console.log(import.meta.env.VITE_API_URL)
-# Devrait afficher: https://api.altusfinancegroup.com
+# Devrait afficher: https://api.altusfinancesgroup.com
 ```
 
 ### 2. Render (Backend)
@@ -86,11 +86,11 @@ Vérifier les logs au démarrage :
 ```
 ============================================================
 [CONFIG] Environment: production
-[CONFIG] Cookie Domain: .altusfinancegroup.com
+[CONFIG] Cookie Domain: .altusfinancesgroup.com
 [CONFIG] Cookie SameSite: none
 [CONFIG] Cookie Secure: true
 [CONFIG] CORS Allowed Origins: production domains
-[CONFIG] Frontend URL: https://altusfinancegroup.com
+[CONFIG] Frontend URL: https://altusfinancesgroup.com
 [CONFIG] Trust Proxy: enabled
 ============================================================
 ```
@@ -112,13 +112,13 @@ Vérifier les logs au démarrage :
 - ✅ SSL activé automatiquement en production
 
 ### COOKIE_DOMAIN
-- ✅ **DOIT** commencer par un point: `.altusfinancegroup.com`
-- ✅ Permet le partage de cookies entre `altusfinancegroup.com` et `api.altusfinancegroup.com`
+- ✅ **DOIT** commencer par un point: `.altusfinancesgroup.com`
+- ✅ Permet le partage de cookies entre `altusfinancesgroup.com` et `api.altusfinancesgroup.com`
 - ❌ Sans le point, les cookies ne fonctionneront pas
 
 ### FRONTEND_URL
-- ✅ **SANS** slash final: `https://altusfinancegroup.com`
-- ❌ **PAS**: `https://altusfinancegroup.com/`
+- ✅ **SANS** slash final: `https://altusfinancesgroup.com`
+- ❌ **PAS**: `https://altusfinancesgroup.com/`
 
 ---
 
@@ -128,7 +128,7 @@ Vérifier les logs au démarrage :
 
 ```bash
 # Health check
-curl https://api.altusfinancegroup.com/health
+curl https://api.altusfinancesgroup.com/health
 
 # Devrait retourner:
 {
@@ -141,13 +141,13 @@ curl https://api.altusfinancegroup.com/health
 
 ### Frontend
 
-1. Ouvrir: `https://altusfinancegroup.com`
+1. Ouvrir: `https://altusfinancesgroup.com`
 2. Console navigateur (F12)
 3. Tester une connexion
 4. Vérifier:
    - ✅ Pas d'erreurs CORS
    - ✅ Cookies définis (Application → Cookies)
-   - ✅ Cookie domain = `.altusfinancegroup.com`
+   - ✅ Cookie domain = `.altusfinancesgroup.com`
 
 ---
 
@@ -171,9 +171,9 @@ curl https://api.altusfinancegroup.com/health
 - [ ] Service démarré
 
 ### DNS
-- [ ] `altusfinancegroup.com` → Vercel
-- [ ] `www.altusfinancegroup.com` → Vercel
-- [ ] `api.altusfinancegroup.com` → Render
+- [ ] `altusfinancesgroup.com` → Vercel
+- [ ] `www.altusfinancesgroup.com` → Vercel
+- [ ] `api.altusfinancesgroup.com` → Render
 - [ ] HTTPS activé partout
 
 ---
@@ -193,8 +193,8 @@ En cas de problème, vérifier dans l'ordre :
 
 **Vercel (2 variables):**
 ```
-VITE_API_URL=https://api.altusfinancegroup.com
-VITE_SITE_URL=https://altusfinancegroup.com
+VITE_API_URL=https://api.altusfinancesgroup.com
+VITE_SITE_URL=https://altusfinancesgroup.com
 ```
 
 **Render (5 variables minimum):**
@@ -202,8 +202,8 @@ VITE_SITE_URL=https://altusfinancegroup.com
 NODE_ENV=production
 SESSION_SECRET=[openssl rand -base64 32]
 DATABASE_URL=[fourni par Render PostgreSQL ou Neon]
-FRONTEND_URL=https://altusfinancegroup.com
-COOKIE_DOMAIN=.altusfinancegroup.com
+FRONTEND_URL=https://altusfinancesgroup.com
+COOKIE_DOMAIN=.altusfinancesgroup.com
 ```
 
 **+ Optionnel (Cloudinary + SendGrid):**
@@ -212,6 +212,6 @@ CLOUDINARY_CLOUD_NAME=...
 CLOUDINARY_API_KEY=...
 CLOUDINARY_API_SECRET=...
 SENDGRID_API_KEY=SG...
-SENDGRID_FROM_EMAIL=noreply@altusfinancegroup.com
-ADMIN_EMAIL=admin@altusfinancegroup.com
+SENDGRID_FROM_EMAIL=noreply@altusfinancesgroup.com
+ADMIN_EMAIL=admin@altusfinancesgroup.com
 ```

@@ -37,12 +37,12 @@ function getBaseUrl(): string {
 ### Solution 1 : Configurer FRONTEND_URL sur Render
 
 **Sur Render Dashboard:**
-1. Allez sur votre service backend (api.altusfinancegroup.com)
+1. Allez sur votre service backend (api.altusfinancesgroup.com)
 2. Cliquez sur **"Environment"** dans le menu de gauche
 3. Cliquez sur **"Add Environment Variable"**
 4. Ajoutez :
    - **Key**: `FRONTEND_URL`
-   - **Value**: `https://altusfinancegroup.com`
+   - **Value**: `https://altusfinancesgroup.com`
 5. Cliquez sur **"Save Changes"**
 6. **IMPORTANT** : Cliquez sur **"Manual Deploy"** → **"Deploy latest commit"** pour redéployer
 
@@ -60,14 +60,14 @@ DATABASE_URL=<votre-url-postgresql>
 
 # Session
 SESSION_SECRET=<votre-secret-complexe>
-COOKIE_DOMAIN=.altusfinancegroup.com
+COOKIE_DOMAIN=.altusfinancesgroup.com
 
 # Frontend
-FRONTEND_URL=https://altusfinancegroup.com
+FRONTEND_URL=https://altusfinancesgroup.com
 
 # SendGrid (email)
 SENDGRID_API_KEY=<votre-clé-sendgrid>
-SENDGRID_FROM_EMAIL=noreply@altusfinancegroup.com
+SENDGRID_FROM_EMAIL=noreply@altusfinancesgroup.com
 
 # Cloudinary (uploads)
 CLOUDINARY_CLOUD_NAME=<votre-cloud-name>
@@ -81,25 +81,25 @@ Le code vérifie déjà les bonnes origines :
 ```typescript
 const allowedOrigins = process.env.NODE_ENV === 'production'
   ? [
-      'https://altusfinancegroup.com',
-      'https://www.altusfinancegroup.com',
+      'https://altusfinancesgroup.com',
+      'https://www.altusfinancesgroup.com',
       process.env.FRONTEND_URL
     ].filter(Boolean)
   : ['http://localhost:5000', ...];
 ```
 
 **Vérifier que :**
-- Netlify est bien sur `https://altusfinancegroup.com`
-- Le domaine `www.altusfinancegroup.com` redirige vers `altusfinancegroup.com` (ou vice versa)
+- Vercel est bien sur `https://altusfinancesgroup.com`
+- Le domaine `www.altusfinancesgroup.com` redirige vers `altusfinancesgroup.com` (ou vice versa)
 
-### Solution 4 : Vérifier la Configuration Netlify
+### Solution 4 : Vérifier la Configuration Vercel
 
-**Sur Netlify Dashboard:**
-1. Allez sur votre site (altusfinancegroup.com)
+**Sur Vercel Dashboard:**
+1. Allez sur votre site (altusfinancesgroup.com)
 2. Cliquez sur **"Site configuration"** → **"Environment variables"**
 3. Vérifiez que `VITE_API_URL` est défini :
    - **Key**: `VITE_API_URL`
-   - **Value**: `https://api.altusfinancegroup.com`
+   - **Value**: `https://api.altusfinancesgroup.com`
 4. Si modifié, redéployez : **"Deploys"** → **"Trigger deploy"** → **"Deploy site"**
 
 ---
@@ -110,7 +110,7 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
 
 ```bash
 # Remplacer <TOKEN> par un vrai token de vérification
-curl -I https://api.altusfinancegroup.com/api/auth/verify/<TOKEN>
+curl -I https://api.altusfinancesgroup.com/api/auth/verify/<TOKEN>
 ```
 
 **Résultat attendu** :
@@ -123,7 +123,7 @@ curl -I https://api.altusfinancegroup.com/api/auth/verify/<TOKEN>
 2. Cliquez sur **"Logs"**
 3. Cherchez :
    - `[CONFIG] Frontend URL: NOT SET` ❌ (problème!)
-   - `[CONFIG] Frontend URL: https://altusfinancegroup.com` ✅ (correct)
+   - `[CONFIG] Frontend URL: https://altusfinancesgroup.com` ✅ (correct)
    - Erreurs de connexion database
    - Erreurs CORS
 
@@ -142,12 +142,12 @@ Ensuite, créez un nouveau compte et vérifiez les logs Render pour voir l'URL g
 ## 🚀 Plan d'Action Immédiat
 
 ### Étape 1 : Configurer FRONTEND_URL (5 min)
-- [ ] Ajouter `FRONTEND_URL=https://altusfinancegroup.com` sur Render
+- [ ] Ajouter `FRONTEND_URL=https://altusfinancesgroup.com` sur Render
 - [ ] Redéployer le service backend
 - [ ] Attendre 2-3 minutes que le déploiement se termine
 
 ### Étape 2 : Vérifier les Logs (2 min)
-- [ ] Vérifier dans les logs Render que `[CONFIG] Frontend URL: https://altusfinancegroup.com` apparaît
+- [ ] Vérifier dans les logs Render que `[CONFIG] Frontend URL: https://altusfinancesgroup.com` apparaît
 - [ ] Vérifier qu'il n'y a pas d'erreurs au démarrage
 
 ### Étape 3 : Tester la Vérification d'Email (5 min)
@@ -180,7 +180,7 @@ app.get("/api/health", (req, res) => {
 
 ### 2. Configurer UptimeRobot ou Similar
 
-- Monitorer `https://api.altusfinancegroup.com/api/health`
+- Monitorer `https://api.altusfinancesgroup.com/api/health`
 - Alertes par email si down > 5 minutes
 - Ping toutes les 5 minutes (évite le spin-down sur Render gratuit)
 
@@ -205,7 +205,7 @@ Si les problèmes persistent après avoir appliqué les solutions :
 
 1. **Vérifier les logs Render** pour les erreurs spécifiques
 2. **Tester avec Postman** l'endpoint de vérification
-3. **Vérifier la configuration DNS** (altusfinancegroup.com → Netlify, api.altusfinancegroup.com → Render)
+3. **Vérifier la configuration DNS** (altusfinancesgroup.com → Vercel, api.altusfinancesgroup.com → Render)
 4. **Considérer upgrade** vers Render Standard (élimine spin-down, meilleure performance)
 
 ---
@@ -214,26 +214,26 @@ Si les problèmes persistent après avoir appliqué les solutions :
 
 ### Backend (Render)
 - [ ] `NODE_ENV=production` défini
-- [ ] `FRONTEND_URL=https://altusfinancegroup.com` défini
+- [ ] `FRONTEND_URL=https://altusfinancesgroup.com` défini
 - [ ] `SESSION_SECRET` défini (complexe, > 32 caractères)
-- [ ] `COOKIE_DOMAIN=.altusfinancegroup.com` défini
+- [ ] `COOKIE_DOMAIN=.altusfinancesgroup.com` défini
 - [ ] `DATABASE_URL` défini et valide
 - [ ] `SENDGRID_API_KEY` et `SENDGRID_FROM_EMAIL` définis
 - [ ] Service redéployé après changements
 - [ ] Logs montrent démarrage réussi
 - [ ] Pas d'erreurs CORS dans les logs
 
-### Frontend (Netlify)
-- [ ] `VITE_API_URL=https://api.altusfinancegroup.com` défini
+### Frontend (Vercel)
+- [ ] `VITE_API_URL=https://api.altusfinancesgroup.com` défini
 - [ ] Site redéployé après changements
 - [ ] Build réussi sans erreurs
-- [ ] DNS pointe correctement vers Netlify
+- [ ] DNS pointe correctement vers Vercel
 
 ### Tests E2E
 - [ ] Page d'accueil charge correctement
 - [ ] Formulaire d'inscription fonctionne
 - [ ] Email de vérification reçu
-- [ ] Lien de vérification dans email est `https://altusfinancegroup.com/verify/...`
+- [ ] Lien de vérification dans email est `https://altusfinancesgroup.com/verify/...`
 - [ ] Vérification réussit et redirige vers login
 - [ ] Login fonctionne après vérification
 - [ ] Site reste disponible après 10+ minutes

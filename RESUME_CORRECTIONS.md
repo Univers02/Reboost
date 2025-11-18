@@ -75,7 +75,7 @@ if (process.env.NODE_ENV === "development") {
 ```
 ┌────────────────────────┐
 │       FRONTEND         │
-│ altusfinancegroup.com  │
+│ altusfinancesgroup.com  │
 │      (Vercel)          │
 │   React + Vite         │
 └───────────┬────────────┘
@@ -83,7 +83,7 @@ if (process.env.NODE_ENV === "development") {
             ▼
 ┌────────────────────────┐
 │       BACKEND          │
-│api.altusfinancegroup.com│
+│api.altusfinancesgroup.com│
 │      (Render)          │
 │  Express + PostgreSQL  │
 └────────────────────────┘
@@ -125,8 +125,8 @@ Variables **obligatoires** dans Render :
 NODE_ENV=production
 DATABASE_URL=postgresql://...votre-url-neon
 SESSION_SECRET=...générez-avec-openssl-rand
-FRONTEND_URL=https://altusfinancegroup.com
-COOKIE_DOMAIN=.altusfinancegroup.com
+FRONTEND_URL=https://altusfinancesgroup.com
+COOKIE_DOMAIN=.altusfinancesgroup.com
 ```
 
 ### 4. Tester le Déploiement

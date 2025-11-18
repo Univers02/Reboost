@@ -124,7 +124,7 @@ try {
 
 ### 📝 CHECKLIST DÉPLOIEMENT PRODUCTION
 
-Avant déploiement sur Netlify/Render:
+Avant déploiement sur Vercel/Render:
 
 - [x] Suppression express.static pour /uploads
 - [x] Migration KYC vers Cloudinary authenticated
@@ -158,12 +158,12 @@ SENDGRID_API_KEY=votre_sendgrid_key
 
 # Configuration
 NODE_ENV=production
-FRONTEND_URL=https://altusfinancegroup.com
+FRONTEND_URL=https://altusfinancesgroup.com
 ```
 
-**Netlify (Frontend)**:
+**Vercel (Frontend)**:
 ```env
-VITE_API_URL=https://api.altusfinancegroup.com
+VITE_API_URL=https://api.altusfinancesgroup.com
 ```
 
 ### 📚 RÉFÉRENCES

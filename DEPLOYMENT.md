@@ -4,7 +4,7 @@
 
 ### 1. Inscription ne fonctionnait pas en production
 
-**Symptôme** : Impossible de créer un compte sur altusfinancegroup.com
+**Symptôme** : Impossible de créer un compte sur altusfinancesgroup.com
 
 **Cause** : Le frontend sur Vercel faisait des requêtes **relatives** (`/api/...`) qui ne savaient pas où trouver le backend API sur Render
 
@@ -68,8 +68,8 @@ Tous les emails envoyés par l'application sont automatiquement dans la langue d
 
 ## Architecture de Déploiement
 
-- **Frontend** : Déployé sur **Vercel** (altusfinancegroup.com)
-- **Backend** : Déployé sur **Render** (api.altusfinancegroup.com)
+- **Frontend** : Déployé sur **Vercel** (altusfinancesgroup.com)
+- **Backend** : Déployé sur **Render** (api.altusfinancesgroup.com)
 - **Base de données** : PostgreSQL (Neon, Railway, Supabase, etc.)
 
 ## 📦 Backend (Render)
@@ -97,9 +97,9 @@ Tous les emails envoyés par l'application sont automatiquement dans la langue d
    PORT=5000
    SESSION_SECRET=<générer avec: openssl rand -base64 32>
    DATABASE_URL=postgresql://user:pass@host:5432/dbname?sslmode=require
-   FRONTEND_URL=https://altusfinancegroup.com
+   FRONTEND_URL=https://altusfinancesgroup.com
    SENDGRID_API_KEY=<votre clé SendGrid>
-   SENDGRID_FROM_EMAIL=noreply@altusfinancegroup.com
+   SENDGRID_FROM_EMAIL=noreply@altusfinancesgroup.com
    ```
 
    ⚠️ **CRITIQUE** :
@@ -138,7 +138,7 @@ Notez cette URL, vous en aurez besoin pour le frontend.
 5. **Variables d'environnement** (Settings > Environment Variables) :
 
    ```bash
-   VITE_API_URL=https://api.altusfinancegroup.com
+   VITE_API_URL=https://api.altusfinancesgroup.com
    ```
 
    ⚠️ **CRITIQUE** : 
@@ -286,7 +286,7 @@ Si le bouton de chargement reste en français :
 
 **Vérification 1 : Variable d'environnement sur Vercel**
 1. Allez dans Settings > Environment Variables de votre projet Vercel
-2. Vérifiez que `VITE_API_URL` existe et pointe vers `https://api.altusfinancegroup.com`
+2. Vérifiez que `VITE_API_URL` existe et pointe vers `https://api.altusfinancesgroup.com`
 3. **IMPORTANT** : Après avoir ajouté/modifié la variable, vous DEVEZ redéployer le frontend
 
 **Vérification 2 : Logs du Backend Render**
@@ -294,8 +294,8 @@ Si le bouton de chargement reste en français :
 2. Vous devriez voir des requêtes avec l'origin correct :
    ```
    [CORS DEBUG] Incoming request: POST /api/auth/signup
-   [CORS DEBUG] Origin: https://altusfinancegroup.com
-   [CORS DEBUG] ✅ Origin allowed: https://altusfinancegroup.com
+   [CORS DEBUG] Origin: https://altusfinancesgroup.com
+   [CORS DEBUG] ✅ Origin allowed: https://altusfinancesgroup.com
    ```
 3. Si vous voyez seulement `Origin: NO ORIGIN`, le frontend n'envoie pas de requêtes au backend
 
@@ -303,7 +303,7 @@ Si le bouton de chargement reste en français :
 1. Ouvrez les DevTools (F12) sur votre site
 2. Allez dans l'onglet Network
 3. Essayez de vous inscrire
-4. Les requêtes doivent pointer vers `https://api.altusfinancegroup.com/api/...`
+4. Les requêtes doivent pointer vers `https://api.altusfinancesgroup.com/api/...`
 5. Si vous voyez des erreurs CORS, vérifiez la variable `FRONTEND_URL` sur Render
 
 ### Base de données ne se connecte pas

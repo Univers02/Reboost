@@ -12,14 +12,14 @@ Voici les variables d'environnement à configurer sur Render pour votre backend:
 | `PORT` | Auto (Render l'assigne) | Port du serveur (généralement 10000) |
 | `DATABASE_URL` | Auto (si PostgreSQL Render) | URL de connexion PostgreSQL |
 | `SESSION_SECRET` | Générer avec `openssl rand -base64 32` | Secret pour les sessions |
-| `FRONTEND_URL` | `https://altusfinancegroup.com` | URL du frontend pour CORS |
+| `FRONTEND_URL` | `https://altusfinancesgroup.com` | URL du frontend pour CORS |
 
 ### 2. Services Externes
 
 #### SendGrid (Email)
 ```bash
 SENDGRID_API_KEY=SG.xxxxxxxxxxxxxxxxxxxxx
-SENDGRID_FROM_EMAIL=noreply@altusfinancegroup.com
+SENDGRID_FROM_EMAIL=noreply@altusfinancesgroup.com
 ```
 
 #### Cloudinary (Upload de fichiers)
@@ -35,8 +35,8 @@ Assurez-vous que votre code backend contient:
 
 ```javascript
 const allowedOrigins = [
-  'https://altusfinancegroup.com',
-  'https://www.altusfinancegroup.com',
+  'https://altusfinancesgroup.com',
+  'https://www.altusfinancesgroup.com',
   process.env.NODE_ENV === 'development' ? 'http://localhost:5000' : null
 ].filter(Boolean);
 
@@ -64,7 +64,7 @@ app.use(session({
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 jours
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    domain: process.env.NODE_ENV === 'production' ? '.altusfinancegroup.com' : undefined
+    domain: process.env.NODE_ENV === 'production' ? '.altusfinancesgroup.com' : undefined
   }
 }));
 ```
@@ -84,7 +84,7 @@ npm run start
 ### 6. Configuration du Domaine Custom
 
 1. Dans Render, allez dans **Settings** > **Custom Domain**
-2. Ajoutez `api.altusfinancegroup.com`
+2. Ajoutez `api.altusfinancesgroup.com`
 3. Configurez les DNS records chez votre registrar:
 
 ```
@@ -122,14 +122,14 @@ Render l'utilisera pour vérifier que votre service fonctionne.
 
 ```bash
 # Tester le health check
-curl https://api.altusfinancegroup.com/api/health
+curl https://api.altusfinancesgroup.com/api/health
 
 # Tester CORS
-curl -H "Origin: https://altusfinancegroup.com" \
+curl -H "Origin: https://altusfinancesgroup.com" \
      -H "Access-Control-Request-Method: POST" \
      -H "Access-Control-Request-Headers: Content-Type" \
      -X OPTIONS \
-     https://api.altusfinancegroup.com/api/csrf-token -v
+     https://api.altusfinancesgroup.com/api/csrf-token -v
 ```
 
 ### 10. Logs et Monitoring
@@ -158,7 +158,7 @@ curl -H "Origin: https://altusfinancegroup.com" \
    - ⚠️ N'oubliez pas `FRONTEND_URL` pour CORS!
 
 4. **Configurer le domaine custom**
-   - Ajoutez `api.altusfinancegroup.com`
+   - Ajoutez `api.altusfinancesgroup.com`
    - Configurez les DNS
 
 5. **Déployer et tester**
@@ -196,8 +196,8 @@ Chaque `git push` sur `main` déclenchera automatiquement un nouveau déploiemen
 ## 📊 Architecture Complète
 
 ```
-Frontend (Netlify)                Backend (Render)              Database (Render)
-altusfinancegroup.com    →    api.altusfinancegroup.com    →    PostgreSQL
+Frontend (Vercel)                Backend (Render)              Database (Render)
+altusfinancesgroup.com    →    api.altusfinancesgroup.com    →    PostgreSQL
      ↓                              ↓                              ↓
   Vite Build                   Express Server              Neon/Render DB
   Static Files                 Node.js 20                  Connection Pool
@@ -211,9 +211,9 @@ altusfinancegroup.com    →    api.altusfinancegroup.com    →    PostgreSQL
 - [ ] Service web créé sur Render
 - [ ] Base de données PostgreSQL créée et liée
 - [ ] Toutes les variables d'environnement configurées
-- [ ] Domaine custom `api.altusfinancegroup.com` configuré
+- [ ] Domaine custom `api.altusfinancesgroup.com` configuré
 - [ ] DNS CNAME configuré
-- [ ] CORS configuré avec `altusfinancegroup.com`
+- [ ] CORS configuré avec `altusfinancesgroup.com`
 - [ ] Sessions configurées correctement
 - [ ] Health check endpoint fonctionne
 - [ ] Migrations de base de données exécutées

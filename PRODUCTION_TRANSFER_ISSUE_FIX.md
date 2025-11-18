@@ -31,8 +31,8 @@ FRONTEND_URL=<votre-url-frontend-https>
 
 **Option B : Frontend et API sur des sous-domaines différents**
 ```bash
-# Si vous utilisez altusfinancegroup.com (sans 's')
-COOKIE_DOMAIN=.altusfinancegroup.com
+# Si vous utilisez altusfinancesgroup.com (sans 's')
+COOKIE_DOMAIN=.altusfinancesgroup.com
 
 # OU si vous utilisez altusfinancesgroup.com (avec 's')  
 COOKIE_DOMAIN=.altusfinancesgroup.com
@@ -52,8 +52,8 @@ const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN ||
 ```
 
 **Avantage** : Les cookies fonctionneront maintenant avec :
-- `altusfinancegroup.com`
-- `www.altusfinancegroup.com`
+- `altusfinancesgroup.com`
+- `www.altusfinancesgroup.com`
 - `altusfinancesgroup.com` (avec 's')
 - N'importe quel sous-domaine
 

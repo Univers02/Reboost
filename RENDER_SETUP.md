@@ -21,10 +21,10 @@ SESSION_SECRET=votre_secret_tres_securise_ici_64_caracteres_minimum
 DATABASE_URL=postgresql://user:password@host:port/database
 
 # 4. OBLIGATOIRE - URL du frontend Vercel
-FRONTEND_URL=https://altusfinancegroup.com
+FRONTEND_URL=https://altusfinancesgroup.com
 
 # 5. OPTIONNEL mais RECOMMANDÉ - Domaine des cookies
-COOKIE_DOMAIN=.altusfinancegroup.com
+COOKIE_DOMAIN=.altusfinancesgroup.com
 ```
 
 ### Comment générer SESSION_SECRET
@@ -41,7 +41,7 @@ Copiez le résultat et utilisez-le comme `SESSION_SECRET`.
 1. **NODE_ENV=production** → Active :
    - `sameSite: 'none'` (permet les cookies cross-domain)
    - `secure: true` (cookies HTTPS uniquement)
-   - `domain: '.altusfinancegroup.com'` (cookies partagés entre sous-domaines)
+   - `domain: '.altusfinancesgroup.com'` (cookies partagés entre sous-domaines)
 
 2. **SESSION_SECRET** → Chiffre les sessions pour la sécurité
 
@@ -60,11 +60,11 @@ Après avoir ajouté ces variables :
 ```
 ============================================================
 [CONFIG] Environment: production
-[CONFIG] Cookie Domain: .altusfinancegroup.com
+[CONFIG] Cookie Domain: .altusfinancesgroup.com
 [CONFIG] Cookie SameSite: none
 [CONFIG] Cookie Secure: true
 [CONFIG] CORS Allowed Origins: production domains
-[CONFIG] Frontend URL: https://altusfinancegroup.com
+[CONFIG] Frontend URL: https://altusfinancesgroup.com
 [CONFIG] Trust Proxy: enabled
 ============================================================
 ```
@@ -74,9 +74,9 @@ Puis après le démarrage du serveur (le port dépend de la variable PORT sur Re
 ✅ Backend API server listening on port <PORT>
 🌍 Environment: production
 🗄️ Database: Connected
-[CONFIG] FRONTEND_URL: https://altusfinancegroup.com
-[CONFIG] Allowed Origins: ["https://altusfinancegroup.com","https://www.altusfinancegroup.com"]
-[CONFIG] Session Cookie Domain: .altusfinancegroup.com
+[CONFIG] FRONTEND_URL: https://altusfinancesgroup.com
+[CONFIG] Allowed Origins: ["https://altusfinancesgroup.com","https://www.altusfinancesgroup.com"]
+[CONFIG] Session Cookie Domain: .altusfinancesgroup.com
 [CONFIG] Session Cookie Secure: true
 [CONFIG] Session Cookie SameSite: none
 ```
@@ -84,7 +84,7 @@ Puis après le démarrage du serveur (le port dépend de la variable PORT sur Re
 3. Pour chaque requête, vous verrez :
 ```
 [REQUEST DEBUG] GET /api/user
-[REQUEST DEBUG] Origin: https://altusfinancegroup.com
+[REQUEST DEBUG] Origin: https://altusfinancesgroup.com
 [REQUEST DEBUG] Cookie Header: PRESENT
 [REQUEST DEBUG] Session Exists: YES
 [REQUEST DEBUG] Authenticated: YES
@@ -95,7 +95,7 @@ Puis après le démarrage du serveur (le port dépend de la variable PORT sur Re
 ```
 [AUTH SUCCESS] User authenticated successfully
 [AUTH SUCCESS] Session created and will be sent as cookie
-[AUTH SUCCESS] Cookie domain: .altusfinancegroup.com
+[AUTH SUCCESS] Cookie domain: .altusfinancesgroup.com
 ```
 
 **Note de sécurité** : Les logs ne montrent jamais les valeurs réelles des sessions ou cookies pour protéger contre le vol de session. Seule la présence/absence est indiquée.
@@ -104,15 +104,15 @@ Puis après le démarrage du serveur (le port dépend de la variable PORT sur Re
 
 Si `NODE_ENV` n'est pas défini à `production`, les cookies auront :
 - `sameSite: 'lax'` → ❌ Ne fonctionne PAS entre domaines différents
-- `domain: undefined` → ❌ Cookie limité à api.altusfinancegroup.com
+- `domain: undefined` → ❌ Cookie limité à api.altusfinancesgroup.com
 
-**Résultat** : Le navigateur refuse d'envoyer le cookie de `altusfinancegroup.com` vers `api.altusfinancegroup.com` → Pas de session → 401 Non authentifié
+**Résultat** : Le navigateur refuse d'envoyer le cookie de `altusfinancesgroup.com` vers `api.altusfinancesgroup.com` → Pas de session → 401 Non authentifié
 
 ## 📝 Configuration Vercel (déjà OK normalement)
 
 Votre frontend Vercel doit avoir :
 ```bash
-VITE_API_URL=https://api.altusfinancegroup.com
+VITE_API_URL=https://api.altusfinancesgroup.com
 ```
 
 ## 🔐 SendGrid (pour les emails)
@@ -120,7 +120,7 @@ VITE_API_URL=https://api.altusfinancegroup.com
 Si ce n'est pas déjà fait, ajoutez aussi :
 ```bash
 SENDGRID_API_KEY=votre_cle_sendgrid
-SENDGRID_FROM_EMAIL=noreply@altusfinancegroup.com
+SENDGRID_FROM_EMAIL=noreply@altusfinancesgroup.com
 ```
 
 ## 🚀 Après configuration

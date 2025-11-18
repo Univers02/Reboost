@@ -14,7 +14,7 @@ Deux erreurs ont été identifiées et corrigées :
 ```
 ┌─────────────────────────────────────────────────┐
 │                   FRONTEND                       │
-│         altusfinancegroup.com                    │
+│         altusfinancesgroup.com                    │
 │              (Vercel)                            │
 │         React + Vite + TypeScript                │
 └───────────────────┬─────────────────────────────┘
@@ -24,7 +24,7 @@ Deux erreurs ont été identifiées et corrigées :
                     ▼
 ┌─────────────────────────────────────────────────┐
 │                   BACKEND                        │
-│       api.altusfinancegroup.com                  │
+│       api.altusfinancesgroup.com                  │
 │             (Render)                             │
 │      Express + TypeScript + PostgreSQL           │
 └─────────────────────────────────────────────────┘
@@ -84,15 +84,15 @@ Dans l'onglet **Environment**, ajoutez ces variables :
 | `NODE_ENV` | `production` |
 | `DATABASE_URL` | Votre URL PostgreSQL Neon |
 | `SESSION_SECRET` | Générez : `openssl rand -base64 32` |
-| `FRONTEND_URL` | `https://altusfinancegroup.com` |
-| `COOKIE_DOMAIN` | `.altusfinancegroup.com` |
+| `FRONTEND_URL` | `https://altusfinancesgroup.com` |
+| `COOKIE_DOMAIN` | `.altusfinancesgroup.com` |
 
 #### Variables Optionnelles (Email)
 
 | Variable | Valeur |
 |----------|--------|
 | `SENDGRID_API_KEY` | Votre clé SendGrid |
-| `SENDGRID_FROM_EMAIL` | `noreply@altusfinancegroup.com` |
+| `SENDGRID_FROM_EMAIL` | `noreply@altusfinancesgroup.com` |
 | `SENDGRID_FROM_NAME` | `Altus Finance Group` |
 
 #### Variables Optionnelles (Cloudinary)
@@ -106,7 +106,7 @@ Dans l'onglet **Environment**, ajoutez ces variables :
 ### 6️⃣ Configuration du Domaine Personnalisé
 
 1. Dans Render, allez dans **Settings** → **Custom Domain**
-2. Ajoutez : `api.altusfinancegroup.com`
+2. Ajoutez : `api.altusfinancesgroup.com`
 3. Render vous donnera un **CNAME record**
 4. Dans votre DNS (Namecheap, Cloudflare, etc.) :
    ```
@@ -147,7 +147,7 @@ Vous devriez voir :
 curl https://altus-finance-backend.onrender.com/health
 
 # Avec votre domaine personnalisé (après configuration DNS)
-curl https://api.altusfinancegroup.com/health
+curl https://api.altusfinancesgroup.com/health
 ```
 
 Réponse attendue :
@@ -159,16 +159,16 @@ Réponse attendue :
   "database": "connected",
   "session": {
     "configured": true,
-    "cookieDomain": ".altusfinancegroup.com",
+    "cookieDomain": ".altusfinancesgroup.com",
     "secure": true,
     "sameSite": "none"
   },
   "cors": {
     "allowedOrigins": [
-      "https://altusfinancegroup.com",
-      "https://www.altusfinancegroup.com"
+      "https://altusfinancesgroup.com",
+      "https://www.altusfinancesgroup.com"
     ],
-    "frontendUrl": "https://altusfinancegroup.com"
+    "frontendUrl": "https://altusfinancesgroup.com"
   }
 }
 ```
@@ -256,7 +256,7 @@ Avant de considérer le déploiement comme terminé :
 - [ ] Toutes les variables d'environnement définies
 
 ### Domaine
-- [ ] Domaine personnalisé ajouté : `api.altusfinancegroup.com`
+- [ ] Domaine personnalisé ajouté : `api.altusfinancesgroup.com`
 - [ ] DNS CNAME configuré
 - [ ] SSL activé (certificat Let's Encrypt)
 
@@ -269,7 +269,7 @@ Avant de considérer le déploiement comme terminé :
 
 ### Frontend (Vercel)
 - [ ] Frontend déployé sur Vercel
-- [ ] `VITE_API_URL=https://api.altusfinancegroup.com` défini
+- [ ] `VITE_API_URL=https://api.altusfinancesgroup.com` défini
 - [ ] CORS fonctionne (requêtes API réussies)
 - [ ] Cookies de session fonctionnent
 
@@ -280,7 +280,7 @@ Avant de considérer le déploiement comme terminé :
 ### Si quelque chose ne fonctionne pas :
 
 1. **Vérifiez les logs Render** : Dashboard → Logs
-2. **Testez l'endpoint health** : `curl https://api.altusfinancegroup.com/health`
+2. **Testez l'endpoint health** : `curl https://api.altusfinancesgroup.com/health`
 3. **Vérifiez les variables d'environnement** : Dashboard → Environment
 4. **Consultez la documentation Render** : https://render.com/docs
 

@@ -54,8 +54,8 @@ if (process.env.NODE_ENV === "development") {
 ```
 
 **Architecture de production** :
-- 🔹 **Render** : Backend API uniquement (`api.altusfinancegroup.com`)
-- 🔹 **Vercel** : Frontend React (`altusfinancegroup.com`)
+- 🔹 **Render** : Backend API uniquement (`api.altusfinancesgroup.com`)
+- 🔹 **Vercel** : Frontend React (`altusfinancesgroup.com`)
 - 🔹 Communication : Le frontend appelle l'API backend via CORS
 
 ---

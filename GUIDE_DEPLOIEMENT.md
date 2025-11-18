@@ -1,13 +1,13 @@
 # Guide de Déploiement - Altus Finance Group
 
-Ce guide vous explique comment déployer votre application Altus Finance Group en production avec Netlify (frontend) et Render (backend).
+Ce guide vous explique comment déployer votre application Altus Finance Group en production avec Vercel (frontend) et Render (backend).
 
 ## 📋 Table des matières
 
 1. [Prérequis](#prérequis)
 2. [Configuration DNS](#configuration-dns)
 3. [Déploiement Backend (Render)](#déploiement-backend-render)
-4. [Déploiement Frontend (Netlify)](#déploiement-frontend-netlify)
+4. [Déploiement Frontend (Vercel)](#déploiement-frontend-vercel)
 5. [Vérification et Tests](#vérification-et-tests)
 6. [Dépannage](#dépannage)
 
@@ -19,8 +19,8 @@ Avant de commencer, assurez-vous d'avoir :
 
 - ✅ Un compte GitHub avec votre code
 - ✅ Un compte Render (https://render.com)
-- ✅ Un compte Netlify (https://netlify.com)
-- ✅ Accès à la configuration DNS de votre domaine `altusfinancegroup.com`
+- ✅ Un compte Vercel (https://vercel.com)
+- ✅ Accès à la configuration DNS de votre domaine `altusfinancesgroup.com`
 - ✅ Une base de données PostgreSQL (sera créée automatiquement sur Render)
 
 ---
@@ -38,11 +38,11 @@ Exemple : Cloudflare, OVH, GoDaddy, etc.
 ```
 Type    Nom                        Valeur                              TTL
 ----------------------------------------------------------------------
-CNAME   altusfinancegroup.com      [URL fournie par Netlify]          Auto
-CNAME   api.altusfinancegroup.com  [URL fournie par Render]           Auto
+CNAME   altusfinancesgroup.com      [URL fournie par Vercel]          Auto
+CNAME   api.altusfinancesgroup.com  [URL fournie par Render]           Auto
 ```
 
-**Note** : Les URLs exactes seront fournies par Netlify et Render dans les étapes suivantes.
+**Note** : Les URLs exactes seront fournies par Vercel et Render dans les étapes suivantes.
 
 ### 3. Vérification
 
@@ -101,11 +101,11 @@ Plan:           Starter (ou supérieur selon vos besoins)
 # Session Secret (IMPORTANT : Générez une clé sécurisée)
 SESSION_SECRET=VOTRE_CLE_SECRETE_GENEREE
 
-# Frontend URL (IMPORTANT : Votre domaine Netlify)
-FRONTEND_URL=https://altusfinancegroup.com
+# Frontend URL (IMPORTANT : Votre domaine Vercel)
+FRONTEND_URL=https://altusfinancesgroup.com
 
 # Cookie Domain (IMPORTANT : Noter le point au début)
-COOKIE_DOMAIN=.altusfinancegroup.com
+COOKIE_DOMAIN=.altusfinancesgroup.com
 
 # Database URL (Collez l'Internal Database URL de l'étape 3)
 DATABASE_URL=postgresql://user:password@host:5432/database
@@ -132,7 +132,7 @@ CLOUDINARY_API_SECRET=votre-api-secret
 
 # SendGrid (envoi d'emails)
 SENDGRID_API_KEY=votre-sendgrid-api-key
-FROM_EMAIL=noreply@altusfinancegroup.com
+FROM_EMAIL=noreply@altusfinancesgroup.com
 ```
 
 ### Étape 5 : Configurer le Domaine Personnalisé
@@ -140,7 +140,7 @@ FROM_EMAIL=noreply@altusfinancegroup.com
 1. Dans votre Web Service, allez à l'onglet **"Settings"**
 2. Scrollez jusqu'à **"Custom Domain"**
 3. Cliquez sur **"Add Custom Domain"**
-4. Entrez : `api.altusfinancegroup.com`
+4. Entrez : `api.altusfinancesgroup.com`
 5. Render vous donnera un **CNAME target** (par exemple : `altus-backend.onrender.com`)
 6. **COPIEZ CE CNAME** - vous en aurez besoin pour la configuration DNS
 
@@ -156,7 +156,7 @@ FROM_EMAIL=noreply@altusfinancegroup.com
 Testez que votre backend fonctionne :
 
 ```bash
-curl https://api.altusfinancegroup.com/health
+curl https://api.altusfinancesgroup.com/health
 ```
 
 Vous devriez recevoir une réponse JSON similaire à :
@@ -169,16 +169,16 @@ Vous devriez recevoir une réponse JSON similaire à :
   "database": "healthy",
   "session": {
     "configured": true,
-    "cookieDomain": ".altusfinancegroup.com",
+    "cookieDomain": ".altusfinancesgroup.com",
     "secure": true,
     "sameSite": "none"
   },
   "cors": {
     "allowedOrigins": [
-      "https://altusfinancegroup.com",
-      "https://www.altusfinancegroup.com"
+      "https://altusfinancesgroup.com",
+      "https://www.altusfinancesgroup.com"
     ],
-    "frontendUrl": "https://altusfinancegroup.com"
+    "frontendUrl": "https://altusfinancesgroup.com"
   }
 }
 ```
@@ -189,11 +189,11 @@ Vous devriez recevoir une réponse JSON similaire à :
 
 ---
 
-## 🎨 Déploiement Frontend (Netlify)
+## 🎨 Déploiement Frontend (Vercel)
 
 ### Étape 1 : Créer un nouveau Site
 
-1. Connectez-vous à https://app.netlify.com
+1. Connectez-vous à https://app.vercel.com
 2. Cliquez sur **"Add new site"** → **"Import an existing project"**
 3. Sélectionnez **"GitHub"** et autorisez l'accès
 4. Choisissez votre repository `altusfinancegroup`
@@ -215,25 +215,25 @@ Publish directory:    dist
 
 ```bash
 # URL de l'API Backend (OBLIGATOIRE)
-VITE_API_URL=https://api.altusfinancegroup.com
+VITE_API_URL=https://api.altusfinancesgroup.com
 
 # URL du site (pour SEO)
-VITE_SITE_URL=https://altusfinancegroup.com
+VITE_SITE_URL=https://altusfinancesgroup.com
 ```
 
 ### Étape 4 : Déployer
 
 1. Cliquez sur **"Deploy site"**
 2. Attendez la fin du build (environ 3-5 minutes)
-3. Le site sera disponible sur une URL temporaire Netlify (ex: `random-name-123456.netlify.app`)
+3. Le site sera disponible sur une URL temporaire Vercel (ex: `random-name-123456.vercel.app`)
 
 ### Étape 5 : Configurer le Domaine Personnalisé
 
 1. Une fois le déploiement terminé, allez dans **"Site settings"**
 2. Cliquez sur **"Domain management"**
 3. Cliquez sur **"Add custom domain"**
-4. Entrez : `altusfinancegroup.com`
-5. Netlify vous donnera l'adresse IP ou le CNAME à configurer
+4. Entrez : `altusfinancesgroup.com`
+5. Vercel vous donnera l'adresse IP ou le CNAME à configurer
 6. **COPIEZ CETTE VALEUR** pour la configuration DNS
 
 ### Étape 6 : Activer HTTPS
@@ -253,17 +253,17 @@ VITE_SITE_URL=https://altusfinancegroup.com
 
 ```bash
 # Test de santé
-curl https://api.altusfinancegroup.com/health
+curl https://api.altusfinancesgroup.com/health
 
 # Test de session
-curl -X GET https://api.altusfinancegroup.com/api/session-check \
-  -H "Origin: https://altusfinancegroup.com" \
+curl -X GET https://api.altusfinancesgroup.com/api/session-check \
+  -H "Origin: https://altusfinancesgroup.com" \
   --cookie-jar cookies.txt
 ```
 
 ### 2. Vérifier le Frontend
 
-1. Ouvrez https://altusfinancegroup.com dans votre navigateur
+1. Ouvrez https://altusfinancesgroup.com dans votre navigateur
 2. Ouvrez les DevTools (F12)
 3. Allez dans l'onglet **"Console"**
 4. Vérifiez qu'il n'y a pas d'erreurs CORS ou réseau
@@ -275,7 +275,7 @@ curl -X GET https://api.altusfinancegroup.com/api/session-check \
 3. **Vérifiez que le dashboard se charge** sans erreur
 4. Dans DevTools → **"Application"** → **"Cookies"** :
    - Vérifiez qu'un cookie `sessionId` existe
-   - Domain doit être `.altusfinancegroup.com`
+   - Domain doit être `.altusfinancesgroup.com`
    - Secure doit être `true`
    - SameSite doit être `None`
 
@@ -286,7 +286,7 @@ curl -X GET https://api.altusfinancegroup.com/api/session-check \
 - Vérifiez qu'il n'y a pas d'erreurs CORS
 - Cherchez les messages `[CORS DEBUG] ✅ Origin allowed`
 
-**Netlify (Frontend)** :
+**Vercel (Frontend)** :
 - Allez dans votre site → **"Deploys"** → **"Deploy log"**
 - Vérifiez que le build s'est terminé sans erreur
 - Vérifiez que `VITE_API_URL` est correctement définie
@@ -299,10 +299,10 @@ curl -X GET https://api.altusfinancegroup.com/api/session-check \
 
 **Causes possibles** :
 
-1. **VITE_API_URL non défini sur Netlify**
+1. **VITE_API_URL non défini sur Vercel**
    ```
-   Solution : Vérifiez dans Netlify → Site settings → Build & deploy → Environment variables
-   Ajoutez : VITE_API_URL=https://api.altusfinancegroup.com
+   Solution : Vérifiez dans Vercel → Site settings → Build & deploy → Environment variables
+   Ajoutez : VITE_API_URL=https://api.altusfinancesgroup.com
    Redéployez le site
    ```
 
@@ -310,13 +310,13 @@ curl -X GET https://api.altusfinancegroup.com/api/session-check \
    ```
    Symptôme : Erreur dans la console : "CORS policy: No 'Access-Control-Allow-Origin'"
    Solution : Vérifiez que FRONTEND_URL est défini sur Render
-   Valeur correcte : https://altusfinancegroup.com (sans slash final)
+   Valeur correcte : https://altusfinancesgroup.com (sans slash final)
    ```
 
 3. **Cookies non envoyés**
    ```
    Symptôme : Session perdue après connexion
-   Solution : Vérifiez que COOKIE_DOMAIN=.altusfinancegroup.com (avec le point)
+   Solution : Vérifiez que COOKIE_DOMAIN=.altusfinancesgroup.com (avec le point)
    Vérifiez que les deux domaines utilisent HTTPS
    ```
 
@@ -325,22 +325,22 @@ curl -X GET https://api.altusfinancegroup.com/api/session-check \
 **Vérification** :
 ```bash
 # Tester CORS
-curl -X OPTIONS https://api.altusfinancegroup.com/api/dashboard \
-  -H "Origin: https://altusfinancegroup.com" \
+curl -X OPTIONS https://api.altusfinancesgroup.com/api/dashboard \
+  -H "Origin: https://altusfinancesgroup.com" \
   -H "Access-Control-Request-Method: GET" \
   -v
 ```
 
 **Solution** :
 - Vérifiez les logs Render pour voir les origines rejetées
-- Assurez-vous que `FRONTEND_URL` est exactement `https://altusfinancegroup.com`
+- Assurez-vous que `FRONTEND_URL` est exactement `https://altusfinancesgroup.com`
 - Pas de slash final, pas de `www.`
 
 ### Problème : Base de données ne se connecte pas
 
 **Vérification** :
 ```bash
-curl https://api.altusfinancegroup.com/health
+curl https://api.altusfinancesgroup.com/health
 ```
 
 Si `database: "unhealthy"` :
@@ -348,14 +348,14 @@ Si `database: "unhealthy"` :
 2. Vérifiez que `DATABASE_URL` est correctement configurée
 3. Vérifiez les logs Render pour plus de détails
 
-### Problème : Build Netlify échoue
+### Problème : Build Vercel échoue
 
 **Causes courantes** :
 - Node version incompatible
 - Dépendances manquantes
 
 **Solution** :
-Ajoutez dans Netlify → **Build settings** :
+Ajoutez dans Vercel → **Build settings** :
 ```
 Node version: 20
 ```
@@ -368,12 +368,12 @@ Si vous rencontrez des problèmes :
 
 1. **Vérifiez les logs** :
    - Render : https://dashboard.render.com → Votre service → Logs
-   - Netlify : https://app.netlify.com → Votre site → Deploys → Deploy log
+   - Vercel : https://app.vercel.com → Votre site → Deploys → Deploy log
 
 2. **Utilisez les health checks** :
    ```bash
-   curl https://api.altusfinancegroup.com/health
-   curl https://api.altusfinancegroup.com/api/session-check
+   curl https://api.altusfinancesgroup.com/health
+   curl https://api.altusfinancesgroup.com/api/session-check
    ```
 
 3. **Mode développement** :
@@ -386,12 +386,12 @@ Si vous rencontrez des problèmes :
 
 Avant de considérer le déploiement terminé :
 
-- [ ] DNS configuré pour `altusfinancegroup.com` et `api.altusfinancegroup.com`
+- [ ] DNS configuré pour `altusfinancesgroup.com` et `api.altusfinancesgroup.com`
 - [ ] Backend Render déployé et status "Live"
 - [ ] Base de données PostgreSQL créée et connectée
 - [ ] Toutes les variables d'environnement Render configurées
-- [ ] Frontend Netlify déployé avec succès
-- [ ] Variables d'environnement Netlify (`VITE_API_URL`) configurées
+- [ ] Frontend Vercel déployé avec succès
+- [ ] Variables d'environnement Vercel (`VITE_API_URL`) configurées
 - [ ] HTTPS activé sur les deux domaines
 - [ ] `/health` retourne `status: "ok"`
 - [ ] Test d'inscription/connexion réussi

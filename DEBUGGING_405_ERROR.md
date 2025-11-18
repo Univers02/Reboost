@@ -14,15 +14,15 @@ Recherchez ces lignes dans les logs Render au démarrage :
 ✅ Backend API server listening on port 5000
 🌍 Environment: production
 🗄️ Database: Connected
-[CONFIG] FRONTEND_URL: https://altusfinancegroup.com
-[CONFIG] Allowed Origins: ["https://altusfinancegroup.com"]
-[CONFIG] Cookie Domain: .altusfinancegroup.com
+[CONFIG] FRONTEND_URL: https://altusfinancesgroup.com
+[CONFIG] Allowed Origins: ["https://altusfinancesgroup.com"]
+[CONFIG] Cookie Domain: .altusfinancesgroup.com
 [CONFIG] Cookie Secure: true
 [CONFIG] Cookie SameSite: none
 ```
 
 **✅ Vérifiez :**
-- `FRONTEND_URL` doit être exactement `https://altusfinancegroup.com` (sans slash `/` à la fin)
+- `FRONTEND_URL` doit être exactement `https://altusfinancesgroup.com` (sans slash `/` à la fin)
 - `Allowed Origins` doit contenir votre domaine frontend
 
 ### 2. Lors d'une Tentative d'Inscription
@@ -32,31 +32,31 @@ Recherchez ces patterns dans les logs :
 #### Pattern A - Requête OPTIONS (Preflight CORS)
 ```
 [CORS DEBUG] Incoming request: OPTIONS /api/auth/signup
-[CORS DEBUG] Origin: https://altusfinancegroup.com
+[CORS DEBUG] Origin: https://altusfinancesgroup.com
 [CORS DEBUG] Headers: {...}
-[CORS DEBUG] ✅ Origin allowed: https://altusfinancegroup.com
+[CORS DEBUG] ✅ Origin allowed: https://altusfinancesgroup.com
 ```
 
 #### Pattern B - Requête POST (Inscription réelle)
 ```
 [CORS DEBUG] Incoming request: POST /api/auth/signup
-[CORS DEBUG] Origin: https://altusfinancegroup.com
+[CORS DEBUG] Origin: https://altusfinancesgroup.com
 [CORS DEBUG] Headers: {"content-type":"application/json","x-csrf-token":"present",...}
-[CORS DEBUG] ✅ Origin allowed: https://altusfinancegroup.com
+[CORS DEBUG] ✅ Origin allowed: https://altusfinancesgroup.com
 POST /api/auth/signup 201 in XXXms
 ```
 
 #### Pattern C - Erreur CORS
 ```
-[CORS ERROR] ❌ Origin rejected: https://www.altusfinancegroup.com
-[CORS ERROR] Allowed origins: ["https://altusfinancegroup.com"]
+[CORS ERROR] ❌ Origin rejected: https://www.altusfinancesgroup.com
+[CORS ERROR] Allowed origins: ["https://altusfinancesgroup.com"]
 ```
 
 #### Pattern D - Erreur Générale
 ```
 [ERROR] POST /api/auth/signup - Status: 405
 [ERROR] Message: Method Not Allowed
-[ERROR] Origin: https://altusfinancegroup.com
+[ERROR] Origin: https://altusfinancesgroup.com
 ```
 
 ## 🔎 Causes Possibles de l'Erreur 405
@@ -64,18 +64,18 @@ POST /api/auth/signup 201 in XXXms
 ### Cause 1 : Mauvaise Origin CORS
 **Symptôme dans les logs :**
 ```
-[CORS ERROR] ❌ Origin rejected: https://www.altusfinancegroup.com
+[CORS ERROR] ❌ Origin rejected: https://www.altusfinancesgroup.com
 ```
 
 **Solution :**
-- Vérifiez que Vercel est configuré sur `altusfinancegroup.com` (sans `www`)
-- OU ajoutez `www.altusfinancegroup.com` aux origins autorisées
+- Vérifiez que Vercel est configuré sur `altusfinancesgroup.com` (sans `www`)
+- OU ajoutez `www.altusfinancesgroup.com` aux origins autorisées
 
 **Modification du code :**
 ```javascript
 const allowedOrigins = [
-  'https://altusfinancegroup.com',
-  'https://www.altusfinancegroup.com'  // Ajouter si nécessaire
+  'https://altusfinancesgroup.com',
+  'https://www.altusfinancesgroup.com'  // Ajouter si nécessaire
 ];
 ```
 
@@ -88,7 +88,7 @@ ou
 ```
 
 **Solution :**
-Vérifiez dans Render que `FRONTEND_URL=https://altusfinancegroup.com` est définie
+Vérifiez dans Render que `FRONTEND_URL=https://altusfinancesgroup.com` est définie
 
 ### Cause 3 : Requête OPTIONS Bloquée
 **Symptôme dans les logs :**
@@ -140,7 +140,7 @@ Le frontend doit d'abord appeler `/api/csrf-token` avant `/api/auth/signup`
 ## 🚀 Actions Immédiates
 
 1. **Redéployez sur Render** avec le nouveau code
-2. **Tentez une inscription** sur `https://altusfinancegroup.com`
+2. **Tentez une inscription** sur `https://altusfinancesgroup.com`
 3. **Ouvrez les logs Render** en temps réel
 4. **Copiez les logs** qui apparaissent lors de l'inscription
 5. **Comparez avec les patterns** de ce guide

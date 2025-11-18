@@ -155,13 +155,13 @@ DATABASE_URL=postgresql://user:password@host:port/database
 
 #### 3. FRONTEND_URL
 ```bash
-FRONTEND_URL=https://altusfinancegroup.com
+FRONTEND_URL=https://altusfinancesgroup.com
 ```
-**CRITIQUE:** Pour CORS, doit correspondre exactement à l'URL Netlify (sans slash final)
+**CRITIQUE:** Pour CORS, doit correspondre exactement à l'URL Vercel (sans slash final)
 
 #### 4. COOKIE_DOMAIN
 ```bash
-COOKIE_DOMAIN=.altusfinancegroup.com
+COOKIE_DOMAIN=.altusfinancesgroup.com
 ```
 **CRITIQUE:** Permet le partage de cookies entre frontend et backend (noter le point au début)
 
@@ -178,7 +178,7 @@ CLOUDINARY_API_SECRET=votre_api_secret
 #### 6. SendGrid (Emails)
 ```bash
 SENDGRID_API_KEY=votre_api_key
-SENDGRID_FROM_EMAIL=noreply@altusfinancegroup.com
+SENDGRID_FROM_EMAIL=noreply@altusfinancesgroup.com
 ```
 **Impact si manquant:** Aucun email ne sera envoyé (vérification, notifications, etc.)
 
@@ -188,17 +188,17 @@ NODE_ENV=production
 ```
 **Impact:** Configure les cookies secure, CORS, etc.
 
-### Frontend (Netlify) - OBLIGATOIRES ⚠️
+### Frontend (Vercel) - OBLIGATOIRES ⚠️
 
 #### 1. VITE_API_URL
 ```bash
-VITE_API_URL=https://api.altusfinancegroup.com
+VITE_API_URL=https://api.altusfinancesgroup.com
 ```
 **CRITIQUE:** URL complète du backend (sans slash final)
 
 #### 2. VITE_SITE_URL
 ```bash
-VITE_SITE_URL=https://altusfinancegroup.com
+VITE_SITE_URL=https://altusfinancesgroup.com
 ```
 **Usage:** SEO et Open Graph
 
@@ -212,8 +212,8 @@ VITE_SITE_URL=https://altusfinancegroup.com
 // CORS
 const allowedOrigins = process.env.NODE_ENV === 'production'
   ? [
-      'https://altusfinancegroup.com',
-      'https://www.altusfinancegroup.com',
+      'https://altusfinancesgroup.com',
+      'https://www.altusfinancesgroup.com',
       process.env.FRONTEND_URL
     ]
   : ['http://localhost:5173', 'http://localhost:5000'];
@@ -231,7 +231,7 @@ app.use(session({
     httpOnly: true,                // Sécurisé
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
     sameSite: IS_PRODUCTION ? 'none' : 'lax', // 'none' pour cross-domain
-    domain: COOKIE_DOMAIN         // .altusfinancegroup.com
+    domain: COOKIE_DOMAIN         // .altusfinancesgroup.com
   }
 }));
 ```
@@ -239,21 +239,21 @@ app.use(session({
 ### ✅ Configuration correcte pour votre déploiement
 
 **Render (Backend):**
-- URL: `https://api.altusfinancegroup.com`
+- URL: `https://api.altusfinancesgroup.com`
 - Variables env requises:
-  - `FRONTEND_URL=https://altusfinancegroup.com`
-  - `COOKIE_DOMAIN=.altusfinancegroup.com`
+  - `FRONTEND_URL=https://altusfinancesgroup.com`
+  - `COOKIE_DOMAIN=.altusfinancesgroup.com`
   - `NODE_ENV=production`
 
-**Netlify (Frontend):**
-- URL: `https://altusfinancegroup.com`
+**Vercel (Frontend):**
+- URL: `https://altusfinancesgroup.com`
 - Variables env requises:
-  - `VITE_API_URL=https://api.altusfinancegroup.com`
+  - `VITE_API_URL=https://api.altusfinancesgroup.com`
 
 **DNS Configuration requise:**
 ```
-altusfinancegroup.com → Netlify (A ou CNAME)
-api.altusfinancegroup.com → Render (CNAME)
+altusfinancesgroup.com → Vercel (A ou CNAME)
+api.altusfinancesgroup.com → Render (CNAME)
 ```
 
 **⚠️ IMPORTANT:** Les deux domaines DOIVENT utiliser HTTPS (obligatoire pour cookies secure)
@@ -266,7 +266,7 @@ api.altusfinancegroup.com → Render (CNAME)
 **Symptôme:** `Access to fetch at ... has been blocked by CORS policy`
 
 **Solutions:**
-- Vérifier que `FRONTEND_URL` est exactement `https://altusfinancegroup.com` (sans slash)
+- Vérifier que `FRONTEND_URL` est exactement `https://altusfinancesgroup.com` (sans slash)
 - Vérifier que le frontend fait les requêtes avec `credentials: 'include'`
 - Vérifier les logs Render pour confirmer la config CORS
 
@@ -274,7 +274,7 @@ api.altusfinancegroup.com → Render (CNAME)
 **Symptôme:** L'utilisateur ne reste pas connecté, doit se reconnecter à chaque page
 
 **Solutions:**
-- Vérifier que `COOKIE_DOMAIN=.altusfinancegroup.com` (avec le point)
+- Vérifier que `COOKIE_DOMAIN=.altusfinancesgroup.com` (avec le point)
 - Vérifier que les deux domaines utilisent HTTPS
 - Vérifier que `sameSite: 'none'` est configuré en production
 - Dans la console navigateur (F12 → Application → Cookies), vérifier que le cookie apparaît
@@ -348,26 +348,26 @@ api.altusfinancegroup.com → Render (CNAME)
 - [ ] Service Web créé
 - [ ] Base PostgreSQL attachée
 - [ ] Variable `SESSION_SECRET` configurée
-- [ ] Variable `FRONTEND_URL=https://altusfinancegroup.com` configurée
-- [ ] Variable `COOKIE_DOMAIN=.altusfinancegroup.com` configurée
+- [ ] Variable `FRONTEND_URL=https://altusfinancesgroup.com` configurée
+- [ ] Variable `COOKIE_DOMAIN=.altusfinancesgroup.com` configurée
 - [ ] Variable `NODE_ENV=production` configurée
 - [ ] Variables Cloudinary configurées (optionnel mais recommandé)
 - [ ] Variables SendGrid configurées (optionnel mais recommandé)
-- [ ] DNS CNAME `api.altusfinancegroup.com` pointe vers Render
+- [ ] DNS CNAME `api.altusfinancesgroup.com` pointe vers Render
 - [ ] Service démarré avec succès
-- [ ] Test: `curl https://api.altusfinancegroup.com/health` retourne 200
+- [ ] Test: `curl https://api.altusfinancesgroup.com/health` retourne 200
 
-### Netlify (Frontend)
+### Vercel (Frontend)
 - [ ] Site créé et déployé
-- [ ] Variable `VITE_API_URL=https://api.altusfinancegroup.com` configurée
-- [ ] Variable `VITE_SITE_URL=https://altusfinancegroup.com` configurée
-- [ ] DNS A/CNAME `altusfinancegroup.com` pointe vers Netlify
-- [ ] HTTPS activé (automatique avec Netlify)
+- [ ] Variable `VITE_API_URL=https://api.altusfinancesgroup.com` configurée
+- [ ] Variable `VITE_SITE_URL=https://altusfinancesgroup.com` configurée
+- [ ] DNS A/CNAME `altusfinancesgroup.com` pointe vers Vercel
+- [ ] HTTPS activé (automatique avec Vercel)
 - [ ] Build réussi
-- [ ] Site accessible à https://altusfinancegroup.com
+- [ ] Site accessible à https://altusfinancesgroup.com
 
 ### Tests de vérification
-- [ ] Ouverture de https://altusfinancegroup.com
+- [ ] Ouverture de https://altusfinancesgroup.com
 - [ ] Console navigateur (F12) sans erreurs CORS
 - [ ] Création de compte fonctionnelle
 - [ ] Connexion fonctionnelle
@@ -404,7 +404,7 @@ api.altusfinancegroup.com → Render (CNAME)
 
 ### 🔗 Liens utiles
 - Dashboard Render: https://dashboard.render.com
-- Dashboard Netlify: https://app.netlify.com
+- Dashboard Vercel: https://app.vercel.com
 - Cloudinary: https://cloudinary.com/console
 - SendGrid: https://app.sendgrid.com
 

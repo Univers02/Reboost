@@ -47,7 +47,7 @@ if (!process.env.SESSION_SECRET) {
 // Cookie domain configuration
 // IMPORTANT: Set COOKIE_DOMAIN in production to match your domain
 // Examples:
-//   - '.altusfinancegroup.com' (shares cookies between www and api subdomains)
+//   - '.altusfinancesgroup.com' (shares cookies between www and api subdomains)
 //   - '.altusfinancesgroup.com' (with 's')
 //   - undefined (same domain only - safest option)
 // 
