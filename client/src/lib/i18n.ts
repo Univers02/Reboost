@@ -4309,7 +4309,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       description: 'Votre partenaire de confiance pour tous vos projets de financement. Solutions de prêt adaptées aux particuliers et professionnels.',
       phone: '+352 40 63 48',
-      email: 'infos@altusfinancegroup.com',
+      email: 'infos@altusfinancesgroup.com',
       address: '19 Rue Sigismond, L-2537 Luxembourg',
       hoursTitle: 'Horaires d\'ouverture',
       hours: {
@@ -6824,7 +6824,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       description: 'Your trusted partner for all your financing projects. Loan solutions tailored to individuals and professionals.',
       phone: '+352 40 63 48',
-      email: 'infos@altusfinancegroup.com',
+      email: 'infos@altusfinancesgroup.com',
       address: '19 Rue Sigismond, L-2537 Luxembourg',
       hoursTitle: 'Opening Hours',
       hours: {
@@ -9241,7 +9241,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       description: 'Su socio de confianza para todos sus proyectos de financiamiento. Soluciones de préstamo adaptadas a particulares y profesionales.',
       phone: '+352 40 63 48',
-      email: 'infos@altusfinancegroup.com',
+      email: 'infos@altusfinancesgroup.com',
       address: '19 Rue Sigismond, L-2537 Luxembourg',
       hoursTitle: 'Horario de Atención',
       hours: {
@@ -11766,7 +11766,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       description: 'Seu parceiro de confiança para todos os seus projetos de financiamento. Soluções de empréstimo adaptadas a particulares e profissionais.',
       phone: '+352 40 63 48',
-      email: 'infos@altusfinancegroup.com',
+      email: 'infos@altusfinancesgroup.com',
       address: '19 Rue Sigismond, L-2537 Luxembourg',
       hoursTitle: 'Horário de Atendimento',
       hours: {
@@ -14086,7 +14086,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       description: 'Il vostro partner di fiducia per tutti i vostri progetti di finanziamento. Soluzioni di prestito adattate a privati e professionisti.',
       phone: '+352 40 63 48',
-      email: 'infos@altusfinancegroup.com',
+      email: 'infos@altusfinancesgroup.com',
       address: '19 Rue Sigismond, L-2537 Luxembourg',
       hoursTitle: 'Orari di Apertura',
       hours: {
@@ -16492,7 +16492,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       description: 'Ihr vertrauenswürdiger Partner für alle Ihre Finanzierungsprojekte. Kreditlösungen für Privat- und Geschäftskunden.',
       phone: '+352 40 63 48',
-      email: 'infos@altusfinancegroup.com',
+      email: 'infos@altusfinancesgroup.com',
       address: '19 Rue Sigismond, L-2537 Luxembourg',
       hoursTitle: 'Öffnungszeiten',
       hours: {
@@ -18868,7 +18868,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       description: 'Uw betrouwbare partner voor al uw financieringsprojecten. Leningsoplossingen aangepast aan particulieren en professionals.',
       phone: '+352 40 63 48',
-      email: 'infos@altusfinancegroup.com',
+      email: 'infos@altusfinancesgroup.com',
       address: '19 Rue Sigismond, L-2537 Luxembourg',
       hoursTitle: 'Openingstijden',
       hours: {
