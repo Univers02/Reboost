@@ -56,10 +56,14 @@ if (!process.env.SESSION_SECRET) {
 const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
+// For cross-domain cookies (frontend and API on different subdomains)
+// we MUST use sameSite: 'none' in production
+const SAME_SITE_POLICY = IS_PRODUCTION ? 'none' : 'lax';
+
 console.log('='.repeat(60));
 console.log(`[CONFIG] Environment: ${process.env.NODE_ENV || 'development'}`);
 console.log(`[CONFIG] Cookie Domain: ${COOKIE_DOMAIN || 'undefined (same domain only)'}`);
-console.log(`[CONFIG] Cookie SameSite: lax`);
+console.log(`[CONFIG] Cookie SameSite: ${SAME_SITE_POLICY}`);
 console.log(`[CONFIG] Cookie Secure: ${IS_PRODUCTION}`);
 console.log(`[CONFIG] CORS Allowed Origins: ${IS_PRODUCTION ? 'production domains' : 'localhost'}`);
 console.log(`[CONFIG] Frontend URL: ${process.env.FRONTEND_URL || 'NOT SET'}`);
@@ -152,9 +156,10 @@ app.use(session({
     secure: IS_PRODUCTION,
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    // Use 'lax' for same-site requests (most common case)
-    // Only use 'none' if you need true cross-site cookies (different domains)
-    sameSite: IS_PRODUCTION ? 'lax' : 'lax',
+    // CRITICAL: Use 'none' in production for cross-domain cookies
+    // Frontend (altusfinancesgroup.com) and API (api.altusfinancesgroup.com) are different origins
+    // 'none' requires secure: true (HTTPS only)
+    sameSite: SAME_SITE_POLICY,
     domain: COOKIE_DOMAIN,
     signed: true,
   },
