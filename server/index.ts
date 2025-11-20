@@ -109,7 +109,9 @@ app.use(helmet({
         ? ["'self'", "https://fonts.googleapis.com"]
         : ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'"],
+      connectSrc: process.env.NODE_ENV === 'production'
+        ? ["'self'", ...allowedOrigins.filter((origin): origin is string => origin !== undefined)]
+        : ["'self'"],
       fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],

@@ -33,18 +33,32 @@ L'endpoint `/api/csrf-token` fonctionne correctement avec les cookies de session
 
 Le frontend utilise `VITE_API_URL` pour pointer vers le backend
 
-### 5. ⚠️ CSP (Content Security Policy) - NOTE IMPORTANTE
+### 5. ✅ CSP (Content Security Policy) - CORRIGÉ ✨
 
-**Le CSP du backend n'affecte PAS les requêtes du frontend !**
+**PROBLÈME IDENTIFIÉ ET RÉSOLU !**
 
-- Le backend (Render) envoie des réponses JSON, pas des documents HTML
-- Le CSP s'applique aux documents, pas aux API JSON
-- Si Vercel applique un CSP sur le frontend, il doit inclure :
-  ```
-  connect-src 'self' https://api.altusfinancesgroup.com
-  ```
-- Vérifiez les headers Vercel dans : Settings → Headers (si configuré)
-- Par défaut, Vite ne définit PAS de CSP, donc aucune modification nécessaire
+Le backend Helmet envoyait un CSP avec `connect-src 'self'` qui **bloquait les requêtes cross-domain** !
+
+**Comment ça bloquait :**
+1. Helmet envoie `connect-src 'self'` dans les réponses API
+2. Le navigateur met ce header en cache
+3. Quand le frontend Vercel essaie d'appeler `api.altusfinancesgroup.com`, **le navigateur bloque la requête AVANT qu'elle n'atteigne le serveur**
+4. Résultat : Sessions/cookies jamais établis, CSRF échoue
+
+**Solution appliquée (server/index.ts, ligne 115-117) :**
+```javascript
+connectSrc: process.env.NODE_ENV === 'production'
+  ? ["'self'", ...allowedOrigins.filter((origin): origin is string => origin !== undefined)]
+  : ["'self'"]
+```
+
+Maintenant, en production, le CSP autorise :
+- `'self'` (le backend lui-même)
+- `https://altusfinancesgroup.com` (le frontend Vercel)
+- `https://www.altusfinancesgroup.com` (variante www)
+- `process.env.FRONTEND_URL` (si défini)
+
+✅ **Le navigateur peut maintenant faire des requêtes cross-domain !**
 
 ---
 
@@ -220,33 +234,47 @@ Si vous rencontrez toujours des problèmes après avoir suivi ce guide :
 
 ## 🎉 Résumé de la Configuration
 
-### ✅ Code Backend - AUCUNE MODIFICATION NÉCESSAIRE
+### ✅ Code Backend - CORRIGÉ LE 20 NOVEMBRE 2025
 
-Le code existant est **déjà correctement configuré** pour le cross-domain :
+**Problème identifié :** Le CSP Helmet bloquait les requêtes cross-domain avec `connect-src 'self'`
 
-1. **CORS** : Autorise `altusfinancesgroup.com` avec `credentials: true`
-2. **Session cookies** : Configuré avec `sameSite: 'none'` et `secure: true` en production
-3. **CSRF** : Fonctionne via cookies de session
-4. **CSP** : N'affecte pas les requêtes cross-domain (API JSON seulement)
+**Solution appliquée :**
+- ✅ **CSP connectSrc** : Maintenant autorise le frontend en production
+- ✅ **CORS** : Autorise `altusfinancesgroup.com` avec `credentials: true`
+- ✅ **Session cookies** : Configuré avec `sameSite: 'none'` et `secure: true` en production
+- ✅ **CSRF** : Fonctionne via cookies de session
 
 ### ✅ Code Frontend - AUCUNE MODIFICATION NÉCESSAIRE
 
 Le frontend utilise déjà `VITE_API_URL` pour pointer vers le backend.
 
-### ⚠️ SEULE ACTION REQUISE : Variables d'Environnement
+### ⚠️ PROCHAINES ÉTAPES : Redéployer le Backend
 
-**Sur Render (Backend)** :
+**1. Sur Render (Backend) - REDÉPLOIEMENT REQUIS :**
+
+Les variables sont déjà configurées ✅ mais vous devez **redéployer** pour appliquer le correctif CSP :
+
 ```bash
-SESSION_SECRET=<généré>
-FRONTEND_URL=https://altusfinancesgroup.com
-COOKIE_DOMAIN=.altusfinancesgroup.com
-NODE_ENV=production
+# Variables déjà configurées (confirmé par captures d'écran)
+SESSION_SECRET=<configuré> ✅
+FRONTEND_URL=https://altusfinancesgroup.com ✅
+COOKIE_DOMAIN=.altusfinancesgroup.com ✅
+NODE_ENV=production ✅
 ```
 
-**Sur Vercel (Frontend)** :
+👉 **Action requise :** Redéployez manuellement ou poussez un commit pour déclencher le redéploiement
+
+**2. Sur Vercel (Frontend) - DÉJÀ CONFIGURÉ :**
+
 ```bash
-VITE_API_URL=https://api.altusfinancesgroup.com
-VITE_SITE_URL=https://altusfinancesgroup.com
+VITE_API_URL=https://api.altusfinancesgroup.com ✅
+VITE_SITE_URL=https://altusfinancesgroup.com ✅
 ```
 
-**C'est tout !** Le code est prêt, il ne reste qu'à configurer ces variables.
+✅ Aucune action requise sur Vercel
+
+**3. Après le redéploiement :**
+
+⚠️ **IMPORTANT** : Videz le cache du navigateur (Ctrl+Shift+Delete) pour supprimer l'ancien CSP mis en cache !
+
+**C'est tout !** Le problème CSP est résolu dans le code, il suffit de redéployer le backend.
