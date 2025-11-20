@@ -118,9 +118,10 @@ export default function TransferFlow() {
       }
       
       setTransferId(data.transfer.id);
-      setIsPausedForCode(true);
-      // CORRECTION: Utiliser la progression du backend au lieu de hardcoder 0
-      setSimulatedProgress(data.transfer.progressPercent || 0);
+      setIsPausedForCode(false);
+      // Démarrer la progression à 0% pour animation visuelle vers le premier pausePercent
+      setSimulatedProgress(0);
+      setLastValidatedSequence(0);
       toast({
         title: t.transferFlow.toast.initiated,
         description: t.transferFlow.toast.initiatedSuccessDesc,
@@ -223,10 +224,12 @@ export default function TransferFlow() {
       
       const targetPercent = computedNextCode.pausePercent || 90;
       const justValidated = lastValidatedSequence === nextSequence - 1;
+      const isInitialLoad = lastValidatedSequence === 0 && nextSequence === 1;
       
-      // SÉCURITÉ CRITIQUE: Ne progresser QUE si un code vient d'être validé
-      // Sinon, le transfert DOIT rester en pause
-      if (justValidated && simulatedProgress < targetPercent && !isPausedForCode) {
+      // Progresser si:
+      // 1. Un code vient d'être validé OU
+      // 2. C'est le chargement initial (première fois qu'on attend le code 1)
+      if ((justValidated || isInitialLoad) && simulatedProgress < targetPercent && !isPausedForCode) {
         if (progressIntervalRef.current) {
           clearInterval(progressIntervalRef.current);
         }
@@ -248,8 +251,8 @@ export default function TransferFlow() {
             return next;
           });
         }, 200);
-      } else if (!justValidated) {
-        // FORCER la pause tant qu'aucun code n'a été validé
+      } else if (!justValidated && !isInitialLoad) {
+        // FORCER la pause tant qu'aucun code n'a été validé (sauf au chargement initial)
         setIsPausedForCode(true);
       }
     }
