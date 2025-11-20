@@ -82,29 +82,34 @@ export const useLanguage = create<LanguageStore>()(
 
 // Auto-detect language on app initialization
 if (typeof window !== 'undefined') {
-  const stored = localStorage.getItem('language-storage');
-  let hasStoredLanguage = false;
-  
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      hasStoredLanguage = !!parsed.state?.language;
-    } catch (e) {
-      // Ignore
-    }
-  }
-  
-  // Only auto-detect if user hasn't manually selected a language
-  if (!hasStoredLanguage) {
-    detectLanguageFromIP().then((detectedLang) => {
-      if (detectedLang) {
-        useLanguage.setState({ 
-          language: detectedLang, 
-          isAutoDetected: true 
-        });
+  // Defer execution to avoid module initialization race conditions
+  setTimeout(() => {
+    const stored = localStorage.getItem('language-storage');
+    let hasStoredLanguage = false;
+    
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        hasStoredLanguage = !!parsed.state?.language;
+      } catch (e) {
+        // Ignore
       }
-    });
-  }
+    }
+    
+    // Only auto-detect if user hasn't manually selected a language
+    if (!hasStoredLanguage) {
+      detectLanguageFromIP().then((detectedLang) => {
+        if (detectedLang) {
+          useLanguage.setState({ 
+            language: detectedLang, 
+            isAutoDetected: true 
+          });
+        }
+      }).catch((error) => {
+        console.error('Failed to detect language from IP:', error);
+      });
+    }
+  }, 0);
 }
 
 type TranslationKeys = {
