@@ -2,7 +2,15 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertLoanSchema, insertTransferSchema, insertUserSchema, transferValidationCodes, type TransferValidationCode } from "@shared/schema";
+import { 
+  insertLoanSchema, 
+  insertTransferSchema, 
+  insertUserSchema, 
+  transferValidationCodes, 
+  type TransferValidationCode,
+  getLoanReferenceNumber,
+  getOrGenerateLoanReference
+} from "@shared/schema";
 import bcrypt from "bcrypt";
 import { randomUUID, randomBytes } from "crypto";
 import { sendVerificationEmail, sendWelcomeEmail, sendResetPasswordEmail } from "./email";
@@ -1700,19 +1708,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/loans", requireAuth, async (req, res) => {
     try {
       const loans = await storage.getUserLoans(req.session.userId!);
-      res.json(loans);
+      // Ajouter les références de prêt à chaque prêt
+      const loansWithReferences = loans.map(loan => ({
+        ...loan,
+        loanReference: getOrGenerateLoanReference(loan)
+      }));
+      res.json({ success: true, data: loansWithReferences });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch loans' });
+      res.status(500).json({ success: false, error: 'Failed to fetch loans' });
     }
   });
 
   app.get("/api/loans/available-for-transfer", requireAuth, async (req, res) => {
     try {
       const loansAvailable = await storage.getLoansAvailableForTransfer(req.session.userId!);
-      res.json(loansAvailable);
+      const loansWithReferences = loansAvailable.map(loan => ({
+        ...loan,
+        loanReference: getOrGenerateLoanReference(loan)
+      }));
+      res.json({ success: true, data: loansWithReferences });
     } catch (error) {
       console.error('Error fetching loans available for transfer:', error);
-      res.status(500).json({ error: 'Erreur lors de la récupération des prêts disponibles' });
+      res.status(500).json({ success: false, error: 'Erreur lors de la récupération des prêts disponibles' });
+    }
+  });
+
+  // Endpoint pour récupérer le calendrier d'amortissement d'un prêt
+  app.get("/api/loans/:id/amortization", requireAuth, async (req, res) => {
+    try {
+      const loan = await storage.getLoan(req.params.id);
+      
+      if (!loan) {
+        return res.status(404).json({ success: false, error: 'Prêt non trouvé' });
+      }
+
+      if (loan.userId !== req.session.userId) {
+        const user = await storage.getUser(req.session.userId!);
+        if (!user || user.role !== 'admin') {
+          return res.status(403).json({ success: false, error: 'Accès refusé' });
+        }
+      }
+
+      // Vérifier que le prêt est approuvé et que les fonds sont disponibles
+      if (loan.status !== 'approved' && loan.status !== 'active') {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Le calendrier d\'amortissement n\'est disponible que pour les prêts approuvés' 
+        });
+      }
+
+      const schedule = await storage.getAmortizationSchedule(req.params.id);
+      
+      // Si le calendrier n'existe pas, le générer
+      if (schedule.length === 0) {
+        const generated = await storage.generateAmortizationSchedule(req.params.id);
+        return res.json({ 
+          success: true, 
+          data: {
+            loan: {
+              ...loan,
+              loanReference: getOrGenerateLoanReference(loan)
+            },
+            schedule: generated
+          }
+        });
+      }
+
+      res.json({ 
+        success: true, 
+        data: {
+          loan: {
+            ...loan,
+            loanReference: getOrGenerateLoanReference(loan)
+          },
+          schedule
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching amortization schedule:', error);
+      res.status(500).json({ success: false, error: 'Erreur lors de la récupération du calendrier d\'amortissement' });
+    }
+  });
+
+  // Endpoint pour récupérer les prochains paiements d'un prêt
+  app.get("/api/loans/:id/upcoming-payments", requireAuth, async (req, res) => {
+    try {
+      const loan = await storage.getLoan(req.params.id);
+      
+      if (!loan) {
+        return res.status(404).json({ success: false, error: 'Prêt non trouvé' });
+      }
+
+      if (loan.userId !== req.session.userId) {
+        const user = await storage.getUser(req.session.userId!);
+        if (!user || user.role !== 'admin') {
+          return res.status(403).json({ success: false, error: 'Accès refusé' });
+        }
+      }
+
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 6;
+      const upcomingPayments = await storage.getUpcomingPayments(req.params.id, limit);
+
+      res.json({ success: true, data: upcomingPayments });
+    } catch (error) {
+      console.error('Error fetching upcoming payments:', error);
+      res.status(500).json({ success: false, error: 'Erreur lors de la récupération des paiements à venir' });
     }
   });
 

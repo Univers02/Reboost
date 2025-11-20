@@ -21,6 +21,7 @@ interface Loan {
   nextPaymentDate: string | null;
   totalRepaid: string;
   createdAt: string;
+  loanReference?: string;
 }
 
 export default function IndividualLoans() {
@@ -168,7 +169,7 @@ export default function IndividualLoans() {
                                 </div>
                                 <div>
                                   <h3 className="font-semibold">{t.loan.loanNumber}</h3>
-                                  <p className="text-xs text-muted-foreground">#{loan.id.substring(0, 8)}</p>
+                                  <p className="text-xs text-muted-foreground">{loan.loanReference || `#${loan.id.substring(0, 8)}`}</p>
                                 </div>
                               </div>
                               <Badge variant="default" className="bg-accent/90 text-accent-foreground shadow-sm">
@@ -245,7 +246,7 @@ export default function IndividualLoans() {
                               </div>
                               <div>
                                 <h3 className="font-semibold">{t.loan.loanNumber}</h3>
-                                <p className="text-xs text-muted-foreground">#{loan.id.substring(0, 8)}</p>
+                                <p className="text-xs text-muted-foreground">{loan.loanReference || `#${loan.id.substring(0, 8)}`}</p>
                               </div>
                             </div>
                             <Badge variant="secondary" className="shadow-sm">

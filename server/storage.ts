@@ -25,6 +25,8 @@ import {
   type InsertKycDocument,
   type Notification,
   type InsertNotification,
+  type AmortizationSchedule,
+  type InsertAmortizationSchedule,
   users,
   loans,
   transfers,
@@ -38,6 +40,9 @@ import {
   externalAccounts,
   kycDocuments,
   notifications,
+  amortizationSchedule,
+  getLoanReferenceNumber,
+  getOrGenerateLoanReference,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
@@ -184,6 +189,12 @@ export interface IStorage {
   getUnreadNotificationCount(userId: string): Promise<number>;
   hasUnreadNotificationByType(userId: string, type: string): Promise<boolean>;
   hasNotificationByType(userId: string, type: string): Promise<boolean>;
+  
+  getAmortizationSchedule(loanId: string): Promise<AmortizationSchedule[]>;
+  createAmortizationSchedule(schedule: InsertAmortizationSchedule): Promise<AmortizationSchedule>;
+  generateAmortizationSchedule(loanId: string): Promise<AmortizationSchedule[]>;
+  getUpcomingPayments(loanId: string, limit?: number): Promise<AmortizationSchedule[]>;
+  markPaymentAsPaid(paymentId: string): Promise<AmortizationSchedule | undefined>;
 }
 
 // export class MemStorage implements IStorage {
@@ -1612,8 +1623,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createLoan(insertLoan: InsertLoan): Promise<Loan> {
+    // Insérer le prêt d'abord pour obtenir l'ID et createdAt
     const result = await db.insert(loans).values(insertLoan).returning();
-    return result[0];
+    const loan = result[0];
+    
+    // Générer et persister la référence professionnelle
+    const { getLoanReferenceNumber } = await import('@shared/schema');
+    const loanReference = getLoanReferenceNumber(loan.id, loan.createdAt);
+    
+    // Mettre à jour le prêt avec la référence
+    const updated = await db
+      .update(loans)
+      .set({ loanReference })
+      .where(eq(loans.id, loan.id))
+      .returning();
+    
+    return updated[0];
   }
 
   async updateLoan(id: string, updates: Partial<Loan>): Promise<Loan | undefined> {
@@ -2708,6 +2733,108 @@ export class DatabaseStorage implements IStorage {
         eq(notifications.type, type)
       ));
     return true;
+  }
+
+  async getAmortizationSchedule(loanId: string): Promise<AmortizationSchedule[]> {
+    return await db.select()
+      .from(amortizationSchedule)
+      .where(eq(amortizationSchedule.loanId, loanId))
+      .orderBy(amortizationSchedule.paymentNumber);
+  }
+
+  async createAmortizationSchedule(schedule: InsertAmortizationSchedule): Promise<AmortizationSchedule> {
+    const result = await db.insert(amortizationSchedule)
+      .values(schedule)
+      .returning();
+    return result[0];
+  }
+
+  async generateAmortizationSchedule(loanId: string): Promise<AmortizationSchedule[]> {
+    const loan = await this.getLoan(loanId);
+    if (!loan) {
+      throw new Error('Prêt non trouvé');
+    }
+
+    // Vérifier si un calendrier existe déjà
+    const existing = await this.getAmortizationSchedule(loanId);
+    if (existing.length > 0) {
+      return existing;
+    }
+
+    const amount = parseFloat(loan.amount);
+    const annualRate = parseFloat(loan.interestRate);
+    const rate = annualRate / 100 / 12; // Taux mensuel
+    const duration = loan.duration; // en mois
+
+    let monthlyPayment: number;
+    
+    // Gérer le cas des prêts à 0% d'intérêt (promotionnels)
+    if (annualRate === 0 || rate === 0) {
+      // Prêt sans intérêt: remboursement linéaire
+      monthlyPayment = amount / duration;
+    } else {
+      // Calcul de la mensualité avec intérêt (formule standard d'amortissement)
+      monthlyPayment = amount * (rate * Math.pow(1 + rate, duration)) / (Math.pow(1 + rate, duration) - 1);
+    }
+
+    let remainingBalance = amount;
+    const schedules: AmortizationSchedule[] = [];
+    const startDate = new Date();
+
+    for (let i = 1; i <= duration; i++) {
+      const interestAmount = annualRate === 0 ? 0 : remainingBalance * rate;
+      const principalAmount = monthlyPayment - interestAmount;
+      remainingBalance -= principalAmount;
+
+      // Date d'échéance
+      const dueDate = new Date(startDate);
+      dueDate.setMonth(dueDate.getMonth() + i);
+
+      const scheduleEntry = await this.createAmortizationSchedule({
+        loanId,
+        paymentNumber: i,
+        dueDate,
+        paymentAmount: monthlyPayment.toFixed(2),
+        principalAmount: principalAmount.toFixed(2),
+        interestAmount: interestAmount.toFixed(2),
+        remainingBalance: Math.max(0, remainingBalance).toFixed(2),
+        status: 'unpaid',
+        paidAt: null,
+      });
+
+      schedules.push(scheduleEntry);
+    }
+
+    return schedules;
+  }
+
+  async getUpcomingPayments(loanId: string, limit: number = 6): Promise<AmortizationSchedule[]> {
+    // Vérifier si le calendrier existe, sinon le générer
+    let schedule = await this.getAmortizationSchedule(loanId);
+    if (schedule.length === 0) {
+      schedule = await this.generateAmortizationSchedule(loanId);
+    }
+    
+    // Retourner uniquement les paiements impayés, triés par date d'échéance
+    return await db.select()
+      .from(amortizationSchedule)
+      .where(and(
+        eq(amortizationSchedule.loanId, loanId),
+        eq(amortizationSchedule.status, 'unpaid')
+      ))
+      .orderBy(amortizationSchedule.dueDate)
+      .limit(limit);
+  }
+
+  async markPaymentAsPaid(paymentId: string): Promise<AmortizationSchedule | undefined> {
+    const result = await db.update(amortizationSchedule)
+      .set({
+        status: 'paid',
+        paidAt: new Date()
+      })
+      .where(eq(amortizationSchedule.id, paymentId))
+      .returning();
+    return result[0];
   }
 }
 

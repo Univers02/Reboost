@@ -214,7 +214,15 @@ export const getQueryFn: <T>(options: {
     }
 
     await throwIfResNotOk(res);
-    return await res.json();
+    const json = await res.json();
+    
+    // Si la réponse utilise le nouveau format standardisé {success, data}, extraire data
+    if (json && typeof json === 'object' && 'success' in json && 'data' in json) {
+      return json.data;
+    }
+    
+    // Sinon, retourner la réponse complète (ancien format)
+    return json;
   };
 
 function shouldRetry(failureCount: number, error: Error): boolean {

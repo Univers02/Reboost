@@ -23,6 +23,7 @@ interface Loan {
   signedContractUrl: string | null;
   approvedAt: string | null;
   createdAt: string;
+  loanReference?: string;
 }
 
 export default function Contracts() {
@@ -168,7 +169,7 @@ export default function Contracts() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <h3 className="text-xl font-semibold mb-1">
-                            {t.contracts?.loanNumber || 'Prêt'} #{loan.id.substring(0, 8)}
+                            {t.contracts?.loanNumber || 'Prêt'} {loan.loanReference || `#${loan.id.substring(0, 8)}`}
                           </h3>
                           <p className="text-sm text-muted-foreground">
                             {t.contracts?.approvedOn || 'Approuvé le'} {formatDate(loan.approvedAt)}
@@ -275,7 +276,7 @@ export default function Contracts() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold mb-1">
-                          {t.contracts?.loanNumber || 'Prêt'} #{loan.id.substring(0, 8)}
+                          {t.contracts?.loanNumber || 'Prêt'} {loan.loanReference || `#${loan.id.substring(0, 8)}`}
                         </h3>
                         <p className="text-sm text-muted-foreground">
                           {formatCurrency(loan.amount)} • {loan.interestRate}% • {loan.duration} mois
@@ -334,7 +335,7 @@ export default function Contracts() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold mb-1">
-                          {t.contracts?.loanNumber || 'Prêt'} #{loan.id.substring(0, 8)}
+                          {t.contracts?.loanNumber || 'Prêt'} {loan.loanReference || `#${loan.id.substring(0, 8)}`}
                         </h3>
                         <p className="text-sm text-muted-foreground">
                           {formatCurrency(loan.amount)} • {loan.interestRate}% • {loan.duration} mois

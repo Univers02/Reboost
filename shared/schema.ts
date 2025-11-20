@@ -32,7 +32,7 @@ export const users = pgTable("users", {
   kycStatus: text("kyc_status").notNull().default("pending"),
   kycSubmittedAt: timestamp("kyc_submitted_at"),
   kycApprovedAt: timestamp("kyc_approved_at"),
-  maxLoanAmount: decimal("max_loan_amount", { precision: 12, scale: 2 }).default("50000.00"),
+  maxLoanAmount: decimal("max_loan_amount", { precision: 12, scale: 2 }).default("500000.00"),
   suspendedUntil: timestamp("suspended_until"),
   suspensionReason: text("suspension_reason"),
   externalTransfersBlocked: boolean("external_transfers_blocked").notNull().default(false),
@@ -54,6 +54,7 @@ export const loans = pgTable("loans", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull(),
   loanType: text("loan_type").notNull(),
+  loanReference: text("loan_reference"),
   amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
   interestRate: decimal("interest_rate", { precision: 5, scale: 2 }).notNull(),
   duration: integer("duration").notNull(),
@@ -239,6 +240,22 @@ export const notifications = pgTable("notifications", {
   readAt: timestamp("read_at"),
 });
 
+export const amortizationSchedule = pgTable("amortization_schedule", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  loanId: varchar("loan_id").notNull(),
+  paymentNumber: integer("payment_number").notNull(),
+  dueDate: timestamp("due_date").notNull(),
+  paymentAmount: decimal("payment_amount", { precision: 12, scale: 2 }).notNull(),
+  principalAmount: decimal("principal_amount", { precision: 12, scale: 2 }).notNull(),
+  interestAmount: decimal("interest_amount", { precision: 12, scale: 2 }).notNull(),
+  remainingBalance: decimal("remaining_balance", { precision: 12, scale: 2 }).notNull(),
+  status: text("status").notNull().default("unpaid"),
+  paidAt: timestamp("paid_at"),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+}, (table) => ({
+  loanIdIdx: index("amortization_loan_id_idx").on(table.loanId),
+}));
+
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true }).extend({
   password: z.string()
     .min(12, 'Le mot de passe doit contenir au moins 12 caractères')
@@ -260,6 +277,7 @@ export const insertAdminMessageSchema = createInsertSchema(adminMessages).omit({
 export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true, createdAt: true });
 export const insertUserOtpSchema = createInsertSchema(userOtps).omit({ id: true, createdAt: true });
 export const insertNotificationSchema = createInsertSchema(notifications).omit({ id: true, createdAt: true });
+export const insertAmortizationScheduleSchema = createInsertSchema(amortizationSchedule).omit({ id: true, createdAt: true });
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -289,6 +307,8 @@ export type UserOtp = typeof userOtps.$inferSelect;
 export type InsertUserOtp = z.infer<typeof insertUserOtpSchema>;
 export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type AmortizationSchedule = typeof amortizationSchedule.$inferSelect;
+export type InsertAmortizationSchedule = z.infer<typeof insertAmortizationScheduleSchema>;
 
 // Type sécurisé pour les métadonnées de code sans exposer les valeurs sensibles
 export type TransferCodeMetadata = {
@@ -343,4 +363,54 @@ export function getTransferReferenceNumber(transfer: Transfer): string {
   
   // Format final: TRF-YYMMDD-XXXX
   return `TRF-${datePrefix}-${idHash}`;
+}
+
+/**
+ * Génère un numéro de référence unique pour un prêt au format professionnel.
+ * 
+ * Format: ALT-{TYPE}-YYYY-{COUNTER}
+ * Ex: ALT-P-2025-00147 (Personnel)
+ *     ALT-I-2025-00893 (Immobilier)
+ *     ALT-C-2025-00042 (Consommation/Business)
+ * 
+ * @param loan - Le prêt pour lequel générer le numéro de référence
+ * @returns Un numéro de référence unique au format ALT-{TYPE}-YYYY-{COUNTER}
+ */
+export function getLoanReferenceNumber(loan: Loan): string {
+  const createdAt = new Date(loan.createdAt);
+  const year = createdAt.getFullYear();
+  
+  // Déterminer le préfixe de type basé sur loanType
+  let typePrefix = 'C'; // Default: Consommation
+  
+  if (loan.loanType === 'personal') {
+    typePrefix = 'P'; // Personnel
+  } else if (loan.loanType === 'mortgage' || loan.loanType === 'commercialProperty') {
+    typePrefix = 'I'; // Immobilier
+  } else if (loan.loanType === 'business' || loan.loanType === 'cashFlow' || loan.loanType === 'lineOfCredit') {
+    typePrefix = 'B'; // Business
+  } else if (loan.loanType === 'auto' || loan.loanType === 'vehicleFleet') {
+    typePrefix = 'A'; // Auto
+  } else if (loan.loanType === 'equipment') {
+    typePrefix = 'E'; // Equipement
+  }
+  
+  // Générer un compteur à partir de l'UUID (5 chiffres)
+  // Utilise les 5 premiers caractères hexadécimaux de l'UUID converti en base 10
+  const uuidNum = parseInt(loan.id.replace(/-/g, '').substring(0, 8), 16);
+  const counter = String(uuidNum % 100000).padStart(5, '0');
+  
+  // Format final: ALT-{TYPE}-YYYY-{COUNTER}
+  return `ALT-${typePrefix}-${year}-${counter}`;
+}
+
+/**
+ * Génère ou retourne le numéro de référence d'un prêt.
+ * Si le prêt a déjà une référence, la retourne, sinon la génère.
+ * 
+ * @param loan - Le prêt
+ * @returns Le numéro de référence du prêt
+ */
+export function getOrGenerateLoanReference(loan: Loan): string {
+  return loan.loanReference || getLoanReferenceNumber(loan);
 }
