@@ -10,6 +10,29 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (November 20, 2025)
 
+### Transfer Progress Animation - Fixed Infinite Loop Issue
+- 🎨 **FIXED:** Replaced problematic setInterval-based progress animation with smooth spring animation
+  - **Issue:** Progress was looping infinitely from 1-5% instead of progressing linearly based on validated codes
+  - **Root cause:** Multiple `setInterval` timers competing and creating infinite loops in useEffect
+  - **Solution:** Simplified to use backend `transfer.progressPercent` as single source of truth
+  - Files modified: `client/src/components/CircularTransferProgress.tsx`, `client/src/pages/TransferFlow.tsx`
+- ✅ **IMPROVED:** CircularTransferProgress component now uses framer-motion spring animation
+  - Uses `useSpring` and `useTransform` for fluid animation of both circle and percentage number
+  - Automatically animates from current value to target value smoothly
+  - Configuration: `stiffness: 50, damping: 20` for natural, non-jarring motion
+- ✅ **SIMPLIFIED:** Transfer progress logic in TransferFlow.tsx
+  - Removed all client-side `setInterval` timers that caused loops
+  - Removed unused `lastValidatedSequence` state and `progressIntervalRef`
+  - Progress now directly syncs with `transfer.progressPercent` from backend every 3 seconds
+  - CircularTransferProgress handles all visual animation automatically
+- ✅ **REPLACED:** Removed hard-coded SVG circle with reusable component
+  - Replaced 40+ lines of static SVG markup with single `<CircularTransferProgress>` component
+  - Ensures consistent animation behavior across the application
+- 🎯 **VERIFIED:** Animation is smooth and progressive based on backend validation codes
+  - No risk of infinite loops or competing timers
+  - Progress updates only when backend confirms code validation
+  - Security preserved: frontend cannot autonomously advance progress
+
 ### Transfer Code System - Critical Fixes
 - ✅ **FIXED:** Code numbering in admin emails corrected from "1/5...6/5" to dynamic "1/6...6/6" format
   - Email template now derives denominator from `vars.codes.length` for any code count
