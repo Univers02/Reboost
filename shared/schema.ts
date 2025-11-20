@@ -89,7 +89,6 @@ export const externalAccounts = pgTable("external_accounts", {
 
 export const transfers = pgTable("transfers", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  referenceNumber: text("reference_number").notNull().unique(),
   userId: varchar("user_id").notNull(),
   loanId: varchar("loan_id"),
   externalAccountId: varchar("external_account_id"),
@@ -249,7 +248,7 @@ export const insertUserSchema = createInsertSchema(users).omit({ id: true, creat
     .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins un caractère spécial'),
 });
 export const insertLoanSchema = createInsertSchema(loans).omit({ id: true, createdAt: true });
-export const insertTransferSchema = createInsertSchema(transfers).omit({ id: true, referenceNumber: true, createdAt: true, updatedAt: true });
+export const insertTransferSchema = createInsertSchema(transfers).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertFeeSchema = createInsertSchema(fees).omit({ id: true, createdAt: true });
 export const insertTransactionSchema = createInsertSchema(transactions).omit({ id: true, createdAt: true });
 export const insertExternalAccountSchema = createInsertSchema(externalAccounts).omit({ id: true, createdAt: true });
@@ -310,3 +309,38 @@ export type TransferDetailsResponse = {
   codes: TransferCodeMetadata[];
   nextSequence: number | null;
 };
+
+/**
+ * Génère un numéro de référence unique pour un transfert de manière déterministe
+ * basé sur l'ID et la date de création.
+ * 
+ * Format: TRF-YYMMDD-XXXX
+ * Ex: TRF-241120-A3F9
+ * 
+ * Cette fonction génère les références à la volée SANS utiliser de colonne de
+ * base de données, ce qui est compatible avec toutes les bases de données de
+ * production sans nécessiter de migration.
+ * 
+ * @param transfer - Le transfert pour lequel générer le numéro de référence
+ * @returns Un numéro de référence unique au format TRF-YYMMDD-XXXX
+ */
+export function getTransferReferenceNumber(transfer: Transfer): string {
+  const createdAt = new Date(transfer.createdAt);
+  
+  // Format date YYMMDD
+  const year = createdAt.getFullYear().toString().slice(-2);
+  const month = (createdAt.getMonth() + 1).toString().padStart(2, '0');
+  const day = createdAt.getDate().toString().padStart(2, '0');
+  const datePrefix = `${year}${month}${day}`;
+  
+  // Extraire les 8 premiers caractères de l'UUID et les convertir en format court
+  // Exemple: "a3f9b2c1-..." → "A3F9B2C1" → "A3F9"
+  const idHash = transfer.id
+    .replace(/-/g, '') // Retirer les tirets
+    .substring(0, 8)   // Prendre les 8 premiers caractères
+    .toUpperCase()     // En majuscules
+    .substring(0, 4);  // Garder seulement 4 caractères
+  
+  // Format final: TRF-YYMMDD-XXXX
+  return `TRF-${datePrefix}-${idHash}`;
+}

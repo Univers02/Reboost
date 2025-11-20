@@ -10,18 +10,8 @@ import { fr } from 'date-fns/locale';
 import { useTranslations } from '@/lib/i18n';
 import { DashboardCard, SectionTitle, GradientButton, UserStat } from '@/components/fintech';
 import { Badge } from '@/components/ui/badge';
-
-interface Transfer {
-  id: string;
-  referenceNumber: string;
-  amount: string;
-  recipient: string;
-  status: string;
-  currentStep: number;
-  progressPercent: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { Transfer } from '@shared/schema';
+import { getTransferReferenceNumber } from '@shared/schema';
 
 function TransfersSkeleton() {
   return (
@@ -81,8 +71,9 @@ export default function Transfers() {
   };
 
   const filteredTransfers = transfers?.filter((transfer) => {
+    const referenceNumber = getTransferReferenceNumber(transfer);
     const matchesSearch = transfer.recipient.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          transfer.referenceNumber.toLowerCase().includes(searchQuery.toLowerCase());
+                          referenceNumber.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || transfer.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -227,7 +218,7 @@ export default function Transfers() {
                       {getStatusBadge(transfer.status)}
                     </div>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
-                      <span className="font-mono font-semibold">{transfer.referenceNumber}</span>
+                      <span className="font-mono font-semibold">{getTransferReferenceNumber(transfer)}</span>
                       <span className="hidden sm:inline">•</span>
                       <span className="hidden sm:inline">
                         {formatDistanceToNow(new Date(transfer.createdAt), { addSuffix: true, locale: fr })}

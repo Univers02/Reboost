@@ -1241,7 +1241,6 @@ export class DatabaseStorage implements IStorage {
     await db.insert(transfers).values([
       {
         id: "transfer-001",
-        referenceNumber: "TRF-241120-0001",
         userId: demoUserId,
         amount: "50000",
         recipient: "Fournisseur ABC SARL",
@@ -1257,7 +1256,6 @@ export class DatabaseStorage implements IStorage {
       },
       {
         id: "transfer-002",
-        referenceNumber: "TRF-241119-0001",
         userId: demoUserId,
         amount: "25000",
         recipient: "Partenaire XYZ Inc.",
@@ -1458,7 +1456,6 @@ export class DatabaseStorage implements IStorage {
 
     await db.insert(transfers).values({
       id: "transfer-003",
-      referenceNumber: "TRF-241113-0001",
       userId: "user-002",
       amount: "75000",
       recipient: "Client ABC Ltd",
@@ -1634,28 +1631,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTransfer(insertTransfer: InsertTransfer): Promise<Transfer> {
-    // Génération et insertion dans une seule transaction avec retry en cas de conflit
-    const maxRetries = 5;
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      try {
-        return await db.transaction(async (tx) => {
-          const { generateTransferReference } = await import('./utils/referenceGenerator');
-          const referenceNumber = await generateTransferReference(tx);
-          const result = await tx.insert(transfers).values({ ...insertTransfer, referenceNumber }).returning();
-          return result[0];
-        });
-      } catch (error: any) {
-        // Si c'est une erreur de contrainte UNIQUE (23505) et qu'il reste des tentatives
-        if (error?.code === '23505' && attempt < maxRetries - 1) {
-          // Attendre un court délai aléatoire avant de réessayer (5-25ms)
-          await new Promise(resolve => setTimeout(resolve, 5 + Math.random() * 20));
-          continue;
-        }
-        // Sinon, relancer l'erreur
-        throw error;
-      }
-    }
-    throw new Error('Impossible de créer le transfert après plusieurs tentatives');
+    const result = await db.insert(transfers).values(insertTransfer).returning();
+    return result[0];
   }
 
   async updateTransfer(id: string, updates: Partial<Transfer>): Promise<Transfer | undefined> {
@@ -2124,9 +2101,7 @@ export class DatabaseStorage implements IStorage {
             throw error;
           }
 
-          const { generateTransferReference } = await import('./utils/referenceGenerator');
-          const referenceNumber = await generateTransferReference(tx);
-          const transferResult = await tx.insert(transfers).values({ ...insertTransfer, referenceNumber }).returning();
+          const transferResult = await tx.insert(transfers).values(insertTransfer).returning();
           const transfer = transferResult[0];
 
       // Check if pre-generated codes exist for this loan (from markLoanFundsAvailable)
