@@ -234,16 +234,26 @@ export default function Transfers() {
                     </div>
                     
                     {/* Progress Bar */}
-                    {transfer.status === 'in-progress' && (
+                    {(transfer.status === 'in-progress' || transfer.status === 'completed') && (
                       <div className="pt-1">
                         <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                          <span className="font-medium">Progression</span>
-                          <span className="font-semibold text-primary">{transfer.progressPercent}%</span>
+                          <span className="font-medium">
+                            {transfer.status === 'completed' ? 'Terminé' : 'Progression'}
+                          </span>
+                          <span className={`font-semibold ${transfer.status === 'completed' ? 'text-accent' : 'text-primary'}`}>
+                            {transfer.status === 'completed' ? '100' : transfer.progressPercent}%
+                          </span>
                         </div>
                         <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
                           <div
-                            className="bg-gradient-to-r from-primary via-primary to-blue-600 h-2 rounded-full transition-all duration-500 shadow-sm"
-                            style={{ width: `${transfer.progressPercent}%` }}
+                            className={`h-2 rounded-full transition-all duration-500 shadow-sm ${
+                              transfer.status === 'completed'
+                                ? 'bg-gradient-to-r from-accent via-accent to-green-600'
+                                : 'bg-gradient-to-r from-primary via-primary to-blue-600'
+                            }`}
+                            style={{ 
+                              width: transfer.status === 'completed' ? '100%' : `${transfer.progressPercent}%` 
+                            }}
                           />
                         </div>
                       </div>
