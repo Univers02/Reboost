@@ -265,8 +265,8 @@ export const insertUserSchema = createInsertSchema(users).omit({ id: true, creat
     .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre')
     .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins un caractère spécial'),
 });
-export const insertLoanSchema = createInsertSchema(loans).omit({ id: true, createdAt: true });
-export const insertTransferSchema = createInsertSchema(transfers).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertLoanSchema = createInsertSchema(loans).omit({ id: true, createdAt: true, loanReference: true });
+export const insertTransferSchema = createInsertSchema(transfers).omit({ id: true, createdAt: true, updatedAt: true, transferReference: true });
 export const insertFeeSchema = createInsertSchema(fees).omit({ id: true, createdAt: true });
 export const insertTransactionSchema = createInsertSchema(transactions).omit({ id: true, createdAt: true });
 export const insertExternalAccountSchema = createInsertSchema(externalAccounts).omit({ id: true, createdAt: true });
