@@ -78,8 +78,17 @@ export function getLoanOfferLimits(loanType: string, accountType: 'individual' |
   const maxAmount = amountRange ? parseInt(amountRange[1].replace(/\s/g, '')) : 75000;
   
   const durationRange = offer.duration.match(/(\d+)/g);
-  const minDuration = durationRange ? parseInt(durationRange[0]) : 12;
-  const maxDuration = durationRange ? parseInt(durationRange[1]) : 84;
+  let minDuration = durationRange ? parseInt(durationRange[0]) : 12;
+  let maxDuration = durationRange ? parseInt(durationRange[1]) : 84;
+  
+  // Vérifier si la durée est en années (contient "ans", "year", "anos", "anni", "Jahre", "jaar")
+  const isInYears = /\b(ans?|years?|anos?|anni?|Jahre|jaar)\b/i.test(offer.duration);
+  
+  // Convertir en mois si nécessaire (car en interne tout est stocké en mois)
+  if (isInYears) {
+    minDuration = minDuration * 12;
+    maxDuration = maxDuration * 12;
+  }
   
   return { minAmount, maxAmount, minDuration, maxDuration };
 }
