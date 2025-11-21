@@ -9,14 +9,470 @@ interface ContractData {
   user: User;
   loan: Loan;
   contractDate: string;
+  language?: string;
 }
 
+type ContractLanguage = 'fr' | 'en' | 'de' | 'pt' | 'es';
+
+interface ContractTranslations {
+  contractTitle: string;
+  contractNumber: string;
+  borrowerInfo: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  company: string;
+  siret: string;
+  loanDetails: string;
+  loanType: string;
+  amountBorrowed: string;
+  annualInterestRate: string;
+  loanDuration: string;
+  contractDate: string;
+  months: string;
+  loanConditions: string;
+  article1Title: string;
+  article1Content: (userName: string, amount: string, rate: string, duration: number) => string;
+  article2Title: string;
+  article2Content: (duration: number, rate: string, monthly: string) => string;
+  article3Title: string;
+  article3Content: (rate: string, totalInterest: string, totalRepayment: string) => string;
+  article4Title: string;
+  article4Content: string;
+  article5Title: string;
+  article5Content: string;
+  article6Title: string;
+  article6Content: string;
+  article7Title: string;
+  article7Content: string;
+  article8Title: string;
+  article8Content: string;
+  article9Title: string;
+  article9Content: string;
+  signatureSection: string;
+  madeInDuplicates: string;
+  inLuxembourg: string;
+  forAltus: string;
+  lender: string;
+  borrower: string;
+  preSigned: string;
+  management: string;
+  altusStamp: string;
+  luxembourg: string;
+  electronicSignature: string;
+  date: string;
+  signatureInstructions: string;
+  instruction1: string;
+  instruction2: string;
+  instruction3: string;
+  instruction4: string;
+  signatureLine: string;
+  readAndApproved: string;
+  confidentialNotice: string;
+  shareCapital: string;
+  headquarters: string;
+  tel: string;
+  loanTypes: Record<string, string>;
+}
+
+const contractTranslations: Record<ContractLanguage, ContractTranslations> = {
+  fr: {
+    contractTitle: 'Contrat de Prêt Professionnel',
+    contractNumber: 'CONTRAT DE PRÊT N°',
+    borrowerInfo: "Informations sur l'emprunteur",
+    fullName: 'Nom complet',
+    email: 'Email',
+    phone: 'Téléphone',
+    company: 'Société',
+    siret: 'SIRET',
+    loanDetails: 'Détails du prêt',
+    loanType: 'Type de prêt',
+    amountBorrowed: 'Montant emprunté',
+    annualInterestRate: "Taux d'intérêt annuel",
+    loanDuration: 'Durée du prêt',
+    contractDate: 'Date du contrat',
+    months: 'mois',
+    loanConditions: 'Conditions du prêt',
+    article1Title: 'Article 1 - Objet du contrat',
+    article1Content: (userName, amount, rate, duration) => 
+      `Le présent contrat a pour objet l'octroi par ALTUS FINANCE GROUP (ci-après "le Prêteur") à ${userName} (ci-après "l'Emprunteur") d'un prêt d'un montant de <strong>${amount} €</strong> au taux d'intérêt annuel de <strong>${rate}%</strong> pour une durée de <strong>${duration} mois</strong>.`,
+    article2Title: 'Article 2 - Modalités de remboursement',
+    article2Content: (duration, rate, monthly) =>
+      `L'Emprunteur s'engage à rembourser le prêt selon un échéancier mensuel sur ${duration} mois. Chaque mensualité comprendra une part du capital emprunté ainsi que les intérêts calculés au taux annuel de ${rate}%. Le montant estimé de la mensualité est de <strong>${monthly} €</strong>.`,
+    article3Title: 'Article 3 - Taux d\'intérêt et coût total du crédit',
+    article3Content: (rate, totalInterest, totalRepayment) =>
+      `Le taux d'intérêt appliqué est fixe et s'élève à ${rate}% par an. Le coût total du crédit, incluant les intérêts, est estimé à <strong>${totalInterest} €</strong>. Le montant total à rembourser s'élève donc à <strong>${totalRepayment} €</strong>.`,
+    article4Title: 'Article 4 – Déblocage des fonds',
+    article4Content: `Les fonds du prêt seront mis à disposition de l'Emprunteur sur le compte affilié ALTUS FINANCE GROUP ouvert au nom de l'Emprunteur au sein du réseau ALTUS. L'Emprunteur reconnaît et accepte que le versement initial sera crédité sur ce compte affilié, qu'il lui appartient d'initier le virement vers son compte bancaire externe, et que le déblocage effectif des fonds aura lieu dans un délai maximum de 24 heures ouvrées à compter de la réception du présent contrat dûment signé.`,
+    article5Title: 'Article 5 - Remboursement anticipé',
+    article5Content: "L'Emprunteur a la possibilité de procéder à un remboursement anticipé, total ou partiel, du capital restant dû sans pénalités. Toute demande de remboursement anticipé doit être formulée par écrit au moins 30 jours avant la date souhaitée.",
+    article6Title: 'Article 6 - Défaut de paiement',
+    article6Content: "En cas de défaut de paiement d'une mensualité, des pénalités de retard de 5% par an seront appliquées sur les sommes restant dues. Après deux mensualités impayées consécutives, le Prêteur se réserve le droit d'exiger le remboursement immédiat du capital restant dû.",
+    article7Title: 'Article 7 – Assurance emprunteur',
+    article7Content: "La souscription d'une assurance emprunteur couvrant au minimum le risque décès et invalidité est <strong>strictement obligatoire</strong>. L'Emprunteur s'engage à fournir la preuve de souscription avant le déblocage des fonds.",
+    article8Title: 'Article 8 - Droit de rétractation',
+    article8Content: "Conformément aux dispositions légales en vigueur, l'Emprunteur dispose d'un délai de rétractation de 14 jours calendaires à compter de la signature du présent contrat.",
+    article9Title: 'Article 9 - Loi applicable et juridiction compétente',
+    article9Content: "Le présent contrat est régi par le droit luxembourgeois. En cas de litige, les parties s'efforceront de trouver une solution amiable. À défaut, les tribunaux compétents de Luxembourg seront seuls compétents.",
+    signatureSection: 'Signatures',
+    madeInDuplicates: 'Fait en deux exemplaires originaux',
+    inLuxembourg: 'À Luxembourg, le',
+    forAltus: 'Pour ALTUS FINANCE GROUP',
+    lender: 'Le Prêteur',
+    borrower: "L'Emprunteur",
+    preSigned: '✓ Document pré-signé et validé',
+    management: 'Direction Générale',
+    altusStamp: 'ALTUS\nFINANCE\nGROUP',
+    luxembourg: 'Luxembourg',
+    electronicSignature: 'Signature électronique certifiée',
+    date: 'Date',
+    signatureInstructions: 'Instructions de signature :',
+    instruction1: '1. Téléchargez ce document',
+    instruction2: '2. Imprimez et signez précédé de "Lu et approuvé"',
+    instruction3: '3. Scannez le document signé',
+    instruction4: '4. Renvoyez-le via votre espace client',
+    signatureLine: 'Signature précédée de',
+    readAndApproved: '"Lu et approuvé"',
+    confidentialNotice: 'Ce document est confidentiel et destiné exclusivement à son destinataire. Toute reproduction, diffusion ou utilisation non autorisée est strictement interdite.',
+    shareCapital: 'Capital social',
+    headquarters: 'Siège social',
+    tel: 'Tél',
+    loanTypes: {
+      'auto': 'Prêt automobile',
+      'mortgage': 'Prêt immobilier',
+      'green': 'Prêt écologique',
+      'renovation': 'Prêt travaux',
+      'student': 'Prêt étudiant',
+      'business': 'Prêt professionnel',
+      'personal': 'Prêt personnel',
+      'cashFlow': 'Prêt de trésorerie',
+      'equipment': 'Prêt matériel',
+      'vehicleFleet': 'Prêt flotte véhicules',
+      'lineOfCredit': 'Ligne de crédit',
+      'commercialProperty': 'Prêt immobilier commercial',
+    }
+  },
+  en: {
+    contractTitle: 'Professional Loan Agreement',
+    contractNumber: 'LOAN AGREEMENT N°',
+    borrowerInfo: 'Borrower Information',
+    fullName: 'Full Name',
+    email: 'Email',
+    phone: 'Phone',
+    company: 'Company',
+    siret: 'Company ID',
+    loanDetails: 'Loan Details',
+    loanType: 'Loan Type',
+    amountBorrowed: 'Loan Amount',
+    annualInterestRate: 'Annual Interest Rate',
+    loanDuration: 'Loan Duration',
+    contractDate: 'Contract Date',
+    months: 'months',
+    loanConditions: 'Loan Terms',
+    article1Title: 'Article 1 - Purpose of Contract',
+    article1Content: (userName, amount, rate, duration) =>
+      `This contract is for the granting by ALTUS FINANCE GROUP (hereinafter "the Lender") to ${userName} (hereinafter "the Borrower") of a loan in the amount of <strong>€${amount}</strong> at an annual interest rate of <strong>${rate}%</strong> for a duration of <strong>${duration} months</strong>.`,
+    article2Title: 'Article 2 - Repayment Terms',
+    article2Content: (duration, rate, monthly) =>
+      `The Borrower commits to repay the loan on a monthly schedule over ${duration} months. Each monthly payment will include a portion of the borrowed capital and interest calculated at the annual rate of ${rate}%. The estimated monthly payment is <strong>€${monthly}</strong>.`,
+    article3Title: 'Article 3 - Interest Rate and Total Credit Cost',
+    article3Content: (rate, totalInterest, totalRepayment) =>
+      `The applied interest rate is fixed at ${rate}% per year. The total cost of credit, including interest, is estimated at <strong>€${totalInterest}</strong>. The total amount to be repaid is therefore <strong>€${totalRepayment}</strong>.`,
+    article4Title: 'Article 4 – Fund Disbursement',
+    article4Content: 'The loan funds will be made available to the Borrower in the ALTUS FINANCE GROUP affiliated account opened in the Borrower\'s name within the ALTUS network. The Borrower acknowledges and accepts that the initial payment will be credited to this affiliated account, that it is their responsibility to initiate the transfer to their external bank account, and that the effective disbursement of funds will occur within a maximum of 24 business hours from receipt of this duly signed contract.',
+    article5Title: 'Article 5 - Early Repayment',
+    article5Content: 'The Borrower has the option to make early repayment, total or partial, of the remaining capital without penalties. Any request for early repayment must be submitted in writing at least 30 days before the desired date.',
+    article6Title: 'Article 6 - Default of Payment',
+    article6Content: 'In case of default on a monthly payment, late payment penalties of 5% per year will be applied to the remaining amounts due. After two consecutive unpaid installments, the Lender reserves the right to demand immediate repayment of the remaining capital.',
+    article7Title: 'Article 7 – Borrower Insurance',
+    article7Content: 'Borrower insurance covering at minimum death and disability risk is <strong>strictly mandatory</strong>. The Borrower commits to provide proof of subscription before fund disbursement.',
+    article8Title: 'Article 8 - Right of Withdrawal',
+    article8Content: 'In accordance with applicable legal provisions, the Borrower has a withdrawal period of 14 calendar days from the signing of this contract.',
+    article9Title: 'Article 9 - Applicable Law and Jurisdiction',
+    article9Content: 'This contract is governed by Luxembourg law. In case of dispute, the parties will endeavor to find an amicable solution. Failing that, the competent courts of Luxembourg shall have sole jurisdiction.',
+    signatureSection: 'Signatures',
+    madeInDuplicates: 'Made in two original copies',
+    inLuxembourg: 'In Luxembourg, on',
+    forAltus: 'For ALTUS FINANCE GROUP',
+    lender: 'The Lender',
+    borrower: 'The Borrower',
+    preSigned: '✓ Pre-signed and validated document',
+    management: 'General Management',
+    altusStamp: 'ALTUS\nFINANCE\nGROUP',
+    luxembourg: 'Luxembourg',
+    electronicSignature: 'Certified electronic signature',
+    date: 'Date',
+    signatureInstructions: 'Signature instructions:',
+    instruction1: '1. Download this document',
+    instruction2: '2. Print and sign with "Read and approved"',
+    instruction3: '3. Scan the signed document',
+    instruction4: '4. Return it via your customer area',
+    signatureLine: 'Signature preceded by',
+    readAndApproved: '"Read and approved"',
+    confidentialNotice: 'This document is confidential and intended exclusively for its recipient. Any reproduction, distribution or unauthorized use is strictly prohibited.',
+    shareCapital: 'Share Capital',
+    headquarters: 'Headquarters',
+    tel: 'Tel',
+    loanTypes: {
+      'auto': 'Auto Loan',
+      'mortgage': 'Mortgage Loan',
+      'green': 'Green Loan',
+      'renovation': 'Renovation Loan',
+      'student': 'Student Loan',
+      'business': 'Business Loan',
+      'personal': 'Personal Loan',
+      'cashFlow': 'Cash Flow Loan',
+      'equipment': 'Equipment Loan',
+      'vehicleFleet': 'Vehicle Fleet Loan',
+      'lineOfCredit': 'Line of Credit',
+      'commercialProperty': 'Commercial Property Loan',
+    }
+  },
+  de: {
+    contractTitle: 'Gewerblicher Darlehensvertrag',
+    contractNumber: 'DARLEHENSVERTRAG NR.',
+    borrowerInfo: 'Angaben zum Darlehensnehmer',
+    fullName: 'Vollständiger Name',
+    email: 'E-Mail',
+    phone: 'Telefon',
+    company: 'Unternehmen',
+    siret: 'Firmen-ID',
+    loanDetails: 'Darlehensdetails',
+    loanType: 'Darlehensart',
+    amountBorrowed: 'Darlehensbetrag',
+    annualInterestRate: 'Jahreszinssatz',
+    loanDuration: 'Darlehensdauer',
+    contractDate: 'Vertragsdatum',
+    months: 'Monate',
+    loanConditions: 'Darlehensbedingungen',
+    article1Title: 'Artikel 1 - Vertragszweck',
+    article1Content: (userName, amount, rate, duration) =>
+      `Dieser Vertrag regelt die Gewährung eines Darlehens durch ALTUS FINANCE GROUP (nachfolgend "Darlehensgeber") an ${userName} (nachfolgend "Darlehensnehmer") in Höhe von <strong>${amount} €</strong> zu einem jährlichen Zinssatz von <strong>${rate}%</strong> für eine Laufzeit von <strong>${duration} Monaten</strong>.`,
+    article2Title: 'Artikel 2 - Rückzahlungsmodalitäten',
+    article2Content: (duration, rate, monthly) =>
+      `Der Darlehensnehmer verpflichtet sich, das Darlehen gemäß einem monatlichen Tilgungsplan über ${duration} Monate zurückzuzahlen. Jede monatliche Rate umfasst einen Teil des geliehenen Kapitals sowie Zinsen, die zum jährlichen Satz von ${rate}% berechnet werden. Die geschätzte monatliche Rate beträgt <strong>${monthly} €</strong>.`,
+    article3Title: 'Artikel 3 - Zinssatz und Gesamtkreditkosten',
+    article3Content: (rate, totalInterest, totalRepayment) =>
+      `Der angewandte Zinssatz ist fest und beträgt ${rate}% pro Jahr. Die Gesamtkreditkosten einschließlich Zinsen werden auf <strong>${totalInterest} €</strong> geschätzt. Der gesamte zurückzuzahlende Betrag beläuft sich somit auf <strong>${totalRepayment} €</strong>.`,
+    article4Title: 'Artikel 4 – Auszahlung der Mittel',
+    article4Content: 'Die Darlehensmittel werden dem Darlehensnehmer auf dem ALTUS FINANCE GROUP-Partnerkonto zur Verfügung gestellt, das im Namen des Darlehensnehmers im ALTUS-Netzwerk eröffnet wurde. Der Darlehensnehmer erkennt an und akzeptiert, dass die anfängliche Zahlung auf diesem Partnerkonto gutgeschrieben wird, dass es in seiner Verantwortung liegt, die Überweisung auf sein externes Bankkonto zu veranlassen, und dass die effektive Auszahlung der Mittel innerhalb von maximal 24 Werktagen nach Erhalt dieses ordnungsgemäß unterzeichneten Vertrags erfolgt.',
+    article5Title: 'Artikel 5 - Vorzeitige Rückzahlung',
+    article5Content: 'Der Darlehensnehmer hat die Möglichkeit, das verbleibende Kapital ganz oder teilweise vorzeitig und ohne Strafen zurückzuzahlen. Jeder Antrag auf vorzeitige Rückzahlung muss mindestens 30 Tage vor dem gewünschten Datum schriftlich gestellt werden.',
+    article6Title: 'Artikel 6 - Zahlungsverzug',
+    article6Content: 'Im Falle des Zahlungsverzugs einer monatlichen Rate werden Verzugszinsen von 5% pro Jahr auf die verbleibenden Beträge erhoben. Nach zwei aufeinanderfolgenden unbezahlten Raten behält sich der Darlehensgeber das Recht vor, die sofortige Rückzahlung des verbleibenden Kapitals zu verlangen.',
+    article7Title: 'Artikel 7 – Darlehensversicherung',
+    article7Content: 'Eine Darlehensversicherung, die mindestens das Todesfall- und Invaliditätsrisiko abdeckt, ist <strong>streng obligatorisch</strong>. Der Darlehensnehmer verpflichtet sich, den Nachweis des Abschlusses vor der Auszahlung der Mittel zu erbringen.',
+    article8Title: 'Artikel 8 - Widerrufsrecht',
+    article8Content: 'Gemäß den geltenden gesetzlichen Bestimmungen hat der Darlehensnehmer eine Widerrufsfrist von 14 Kalendertagen ab Unterzeichnung dieses Vertrags.',
+    article9Title: 'Artikel 9 - Anwendbares Recht und zuständige Gerichte',
+    article9Content: 'Dieser Vertrag unterliegt luxemburgischem Recht. Im Streitfall werden sich die Parteien bemühen, eine gütliche Lösung zu finden. Andernfalls sind ausschließlich die zuständigen Gerichte in Luxemburg zuständig.',
+    signatureSection: 'Unterschriften',
+    madeInDuplicates: 'In zwei Originalexemplaren erstellt',
+    inLuxembourg: 'In Luxemburg, am',
+    forAltus: 'Für ALTUS FINANCE GROUP',
+    lender: 'Der Darlehensgeber',
+    borrower: 'Der Darlehensnehmer',
+    preSigned: '✓ Vorab unterzeichnetes und validiertes Dokument',
+    management: 'Geschäftsführung',
+    altusStamp: 'ALTUS\nFINANCE\nGROUP',
+    luxembourg: 'Luxemburg',
+    electronicSignature: 'Zertifizierte elektronische Signatur',
+    date: 'Datum',
+    signatureInstructions: 'Unterschriftsanweisungen:',
+    instruction1: '1. Laden Sie dieses Dokument herunter',
+    instruction2: '2. Drucken und unterschreiben Sie mit "Gelesen und genehmigt"',
+    instruction3: '3. Scannen Sie das unterschriebene Dokument',
+    instruction4: '4. Senden Sie es über Ihren Kundenbereich zurück',
+    signatureLine: 'Unterschrift vorangestellt von',
+    readAndApproved: '"Gelesen und genehmigt"',
+    confidentialNotice: 'Dieses Dokument ist vertraulich und ausschließlich für seinen Empfänger bestimmt. Jede Vervielfältigung, Verbreitung oder unbefugte Nutzung ist strengstens untersagt.',
+    shareCapital: 'Stammkapital',
+    headquarters: 'Hauptsitz',
+    tel: 'Tel',
+    loanTypes: {
+      'auto': 'Autokredit',
+      'mortgage': 'Hypothekendarlehen',
+      'green': 'Grünes Darlehen',
+      'renovation': 'Renovierungsdarlehen',
+      'student': 'Studentendarlehen',
+      'business': 'Geschäftsdarlehen',
+      'personal': 'Privatdarlehen',
+      'cashFlow': 'Liquiditätsdarlehen',
+      'equipment': 'Ausstattungsdarlehen',
+      'vehicleFleet': 'Fuhrparkdarlehen',
+      'lineOfCredit': 'Kreditlinie',
+      'commercialProperty': 'Gewerbeimmobiliendarlehen',
+    }
+  },
+  pt: {
+    contractTitle: 'Contrato de Empréstimo Profissional',
+    contractNumber: 'CONTRATO DE EMPRÉSTIMO N°',
+    borrowerInfo: 'Informações do Mutuário',
+    fullName: 'Nome Completo',
+    email: 'E-mail',
+    phone: 'Telefone',
+    company: 'Empresa',
+    siret: 'ID da Empresa',
+    loanDetails: 'Detalhes do Empréstimo',
+    loanType: 'Tipo de Empréstimo',
+    amountBorrowed: 'Montante Emprestado',
+    annualInterestRate: 'Taxa de Juros Anual',
+    loanDuration: 'Duração do Empréstimo',
+    contractDate: 'Data do Contrato',
+    months: 'meses',
+    loanConditions: 'Condições do Empréstimo',
+    article1Title: 'Artigo 1 - Objeto do Contrato',
+    article1Content: (userName, amount, rate, duration) =>
+      `Este contrato tem como objeto a concessão pela ALTUS FINANCE GROUP (doravante "o Mutuante") a ${userName} (doravante "o Mutuário") de um empréstimo no valor de <strong>${amount} €</strong> à taxa de juros anual de <strong>${rate}%</strong> por uma duração de <strong>${duration} meses</strong>.`,
+    article2Title: 'Artigo 2 - Modalidades de Reembolso',
+    article2Content: (duration, rate, monthly) =>
+      `O Mutuário compromete-se a reembolsar o empréstimo segundo um cronograma mensal ao longo de ${duration} meses. Cada mensalidade incluirá uma parte do capital emprestado, bem como os juros calculados à taxa anual de ${rate}%. O valor estimado da mensalidade é de <strong>${monthly} €</strong>.`,
+    article3Title: 'Artigo 3 - Taxa de Juros e Custo Total do Crédito',
+    article3Content: (rate, totalInterest, totalRepayment) =>
+      `A taxa de juros aplicada é fixa e corresponde a ${rate}% ao ano. O custo total do crédito, incluindo juros, é estimado em <strong>${totalInterest} €</strong>. O montante total a reembolsar ascende portanto a <strong>${totalRepayment} €</strong>.`,
+    article4Title: 'Artigo 4 – Desembolso dos Fundos',
+    article4Content: 'Os fundos do empréstimo serão disponibilizados ao Mutuário na conta afiliada ALTUS FINANCE GROUP aberta em nome do Mutuário dentro da rede ALTUS. O Mutuário reconhece e aceita que o pagamento inicial será creditado nesta conta afiliada, que é sua responsabilidade iniciar a transferência para sua conta bancária externa, e que o desembolso efetivo dos fundos ocorrerá dentro de um máximo de 24 horas úteis a partir do recebimento deste contrato devidamente assinado.',
+    article5Title: 'Artigo 5 - Reembolso Antecipado',
+    article5Content: 'O Mutuário tem a opção de proceder ao reembolso antecipado, total ou parcial, do capital remanescente sem penalidades. Qualquer pedido de reembolso antecipado deve ser formulado por escrito pelo menos 30 dias antes da data desejada.',
+    article6Title: 'Artigo 6 - Inadimplência',
+    article6Content: 'Em caso de inadimplência de uma mensalidade, serão aplicadas penalidades de atraso de 5% ao ano sobre os valores remanescentes devidos. Após duas mensalidades consecutivas não pagas, o Mutuante reserva-se o direito de exigir o reembolso imediato do capital remanescente.',
+    article7Title: 'Artigo 7 – Seguro do Mutuário',
+    article7Content: 'A subscrição de um seguro do mutuário cobrindo no mínimo o risco de morte e invalidez é <strong>estritamente obrigatória</strong>. O Mutuário compromete-se a fornecer prova da subscrição antes do desembolso dos fundos.',
+    article8Title: 'Artigo 8 - Direito de Retratação',
+    article8Content: 'Em conformidade com as disposições legais em vigor, o Mutuário dispõe de um prazo de retratação de 14 dias corridos a contar da assinatura deste contrato.',
+    article9Title: 'Artigo 9 - Lei Aplicável e Jurisdição Competente',
+    article9Content: 'Este contrato é regido pelo direito luxemburguês. Em caso de litígio, as partes esforçar-se-ão por encontrar uma solução amigável. Na sua falta, apenas os tribunais competentes do Luxemburgo terão jurisdição.',
+    signatureSection: 'Assinaturas',
+    madeInDuplicates: 'Feito em dois originais',
+    inLuxembourg: 'No Luxemburgo, em',
+    forAltus: 'Por ALTUS FINANCE GROUP',
+    lender: 'O Mutuante',
+    borrower: 'O Mutuário',
+    preSigned: '✓ Documento pré-assinado e validado',
+    management: 'Direção Geral',
+    altusStamp: 'ALTUS\nFINANCE\nGROUP',
+    luxembourg: 'Luxemburgo',
+    electronicSignature: 'Assinatura eletrónica certificada',
+    date: 'Data',
+    signatureInstructions: 'Instruções de assinatura:',
+    instruction1: '1. Descarregue este documento',
+    instruction2: '2. Imprima e assine com "Lido e aprovado"',
+    instruction3: '3. Digitalize o documento assinado',
+    instruction4: '4. Envie-o através da sua área de cliente',
+    signatureLine: 'Assinatura precedida de',
+    readAndApproved: '"Lido e aprovado"',
+    confidentialNotice: 'Este documento é confidencial e destinado exclusivamente ao seu destinatário. Qualquer reprodução, distribuição ou utilização não autorizada é estritamente proibida.',
+    shareCapital: 'Capital Social',
+    headquarters: 'Sede Social',
+    tel: 'Tel',
+    loanTypes: {
+      'auto': 'Empréstimo Automóvel',
+      'mortgage': 'Empréstimo Hipotecário',
+      'green': 'Empréstimo Verde',
+      'renovation': 'Empréstimo para Obras',
+      'student': 'Empréstimo Estudantil',
+      'business': 'Empréstimo Profissional',
+      'personal': 'Empréstimo Pessoal',
+      'cashFlow': 'Empréstimo de Tesouraria',
+      'equipment': 'Empréstimo de Equipamento',
+      'vehicleFleet': 'Empréstimo de Frota de Veículos',
+      'lineOfCredit': 'Linha de Crédito',
+      'commercialProperty': 'Empréstimo Imobiliário Comercial',
+    }
+  },
+  es: {
+    contractTitle: 'Contrato de Préstamo Profesional',
+    contractNumber: 'CONTRATO DE PRÉSTAMO N°',
+    borrowerInfo: 'Información del Prestatario',
+    fullName: 'Nombre Completo',
+    email: 'Correo Electrónico',
+    phone: 'Teléfono',
+    company: 'Empresa',
+    siret: 'ID de la Empresa',
+    loanDetails: 'Detalles del Préstamo',
+    loanType: 'Tipo de Préstamo',
+    amountBorrowed: 'Monto Prestado',
+    annualInterestRate: 'Tasa de Interés Anual',
+    loanDuration: 'Duración del Préstamo',
+    contractDate: 'Fecha del Contrato',
+    months: 'meses',
+    loanConditions: 'Condiciones del Préstamo',
+    article1Title: 'Artículo 1 - Objeto del Contrato',
+    article1Content: (userName, amount, rate, duration) =>
+      `Este contrato tiene por objeto el otorgamiento por ALTUS FINANCE GROUP (en adelante "el Prestamista") a ${userName} (en adelante "el Prestatario") de un préstamo por un monto de <strong>${amount} €</strong> a una tasa de interés anual de <strong>${rate}%</strong> por una duración de <strong>${duration} meses</strong>.`,
+    article2Title: 'Artículo 2 - Modalidades de Reembolso',
+    article2Content: (duration, rate, monthly) =>
+      `El Prestatario se compromete a reembolsar el préstamo según un calendario mensual durante ${duration} meses. Cada mensualidad incluirá una parte del capital prestado así como los intereses calculados a la tasa anual de ${rate}%. El monto estimado de la mensualidad es de <strong>${monthly} €</strong>.`,
+    article3Title: 'Artículo 3 - Tasa de Interés y Costo Total del Crédito',
+    article3Content: (rate, totalInterest, totalRepayment) =>
+      `La tasa de interés aplicada es fija y asciende a ${rate}% por año. El costo total del crédito, incluyendo intereses, se estima en <strong>${totalInterest} €</strong>. El monto total a reembolsar asciende por lo tanto a <strong>${totalRepayment} €</strong>.`,
+    article4Title: 'Artículo 4 – Desembolso de los Fondos',
+    article4Content: 'Los fondos del préstamo se pondrán a disposición del Prestatario en la cuenta afiliada ALTUS FINANCE GROUP abierta a nombre del Prestatario dentro de la red ALTUS. El Prestatario reconoce y acepta que el pago inicial se acreditará en esta cuenta afiliada, que es su responsabilidad iniciar la transferencia a su cuenta bancaria externa, y que el desembolso efectivo de los fondos se realizará dentro de un máximo de 24 horas hábiles desde la recepción de este contrato debidamente firmado.',
+    article5Title: 'Artículo 5 - Reembolso Anticipado',
+    article5Content: 'El Prestatario tiene la opción de proceder al reembolso anticipado, total o parcial, del capital restante sin penalidades. Cualquier solicitud de reembolso anticipado debe formularse por escrito al menos 30 días antes de la fecha deseada.',
+    article6Title: 'Artículo 6 - Incumplimiento de Pago',
+    article6Content: 'En caso de incumplimiento de pago de una mensualidad, se aplicarán penalidades por demora del 5% anual sobre los montos restantes adeudados. Después de dos mensualidades consecutivas impagadas, el Prestamista se reserva el derecho de exigir el reembolso inmediato del capital restante.',
+    article7Title: 'Artículo 7 – Seguro del Prestatario',
+    article7Content: 'La suscripción de un seguro del prestatario que cubra como mínimo el riesgo de muerte e invalidez es <strong>estrictamente obligatoria</strong>. El Prestatario se compromete a proporcionar prueba de la suscripción antes del desembolso de los fondos.',
+    article8Title: 'Artículo 8 - Derecho de Retractación',
+    article8Content: 'De conformidad con las disposiciones legales vigentes, el Prestatario dispone de un plazo de retractación de 14 días calendario a partir de la firma de este contrato.',
+    article9Title: 'Artículo 9 - Ley Aplicable y Jurisdicción Competente',
+    article9Content: 'Este contrato se rige por la ley luxemburguesa. En caso de litigio, las partes se esforzarán por encontrar una solución amistosa. En su defecto, solo los tribunales competentes de Luxemburgo tendrán jurisdicción.',
+    signatureSection: 'Firmas',
+    madeInDuplicates: 'Hecho en dos originales',
+    inLuxembourg: 'En Luxemburgo, el',
+    forAltus: 'Por ALTUS FINANCE GROUP',
+    lender: 'El Prestamista',
+    borrower: 'El Prestatario',
+    preSigned: '✓ Documento pre-firmado y validado',
+    management: 'Dirección General',
+    altusStamp: 'ALTUS\nFINANCE\nGROUP',
+    luxembourg: 'Luxemburgo',
+    electronicSignature: 'Firma electrónica certificada',
+    date: 'Fecha',
+    signatureInstructions: 'Instrucciones de firma:',
+    instruction1: '1. Descargue este documento',
+    instruction2: '2. Imprima y firme con "Leído y aprobado"',
+    instruction3: '3. Escanee el documento firmado',
+    instruction4: '4. Devuélvalo a través de su área de cliente',
+    signatureLine: 'Firma precedida de',
+    readAndApproved: '"Leído y aprobado"',
+    confidentialNotice: 'Este documento es confidencial y está destinado exclusivamente a su destinatario. Cualquier reproducción, distribución o uso no autorizado está estrictamente prohibido.',
+    shareCapital: 'Capital Social',
+    headquarters: 'Sede Social',
+    tel: 'Tel',
+    loanTypes: {
+      'auto': 'Préstamo Automóvil',
+      'mortgage': 'Préstamo Hipotecario',
+      'green': 'Préstamo Ecológico',
+      'renovation': 'Préstamo para Obras',
+      'student': 'Préstamo Estudiantil',
+      'business': 'Préstamo Profesional',
+      'personal': 'Préstamo Personal',
+      'cashFlow': 'Préstamo de Tesorería',
+      'equipment': 'Préstamo de Equipamiento',
+      'vehicleFleet': 'Préstamo de Flota de Vehículos',
+      'lineOfCredit': 'Línea de Crédito',
+      'commercialProperty': 'Préstamo Inmobiliario Comercial',
+    }
+  }
+};
+
 const getContractTemplate = (data: ContractData): string => {
-  const { user, loan, contractDate } = data;
+  const { user, loan, contractDate, language = 'fr' } = data;
+  const lang = (language as ContractLanguage) in contractTranslations ? language as ContractLanguage : 'fr';
+  const t = contractTranslations[lang];
+  
+  const amount = parseFloat(loan.amount).toLocaleString(lang === 'fr' ? 'fr-FR' : lang === 'de' ? 'de-DE' : lang === 'pt' ? 'pt-PT' : lang === 'es' ? 'es-ES' : 'en-US', { minimumFractionDigits: 2 });
+  const rate = parseFloat(loan.interestRate).toFixed(2);
+  const monthly = calculateMonthlyPayment(parseFloat(loan.amount), parseFloat(loan.interestRate), loan.duration).toLocaleString(lang === 'fr' ? 'fr-FR' : lang === 'de' ? 'de-DE' : lang === 'pt' ? 'pt-PT' : lang === 'es' ? 'es-ES' : 'en-US', { minimumFractionDigits: 2 });
+  const totalInterest = calculateTotalInterest(parseFloat(loan.amount), parseFloat(loan.interestRate), loan.duration).toLocaleString(lang === 'fr' ? 'fr-FR' : lang === 'de' ? 'de-DE' : lang === 'pt' ? 'pt-PT' : lang === 'es' ? 'es-ES' : 'en-US', { minimumFractionDigits: 2 });
+  const totalRepayment = calculateTotalRepayment(parseFloat(loan.amount), parseFloat(loan.interestRate), loan.duration).toLocaleString(lang === 'fr' ? 'fr-FR' : lang === 'de' ? 'de-DE' : lang === 'pt' ? 'pt-PT' : lang === 'es' ? 'es-ES' : 'en-US', { minimumFractionDigits: 2 });
+  const loanTypeName = t.loanTypes[loan.loanType] || loan.loanType;
   
   return `
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="${lang}">
 <head>
   <meta charset="UTF-8">
   <style>
@@ -31,11 +487,12 @@ const getContractTemplate = (data: ContractData): string => {
       font-size: 11pt;
     }
     .header {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      color: white;
+      background: #ffffff;
+      color: #1a1a1a;
       padding: 35px 45px;
       margin: -2cm -2cm 30px -2cm;
       position: relative;
+      border-bottom: 3px solid #2563eb;
     }
     .header-top {
       display: flex;
@@ -79,19 +536,20 @@ const getContractTemplate = (data: ContractData): string => {
     }
     .header-info .contact-line {
       display: block;
-      opacity: 0.92;
+      opacity: 0.85;
+      color: #475569;
     }
     .contract-ref {
-      background: rgba(255, 255, 255, 0.18);
+      background: #f8fafc;
       padding: 14px 24px;
       border-radius: 8px;
       display: inline-block;
       font-size: 11pt;
       font-weight: 700;
       letter-spacing: 1.2px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 2px solid #2563eb;
+      color: #1e3a8a;
     }
     h1 {
       color: #1e3a8a;
@@ -276,199 +734,157 @@ const getContractTemplate = (data: ContractData): string => {
       </div>
     </div>
     <div style="text-align: center;">
-      <div class="contract-ref">CONTRAT DE PRÊT N° ${loan.id.toUpperCase()}</div>
+      <div class="contract-ref">${t.contractNumber} ${loan.id.toUpperCase()}</div>
     </div>
   </div>
 
-  <h1>Contrat de Prêt Professionnel</h1>
+  <h1>${t.contractTitle}</h1>
 
   <div class="info-box">
-    <h2 style="margin-top: 0;">Informations sur l'emprunteur</h2>
+    <h2 style="margin-top: 0;">${t.borrowerInfo}</h2>
     <div class="info-row">
-      <span class="label">Nom complet:</span>
+      <span class="label">${t.fullName}:</span>
       <span class="value">${user.fullName}</span>
     </div>
     <div class="info-row">
-      <span class="label">Email:</span>
+      <span class="label">${t.email}:</span>
       <span class="value">${user.email}</span>
     </div>
     ${user.phone ? `
     <div class="info-row">
-      <span class="label">Téléphone:</span>
+      <span class="label">${t.phone}:</span>
       <span class="value">${user.phone}</span>
     </div>
     ` : ''}
     ${user.companyName ? `
     <div class="info-row">
-      <span class="label">Société:</span>
+      <span class="label">${t.company}:</span>
       <span class="value">${user.companyName}</span>
     </div>
     ` : ''}
     ${user.siret ? `
     <div class="info-row">
-      <span class="label">SIRET:</span>
+      <span class="label">${t.siret}:</span>
       <span class="value">${user.siret}</span>
     </div>
     ` : ''}
   </div>
 
   <div class="info-box">
-    <h2 style="margin-top: 0;">Détails du prêt</h2>
+    <h2 style="margin-top: 0;">${t.loanDetails}</h2>
     <div class="info-row">
-      <span class="label">Type de prêt:</span>
-      <span class="value">${getLoanTypeName(loan.loanType)}</span>
+      <span class="label">${t.loanType}:</span>
+      <span class="value">${loanTypeName}</span>
     </div>
     <div class="info-row">
-      <span class="label">Montant emprunté:</span>
-      <span class="value highlight">${parseFloat(loan.amount).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</span>
+      <span class="label">${t.amountBorrowed}:</span>
+      <span class="value highlight">${amount} €</span>
     </div>
     <div class="info-row">
-      <span class="label">Taux d'intérêt annuel:</span>
-      <span class="value highlight">${parseFloat(loan.interestRate).toFixed(2)} %</span>
+      <span class="label">${t.annualInterestRate}:</span>
+      <span class="value highlight">${rate} %</span>
     </div>
     <div class="info-row">
-      <span class="label">Durée du prêt:</span>
-      <span class="value">${loan.duration} mois</span>
+      <span class="label">${t.loanDuration}:</span>
+      <span class="value">${loan.duration} ${t.months}</span>
     </div>
     <div class="info-row">
-      <span class="label">Date du contrat:</span>
+      <span class="label">${t.contractDate}:</span>
       <span class="value">${contractDate}</span>
     </div>
   </div>
 
-  <h2>Conditions du prêt</h2>
+  <h2>${t.loanConditions}</h2>
 
   <div class="article">
-    <div class="article-title">Article 1 - Objet du contrat</div>
-    <p>
-      Le présent contrat a pour objet l'octroi par ALTUS FINANCE GROUP (ci-après "le Prêteur") à ${user.fullName} 
-      (ci-après "l'Emprunteur") d'un prêt d'un montant de <strong>${parseFloat(loan.amount).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</strong> 
-      au taux d'intérêt annuel de <strong>${parseFloat(loan.interestRate).toFixed(2)}%</strong> pour une durée de <strong>${loan.duration} mois</strong>.
-    </p>
+    <div class="article-title">${t.article1Title}</div>
+    <p>${t.article1Content(user.fullName, amount, rate, loan.duration)}</p>
   </div>
 
   <div class="article">
-    <div class="article-title">Article 2 - Modalités de remboursement</div>
-    <p>
-      L'Emprunteur s'engage à rembourser le prêt selon un échéancier mensuel sur ${loan.duration} mois. 
-      Chaque mensualité comprendra une part du capital emprunté ainsi que les intérêts calculés au taux annuel de ${parseFloat(loan.interestRate).toFixed(2)}%.
-    </p>
-    <p>
-      Le montant estimé de la mensualité est de <strong>${calculateMonthlyPayment(parseFloat(loan.amount), parseFloat(loan.interestRate), loan.duration).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</strong>.
-    </p>
+    <div class="article-title">${t.article2Title}</div>
+    <p>${t.article2Content(loan.duration, rate, monthly)}</p>
   </div>
 
   <div class="article">
-    <div class="article-title">Article 3 - Taux d'intérêt et coût total du crédit</div>
-    <p>
-      Le taux d'intérêt appliqué est fixe et s'élève à ${parseFloat(loan.interestRate).toFixed(2)}% par an. 
-      Le coût total du crédit, incluant les intérêts, est estimé à <strong>${calculateTotalInterest(parseFloat(loan.amount), parseFloat(loan.interestRate), loan.duration).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</strong>.
-    </p>
-    <p>
-      Le montant total à rembourser s'élève donc à <strong>${calculateTotalRepayment(parseFloat(loan.amount), parseFloat(loan.interestRate), loan.duration).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</strong>.
-    </p>
+    <div class="article-title">${t.article3Title}</div>
+    <p>${t.article3Content(rate, totalInterest, totalRepayment)}</p>
   </div>
 
   <div class="article">
-    <div class="article-title">Article 4 – Déblocage des fonds</div>
-    <p>
-      Les fonds du prêt seront mis à disposition de l'Emprunteur sur le compte affilié ALTUS FINANCE GROUP ouvert au nom de l'Emprunteur au sein du réseau ALTUS. L'Emprunteur reconnaît et accepte que :
-    </p>
-    <ul>
-      <li>le versement initial sera crédité sur ce compte affilié ;</li>
-      <li>il appartient à l'Emprunteur d'initier et d'assurer le virement des fonds depuis son compte affilié ALTUS vers le compte bancaire externe de son choix ;</li>
-      <li>le déblocage effectif des fonds aura lieu dans un délai maximum de 24 heures ouvrées à compter de la réception du présent contrat dûment signé et de la réalisation des conditions suspensives (notamment vérifications KYC/AML et souscription de l'assurance si requise) ;</li>
-      <li>ALTUS FINANCE GROUP ne pourra être tenue responsable d'un délai de transfert externe au-delà des opérations initiées par l'Emprunteur.</li>
-    </ul>
+    <div class="article-title">${t.article4Title}</div>
+    <p>${t.article4Content}</p>
   </div>
 
   <div class="article">
-    <div class="article-title">Article 5 - Remboursement anticipé</div>
-    <p>
-      L'Emprunteur a la possibilité de procéder à un remboursement anticipé, total ou partiel, 
-      du capital restant dû sans pénalités. Toute demande de remboursement anticipé doit être formulée 
-      par écrit au moins 30 jours avant la date souhaitée.
-    </p>
+    <div class="article-title">${t.article5Title}</div>
+    <p>${t.article5Content}</p>
   </div>
 
   <div class="article">
-    <div class="article-title">Article 6 - Défaut de paiement</div>
-    <p>
-      En cas de défaut de paiement d'une mensualité, des pénalités de retard de 5% par an seront appliquées 
-      sur les sommes restant dues. Après deux mensualités impayées consécutives, le Prêteur se réserve le droit 
-      d'exiger le remboursement immédiat du capital restant dû.
-    </p>
+    <div class="article-title">${t.article6Title}</div>
+    <p>${t.article6Content}</p>
   </div>
 
   <div class="article">
-    <div class="article-title">Article 7 – Assurance emprunteur</div>
-    <p>
-      La souscription d'une assurance emprunteur couvrant au minimum le risque décès et invalidité est <strong>strictement obligatoire</strong> pour la sécurité du prêt accordé et le respect des normes en vigueur.
-    </p>
-    <p>
-      L'Emprunteur s'engage à fournir la preuve de souscription de cette assurance avant le déblocage des fonds. À défaut, ALTUS FINANCE GROUP se réserve le droit de suspendre le versement du prêt jusqu'à réception des justificatifs requis.
-    </p>
+    <div class="article-title">${t.article7Title}</div>
+    <p>${t.article7Content}</p>
   </div>
 
   <div class="article">
-    <div class="article-title">Article 8 - Droit de rétractation</div>
-    <p>
-      Conformément aux dispositions légales en vigueur, l'Emprunteur dispose d'un délai de rétractation de 14 jours 
-      calendaires à compter de la signature du présent contrat. Ce droit peut être exercé par courrier recommandé avec accusé de réception 
-      adressé à ALTUS FINANCE GROUP.
-    </p>
+    <div class="article-title">${t.article8Title}</div>
+    <p>${t.article8Content}</p>
   </div>
 
   <div class="article">
-    <div class="article-title">Article 9 - Loi applicable et juridiction compétente</div>
-    <p>
-      Le présent contrat est régi par le droit luxembourgeois. En cas de litige, les parties s'efforceront de trouver 
-      une solution amiable. À défaut, les tribunaux compétents de Luxembourg seront seuls compétents.
-    </p>
+    <div class="article-title">${t.article9Title}</div>
+    <p>${t.article9Content}</p>
   </div>
 
   <div class="signature-section">
     <p style="margin-bottom: 30px; text-align: center;">
-      <strong style="font-size: 11pt;">Fait en deux exemplaires originaux</strong><br>
-      <span style="color: #64748b;">À Luxembourg, le ${contractDate}</span>
+      <strong style="font-size: 11pt;">${t.madeInDuplicates}</strong><br>
+      <span style="color: #64748b;">${t.inLuxembourg} ${contractDate}</span>
     </p>
 
     <div class="signature-box">
       <div class="signature-item">
-        <div class="signature-header">Pour ALTUS FINANCE GROUP</div>
-        <div class="signature-role">Le Prêteur</div>
+        <div class="signature-header">${t.forAltus}</div>
+        <div class="signature-role">${t.lender}</div>
         <div class="pre-signed">
           <p style="font-style: italic; font-size: 10pt; color: #2563eb; margin-bottom: 10px;">
-            ✓ Document pré-signé et validé
+            ${t.preSigned}
           </p>
           <div style="font-family: 'Brush Script MT', cursive; font-size: 18pt; color: #1e3a8a; margin: 15px 0;">
-            Direction Générale
+            ${t.management}
           </div>
-          <div class="stamp-placeholder">
-            <div style="font-weight: bold; text-transform: uppercase;">
-              ALTUS<br>FINANCE<br>GROUP<br>
-              <span style="font-size: 7pt;">Luxembourg</span>
-            </div>
-          </div>
+          <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="60" cy="60" r="55" fill="none" stroke="#2563eb" stroke-width="3" stroke-dasharray="5,5"/>
+            <circle cx="60" cy="60" r="50" fill="#f8fafc" opacity="0.7"/>
+            <text x="60" y="45" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a8a">ALTUS</text>
+            <text x="60" y="60" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a8a">FINANCE</text>
+            <text x="60" y="75" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a8a">GROUP</text>
+            <text x="60" y="88" text-anchor="middle" font-size="9" fill="#64748b">${t.luxembourg}</text>
+          </svg>
           <p style="font-size: 8pt; color: #94a3b8; margin-top: 10px;">
-            Signature électronique certifiée<br>
-            Date: ${contractDate}
+            ${t.electronicSignature}<br>
+            ${t.date}: ${contractDate}
           </p>
         </div>
       </div>
 
       <div class="signature-item">
-        <div class="signature-header">L'Emprunteur</div>
+        <div class="signature-header">${t.borrower}</div>
         <div class="signature-role">${user.fullName}</div>
         <div class="important-notice" style="font-size: 10pt; margin-bottom: 15px;">
-          <strong>Instructions de signature :</strong><br>
-          1. Téléchargez ce document<br>
-          2. Imprimez et signez précédé de "Lu et approuvé"<br>
-          3. Scannez le document signé<br>
-          4. Renvoyez-le via votre espace client
+          <strong>${t.signatureInstructions}</strong><br>
+          ${t.instruction1}<br>
+          ${t.instruction2}<br>
+          ${t.instruction3}<br>
+          ${t.instruction4}
         </div>
         <div class="signature-line">
-          Signature précédée de<br>"Lu et approuvé"
+          ${t.signatureLine}<br>${t.readAndApproved}
         </div>
       </div>
     </div>
@@ -477,38 +893,19 @@ const getContractTemplate = (data: ContractData): string => {
   <div class="footer">
     <p class="footer-bold">ALTUS FINANCE GROUP - S.à r.l.</p>
     <p style="margin: 8px 0;">
-      Capital social: 1 000 000 € • RCS Luxembourg B123456<br>
-      Siège social: 19 Rue Sigismond, L-2537 Luxembourg<br>
-      Tél: +352 40 63 48 • Email: infos@altusfinancesgroup.com<br>
+      ${t.shareCapital}: 1 000 000 € • RCS Luxembourg B123456<br>
+      ${t.headquarters}: 19 Rue Sigismond, L-2537 Luxembourg<br>
+      ${t.tel}: +352 40 63 48 • Email: infos@altusfinancesgroup.com<br>
       www.altusfinancesgroup.com
     </p>
     <p style="margin-top: 15px; font-size: 8pt; font-style: italic;">
-      Ce document est confidentiel et destiné exclusivement à son destinataire.<br>
-      Toute reproduction, diffusion ou utilisation non autorisée est strictement interdite.
+      ${t.confidentialNotice}
     </p>
   </div>
 </body>
 </html>
   `;
 };
-
-function getLoanTypeName(type: string): string {
-  const types: Record<string, string> = {
-    'auto': 'Prêt automobile',
-    'mortgage': 'Prêt immobilier',
-    'green': 'Prêt écologique',
-    'renovation': 'Prêt travaux',
-    'student': 'Prêt étudiant',
-    'business': 'Prêt professionnel',
-    'personal': 'Prêt personnel',
-    'cashFlow': 'Prêt de trésorerie',
-    'equipment': 'Prêt matériel',
-    'vehicleFleet': 'Prêt flotte véhicules',
-    'lineOfCredit': 'Ligne de crédit',
-    'commercialProperty': 'Prêt immobilier commercial',
-  };
-  return types[type] || type;
-}
 
 function calculateMonthlyPayment(principal: number, annualRate: number, months: number): number {
   const monthlyRate = annualRate / 100 / 12;
@@ -526,11 +923,12 @@ function calculateTotalRepayment(principal: number, annualRate: number, months: 
   return monthlyPayment * months;
 }
 
-export async function generateContractPDF(user: User, loan: Loan): Promise<string> {
+export async function generateContractPDF(user: User, loan: Loan, language: string = 'fr'): Promise<string> {
   console.log('=== DÉBUT GÉNÉRATION CONTRAT PDF ===');
-  console.log(`Loan ID: ${loan.id}, User: ${user.fullName}, Amount: ${loan.amount}`);
+  console.log(`Loan ID: ${loan.id}, User: ${user.fullName}, Amount: ${loan.amount}, Language: ${language}`);
   
-  const contractDate = new Date().toLocaleDateString('fr-FR', {
+  const locale = language === 'en' ? 'en-US' : language === 'de' ? 'de-DE' : language === 'pt' ? 'pt-PT' : language === 'es' ? 'es-ES' : 'fr-FR';
+  const contractDate = new Date().toLocaleDateString(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
@@ -538,7 +936,7 @@ export async function generateContractPDF(user: User, loan: Loan): Promise<strin
 
   console.log('✓ Template HTML généré');
 
-  const htmlContent = getContractTemplate({ user, loan, contractDate });
+  const htmlContent = getContractTemplate({ user, loan, contractDate, language });
 
   const uploadsDir = path.join(process.cwd(), 'uploads', 'contracts');
   console.log(`Vérification répertoire: ${uploadsDir}`);

@@ -34,7 +34,7 @@ interface ContractVariables {
   fullName: string;
   amount: string;
   loanId: string;
-  contractUrl: string;
+  dashboardUrl: string;
   fromEmail: string;
 }
 
@@ -1776,7 +1776,7 @@ function getContractTemplate(lang: Language, vars: ContractVariables): EmailTemp
           </div>
 
           <div style="text-align: center;">
-            <a href="${vars.contractUrl}" class="button">${t.downloadButton}</a>
+            <a href="${vars.dashboardUrl}" class="button">${t.downloadButton}</a>
           </div>
 
           <p style="margin-top: 30px; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px;">
@@ -1811,7 +1811,7 @@ function getContractTemplate(lang: Language, vars: ContractVariables): EmailTemp
     2. ${t.step2Title}: ${t.step2Text}
     3. ${t.step3Title}: ${t.step3Text} ${vars.fromEmail}
     
-    ${t.downloadButton}: ${vars.contractUrl}
+    ${t.downloadButton}: ${vars.dashboardUrl}
     
     ${t.importantTitle} ${t.importantMessage}
     

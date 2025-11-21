@@ -3528,7 +3528,7 @@ Tous les codes de validation ont été vérifiés avec succès.`,
       console.log('\n--- Début génération de contrat PDF ---');
       try {
         const { generateContractPDF } = await import('./services/contractGenerator');
-        contractUrl = await generateContractPDF(user, loan);
+        contractUrl = await generateContractPDF(user, loan, user.preferredLanguage || 'fr');
         contractGenerated = true;
         console.log(`✓ SUCCÈS: Contrat généré à ${contractUrl}`);
       } catch (contractError: any) {

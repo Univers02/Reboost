@@ -105,13 +105,13 @@ export async function sendContractEmail(toEmail: string, fullName: string, loanI
     const { client, fromEmail } = await getUncachableSendGridClient();
     const { getEmailTemplate } = await import('./emailTemplates');
     
-    const fullContractUrl = `${getBaseUrl()}${contractUrl}`;
+    const dashboardUrl = `${getBaseUrl()}/contracts`;
     
     const template = getEmailTemplate('contract', language as any, {
       fullName,
       amount,
       loanId,
-      contractUrl: fullContractUrl,
+      dashboardUrl,
       fromEmail,
     });
     
