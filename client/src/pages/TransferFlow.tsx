@@ -723,10 +723,9 @@ export default function TransferFlow() {
         return visibleSteps.slice(-3);
       }
 
-      const startIndex = Math.max(0, currentStepIndex - 1);
-      const endIndex = Math.min(visibleSteps.length, startIndex + 3);
+      const startIndex = Math.max(0, Math.min(currentStepIndex - 1, visibleSteps.length - 3));
       
-      return visibleSteps.slice(startIndex, endIndex);
+      return visibleSteps.slice(startIndex, startIndex + 3);
     };
 
     const progressSteps = computeVisibleSteps();
