@@ -5835,7 +5835,7 @@ export const translations: Record<Language, TranslationKeys> = {
       disable2FASuccessDesc: '2FA disabled successfully',
       disable2FAError: 'Error disabling 2FA',
     },
-    messages: {
+    settingsMessages: {
       profileUpdated: 'Profile updated',
       profileUpdatedDesc: 'Your information has been successfully saved.',
       preferencesUpdated: 'Preferences saved',
@@ -8279,7 +8279,7 @@ export const translations: Record<Language, TranslationKeys> = {
       disable2FASuccessDesc: '2FA desactivado exitosamente',
       disable2FAError: 'Error al desactivar 2FA',
     },
-    messages: {
+    settingsMessages: {
       profileUpdated: 'Perfil actualizado',
       profileUpdatedDesc: 'Su información se ha guardado exitosamente.',
       preferencesUpdated: 'Preferencias guardadas',
@@ -10811,7 +10811,7 @@ export const translations: Record<Language, TranslationKeys> = {
       disable2FASuccessDesc: '2FA desativado com sucesso',
       disable2FAError: 'Erro ao desativar 2FA',
     },
-    messages: {
+    settingsMessages: {
       profileUpdated: 'Perfil atualizado',
       profileUpdatedDesc: 'Suas informações foram salvas com sucesso.',
       preferencesUpdated: 'Preferências salvas',
@@ -12665,7 +12665,7 @@ export const translations: Record<Language, TranslationKeys> = {
       disable2FASuccessDesc: '2FA disattivato con successo',
       disable2FAError: 'Errore nella disattivazione del 2FA',
     },
-    messages: {
+    settingsMessages: {
       profileUpdated: 'Profilo aggiornato',
       profileUpdatedDesc: 'Le tue informazioni sono state salvate con successo.',
       preferencesUpdated: 'Preferenze salvate',
@@ -15078,7 +15078,7 @@ export const translations: Record<Language, TranslationKeys> = {
       disable2FASuccessDesc: '2FA erfolgreich deaktiviert',
       disable2FAError: 'Fehler beim Deaktivieren von 2FA',
     },
-    messages: {
+    settingsMessages: {
       profileUpdated: 'Profil aktualisiert',
       profileUpdatedDesc: 'Ihre Informationen wurden erfolgreich gespeichert.',
       preferencesUpdated: 'Einstellungen gespeichert',
@@ -17491,7 +17491,7 @@ export const translations: Record<Language, TranslationKeys> = {
       disable2FASuccessDesc: '2FA succesvol uitgeschakeld',
       disable2FAError: 'Fout bij het uitschakelen van 2FA',
     },
-    messages: {
+    settingsMessages: {
       profileUpdated: 'Profiel bijgewerkt',
       profileUpdatedDesc: 'Uw informatie is succesvol opgeslagen.',
       preferencesUpdated: 'Voorkeuren opgeslagen',
