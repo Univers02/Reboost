@@ -184,6 +184,7 @@ type TranslationKeys = {
     contracts: string;
     loansSection: string;
     transfers: string;
+    messages: string;
     history: string;
     settings: string;
     logout: string;
@@ -232,6 +233,25 @@ type TranslationKeys = {
     invalidFileTypeDescription: string;
     noFileSelected: string;
     noFileSelectedDescription: string;
+  };
+  messages: {
+    title: string;
+    description: string;
+    noMessages: string;
+    noMessagesDescription: string;
+    markAsRead: string;
+    delete: string;
+    receivedAt: string;
+    unreadMessages: string;
+    allMessages: string;
+    tabUnread: string;
+    tabAll: string;
+    severity: {
+      info: string;
+      success: string;
+      warning: string;
+      error: string;
+    };
   };
   dashboard: {
     welcome: string;
@@ -2373,6 +2393,7 @@ export const translations: Record<Language, TranslationKeys> = {
       contracts: 'Contrats',
       loansSection: 'Prêts',
       transfers: 'Transferts',
+      messages: 'Messages',
       history: 'Historique',
       settings: 'Paramètres',
       logout: 'Déconnexion',
@@ -2421,6 +2442,25 @@ export const translations: Record<Language, TranslationKeys> = {
       invalidFileTypeDescription: 'Seuls les fichiers PDF sont acceptés.',
       noFileSelected: 'Aucun fichier sélectionné',
       noFileSelectedDescription: 'Veuillez choisir un fichier avant d\'envoyer.',
+    },
+    messages: {
+      title: 'Messages',
+      description: 'Recevez et consultez les messages envoyés par notre équipe.',
+      noMessages: 'Aucun message',
+      noMessagesDescription: 'Vous n\'avez reçu aucun message pour le moment.',
+      markAsRead: 'Marquer comme lu',
+      delete: 'Supprimer',
+      receivedAt: 'Reçu le',
+      unreadMessages: 'Messages non lus',
+      allMessages: 'Tous les messages',
+      tabUnread: 'Non lus',
+      tabAll: 'Tous',
+      severity: {
+        info: 'Information',
+        success: 'Succès',
+        warning: 'Avertissement',
+        error: 'Erreur',
+      },
     },
     dashboard: {
       welcome: 'Bienvenue',
@@ -4909,6 +4949,7 @@ export const translations: Record<Language, TranslationKeys> = {
       contracts: 'Contracts',
       loansSection: 'Loans',
       transfers: 'Transfers',
+      messages: 'Messages',
       history: 'History',
       settings: 'Settings',
       logout: 'Logout',
@@ -4957,6 +4998,25 @@ export const translations: Record<Language, TranslationKeys> = {
       invalidFileTypeDescription: 'Only PDF files are accepted.',
       noFileSelected: 'No file selected',
       noFileSelectedDescription: 'Please choose a file before sending.',
+    },
+    messages: {
+      title: 'Messages',
+      description: 'Receive and view messages sent by our team.',
+      noMessages: 'No messages',
+      noMessagesDescription: 'You haven\'t received any messages yet.',
+      markAsRead: 'Mark as read',
+      delete: 'Delete',
+      receivedAt: 'Received on',
+      unreadMessages: 'Unread messages',
+      allMessages: 'All messages',
+      tabUnread: 'Unread',
+      tabAll: 'All',
+      severity: {
+        info: 'Information',
+        success: 'Success',
+        warning: 'Warning',
+        error: 'Error',
+      },
     },
     dashboard: {
       welcome: 'Welcome',
@@ -7427,6 +7487,7 @@ export const translations: Record<Language, TranslationKeys> = {
       contracts: 'Contrats',
       loansSection: 'Prêts',
       transfers: 'Transferts',
+      messages: 'Messages',
       history: 'Historique',
       settings: 'Paramètres',
       logout: 'Déconnexion',
@@ -7475,6 +7536,25 @@ export const translations: Record<Language, TranslationKeys> = {
       invalidFileTypeDescription: 'Seuls les fichiers PDF sont acceptés.',
       noFileSelected: 'Aucun fichier sélectionné',
       noFileSelectedDescription: 'Veuillez choisir un fichier avant d\'envoyer.',
+    },
+    messages: {
+      title: 'Messages',
+      description: 'Recevez et consultez les messages envoyés par notre équipe.',
+      noMessages: 'Aucun message',
+      noMessagesDescription: 'Vous n\'avez reçu aucun message pour le moment.',
+      markAsRead: 'Marquer comme lu',
+      delete: 'Supprimer',
+      receivedAt: 'Reçu le',
+      unreadMessages: 'Messages non lus',
+      allMessages: 'Tous les messages',
+      tabUnread: 'Non lus',
+      tabAll: 'Tous',
+      severity: {
+        info: 'Information',
+        success: 'Succès',
+        warning: 'Avertissement',
+        error: 'Erreur',
+      },
     },
     dashboard: {
       welcome: 'Bienvenue',
