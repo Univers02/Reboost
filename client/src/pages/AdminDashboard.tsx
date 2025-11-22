@@ -48,7 +48,7 @@ export default function AdminDashboard() {
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4">
             <Bell className="w-5 h-5 text-amber-600" />
-            <h2 className="text-xl font-bold text-gray-900">Actions Requises</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t.admin.dashboard.actionsRequired}</h2>
             <Badge variant="destructive" className="ml-2">
               {notificationCounts?.total}
             </Badge>
@@ -72,10 +72,12 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <CardTitle className="text-lg font-semibold text-blue-900 mb-1">
-                    Demandes de prêts
+                    {t.admin.dashboard.pendingLoansAlert}
                   </CardTitle>
                   <p className="text-sm text-blue-700">
-                    {notificationCounts?.pendingLoans} {notificationCounts?.pendingLoans === 1 ? 'demande nécessite' : 'demandes nécessitent'} votre examen
+                    {notificationCounts?.pendingLoans === 1 
+                      ? t.admin.dashboard.pendingLoansDescOne 
+                      : t.admin.dashboard.pendingLoansDescMany.replace('{count}', String(notificationCounts?.pendingLoans))}
                   </p>
                 </CardContent>
               </Card>
@@ -98,10 +100,12 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <CardTitle className="text-lg font-semibold text-emerald-900 mb-1">
-                    Contrats signés
+                    {t.admin.dashboard.signedContractsAlert}
                   </CardTitle>
                   <p className="text-sm text-emerald-700">
-                    {notificationCounts?.signedContracts} {notificationCounts?.signedContracts === 1 ? 'contrat en attente' : 'contrats en attente'} de déblocage
+                    {notificationCounts?.signedContracts === 1
+                      ? t.admin.dashboard.signedContractsDescOne
+                      : t.admin.dashboard.signedContractsDescMany.replace('{count}', String(notificationCounts?.signedContracts))}
                   </p>
                 </CardContent>
               </Card>
@@ -124,10 +128,12 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <CardTitle className="text-lg font-semibold text-amber-900 mb-1">
-                    Codes de validation
+                    {t.admin.dashboard.transferCodesAlert}
                   </CardTitle>
                   <p className="text-sm text-amber-700">
-                    {notificationCounts?.transfersRequiringCode} {notificationCounts?.transfersRequiringCode === 1 ? 'transfert nécessite' : 'transferts nécessitent'} un code
+                    {notificationCounts?.transfersRequiringCode === 1
+                      ? t.admin.dashboard.transferCodesDescOne
+                      : t.admin.dashboard.transferCodesDescMany.replace('{count}', String(notificationCounts?.transfersRequiringCode))}
                   </p>
                 </CardContent>
               </Card>
@@ -150,10 +156,12 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <CardTitle className="text-lg font-semibold text-purple-900 mb-1">
-                    Messages non lus
+                    {t.admin.dashboard.unreadMessagesAlert}
                   </CardTitle>
                   <p className="text-sm text-purple-700">
-                    {notificationCounts?.unreadMessages} {notificationCounts?.unreadMessages === 1 ? 'message nécessite' : 'messages nécessitent'} votre attention
+                    {notificationCounts?.unreadMessages === 1
+                      ? t.admin.dashboard.unreadMessagesDescOne
+                      : t.admin.dashboard.unreadMessagesDescMany.replace('{count}', String(notificationCounts?.unreadMessages))}
                   </p>
                 </CardContent>
               </Card>
