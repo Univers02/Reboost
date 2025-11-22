@@ -1,5 +1,6 @@
 import { storage } from './storage';
 import { type InsertNotification, type InsertAdminMessage } from '@shared/schema';
+import { getNotificationTranslation, type Language } from './notification-translations';
 
 export type NotificationType =
   | 'loan_request'
@@ -32,6 +33,17 @@ export interface CreateNotificationParams {
   metadata?: any;
 }
 
+async function getUserLanguage(userId: string): Promise<Language> {
+  try {
+    const user = await storage.getUserById(userId);
+    const lang = user?.language as Language;
+    return lang && ['fr', 'en', 'es', 'pt', 'it', 'de', 'nl'].includes(lang) ? lang : 'fr';
+  } catch (error) {
+    console.error('Error getting user language:', error);
+    return 'fr';
+  }
+}
+
 export async function createUserNotification(params: CreateNotificationParams) {
   const notification: InsertNotification = {
     userId: params.userId,
@@ -47,175 +59,223 @@ export async function createUserNotification(params: CreateNotificationParams) {
 }
 
 export async function notifyLoanApproved(userId: string, loanId: string, amount: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('loan_approved', language);
+  
   return await createUserNotification({
     userId,
     type: 'loan_approved',
-    title: 'Loan Approved',
-    message: `Your loan application has been approved. You can now proceed to contract signing.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'success',
     metadata: { loanId, amount },
   });
 }
 
 export async function notifyLoanRejected(userId: string, loanId: string, reason: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('loan_rejected', language);
+  
   return await createUserNotification({
     userId,
     type: 'loan_rejected',
-    title: 'Loan Rejected',
-    message: `Your loan application has been rejected.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'error',
     metadata: { loanId, reason },
   });
 }
 
 export async function notifyLoanFundsAvailable(userId: string, loanId: string, amount: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('loan_funds_available', language);
+  
   return await createUserNotification({
     userId,
     type: 'loan_funds_available',
-    title: 'Fonds disponibles',
-    message: `Vos fonds sont désormais disponibles. Vous pouvez initier votre transfert.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'success',
     metadata: { loanId, amount },
   });
 }
 
 export async function notifyLoanDisbursed(userId: string, loanId: string, amount: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('loan_disbursed', language);
+  
   return await createUserNotification({
     userId,
     type: 'loan_disbursed',
-    title: 'Funds Disbursed',
-    message: `Your loan funds have been successfully disbursed to your account.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'success',
     metadata: { loanId, amount },
   });
 }
 
 export async function notifyTransferCompleted(userId: string, transferId: string, amount: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('transfer_completed', language);
+  
   return await createUserNotification({
     userId,
     type: 'transfer_completed',
-    title: 'Transfer Completed',
-    message: `Your transfer has been completed successfully.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'success',
     metadata: { transferId, amount },
   });
 }
 
 export async function notifyTransferApproved(userId: string, transferId: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('transfer_approved', language);
+  
   return await createUserNotification({
     userId,
     type: 'transfer_approved',
-    title: 'Transfer Approved',
-    message: 'Your transfer request has been approved by the administration.',
+    title: translation.title,
+    message: translation.message,
     severity: 'success',
     metadata: { transferId },
   });
 }
 
 export async function notifyTransferSuspended(userId: string, transferId: string, reason: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('transfer_suspended', language);
+  
   return await createUserNotification({
     userId,
     type: 'transfer_suspended',
-    title: 'Transfer Suspended',
-    message: `Your transfer has been suspended.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'warning',
     metadata: { transferId, reason },
   });
 }
 
 export async function notifyCodeIssued(userId: string, transferId: string, sequence: number) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('code_issued', language);
+  
   return await createUserNotification({
     userId,
     type: 'code_issued',
-    title: 'Validation Code Issued',
-    message: `A new validation code has been issued for your transfer. Check your emails.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'info',
     metadata: { transferId, sequence },
   });
 }
 
 export async function notifyKycApproved(userId: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('kyc_approved', language);
+  
   return await createUserNotification({
     userId,
     type: 'kyc_approved',
-    title: 'KYC Documents Approved',
-    message: 'Your documents have been verified and approved. Your account is now active.',
+    title: translation.title,
+    message: translation.message,
     severity: 'success',
   });
 }
 
 export async function notifyKycRejected(userId: string, reason: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('kyc_rejected', language);
+  
   return await createUserNotification({
     userId,
     type: 'kyc_rejected',
-    title: 'KYC Documents Rejected',
-    message: `Your documents have been rejected. Please submit new documents.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'error',
     metadata: { reason },
   });
 }
 
 export async function notifyFeeAdded(userId: string, feeId: string, amount: string, reason: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('fee_added', language);
+  
   return await createUserNotification({
     userId,
     type: 'fee_added',
-    title: 'New Fee',
-    message: `New fees have been added to your account.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'warning',
     metadata: { feeId, amount, reason },
   });
 }
 
 export async function notifyAccountStatusChanged(userId: string, newStatus: string, reason?: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('account_status_changed', language);
+  
   return await createUserNotification({
     userId,
     type: 'account_status_changed',
-    title: 'Account Status Changed',
-    message: `Your account status has been updated.`,
+    title: translation.title,
+    message: translation.message,
     severity: newStatus === 'active' ? 'success' : 'warning',
     metadata: { newStatus, reason },
   });
 }
 
 export async function notifyLoanRequest(userId: string, loanId: string, amount: string, loanType: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('loan_request', language);
+  
   return await createUserNotification({
     userId,
     type: 'loan_request',
-    title: 'Loan Request Submitted',
-    message: `Your loan request has been successfully submitted. We will review your application shortly.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'success',
     metadata: { loanId, loanType, amount },
   });
 }
 
 export async function notifyLoanUnderReview(userId: string, loanId: string, amount: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('loan_under_review', language);
+  
   return await createUserNotification({
     userId,
     type: 'loan_under_review',
-    title: 'Application Under Review',
-    message: `Your loan application is currently being reviewed by our team.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'info',
     metadata: { loanId, amount },
   });
 }
 
 export async function notifyLoanContractGenerated(userId: string, loanId: string, amount: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('loan_contract_generated', language);
+  
   return await createUserNotification({
     userId,
     type: 'loan_contract_generated',
-    title: 'Loan Contract Available',
-    message: `Your loan contract is now available. Please download it, sign it, and return it.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'success',
     metadata: { loanId, amount },
   });
 }
 
 export async function notifyLoanContractSigned(userId: string, loanId: string, amount: string) {
+  const language = await getUserLanguage(userId);
+  const translation = getNotificationTranslation('loan_contract_signed', language);
+  
   return await createUserNotification({
     userId,
     type: 'loan_contract_signed',
-    title: 'Signed Contract Received',
-    message: `We have received your signed contract. Your loan will be processed shortly.`,
+    title: translation.title,
+    message: translation.message,
     severity: 'success',
     metadata: { loanId, amount },
   });
