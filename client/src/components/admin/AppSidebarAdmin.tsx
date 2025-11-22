@@ -9,16 +9,40 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
 
 export function AppSidebarAdmin() {
   const [location] = useLocation();
 
+  // Récupérer les compteurs de notifications en temps réel
+  const { data: notificationCounts } = useQuery<{
+    pendingLoans: number;
+    signedContracts: number;
+    transfersRequiringCode: number;
+    unreadMessages: number;
+    total: number;
+  }>({
+    queryKey: ["/api/admin/notifications-count"],
+    refetchInterval: 30000, // Rafraîchir toutes les 30 secondes
+  });
+
   const menuItems = [
-    { label: "Vue d'ensemble", link: "/admin", icon: LayoutDashboard },
-    { label: "Demandes de prêts", link: "/admin/loans", icon: Landmark },
-    { label: "Utilisateurs", link: "/admin/users", icon: Users },
-    { label: "Contact", link: "/admin/contact", icon: MessageSquare },
-    { label: "Chat Support", link: "/admin/chat", icon: MessagesSquare },
+    { label: "Vue d'ensemble", link: "/admin", icon: LayoutDashboard, count: 0 },
+    { 
+      label: "Demandes de prêts", 
+      link: "/admin/loans", 
+      icon: Landmark,
+      count: (notificationCounts?.pendingLoans || 0) + (notificationCounts?.signedContracts || 0) + (notificationCounts?.transfersRequiringCode || 0)
+    },
+    { label: "Utilisateurs", link: "/admin/users", icon: Users, count: 0 },
+    { label: "Contact", link: "/admin/contact", icon: MessageSquare, count: 0 },
+    { 
+      label: "Chat Support", 
+      link: "/admin/chat", 
+      icon: MessagesSquare,
+      count: notificationCounts?.unreadMessages || 0
+    },
   ];
 
   return (
@@ -39,14 +63,25 @@ export function AppSidebarAdmin() {
                     <SidebarMenuButton asChild data-testid={`link-admin-${item.label.toLowerCase()}`}>
                       <Link href={item.link}>
                         <a
-                          className={`flex items-center gap-3 p-3 rounded-xl transition-all w-full ${
+                          className={`flex items-center justify-between gap-3 p-3 rounded-xl transition-all w-full ${
                             isActive
                               ? "bg-indigo-100 text-indigo-700 font-semibold"
                               : "hover:bg-indigo-50 text-gray-700"
                           }`}
                         >
-                          <Icon className="w-5 h-5" />
-                          <span className="font-medium">{item.label}</span>
+                          <div className="flex items-center gap-3">
+                            <Icon className="w-5 h-5" />
+                            <span className="font-medium">{item.label}</span>
+                          </div>
+                          {item.count > 0 && (
+                            <Badge 
+                              variant="destructive" 
+                              className="ml-auto min-w-[24px] h-5 flex items-center justify-center px-2"
+                              data-testid={`badge-admin-count-${item.label.toLowerCase()}`}
+                            >
+                              {item.count}
+                            </Badge>
+                          )}
                         </a>
                       </Link>
                     </SidebarMenuButton>
