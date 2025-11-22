@@ -81,19 +81,26 @@ export function createSocketIOSessionMiddleware(
   sessionMiddleware: RequestHandler
 ) {
   return (socket: Socket, next: (err?: Error) => void) => {
+    const cookieHeader = socket.request.headers.cookie;
+    
+    if (!cookieHeader) {
+      console.log('[SESSION] Cookie missing in socket handshake');
+      return next(); // socket connecté mais pas authentifié
+    }
+
     const req = socket.request as any;
     const res = {} as any;
     
+    // Récupérer la session Express
     sessionMiddleware(req, res, (err?: any) => {
       if (err) {
         console.error('[SOCKET.IO] Session middleware error:', err);
-        return next(new Error('Session authentication failed'));
+        return next();
       }
       
-      // Verify session and user authentication
       if (!req.session || !req.session.userId) {
-        console.warn('[SOCKET.IO] Unauthenticated connection attempt');
-        return next(new Error('Authentication required'));
+        console.log('[SESSION] Socket not authenticated');
+        return next();
       }
       
       // Attach user data to socket

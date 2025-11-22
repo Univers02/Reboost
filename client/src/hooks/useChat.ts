@@ -30,7 +30,10 @@ export function useChat({ room, userId, partnerId }: UseChatOptions) {
 
     const socket = io(socketUrl, {
       transports: ["websocket", "polling"],
-      withCredentials: true
+      withCredentials: true,
+      extraHeaders: {
+        Cookie: document.cookie
+      }
     });
 
     socketRef.current = socket;
