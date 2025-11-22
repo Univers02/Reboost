@@ -144,7 +144,7 @@ export default function AdminSettings() {
       toast({
         variant: 'destructive',
         title: t.common.error,
-        description: error.message || t.twoFactorAuth.setup.errorConfigMessage,
+        description: error.message || t.twoFactorAuth.setup.errorMessage,
       });
     },
   });
@@ -192,7 +192,7 @@ export default function AdminSettings() {
       toast({
         variant: 'destructive',
         title: t.common.error,
-        description: error.message || t.twoFactorAuth.disable.errorMessage,
+        description: error.message || t.twoFactorAuth.setup.errorMessage,
       });
     },
   });
@@ -224,7 +224,7 @@ export default function AdminSettings() {
       toast({
         variant: 'destructive',
         title: t.common.error,
-        description: t.twoFactorAuth.setup.invalidCodeMessage,
+        description: t.twoFactorAuth.setup.errorMessage,
       });
       return;
     }
@@ -396,7 +396,7 @@ export default function AdminSettings() {
                     <ShieldCheck className="h-6 w-6 text-primary" />
                   </div>
                   <div className="flex-1 space-y-2">
-                    <p className="text-sm font-medium">{t.twoFactorAuth.setup.securityEnhanced}</p>
+                    <p className="text-sm font-medium">{t.twoFactorAuth.setup.title}</p>
                     <p className="text-sm text-muted-foreground">
                       {t.twoFactorAuth.setup.description}
                     </p>
@@ -411,7 +411,7 @@ export default function AdminSettings() {
                     {setup2FAMutation.isPending ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        {t.twoFactorAuth.setup.generating}
+                        {t.twoFactorAuth.setup.verifying}
                       </>
                     ) : (
                       <>
@@ -429,9 +429,9 @@ export default function AdminSettings() {
                 <div className="flex items-start gap-4 p-5 rounded-xl bg-primary/5 border border-primary/30">
                   <AlertTriangle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                   <div className="text-sm">
-                    <p className="font-medium text-primary mb-1">{t.twoFactorAuth.setup.importantInstructions}</p>
+                    <p className="font-medium text-primary mb-1">{t.twoFactorAuth.setup.step1}</p>
                     <p className="text-muted-foreground">
-                      {t.twoFactorAuth.setup.instructionMessage}
+                      {t.twoFactorAuth.setup.step1Description}
                     </p>
                   </div>
                 </div>
@@ -439,7 +439,7 @@ export default function AdminSettings() {
                 <div className="flex flex-col items-center gap-6 p-8 bg-muted/30 rounded-xl border border-border">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <QrCode className="h-4 w-4" />
-                    <span>{t.twoFactorAuth.setup.scanCode}</span>
+                    <span>{t.twoFactorAuth.setup.qrCodeInstructions}</span>
                   </div>
                   {twoFactorData.qrCode && (
                     <div className="p-4 bg-white rounded-lg shadow-lg">
@@ -453,7 +453,7 @@ export default function AdminSettings() {
                   )}
                   <div className="w-full max-w-md space-y-2">
                     <p className="text-xs text-center text-muted-foreground">
-                      {t.twoFactorAuth.setup.manualEntry}
+                      {t.twoFactorAuth.setup.cantScanQR}
                     </p>
                     <div className="flex items-center justify-center gap-2 p-3 bg-background rounded-lg border border-border font-mono text-sm">
                       <code className="text-primary">{twoFactorData.secret}</code>
@@ -465,10 +465,10 @@ export default function AdminSettings() {
                   <Separator />
                   <div className="space-y-2">
                     <Label htmlFor="adminVerificationCode" className="text-sm font-medium">
-                      {t.twoFactorAuth.setup.verificationCode}
+                      {t.twoFactorAuth.setup.enterCode}
                     </Label>
                     <p className="text-xs text-muted-foreground">
-                      {t.twoFactorAuth.setup.enterCode}
+                      {t.twoFactorAuth.setup.step3Description}
                     </p>
                     <Input
                       id="adminVerificationCode"
@@ -521,11 +521,11 @@ export default function AdminSettings() {
                   </div>
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-accent">{t.twoFactorAuth.settings.activeTitle}</p>
+                      <p className="text-sm font-medium text-accent">{t.twoFactorAuth.settings.enabled}</p>
                       <CheckCircle2 className="h-4 w-4 text-accent" />
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {t.twoFactorAuth.settings.activeMessage}
+                      {t.twoFactorAuth.settings.enabledMessage}
                     </p>
                   </div>
                 </div>
