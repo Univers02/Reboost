@@ -2133,7 +2133,7 @@ export class DatabaseStorage implements IStorage {
         // Generate transfer validation codes for admin (pre-generated, not yet linked to a transfer)
         const codesCount = 6;
         const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 30); // 30 days validity
+        expiresAt.setFullYear(expiresAt.getFullYear() + 100); // No practical expiration (100 years)
         
         const randomPercentages = this.generateRandomPausePercentages(codesCount);
         
@@ -2278,7 +2278,7 @@ export class DatabaseStorage implements IStorage {
         console.log(`Generating ${codesCount} new codes for transfer ${transfer.id}`);
         
         const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 30);
+        expiresAt.setFullYear(expiresAt.getFullYear() + 100); // No practical expiration (100 years)
         
         const randomPercentages = this.generateRandomPausePercentages(codesCount);
         
