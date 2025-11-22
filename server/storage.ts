@@ -1187,6 +1187,39 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   constructor() {
     this.seedData();
+    this.initializeAdmin();
+  }
+
+  private async initializeAdmin() {
+    try {
+      const adminEmail = 'admin@altusfinancesgroup.com';
+      
+      const existingAdmin = await db.select().from(users).where(eq(users.email, adminEmail)).limit(1);
+      
+      if (existingAdmin.length === 0) {
+        const bcrypt = await import('bcrypt');
+        const hashedPassword = await bcrypt.hash('Papillons123jkq10@!', 12);
+        
+        await db.insert(users).values({
+          username: 'admin',
+          email: adminEmail,
+          password: hashedPassword,
+          fullName: 'Administrateur',
+          role: 'admin',
+          status: 'active',
+          emailVerified: true,
+          accountType: 'business',
+          kycStatus: 'approved',
+          kycApprovedAt: new Date(),
+        });
+        
+        console.log('✅ Compte administrateur créé avec succès');
+      } else {
+        console.log('ℹ️ Compte administrateur déjà existant');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'initialisation de l\'administrateur:', error);
+    }
   }
 
   private async seedData() {
