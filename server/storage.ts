@@ -1200,12 +1200,13 @@ export class DatabaseStorage implements IStorage {
         return;
       }
       
+      const bcrypt = await import('bcrypt');
+      const hashedPassword = await bcrypt.hash(adminPassword, 12);
+      
       const existingAdmin = await db.select().from(users).where(eq(users.email, adminEmail)).limit(1);
       
       if (existingAdmin.length === 0) {
-        const bcrypt = await import('bcrypt');
-        const hashedPassword = await bcrypt.hash(adminPassword, 12);
-        
+        // Créer le compte admin
         await db.insert(users).values({
           username: 'admin',
           email: adminEmail,
@@ -1221,7 +1222,15 @@ export class DatabaseStorage implements IStorage {
         
         console.log('✅ Compte administrateur créé avec succès:', adminEmail);
       } else {
-        console.log('ℹ️ Compte administrateur déjà existant:', adminEmail);
+        // Mettre à jour le mot de passe de l'admin existant
+        await db.update(users)
+          .set({ 
+            password: hashedPassword,
+            updatedAt: new Date()
+          })
+          .where(eq(users.email, adminEmail));
+        
+        console.log('✅ Mot de passe administrateur mis à jour:', adminEmail);
       }
     } catch (error) {
       console.error('❌ Erreur lors de l\'initialisation de l\'administrateur:', error);
