@@ -1194,19 +1194,20 @@ export class DatabaseStorage implements IStorage {
     try {
       const adminEmail = process.env.ADMIN_EMAIL;
       const adminPassword = process.env.ADMIN_PASSWORD;
+      const resetPassword = process.env.RESET_ADMIN_PASSWORD === 'true';
       
       if (!adminEmail || !adminPassword) {
         console.log('⚠️ ADMIN_EMAIL ou ADMIN_PASSWORD non défini - compte admin non créé');
         return;
       }
       
-      const bcrypt = await import('bcrypt');
-      const hashedPassword = await bcrypt.hash(adminPassword, 12);
-      
       const existingAdmin = await db.select().from(users).where(eq(users.email, adminEmail)).limit(1);
       
       if (existingAdmin.length === 0) {
         // Créer le compte admin
+        const bcrypt = await import('bcrypt');
+        const hashedPassword = await bcrypt.hash(adminPassword, 12);
+        
         await db.insert(users).values({
           username: 'admin',
           email: adminEmail,
@@ -1221,8 +1222,11 @@ export class DatabaseStorage implements IStorage {
         });
         
         console.log('✅ Compte administrateur créé avec succès:', adminEmail);
-      } else {
-        // Mettre à jour le mot de passe de l'admin existant
+      } else if (resetPassword) {
+        // Mettre à jour le mot de passe uniquement si RESET_ADMIN_PASSWORD=true
+        const bcrypt = await import('bcrypt');
+        const hashedPassword = await bcrypt.hash(adminPassword, 12);
+        
         await db.update(users)
           .set({ 
             password: hashedPassword,
@@ -1230,7 +1234,10 @@ export class DatabaseStorage implements IStorage {
           })
           .where(eq(users.email, adminEmail));
         
-        console.log('✅ Mot de passe administrateur mis à jour:', adminEmail);
+        console.log('✅ Mot de passe administrateur réinitialisé:', adminEmail);
+        console.log('⚠️ N\'oubliez pas de supprimer RESET_ADMIN_PASSWORD des variables d\'environnement');
+      } else {
+        console.log('ℹ️ Compte administrateur existant:', adminEmail);
       }
     } catch (error) {
       console.error('❌ Erreur lors de l\'initialisation de l\'administrateur:', error);
