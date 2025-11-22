@@ -1,6 +1,5 @@
 import { type CSSProperties } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Bell, UserCircle } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,6 +11,8 @@ import {
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebarAdmin } from './AppSidebarAdmin';
 import AdminHeader from './AdminHeader';
+import AdminNotificationBell from './AdminNotificationBell';
+import AdminProfileMenu from './AdminProfileMenu';
 
 interface AdminLayoutProps {
   title: string;
@@ -53,13 +54,9 @@ export function AdminLayout({
                 </h1>
               </div>
 
-              <div className="flex items-center gap-6">
-                <button data-testid="button-notifications">
-                  <Bell size={22} className="text-indigo-600" />
-                </button>
-                <button data-testid="button-profile">
-                  <UserCircle size={32} className="text-gray-700" />
-                </button>
+              <div className="flex items-center gap-3">
+                <AdminNotificationBell />
+                <AdminProfileMenu />
               </div>
             </header>
 

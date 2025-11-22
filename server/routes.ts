@@ -3588,6 +3588,82 @@ Tous les codes de validation ont été vérifiés avec succès.`,
     }
   });
 
+  app.get("/api/admin/notifications", requireAdmin, async (req, res) => {
+    try {
+      const notifications = [];
+      
+      const allLoans = await storage.getAllLoans();
+      const pendingLoans = allLoans.filter(loan => 
+        loan.status === 'pending_review' && !loan.deletedAt
+      );
+      if (pendingLoans.length > 0) {
+        notifications.push({
+          id: 'loan_pending',
+          type: 'loan_pending',
+          title: 'Demandes de prêts en attente',
+          description: `${pendingLoans.length} demande(s) de prêt nécessitent votre attention`,
+          count: pendingLoans.length,
+          href: '/admin/loans',
+          createdAt: pendingLoans[0].createdAt,
+        });
+      }
+
+      const signedContracts = allLoans.filter(loan => 
+        loan.contractStatus === 'signed_pending_processing' && !loan.deletedAt
+      );
+      if (signedContracts.length > 0) {
+        notifications.push({
+          id: 'contract_signed',
+          type: 'contract_signed',
+          title: 'Contrats signés à traiter',
+          description: `${signedContracts.length} contrat(s) signé(s) en attente de traitement`,
+          count: signedContracts.length,
+          href: '/admin/loans',
+          createdAt: signedContracts[0].createdAt,
+        });
+      }
+
+      const allUsers = await storage.getAllUsers();
+      const pendingUsers = allUsers.filter(user => 
+        user.status === 'pending' || user.kycStatus === 'pending'
+      );
+      if (pendingUsers.length > 0) {
+        notifications.push({
+          id: 'user_pending',
+          type: 'user_pending',
+          title: 'Utilisateurs en attente',
+          description: `${pendingUsers.length} utilisateur(s) en attente de validation`,
+          count: pendingUsers.length,
+          href: '/admin/users',
+          createdAt: pendingUsers[0].createdAt,
+        });
+      }
+
+      const allKycDocs = await storage.getAllKycDocuments();
+      const pendingKycDocs = allKycDocs.filter(doc => doc.status === 'pending');
+      if (pendingKycDocs.length > 0) {
+        notifications.push({
+          id: 'kyc_pending',
+          type: 'kyc_pending',
+          title: 'Documents KYC à vérifier',
+          description: `${pendingKycDocs.length} document(s) KYC en attente de vérification`,
+          count: pendingKycDocs.length,
+          href: '/admin/users',
+          createdAt: pendingKycDocs[0].uploadedAt,
+        });
+      }
+
+      notifications.sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      res.json(notifications);
+    } catch (error) {
+      console.error('Error fetching admin notifications:', error);
+      res.status(500).json({ error: 'Failed to fetch notifications' });
+    }
+  });
+
   app.get("/api/admin/audit-logs", requireAdmin, async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
