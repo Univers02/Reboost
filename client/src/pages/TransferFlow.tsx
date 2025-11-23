@@ -264,11 +264,19 @@ export default function TransferFlow() {
     },
     onSuccess: (data: any) => {
       setValidationCode('');
-      const contextInfo = data.codeContext ? ` - ${translateCodeContext(data.codeContext, t)}` : '';
+      
+      // Construire le message de succès traduit
+      const baseMessage = data.isComplete 
+        ? t.transferFlow.progress.statusCompleted 
+        : t.transferFlow.toast.codeValidated;
+      
+      const contextInfo = data.codeContext 
+        ? ` - ${translateCodeContext(data.codeContext, t)}` 
+        : '';
       
       toast({
-        title: t.transferFlow.toast.codeValidated,
-        description: `${data.message}${contextInfo}`,
+        title: baseMessage,
+        description: contextInfo || undefined,
       });
       
       setLastValidatedSequence(currentCodeSequence);
@@ -488,7 +496,7 @@ export default function TransferFlow() {
                     </Label>
                     <Select value={selectedLoanId} onValueChange={setSelectedLoanId}>
                       <SelectTrigger data-testid="select-loan" className="h-12">
-                        <SelectValue placeholder={t.transferFlow.chooseLoan} />
+                        <SelectValue placeholder={t.amortization.chooseLoan} />
                       </SelectTrigger>
                       <SelectContent>
                         {availableLoans.map((loan) => (

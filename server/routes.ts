@@ -3142,15 +3142,12 @@ Tous les codes de validation ont été vérifiés avec succès.`,
 
       res.json({ 
         success: true,
-        message: isComplete 
-          ? 'Transfert finalisé avec succès' 
-          : 'Code validé avec succès',
         isComplete,
         isPaused,
         progress: newProgress,
         pausePercent: isPaused ? pausePercent : null,
         nextSequence: isComplete ? null : newCodesValidated + 1,
-        codeContext: validatedCode.codeContext || 'Code validé',
+        codeContext: validatedCode.codeContext || null,
       });
     } catch (error) {
       console.error('Code validation error:', error);
