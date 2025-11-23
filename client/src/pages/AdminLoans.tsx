@@ -408,28 +408,39 @@ export default function AdminLoans() {
                       </>
                     )}
 
-                    <Tooltip>
-                      <AlertDialog>
+                    {!loan.contractUrl ? (
+                      <Tooltip>
                         <TooltipTrigger asChild>
-                          <AlertDialogTrigger asChild>
+                          <span className="w-full">
                             <Button
                               variant="default"
                               size="sm"
                               className="w-full justify-start"
-                              disabled={!loan.contractUrl}
+                              disabled
                               data-testid={`button-confirm-contract-mobile-${loan.id}`}
                             >
-                              {!loan.contractUrl && <Lock className="h-4 w-4 mr-2" />}
-                              {loan.contractUrl && <CheckCircle className="h-4 w-4 mr-2" />}
+                              <Lock className="h-4 w-4 mr-2" />
                               Confirmer le contrat
                             </Button>
-                          </AlertDialogTrigger>
+                          </span>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {!loan.contractUrl 
-                            ? "Le contrat doit d'abord être généré. Approuvez la demande pour générer le contrat." 
-                            : "Confirmer le contrat et débloquer les fonds"}
+                          Le contrat doit d'abord être généré. Approuvez la demande pour générer le contrat.
                         </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="w-full justify-start"
+                            data-testid={`button-confirm-contract-mobile-${loan.id}`}
+                          >
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Confirmer le contrat
+                          </Button>
+                        </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Confirmer le contrat</AlertDialogTitle>
@@ -449,7 +460,7 @@ export default function AdminLoans() {
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
-                    </Tooltip>
+                    )}
 
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
@@ -649,27 +660,37 @@ export default function AdminLoans() {
                         </>
                       )}
 
-                      <Tooltip>
-                        <AlertDialog>
+                      {!loan.contractUrl ? (
+                        <Tooltip>
                           <TooltipTrigger asChild>
-                            <AlertDialogTrigger asChild>
+                            <span>
                               <Button
                                 variant="default"
                                 size="sm"
-                                disabled={!loan.contractUrl}
+                                disabled
                                 data-testid={`button-confirm-contract-${loan.id}`}
                               >
-                                {!loan.contractUrl && <Lock className="h-4 w-4 mr-1" />}
-                                {loan.contractUrl && <CheckCircle className="h-4 w-4 mr-1" />}
+                                <Lock className="h-4 w-4 mr-1" />
                                 Confirmer
                               </Button>
-                            </AlertDialogTrigger>
+                            </span>
                           </TooltipTrigger>
                           <TooltipContent>
-                            {!loan.contractUrl 
-                              ? "Le contrat doit d'abord être généré. Approuvez la demande pour générer le contrat." 
-                              : "Confirmer le contrat et débloquer les fonds"}
+                            Le contrat doit d'abord être généré. Approuvez la demande pour générer le contrat.
                           </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              data-testid={`button-confirm-contract-${loan.id}`}
+                            >
+                              <CheckCircle className="h-4 w-4 mr-1" />
+                              Confirmer
+                            </Button>
+                          </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>Confirmer le contrat</AlertDialogTitle>
@@ -689,7 +710,7 @@ export default function AdminLoans() {
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
-                      </Tooltip>
+                      )}
 
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
