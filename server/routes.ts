@@ -2681,15 +2681,45 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
           error: 'Les fonds ne sont pas encore disponibles pour ce prêt. Veuillez attendre la confirmation du contrat par l\'administrateur.' 
         });
       }
+
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 5: Vérification des transferts existants pour ce prêt`);
+      const existingTransfers = await storage.getUserTransfers(req.session.userId!);
+      const loanTransfers = existingTransfers.filter(t => t.loanId === loanId);
+      console.log(`[TRANSFER-INITIATE] ${requestId} - ${loanTransfers.length} transfert(s) trouvé(s) pour ce prêt`);
+
+      // Bloquer si un transfert est déjà complété
+      const completedTransfer = loanTransfers.find(t => t.status === 'completed');
+      if (completedTransfer) {
+        console.error(`[TRANSFER-INITIATE] ${requestId} - ERREUR: Transfert déjà complété - ID: ${completedTransfer.id}`);
+        return res.status(400).json({ 
+          error: 'Un transfert a déjà été finalisé pour ce prêt. Impossible d\'initier un nouveau transfert.',
+          existingTransferId: completedTransfer.id 
+        });
+      }
+
+      // Bloquer si un transfert est en cours
+      const activeTransfer = loanTransfers.find(t => 
+        t.status === 'pending' || t.status === 'in-progress'
+      );
+      if (activeTransfer) {
+        console.error(`[TRANSFER-INITIATE] ${requestId} - ERREUR: Transfert déjà actif - ID: ${activeTransfer.id}, status: ${activeTransfer.status}`);
+        return res.status(409).json({ 
+          error: 'Un transfert est déjà en cours pour ce prêt.',
+          existingTransferId: activeTransfer.id,
+          redirect: true
+        });
+      }
+
+      console.log(`[TRANSFER-INITIATE] ${requestId} - ✓ Aucun transfert actif ou complété trouvé - Création autorisée`);
       
-      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 5: Récupération des frais de transfert`);
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 6: Récupération des frais de transfert`);
       const settingFee = await storage.getAdminSetting('default_transfer_fee');
       const feeAmount = (settingFee?.settingValue as any)?.amount || 25;
       console.log(`[TRANSFER-INITIATE] ${requestId} - Frais de transfert: ${feeAmount}€`);
       
       const codesCount = 6;
       
-      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 6: Création du transfert et des codes`);
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 7: Création du transfert et des codes`);
       console.log(`[TRANSFER-INITIATE] ${requestId} - Paramètres transfert:`, JSON.stringify({
         userId: req.session.userId,
         loanId,
@@ -2729,16 +2759,16 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
       });
       console.log(`[TRANSFER-INITIATE] ${requestId} - État initial: transfert démarré à 0%, progressera jusqu'à ${firstCodePausePercent}% (premier code)`);
 
-      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 7: Notification utilisateur`);
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 8: Notification utilisateur`);
       await notifyTransferInitiated(req.session.userId!, transfer.id, amount.toString(), recipient);
       console.log(`[TRANSFER-INITIATE] ${requestId} - Notification utilisateur envoyée`);
 
-      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 8: Récupération des infos utilisateur`);
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 9: Récupération des infos utilisateur`);
       const user = await storage.getUser(req.session.userId!);
       if (user) {
         console.log(`[TRANSFER-INITIATE] ${requestId} - Utilisateur: ${user.fullName} (${user.email})`);
         
-        console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 9: Notification administrateurs`);
+        console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 10: Notification administrateurs`);
         await notifyAdminsNewTransfer(
           user.id,
           user.fullName,
@@ -2750,12 +2780,12 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
 
         // NOTE: Les codes ont déjà été envoyés à l'admin lors de la confirmation du contrat.
         // Pas besoin de les renvoyer lors de l'initiation du transfert.
-        console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 10: Codes déjà envoyés lors de la confirmation du contrat - pas de renvoi`);
+        console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 11: Codes déjà envoyés lors de la confirmation du contrat - pas de renvoi`);
       } else {
         console.warn(`[TRANSFER-INITIATE] ${requestId} - AVERTISSEMENT: Utilisateur non trouvé pour userId: ${req.session.userId}`);
       }
 
-      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 11: Création événement transfert`);
+      console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 12: Création événement transfert`);
       await storage.createTransferEvent({
         transferId: transfer.id,
         eventType: 'initiated',
