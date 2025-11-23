@@ -8,6 +8,29 @@ ALTUS is a multi-language professional loan management platform designed for bus
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (November 23, 2025)
+
+### CometChat Real-Time Chat Integration
+- ✅ **IMPLEMENTED:** Complete CometChat infrastructure for real-time chat functionality
+  - Installed packages: `@cometchat-pro/chat`, `@cometchat/chat-uikit-react` (v6.x)
+  - Created `client/src/cometchat.ts` for CometChat UI Kit initialization
+  - Created `client/src/hooks/useCometChat.ts` for user authentication hook
+  - Created `client/src/components/ChatWidget.tsx` for floating chat button widget
+  - Modified `client/src/main.tsx` to initialize CometChat at app startup
+  - Modified `client/src/App.tsx` to integrate ChatWidget globally
+  - Added backend endpoint `/api/cometchat/auth-token` for secure user authentication
+  - Files modified: `client/src/cometchat.ts`, `client/src/hooks/useCometChat.ts`, `client/src/components/ChatWidget.tsx`, `client/src/main.tsx`, `client/src/App.tsx`, `server/routes.ts`
+- ✅ **CONFIGURED:** Environment variables for CometChat integration
+  - `VITE_COMETCHAT_APP_ID`, `VITE_COMETCHAT_REGION`, `VITE_COMETCHAT_AUTH_KEY`
+- 📝 **DOCUMENTED:** Complete setup guide in `COMETCHAT_SETUP.md`
+- 🔐 **SECURITY:** Backend authentication endpoint protected by `requireAuth` middleware
+- 🎯 **STATUS:** Base infrastructure complete, ready for full chat UI implementation
+- 📋 **NEXT STEPS:** 
+  - Create CometChat users (manual via dashboard or automatic via API)
+  - Replace placeholder widget with actual CometChat UI components
+  - Implement auto-login after user authentication
+  - Customize widget appearance
+
 ## Recent Changes (November 20, 2025)
 
 ### Transfer Code System - Critical Fixes
@@ -123,4 +146,5 @@ Preferred communication style: Simple, everyday language.
 **Authentication:** SendGrid for transactional email verification.
 **Two-Factor Authentication:** Speakeasy and qrcode libraries for TOTP generation and verification.
 **Cloud Storage:** Cloudinary for profile photo storage only. KYC documents and signed contracts use local file system storage.
+**Real-Time Chat:** CometChat integration with UI Kit v6.x for real-time messaging capabilities. Includes floating chat widget, secure backend authentication, and infrastructure ready for full chat UI implementation.
 **File Validation:** Sharp for image sanitization, PDF-lib for PDF sanitization, file-type for magic byte verification.
