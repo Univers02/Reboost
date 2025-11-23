@@ -4596,7 +4596,22 @@ ${urls.map(url => `  <url>
     res.send(sitemap);
   });
 
-  app.get("/api/cometchat/auth-token", requireAuth, async (req, res) => {
+  const cometChatTokenCache = new Map<string, { token: string, createdAt: number }>();
+  const COMETCHAT_TOKEN_CACHE_DURATION = 5 * 60 * 1000;
+
+  const cometChatTokenLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 10,
+    message: { error: 'Too many CometChat token requests. Please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req: any) => !req.session?.userId,
+    keyGenerator: (req: any) => {
+      return `cometchat:${req.session.userId}`;
+    }
+  });
+
+  app.get("/api/cometchat/auth-token", requireAuth, cometChatTokenLimiter, async (req, res) => {
     try {
       const userId = req.session.userId;
       if (!userId) {
@@ -4610,13 +4625,95 @@ ${urls.map(url => `  <url>
 
       const uid = `user_${userId}`;
       
+      const COMETCHAT_APP_ID = process.env.COMETCHAT_APP_ID;
+      const COMETCHAT_REGION = process.env.COMETCHAT_REGION;
+      const COMETCHAT_REST_API_KEY = process.env.COMETCHAT_REST_API_KEY;
+
+      if (!COMETCHAT_APP_ID || !COMETCHAT_REGION || !COMETCHAT_REST_API_KEY) {
+        console.warn('⚠️ CometChat configuration not found');
+        return res.status(503).json({ error: 'CometChat not configured' });
+      }
+
+      const cached = cometChatTokenCache.get(userId);
+      if (cached && (Date.now() - cached.createdAt) < COMETCHAT_TOKEN_CACHE_DURATION) {
+        console.log(`[CometChat] Returning cached token for user ${uid}`);
+        return res.json({
+          uid,
+          authToken: cached.token,
+          appId: COMETCHAT_APP_ID,
+          region: COMETCHAT_REGION,
+          name: user.fullName,
+          email: user.email
+        });
+      }
+
+      const createUserResponse = await fetch(
+        `https://${COMETCHAT_APP_ID}.api-${COMETCHAT_REGION}.cometchat.io/v3/users`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': COMETCHAT_REST_API_KEY,
+            'accept': 'application/json'
+          },
+          body: JSON.stringify({
+            uid,
+            name: user.fullName,
+            avatar: ''
+          })
+        }
+      );
+
+      if (!createUserResponse.ok && createUserResponse.status !== 409) {
+        const errorData = await createUserResponse.json().catch(() => ({}));
+        console.error(`[CometChat] User creation failed for ${uid}:`, createUserResponse.status, errorData);
+      } else if (createUserResponse.ok) {
+        console.log(`[CometChat] Created new user ${uid}`);
+      } else {
+        console.log(`[CometChat] User ${uid} already exists (409)`);
+      }
+
+      const tokenResponse = await fetch(
+        `https://${COMETCHAT_APP_ID}.api-${COMETCHAT_REGION}.cometchat.io/v3/users/${uid}/auth_tokens`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': COMETCHAT_REST_API_KEY,
+            'accept': 'application/json'
+          }
+        }
+      );
+
+      if (!tokenResponse.ok) {
+        const errorData = await tokenResponse.json().catch(() => ({}));
+        console.error(`[CometChat] Token generation failed for ${uid}:`, tokenResponse.status, errorData);
+        return res.status(tokenResponse.status).json({ 
+          error: 'Failed to generate auth token',
+          details: errorData 
+        });
+      }
+
+      const tokenData = await tokenResponse.json();
+      const authToken = tokenData.data.authToken;
+
+      cometChatTokenCache.set(userId, {
+        token: authToken,
+        createdAt: Date.now()
+      });
+
+      console.log(`[CometChat] Generated and cached new token for user ${uid}`);
+      
       res.json({ 
         uid,
+        authToken,
+        appId: COMETCHAT_APP_ID,
+        region: COMETCHAT_REGION,
         name: user.fullName,
         email: user.email
       });
     } catch (error) {
-      console.error('CometChat auth token error:', error);
+      console.error('[CometChat] Error:', error);
       res.status(500).json({ error: 'Failed to generate auth token' });
     }
   });

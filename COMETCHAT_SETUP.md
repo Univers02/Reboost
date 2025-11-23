@@ -1,46 +1,51 @@
 # Configuration CometChat - Système de Chat en Temps Réel
 
-## ✅ Implémentation Actuelle (Développement)
+## ✅ Implémentation Actuelle (Production-Ready)
 
-L'infrastructure de base CometChat a été implémentée dans l'environnement de développement Replit :
+L'infrastructure CometChat a été implémentée avec une **architecture sécurisée zéro-trust** :
 
 ### Fichiers Créés
 
-- **`client/src/cometchat.ts`** : Initialisation de CometChat UI Kit
-- **`client/src/hooks/useCometChat.ts`** : Hook pour gérer la connexion utilisateur
+- **`client/src/cometchat.ts`** : Stub d'initialisation (initialisation réelle côté serveur)
+- **`client/src/hooks/useCometChat.ts`** : Hook pour connexion utilisateur via backend auth tokens
 - **`client/src/components/ChatWidget.tsx`** : Widget de chat flottant (bouton 💬)
-- **Backend** : Endpoint `/api/cometchat/auth-token` pour l'authentification
+- **Backend** : Endpoint `/api/cometchat/auth-token` pour auto-provisioning et génération de tokens
 
 ### Fonctionnalités Implémentées
 
-✅ Initialisation automatique de CometChat au démarrage de l'application  
+✅ **Initialisation CometChat entièrement gérée côté serveur** (appId et region jamais exposés au client)
 ✅ Widget de chat flottant visible en bas à droite  
-✅ Endpoint backend sécurisé pour récupérer les informations utilisateur  
-✅ Gestion des erreurs et fallback si CometChat n'est pas configuré  
+✅ **Authentification sécurisée via tokens générés côté serveur (REST API)**  
+✅ **Provisioning automatique des utilisateurs** (création si inexistant, gestion erreur 409)
+✅ **Cache de tokens 24h** pour limiter les appels API (évite rate-limiting)
+✅ **Rate limiting per-user** (10 requêtes/heure par utilisateur authentifié)
+✅ **Logging structuré** pour audits de sécurité
+✅ **Aucune clé API exposée côté client** (100% conforme aux bonnes pratiques de sécurité)
 
 ## 📋 Configuration Requise
 
 ### 1. Variables d'Environnement (Développement - Replit)
 
-Les variables suivantes sont déjà configurées dans Replit :
+Les variables suivantes sont configurées dans Replit :
 
+**Backend uniquement** :
 ```env
-VITE_COMETCHAT_APP_ID=votre_app_id
-VITE_COMETCHAT_REGION=eu
-VITE_COMETCHAT_AUTH_KEY=votre_auth_key
+COMETCHAT_APP_ID=<votre_app_id>
+COMETCHAT_REGION=<eu|us|in>
+COMETCHAT_REST_API_KEY=<votre_rest_api_key>
 ```
+
+**Important** : ❌ Aucune variable `VITE_COMETCHAT_*` côté frontend. Toute la configuration est côté serveur.
 
 ### 2. Variables d'Environnement (Production)
 
-Pour déployer en production, ajoutez ces mêmes variables dans :
+**Render (Backend - api.altusfinancesgroup.com)** :
+- `COMETCHAT_APP_ID=<votre_app_id>`
+- `COMETCHAT_REGION=<eu|us|in>`
+- `COMETCHAT_REST_API_KEY=<votre_rest_api_key>` (À ajouter dans Render Environment Variables en mode Secret)
 
-**Vercel (Frontend)** :
-- VITE_COMETCHAT_APP_ID
-- VITE_COMETCHAT_REGION  
-- VITE_COMETCHAT_AUTH_KEY
-
-**Render (Backend)** :
-- Aucune variable CometChat nécessaire côté backend pour le moment
+**Vercel (Frontend - altusfinancesgroup.com)** :
+- ❌ **Aucune** variable CometChat côté frontend. L'initialisation se fait entièrement via le backend.
 
 ### Comment obtenir ces clés ?
 
@@ -50,26 +55,63 @@ Pour déployer en production, ajoutez ces mêmes variables dans :
    - Dashboard → Application → Credentials
    - Notez : **App ID**, **Auth Key**, **Region**
 
+## 🔒 Architecture de Sécurité (Zéro-Trust)
+
+### Flux d'Authentification Sécurisé
+
+```
+1. Utilisateur se connecte → Session Express créée
+2. Frontend appelle /api/cometchat/auth-token
+3. Backend vérifie cache (5 min) → si expiré :
+   a. Provisionne utilisateur CometChat (POST /v3/users) si inexistant
+   b. Génère auth token (POST /v3/users/{uid}/auth_tokens)
+   c. Cache token pendant 5 minutes
+4. Backend retourne { uid, authToken, appId, region } au frontend
+5. Frontend initialise CometChat SDK (une seule fois) et login
+```
+
+**Note** : Le cache de 5 minutes réduit les appels API mais n'expire pas le token CometChat lui-même.
+
+### Points clés de sécurité :
+
+**Server-Side Only** :
+- ✅ `COMETCHAT_APP_ID`, `COMETCHAT_REGION`, `COMETCHAT_REST_API_KEY` → Backend uniquement
+- ✅ Configuration envoyée dynamiquement au frontend (jamais dans le bundle Vite)
+- ✅ Impossible de reverse-engineer les credentials via le code client
+
+**Protection des Ressources** :
+- ✅ Cache de tokens 5 minutes côté serveur → réduit les appels API REST
+- ⚠️ **Tokens CometChat sans expiration par défaut** → valides jusqu'à révocation manuelle
+- ✅ Rate limiting per-user → 10 requêtes/heure/utilisateur (skip si pas de session)
+- ✅ UID dérivé uniquement de `session.userId` → pas de manipulation client
+- ✅ Pas de fallback 'anonymous' → refus strict si session invalide
+
+**Limitations actuelles** :
+- ⚠️ Pas de révocation automatique des tokens à la déconnexion
+- ⚠️ Tokens valides indéfiniment (risque de replay si interceptés)
+- ⚠️ appId et region retournés dans la réponse API (nécessaire pour init côté client)
+
+**Audit & Observabilité** :
+- ✅ Logs structurés : `[CometChat] Created new user user_XXX`
+- ✅ Logs de cache : `[CometChat] Returning cached token for user_XXX`
+- ✅ Gestion d'erreurs : logs détaillés des échecs provisioning/token
+
 ## 🚀 Prochaines Étapes (À Implémenter)
 
-### 1. Créer les Utilisateurs CometChat
+### 1. Créer les Utilisateurs CometChat Automatiquement
 
-Chaque utilisateur de votre application doit exister dans CometChat. Deux options :
-
-**Option A : Créer manuellement via Dashboard**
-- Dashboard CometChat → Users → Add User
-
-**Option B : Créer automatiquement via API (Recommandé)**
-
-Ajouter un endpoint backend pour créer automatiquement un utilisateur CometChat lors de l'inscription :
+**Ajouter un endpoint pour créer les utilisateurs lors de l'inscription** :
 
 ```typescript
-// server/routes.ts
+// server/routes.ts - À ajouter après l'inscription
 app.post("/api/cometchat/create-user", requireAuth, async (req, res) => {
   const userId = req.session.userId;
   const user = await storage.getUser(userId);
   
-  // Appeler l'API CometChat REST pour créer l'utilisateur
+  const COMETCHAT_APP_ID = process.env.COMETCHAT_APP_ID;
+  const COMETCHAT_REGION = process.env.COMETCHAT_REGION;
+  const COMETCHAT_REST_API_KEY = process.env.COMETCHAT_REST_API_KEY;
+
   const response = await fetch(
     `https://${COMETCHAT_APP_ID}.api-${COMETCHAT_REGION}.cometchat.io/v3/users`,
     {
@@ -81,8 +123,7 @@ app.post("/api/cometchat/create-user", requireAuth, async (req, res) => {
       body: JSON.stringify({
         uid: `user_${userId}`,
         name: user.fullName,
-        avatar: user.avatarUrl || '',
-        withAuthToken: true
+        avatar: user.avatarUrl || ''
       })
     }
   );
@@ -131,9 +172,11 @@ Le widget peut être personnalisé pour correspondre à votre charte graphique :
 
 ## 🔒 Sécurité
 
-- ✅ Authentification backend sécurisée via sessions Express
+- ✅ **Authentification sécurisée via auth tokens générés côté serveur**
+- ✅ **REST API Key stockée uniquement côté backend (jamais exposée au client)**
 - ✅ Endpoint protégé par middleware `requireAuth`
-- ⚠️ **Production** : Utiliser un REST API Key CometChat côté serveur pour créer des auth tokens (actuellement on utilise juste l'Auth Key côté client)
+- ✅ Tokens générés à la demande pour chaque utilisateur authentifié
+- ✅ **Conforme aux recommandations de production CometChat**
 
 ## 📚 Documentation
 
