@@ -3914,6 +3914,12 @@ Tous les codes de validation ont été vérifiés avec succès.`,
         return res.status(404).json({ error: 'Prêt non trouvé' });
       }
 
+      if (!loan.contractUrl) {
+        return res.status(400).json({ 
+          error: 'Le contrat n\'a pas encore été généré. Veuillez d\'abord approuver la demande de prêt pour générer le contrat.' 
+        });
+      }
+
       const result = await storage.markLoanFundsAvailable(req.params.id, req.session.userId!);
       
       if (!result) {
