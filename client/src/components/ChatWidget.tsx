@@ -1,15 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@/hooks/use-user";
-import { CometChatConversations } from "@cometchat/chat-uikit-react";
+import { CometChatConversations, CometChatUsers } from "@cometchat/chat-uikit-react";
 import { CometChatUIKit, UIKitSettingsBuilder } from "@cometchat/chat-uikit-react";
 import { getApiUrl } from "@/lib/queryClient";
 
 let isInitialized = false;
 
+type ChatView = "conversations" | "users";
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [isCometChatReady, setIsCometChatReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeView, setActiveView] = useState<ChatView>("conversations");
   const { data: user } = useUser();
 
   const initializeCometChat = useCallback(async () => {
@@ -107,7 +110,53 @@ export default function ChatWidget() {
               <p>Chargement du chat...</p>
             </div>
           ) : (
-            <CometChatConversations />
+            <>
+              <div style={{ 
+                display: "flex", 
+                borderBottom: "1px solid #e0e0e0",
+                background: "#f5f5f5"
+              }}>
+                <button
+                  onClick={() => setActiveView("conversations")}
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    border: "none",
+                    background: activeView === "conversations" ? "#fff" : "transparent",
+                    borderBottom: activeView === "conversations" ? "2px solid #6c5ce7" : "none",
+                    color: activeView === "conversations" ? "#6c5ce7" : "#666",
+                    fontWeight: activeView === "conversations" ? "600" : "400",
+                    cursor: "pointer",
+                  }}
+                  data-testid="button-chat-conversations"
+                >
+                  Conversations
+                </button>
+                <button
+                  onClick={() => setActiveView("users")}
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    border: "none",
+                    background: activeView === "users" ? "#fff" : "transparent",
+                    borderBottom: activeView === "users" ? "2px solid #6c5ce7" : "none",
+                    color: activeView === "users" ? "#6c5ce7" : "#666",
+                    fontWeight: activeView === "users" ? "600" : "400",
+                    cursor: "pointer",
+                  }}
+                  data-testid="button-chat-users"
+                >
+                  Utilisateurs
+                </button>
+              </div>
+              <div style={{ height: "calc(100% - 49px)", overflow: "hidden" }}>
+                {activeView === "conversations" ? (
+                  <CometChatConversations />
+                ) : (
+                  <CometChatUsers />
+                )}
+              </div>
+            </>
           )}
         </div>
       )}
