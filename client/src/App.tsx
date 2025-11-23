@@ -135,10 +135,10 @@ function App() {
               </LoanDialogProvider>
             </Route>
           </Switch>
+          <ChatWidget />
           <Toaster />
         </TooltipProvider>
       </QueryClientProvider>
-      <ChatWidget />
     </HelmetProvider>
   );
 }
