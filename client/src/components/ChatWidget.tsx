@@ -1,11 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useCometChatLogin } from "@/hooks/useCometChat";
+import { CometChatConversations } from "@cometchat/chat-uikit-react";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
+  const [isCometChatReady, setIsCometChatReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { login } = useCometChatLogin();
+
+  useEffect(() => {
+    if (open && !isCometChatReady) {
+      login()
+        .then(() => {
+          setIsCometChatReady(true);
+          setError(null);
+        })
+        .catch((err: unknown) => {
+          console.error("CometChat login failed:", err);
+          setError("Impossible de se connecter au chat. Veuillez réessayer.");
+        });
+    }
+  }, [open, isCometChatReady, login]);
 
   return (
     <>
-      {/* Bouton flottant */}
       <button
         data-testid="button-chat-widget"
         onClick={() => setOpen(!open)}
@@ -27,7 +45,6 @@ export default function ChatWidget() {
         💬
       </button>
 
-      {/* Fenêtre du chat */}
       {open && (
         <div
           style={{
@@ -43,12 +60,17 @@ export default function ChatWidget() {
             zIndex: 9999,
           }}
         >
-          <div style={{ padding: "20px", textAlign: "center" }}>
-            <p>Chat CometChat</p>
-            <p style={{ fontSize: "12px", color: "#666", marginTop: "10px" }}>
-              Configuration requise: VITE_COMETCHAT_APP_ID, VITE_COMETCHAT_REGION, VITE_COMETCHAT_AUTH_KEY
-            </p>
-          </div>
+          {error ? (
+            <div style={{ padding: "20px", textAlign: "center" }}>
+              <p style={{ color: "#e74c3c" }}>{error}</p>
+            </div>
+          ) : !isCometChatReady ? (
+            <div style={{ padding: "20px", textAlign: "center" }}>
+              <p>Chargement du chat...</p>
+            </div>
+          ) : (
+            <CometChatConversations />
+          )}
         </div>
       )}
     </>
