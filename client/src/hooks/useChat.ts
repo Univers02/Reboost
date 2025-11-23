@@ -45,12 +45,18 @@ export function useChat({ room, userId, partnerId }: UseChatOptions) {
       // Identifie explicitement l'utilisateur auprès du backend
       socket.emit("user_online", { userId });
       
-      socket.emit("join_room", room);
-      socket.emit("join_room", `user_${userId}`);
-      
-      // Request presence state for partner
-      if (partnerId) {
-        socket.emit("get_presence_state", [partnerId]);
+      // CRITICAL FIX: Only join room if it's valid
+      // If room is null/undefined, Socket.IO cannot establish presence correctly
+      if (room) {
+        socket.emit("join_room", room);
+        socket.emit("join_room", `user_${userId}`);
+        
+        // Request presence state for partner
+        if (partnerId) {
+          socket.emit("get_presence_state", [partnerId]);
+        }
+      } else {
+        console.warn("[CHAT] Cannot join room: room is null or undefined");
       }
     });
 

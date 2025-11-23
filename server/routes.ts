@@ -3255,6 +3255,41 @@ Tous les codes de validation ont été vérifiés avec succès.`,
     }
   });
 
+  // Initialize or get conversation room between two users
+  app.post("/api/chat/conversation/init", requireAuth, requireCSRF, async (req, res) => {
+    try {
+      const initConversationSchema = z.object({
+        partnerId: z.string().uuid()
+      });
+
+      const { partnerId } = initConversationSchema.parse(req.body);
+      const userId = req.session.userId!;
+
+      // Verify partner user exists
+      const partner = await storage.getUser(partnerId);
+      if (!partner) {
+        return res.status(404).json({ error: 'Partner user not found' });
+      }
+
+      // Generate room ID (sorted IDs to ensure consistency)
+      const room = [userId, partnerId].sort().join("_");
+
+      // Return conversation info
+      res.json({
+        room,
+        partnerId,
+        partnerName: partner.fullName,
+        initialized: true
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Invalid partner ID' });
+      }
+      console.error('[CHAT] Error initializing conversation:', error);
+      res.status(500).json({ error: 'Failed to initialize conversation' });
+    }
+  });
+
   app.get("/api/chat/conversations", requireAuth, async (req, res) => {
     try {
       const conversations = await storage.getUserConversations(req.session.userId!);

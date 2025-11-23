@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { MessageSquare, Users, Search } from 'lucide-react';
 import { AdminLayout } from '@/components/admin';
 import { useTranslations } from '@/lib/i18n';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 interface User {
   id: string;
@@ -30,8 +32,37 @@ interface Conversation {
 
 export default function AdminChatPage() {
   const t = useTranslations();
+  const { toast } = useToast();
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isInitializing, setIsInitializing] = useState(false);
+
+  // Initialize conversation before selecting user
+  const handleSelectUser = async (userId: string) => {
+    try {
+      setIsInitializing(true);
+      
+      // Call backend to initialize/verify conversation
+      const response = await apiRequest('POST', '/api/chat/conversation/init', {
+        partnerId: userId
+      }) as { room: string; partnerId: string; partnerName: string; initialized: boolean };
+
+      if (response.initialized) {
+        // Conversation initialized successfully
+        setSelectedUserId(userId);
+        console.log(`[CHAT] Conversation initialized with room: ${response.room}`);
+      }
+    } catch (error: any) {
+      console.error('[CHAT] Failed to initialize conversation:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: error.message || "Impossible d'initialiser la conversation"
+      });
+    } finally {
+      setIsInitializing(false);
+    }
+  };
 
   const { data: conversations, isLoading: conversationsLoading } = useQuery<Conversation[]>({
     queryKey: ['/api/chat/conversations'],
@@ -117,7 +148,8 @@ export default function AdminChatPage() {
                         <Button
                           key={conv.userId}
                           variant="ghost"
-                          onClick={() => setSelectedUserId(conv.userId)}
+                          onClick={() => handleSelectUser(conv.userId)}
+                          disabled={isInitializing}
                           className={`w-full p-4 h-auto justify-start ${
                             selectedUserId === conv.userId
                               ? 'bg-primary/10'
@@ -164,7 +196,8 @@ export default function AdminChatPage() {
                         <Button
                           key={user.id}
                           variant="ghost"
-                          onClick={() => setSelectedUserId(user.id)}
+                          onClick={() => handleSelectUser(user.id)}
+                          disabled={isInitializing}
                           className={`w-full p-4 h-auto justify-start ${
                             selectedUserId === user.id
                               ? 'bg-primary/10'
