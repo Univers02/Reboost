@@ -12,7 +12,11 @@ import {
   getOrGenerateLoanReference,
   getTransferReferenceNumber,
   messages,
-  users
+  users,
+  insertChatConversationSchema,
+  insertChatMessageSchema,
+  type ChatConversation,
+  type ChatMessage,
 } from "@shared/schema";
 import { eq, and, sql as sqlDrizzle } from "drizzle-orm";
 import bcrypt from "bcrypt";
@@ -813,7 +817,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
 
   app.post("/api/2fa/setup", requireAuth, requireCSRF, async (req, res) => {
     try {
-      const userId = req.session.userId;
+      const userId = req.session.userId!;
       if (!userId) {
         return res.status(401).json({ error: 'Authentification requise' });
       }
@@ -992,7 +996,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
 
   app.post("/api/2fa/verify", requireAuth, requireCSRF, async (req, res) => {
     try {
-      const userId = req.session.userId;
+      const userId = req.session.userId!;
       if (!userId) {
         return res.status(401).json({ error: 'Authentification requise' });
       }
@@ -1102,7 +1106,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
 
   app.post("/api/2fa/disable", requireAuth, requireCSRF, async (req, res) => {
     try {
-      const userId = req.session.userId;
+      const userId = req.session.userId!;
       if (!userId) {
         return res.status(401).json({ error: 'Authentification requise' });
       }
@@ -1128,7 +1132,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
 
   app.post("/api/auth/logout", requireCSRF, async (req, res) => {
     try {
-      const userId = req.session.userId;
+      const userId = req.session.userId!;
       const userRole = req.session.userRole || 'user';
       
       if (userId) {
@@ -4628,6 +4632,322 @@ ${urls.map(url => `  <url>
     res.send(sitemap);
   });
 
+
+  // ============================================================
+  // CHAT SYSTEM ROUTES
+  // ============================================================
+
+  // Schéma de validation pour créer une conversation
+  const createConversationSchema = insertChatConversationSchema.extend({
+    subject: z.string().optional(),
+  });
+
+  // Schéma de validation pour envoyer un message
+  const sendMessageSchema = insertChatMessageSchema.extend({
+    content: z.string().min(1, 'Le message ne peut pas être vide').max(5000, 'Message trop long'),
+  });
+
+  // CONVERSATIONS - User routes
+  app.get("/api/chat/conversations", requireAuth, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const conversations = await storage.getUserConversations(userId);
+      res.json(conversations);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur récupération conversations:', error);
+      res.status(500).json({ error: 'Erreur lors de la récupération des conversations' });
+    }
+  });
+
+  // CONVERSATIONS - Admin routes
+  app.get("/api/chat/conversations/admin", requireAuth, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ error: 'Accès réservé aux administrateurs' });
+      }
+
+      const { adminId, status } = req.query;
+      const conversations = await storage.getAdminConversations(
+        adminId as string | undefined,
+        status as string | undefined
+      );
+      res.json(conversations);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur récupération conversations admin:', error);
+      res.status(500).json({ error: 'Erreur lors de la récupération des conversations' });
+    }
+  });
+
+  // Get single conversation
+  app.get("/api/chat/conversations/:id", requireAuth, async (req, res) => {
+    try {
+      const conversationId = req.params.id;
+      const userId = req.session.userId!;
+      const user = await storage.getUser(userId);
+
+      const conversation = await storage.getConversation(conversationId);
+      if (!conversation) {
+        return res.status(404).json({ error: 'Conversation non trouvée' });
+      }
+
+      // Vérifier l'autorisation
+      if (user?.role !== 'admin' && conversation.userId !== userId) {
+        return res.status(403).json({ error: 'Accès non autorisé à cette conversation' });
+      }
+
+      res.json(conversation);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur récupération conversation:', error);
+      res.status(500).json({ error: 'Erreur lors de la récupération de la conversation' });
+    }
+  });
+
+  // Create new conversation
+  app.post("/api/chat/conversations", requireAuth, requireCSRF, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const validation = createConversationSchema.safeParse({
+        ...req.body,
+        userId,
+      });
+
+      if (!validation.success) {
+        return res.status(400).json({ 
+          error: 'Données invalides', 
+          details: validation.error.issues 
+        });
+      }
+
+      const conversation = await storage.createConversation(validation.data);
+      res.status(201).json(conversation);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur création conversation:', error);
+      res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
+    }
+  });
+
+  // Update conversation (status, subject)
+  app.patch("/api/chat/conversations/:id", requireAuth, requireCSRF, async (req, res) => {
+    try {
+      const conversationId = req.params.id;
+      const userId = req.session.userId!;
+      const user = await storage.getUser(userId);
+
+      const conversation = await storage.getConversation(conversationId);
+      if (!conversation) {
+        return res.status(404).json({ error: 'Conversation non trouvée' });
+      }
+
+      // Vérifier l'autorisation
+      if (user?.role !== 'admin' && conversation.userId !== userId) {
+        return res.status(403).json({ error: 'Accès non autorisé à cette conversation' });
+      }
+
+      const { status, subject } = req.body;
+      const updates: Partial<ChatConversation> = {};
+      
+      if (status) updates.status = status;
+      if (subject) updates.subject = subject;
+
+      const updated = await storage.updateConversation(conversationId, updates);
+      res.json(updated);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur mise à jour conversation:', error);
+      res.status(500).json({ error: 'Erreur lors de la mise à jour de la conversation' });
+    }
+  });
+
+  // Assign conversation to admin
+  app.post("/api/chat/conversations/:id/assign", requireAuth, requireCSRF, async (req, res) => {
+    try {
+      const conversationId = req.params.id;
+      const userId = req.session.userId!;
+      const user = await storage.getUser(userId);
+
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ error: 'Accès réservé aux administrateurs' });
+      }
+
+      const { adminId } = req.body;
+      if (!adminId) {
+        return res.status(400).json({ error: 'ID admin requis' });
+      }
+
+      const updated = await storage.assignConversationToAdmin(conversationId, adminId);
+      res.json(updated);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur assignation conversation:', error);
+      res.status(500).json({ error: 'Erreur lors de l\'assignation de la conversation' });
+    }
+  });
+
+  // MESSAGES - Get messages for a conversation
+  app.get("/api/chat/conversations/:id/messages", requireAuth, async (req, res) => {
+    try {
+      const conversationId = req.params.id;
+      const userId = req.session.userId!;
+      const user = await storage.getUser(userId);
+
+      const conversation = await storage.getConversation(conversationId);
+      if (!conversation) {
+        return res.status(404).json({ error: 'Conversation non trouvée' });
+      }
+
+      // Vérifier l'autorisation
+      if (user?.role !== 'admin' && conversation.userId !== userId) {
+        return res.status(403).json({ error: 'Accès non autorisé à cette conversation' });
+      }
+
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
+      const messages = await storage.getConversationMessages(conversationId, limit);
+      
+      res.json(messages);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur récupération messages:', error);
+      res.status(500).json({ error: 'Erreur lors de la récupération des messages' });
+    }
+  });
+
+  // Send a message
+  app.post("/api/chat/messages", requireAuth, requireCSRF, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const user = await storage.getUser(userId);
+
+      const validation = sendMessageSchema.safeParse({
+        ...req.body,
+        senderId: userId,
+        senderType: user?.role === 'admin' ? 'admin' : 'user',
+      });
+
+      if (!validation.success) {
+        return res.status(400).json({ 
+          error: 'Données invalides', 
+          details: validation.error.issues 
+        });
+      }
+
+      // Vérifier que la conversation existe et que l'utilisateur y a accès
+      const conversation = await storage.getConversation(validation.data.conversationId);
+      if (!conversation) {
+        return res.status(404).json({ error: 'Conversation non trouvée' });
+      }
+
+      if (user?.role !== 'admin' && conversation.userId !== userId) {
+        return res.status(403).json({ error: 'Accès non autorisé à cette conversation' });
+      }
+
+      const message = await storage.createChatMessage(validation.data);
+      res.status(201).json(message);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur envoi message:', error);
+      res.status(500).json({ error: 'Erreur lors de l\'envoi du message' });
+    }
+  });
+
+  // Mark messages as read
+  app.patch("/api/chat/messages/read", requireAuth, requireCSRF, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const { conversationId } = req.body;
+
+      if (!conversationId) {
+        return res.status(400).json({ error: 'ID de conversation requis' });
+      }
+
+      const conversation = await storage.getConversation(conversationId);
+      if (!conversation) {
+        return res.status(404).json({ error: 'Conversation non trouvée' });
+      }
+
+      const user = await storage.getUser(userId);
+      if (user?.role !== 'admin' && conversation.userId !== userId) {
+        return res.status(403).json({ error: 'Accès non autorisé à cette conversation' });
+      }
+
+      const count = await storage.markMessagesAsRead(conversationId, userId);
+      res.json({ markedAsRead: count });
+    } catch (error: any) {
+      console.error('[CHAT] Erreur marquage messages lus:', error);
+      res.status(500).json({ error: 'Erreur lors du marquage des messages comme lus' });
+    }
+  });
+
+  // Get unread message count
+  app.get("/api/chat/conversations/:id/unread", requireAuth, async (req, res) => {
+    try {
+      const conversationId = req.params.id;
+      const userId = req.session.userId!;
+      const user = await storage.getUser(userId);
+
+      const conversation = await storage.getConversation(conversationId);
+      if (!conversation) {
+        return res.status(404).json({ error: 'Conversation non trouvée' });
+      }
+
+      if (user?.role !== 'admin' && conversation.userId !== userId) {
+        return res.status(403).json({ error: 'Accès non autorisé à cette conversation' });
+      }
+
+      const count = await storage.getUnreadMessageCount(conversationId, userId);
+      res.json({ unreadCount: count });
+    } catch (error: any) {
+      console.error('[CHAT] Erreur comptage messages non lus:', error);
+      res.status(500).json({ error: 'Erreur lors du comptage des messages non lus' });
+    }
+  });
+
+  // PRESENCE - Get user presence
+  app.get("/api/chat/presence/:userId", requireAuth, async (req, res) => {
+    try {
+      const targetUserId = req.params.userId;
+      const presence = await storage.getUserPresence(targetUserId);
+      
+      if (!presence) {
+        return res.json({ userId: targetUserId, status: 'offline', lastSeen: null });
+      }
+      
+      res.json(presence);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur récupération présence:', error);
+      res.status(500).json({ error: 'Erreur lors de la récupération de la présence' });
+    }
+  });
+
+  // Update user presence
+  app.patch("/api/chat/presence", requireAuth, requireCSRF, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const { status } = req.body;
+
+      if (!status || !['online', 'away', 'offline'].includes(status)) {
+        return res.status(400).json({ error: 'Statut invalide' });
+      }
+
+      const presence = await storage.updateUserPresence(userId, status);
+      res.json(presence);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur mise à jour présence:', error);
+      res.status(500).json({ error: 'Erreur lors de la mise à jour de la présence' });
+    }
+  });
+
+  // Get online users
+  app.get("/api/chat/presence/online", requireAuth, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ error: 'Accès réservé aux administrateurs' });
+      }
+
+      const onlineUsers = await storage.getOnlineUsers();
+      res.json(onlineUsers);
+    } catch (error: any) {
+      console.error('[CHAT] Erreur récupération utilisateurs en ligne:', error);
+      res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs en ligne' });
+    }
+  });
 
   const httpServer = createServer(app);
 
