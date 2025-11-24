@@ -341,8 +341,10 @@ export default function TransferFlow() {
       const shouldProgress = (justValidated || isFirstCode) && simulatedProgress < targetPercent;
       
       if (shouldProgress) {
-        // Lancer l'animation progressive sur 8 secondes avec vérification de séquence
-        animateProgress(simulatedProgress, targetPercent, 8000, computedNextCode?.sequence);
+        // Calculer la durée dynamiquement : 1 seconde par point de pourcentage
+        const progressDelta = targetPercent - simulatedProgress;
+        const duration = progressDelta * 1000; // 1000ms = 1 seconde par %
+        animateProgress(simulatedProgress, targetPercent, duration, computedNextCode?.sequence);
       } else if (!justValidated && !isFirstCode) {
         // FORCER la pause tant qu'aucun code n'a été validé (sauf pour le premier)
         setIsPausedForCode(true);
