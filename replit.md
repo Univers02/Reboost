@@ -10,6 +10,48 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (November 24, 2025)
 
+### Native Real-Time Chat System - Production Ready ✅
+- ✅ **IMPLEMENTED:** Complete native chat system with WebSocket real-time communication
+  - Built from scratch replacing CometChat (which was removed due to visibility issues)
+  - Socket.IO integration for bidirectional real-time messaging
+  - Backend: 12 REST endpoints + WebSocket event handlers
+  - Frontend: 7 production-grade components + 3 optimized React Query hooks
+- ✅ **ARCHITECTURE:** Unread Ownership Model (Critical Innovation)
+  - Admins retain visibility of conversations with unread messages even after reassignment
+  - `getAdminConversationsForUnread` uses dual-query approach: assigned conversations UNION conversations with unreads
+  - Prevents orphaned unread messages during admin handoffs
+  - Automatic cleanup when messages marked as read (no manual intervention)
+  - Files: `server/storage.ts` (lines 2996-3039), `server/routes.ts`
+- ✅ **REAL-TIME SYNC:** Socket event system for instant synchronization
+  - Events: `new_message`, `message_read`, `conversation_assigned`, `unread_sync_required`
+  - Structured queryKeys: `['chat', 'unread', 'user', userId]`, `['chat', 'messages', conversationId]`
+  - Immediate cache refetch on reassignment (both previous and new admin)
+  - Message list invalidation ensures UI consistency post-reassignment
+  - File: `client/src/hooks/useChatNotifications.ts`
+- ✅ **SECURITY:** SQL injection vulnerability fixed
+  - Removed all `sql.raw()` usage in WHERE clauses
+  - Uses Drizzle's type-safe parameter binding (`eq`, `inArray`, `and`, `or`)
+  - Safe template literals for comparison operators only
+  - Production-ready for Vercel + Render + PostgreSQL deployment
+- ✅ **FEATURES:**
+  - User-to-Admin messaging (users initiate, admins respond)
+  - Admin conversation assignment & reassignment
+  - Unread message counters with real-time updates
+  - Badge notifications synced across all admin sessions
+  - Message read status tracking
+  - Conversation status management (open/closed)
+  - ChatWidget component: floating chat button with popup window
+  - AdminChat page: comprehensive conversation management interface
+- ✅ **PRODUCTION VALIDATIONS:**
+  - LSP: 0 diagnostics
+  - Architect approval after multiple iterations resolving unread synchronization issues
+  - Structured queryKeys prevent cache collisions
+  - Server-as-truth badge hydration (clears stale client-side counts)
+  - Zero unread counts returned for stable badge state (no flicker)
+  - Performance recommendation: Monitor dual-query approach telemetry in production
+- 📝 **Documentation:** Complete architecture documented in `CHAT_SYSTEM_PRODUCTION.md`
+- 🚀 **Status:** PRODUCTION-READY for altusfinancesgroup.com deployment
+
 ### UI/UX Improvements - Layout & Scrolling Fixes
 - ✅ **FIXED:** Double scrollbar issue resolved
   - Removed `mt-[37px]` and `overflow-hidden` from main authenticated layout container
