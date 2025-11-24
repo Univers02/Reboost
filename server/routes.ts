@@ -4951,5 +4951,9 @@ ${urls.map(url => `  <url>
 
   const httpServer = createServer(app);
 
+  // Initialize WebSocket for real-time chat
+  const { initializeChatSocket } = await import('./chat-socket');
+  initializeChatSocket(httpServer, storage, sessionMiddleware);
+
   return httpServer;
 }
