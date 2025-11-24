@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "./queryClient";
+import { apiRequest, getApiUrl } from "./queryClient";
 import type { ChatConversation, ChatMessage, InsertChatConversation, InsertChatMessage, ChatPresence, InsertChatPresence } from "@shared/schema";
 
 /**
@@ -22,7 +22,7 @@ export const useConversations = (userId: string) => {
   return useQuery<ChatConversation[]>({
     queryKey: ['chat', 'conversations', 'user', userId],
     queryFn: async () => {
-      const res = await fetch("/api/chat/conversations", {
+      const res = await fetch(getApiUrl("/api/chat/conversations"), {
         credentials: "include"
       });
       if (!res.ok) throw new Error("Failed to fetch conversations");
@@ -41,7 +41,7 @@ export const useAdminConversations = (adminId?: string, status?: string) => {
       if (status) params.append('status', status);
       
       const url = `/api/chat/conversations/admin${params.toString() ? `?${params.toString()}` : ''}`;
-      const res = await fetch(url, {
+      const res = await fetch(getApiUrl(url), {
         credentials: "include"
       });
       if (!res.ok) throw new Error("Failed to fetch admin conversations");
@@ -54,7 +54,7 @@ export const useConversation = (conversationId: string) => {
   return useQuery<ChatConversation>({
     queryKey: ['chat', 'conversations', 'detail', conversationId],
     queryFn: async () => {
-      const res = await fetch(`/api/chat/conversations/${conversationId}`, {
+      const res = await fetch(getApiUrl(`/api/chat/conversations/${conversationId}`), {
         credentials: "include"
       });
       if (!res.ok) throw new Error("Failed to fetch conversation");
@@ -68,7 +68,7 @@ export const useMessages = (conversationId: string) => {
   return useQuery<ChatMessage[]>({
     queryKey: ['chat', 'messages', conversationId],
     queryFn: async () => {
-      const res = await fetch(`/api/chat/conversations/${conversationId}/messages`, {
+      const res = await fetch(getApiUrl(`/api/chat/conversations/${conversationId}/messages`), {
         credentials: "include"
       });
       if (!res.ok) throw new Error("Failed to fetch messages");
@@ -82,7 +82,7 @@ export const useUnreadCount = (conversationId: string) => {
   return useQuery<{ unreadCount: number }>({
     queryKey: ['chat', 'unread', 'conversation', conversationId],
     queryFn: async () => {
-      const res = await fetch(`/api/chat/conversations/${conversationId}/unread`, {
+      const res = await fetch(getApiUrl(`/api/chat/conversations/${conversationId}/unread`), {
         credentials: "include"
       });
       if (!res.ok) throw new Error("Failed to fetch unread count");
@@ -98,7 +98,7 @@ export const usePresence = (userId: string) => {
   return useQuery<ChatPresence>({
     queryKey: ['chat', 'presence', 'user', userId],
     queryFn: async () => {
-      const res = await fetch(`/api/chat/presence/${userId}`, {
+      const res = await fetch(getApiUrl(`/api/chat/presence/${userId}`), {
         credentials: "include"
       });
       if (!res.ok) throw new Error("Failed to fetch presence");
@@ -112,7 +112,7 @@ export const useOnlineUsers = () => {
   return useQuery<ChatPresence[]>({
     queryKey: ['chat', 'presence', 'online'],
     queryFn: async () => {
-      const res = await fetch("/api/chat/presence/online", {
+      const res = await fetch(getApiUrl("/api/chat/presence/online"), {
         credentials: "include"
       });
       if (!res.ok) throw new Error("Failed to fetch online users");
