@@ -29,6 +29,12 @@ import {
   type InsertMessage,
   type AmortizationSchedule,
   type InsertAmortizationSchedule,
+  type ChatConversation,
+  type InsertChatConversation,
+  type ChatMessage,
+  type InsertChatMessage,
+  type ChatPresence,
+  type InsertChatPresence,
   users,
   loans,
   transfers,
@@ -44,6 +50,9 @@ import {
   notifications,
   messages,
   amortizationSchedule,
+  chatConversations,
+  chatMessages,
+  chatPresence,
   getLoanReferenceNumber,
   getOrGenerateLoanReference,
 } from "@shared/schema";
@@ -198,6 +207,24 @@ export interface IStorage {
   generateAmortizationSchedule(loanId: string): Promise<AmortizationSchedule[]>;
   getUpcomingPayments(loanId: string, limit?: number): Promise<AmortizationSchedule[]>;
   markPaymentAsPaid(paymentId: string): Promise<AmortizationSchedule | undefined>;
+  
+  // Chat System
+  getUserConversations(userId: string): Promise<ChatConversation[]>;
+  getAdminConversations(adminId?: string, status?: string): Promise<ChatConversation[]>;
+  getConversation(id: string): Promise<ChatConversation | undefined>;
+  createConversation(conversation: InsertChatConversation): Promise<ChatConversation>;
+  updateConversation(id: string, updates: Partial<ChatConversation>): Promise<ChatConversation | undefined>;
+  assignConversationToAdmin(conversationId: string, adminId: string): Promise<ChatConversation | undefined>;
+  
+  getConversationMessages(conversationId: string, limit?: number): Promise<ChatMessage[]>;
+  getChatMessage(messageId: string): Promise<ChatMessage | undefined>;
+  createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
+  markMessagesAsRead(conversationId: string, userId: string): Promise<number>;
+  getUnreadMessageCount(conversationId: string, userId: string): Promise<number>;
+  
+  getUserPresence(userId: string): Promise<ChatPresence | undefined>;
+  updateUserPresence(userId: string, status: string): Promise<ChatPresence>;
+  getOnlineUsers(): Promise<ChatPresence[]>;
 }
 
 // export class MemStorage implements IStorage {
@@ -2930,6 +2957,144 @@ export class DatabaseStorage implements IStorage {
       .where(eq(amortizationSchedule.id, paymentId))
       .returning();
     return result[0];
+  }
+
+  // Chat System Implementation
+  async getUserConversations(userId: string): Promise<ChatConversation[]> {
+    return await db.select()
+      .from(chatConversations)
+      .where(eq(chatConversations.userId, userId))
+      .orderBy(desc(chatConversations.lastMessageAt));
+  }
+
+  async getAdminConversations(adminId?: string, status?: string): Promise<ChatConversation[]> {
+    const conditions = [];
+    
+    if (adminId) {
+      conditions.push(eq(chatConversations.assignedAdminId, adminId));
+    }
+    if (status) {
+      conditions.push(eq(chatConversations.status, status));
+    }
+    
+    if (conditions.length === 0) {
+      return await db.select()
+        .from(chatConversations)
+        .orderBy(desc(chatConversations.lastMessageAt));
+    }
+    
+    return await db.select()
+      .from(chatConversations)
+      .where(and(...conditions))
+      .orderBy(desc(chatConversations.lastMessageAt));
+  }
+
+  async getConversation(id: string): Promise<ChatConversation | undefined> {
+    const result = await db.select()
+      .from(chatConversations)
+      .where(eq(chatConversations.id, id));
+    return result[0];
+  }
+
+  async createConversation(conversation: InsertChatConversation): Promise<ChatConversation> {
+    const result = await db.insert(chatConversations)
+      .values(conversation)
+      .returning();
+    return result[0];
+  }
+
+  async updateConversation(id: string, updates: Partial<ChatConversation>): Promise<ChatConversation | undefined> {
+    const result = await db.update(chatConversations)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(chatConversations.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async assignConversationToAdmin(conversationId: string, adminId: string): Promise<ChatConversation | undefined> {
+    return await this.updateConversation(conversationId, { assignedAdminId: adminId });
+  }
+
+  async getConversationMessages(conversationId: string, limit: number = 100): Promise<ChatMessage[]> {
+    return await db.select()
+      .from(chatMessages)
+      .where(eq(chatMessages.conversationId, conversationId))
+      .orderBy(chatMessages.createdAt)
+      .limit(limit);
+  }
+
+  async getChatMessage(messageId: string): Promise<ChatMessage | undefined> {
+    const result = await db.select()
+      .from(chatMessages)
+      .where(eq(chatMessages.id, messageId));
+    return result[0];
+  }
+
+  async createChatMessage(message: InsertChatMessage): Promise<ChatMessage> {
+    const result = await db.insert(chatMessages)
+      .values(message)
+      .returning();
+    
+    const createdMessage = result[0];
+    
+    await this.updateConversation(message.conversationId, {
+      lastMessageAt: createdMessage.createdAt
+    });
+    
+    return createdMessage;
+  }
+
+  async markMessagesAsRead(conversationId: string, userId: string): Promise<number> {
+    const result = await db.update(chatMessages)
+      .set({ isRead: true, readAt: new Date() })
+      .where(and(
+        eq(chatMessages.conversationId, conversationId),
+        eq(chatMessages.isRead, false),
+        sqlDrizzle`${chatMessages.senderId} != ${userId}`
+      ))
+      .returning();
+    return result.length;
+  }
+
+  async getUnreadMessageCount(conversationId: string, userId: string): Promise<number> {
+    const result = await db.select()
+      .from(chatMessages)
+      .where(and(
+        eq(chatMessages.conversationId, conversationId),
+        eq(chatMessages.isRead, false),
+        sqlDrizzle`${chatMessages.senderId} != ${userId}`
+      ));
+    return result.length;
+  }
+
+  async getUserPresence(userId: string): Promise<ChatPresence | undefined> {
+    const result = await db.select()
+      .from(chatPresence)
+      .where(eq(chatPresence.userId, userId));
+    return result[0];
+  }
+
+  async updateUserPresence(userId: string, status: string): Promise<ChatPresence> {
+    const existingPresence = await this.getUserPresence(userId);
+    
+    if (existingPresence) {
+      const result = await db.update(chatPresence)
+        .set({ status, lastSeen: new Date(), updatedAt: new Date() })
+        .where(eq(chatPresence.userId, userId))
+        .returning();
+      return result[0];
+    } else {
+      const result = await db.insert(chatPresence)
+        .values({ userId, status, lastSeen: new Date() })
+        .returning();
+      return result[0];
+    }
+  }
+
+  async getOnlineUsers(): Promise<ChatPresence[]> {
+    return await db.select()
+      .from(chatPresence)
+      .where(eq(chatPresence.status, 'online'));
   }
 }
 
