@@ -148,6 +148,11 @@ export default function ChatWidget() {
     }
   };
 
+  // Guard against SSR/test environments where document is undefined
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
   return createPortal(
     <>
       <Button
