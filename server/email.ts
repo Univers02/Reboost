@@ -689,7 +689,7 @@ export async function sendTransferCompletedEmail(
       recipient,
       recipientIban,
       transferId,
-      supportEmail: fromEmail,
+      supportEmail: 'support@altusfinancesgroup.com',
     });
     
     const msg = {
