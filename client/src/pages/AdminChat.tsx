@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ChatWindow } from "@/components/chat/ChatWindow";
-import { useConversations, useAssignConversation } from "@/lib/chatQueries";
+import { useAdminConversations, useAssignConversation } from "@/lib/chatQueries";
 import { useUser } from "@/hooks/use-user";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -26,7 +26,7 @@ export default function AdminChat() {
   const [statusFilter, setStatusFilter] = useState<"all" | "open" | "closed">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: allConversations = [] } = useConversations(user?.id || "");
+  const { data: allConversations = [] } = useAdminConversations();
   const assignConversationMutation = useAssignConversation();
 
   const filteredConversations = allConversations.filter((conv) => {

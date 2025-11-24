@@ -32,6 +32,24 @@ export const useConversations = (userId: string) => {
   });
 };
 
+export const useAdminConversations = (adminId?: string, status?: string) => {
+  return useQuery<ChatConversation[]>({
+    queryKey: ['chat', 'conversations', 'admin', adminId, status],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (adminId) params.append('adminId', adminId);
+      if (status) params.append('status', status);
+      
+      const url = `/api/chat/conversations/admin${params.toString() ? `?${params.toString()}` : ''}`;
+      const res = await fetch(url, {
+        credentials: "include"
+      });
+      if (!res.ok) throw new Error("Failed to fetch admin conversations");
+      return res.json();
+    },
+  });
+};
+
 export const useConversation = (conversationId: string) => {
   return useQuery<ChatConversation>({
     queryKey: ['chat', 'conversations', 'detail', conversationId],
