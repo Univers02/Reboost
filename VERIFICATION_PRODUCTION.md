@@ -50,16 +50,26 @@ AND table_name LIKE 'chat_%';
 **Variables CRITIQUES** (sans elles le chat ne fonctionnera PAS):
 
 ```env
-FRONTEND_URL=https://altusfinancesgroup.com
+# OBLIGATOIRE: Active le mode production et les bons CORS
+NODE_ENV=production
+
+# OBLIGATOIRE: Permet les cookies cross-domain entre altusfinancesgroup.com et api.altusfinancesgroup.com
 COOKIE_DOMAIN=.altusfinancesgroup.com
+
+# RECOMMANDÉ: Pour les logs et debug (optionnel)
+FRONTEND_URL=https://altusfinancesgroup.com
 ```
 
-**Variables recommandées**:
+**Variables qui doivent déjà exister**:
 ```env
-NODE_ENV=production
-DATABASE_URL=postgresql://... (devrait déjà exister)
-SESSION_SECRET=... (devrait déjà exister)
+DATABASE_URL=postgresql://... (session + base de données)
+SESSION_SECRET=... (sécurité des sessions)
 ```
+
+**⚠️ IMPORTANT**:
+- Les origines CORS sont **codées en dur** dans le code (server/index.ts lignes 75-80)
+- Pas besoin de variable `ALLOWED_ORIGINS`
+- `NODE_ENV=production` active automatiquement les bons domaines
 
 **Où les ajouter**:
 1. Dashboard Render → Votre service
@@ -68,18 +78,55 @@ SESSION_SECRET=... (devrait déjà exister)
 
 ---
 
-### ✅ ÉTAPE 3: Déployer le Code sur Render
+### ✅ ÉTAPE 3: Vérifier quel commit est déployé sur Render
 
-**Action**: Pusher le code et redéployer
+**⚠️ CRITIQUE**: Avant de déployer, vérifiez que Render utilise bien votre repository actuel!
+
+**Action 1**: Vérifier le commit déployé
+
+1. Dashboard Render → Votre service → "Deploys"
+2. Regarder le dernier déploiement réussi
+3. Noter le commit hash (ex: `a1b2c3d`)
+
+**Action 2**: Comparer avec votre repository local
+
+```bash
+# Voir le dernier commit local
+git log -1 --oneline
+
+# Vérifier si les routes du chat existent dans le commit déployé
+git show <commit-hash>:server/routes.ts | grep "api/chat/conversations"
+
+# ✅ Si vous voyez "app.get("/api/chat/conversations"" → Le code du chat existe
+# ❌ Si rien ou erreur → Le code du chat n'est PAS dans ce commit
+```
+
+**Si le code du chat n'est PAS dans le commit déployé**:
+→ Vous devez déployer le nouveau code (voir Étape 4)
+
+**Si le code du chat EST dans le commit déployé**:
+→ Le problème est ailleurs (variables d'environnement, base de données)
+
+---
+
+### ✅ ÉTAPE 4: Déployer le Code sur Render
+
+**⚠️ Ne faire cette étape QUE si le code du chat n'est pas déjà déployé**
 
 **Commandes**:
 ```bash
-# 1. Commiter et pusher le code
+# 1. Vérifier que vous avez les derniers changements
+git status
+git log -1 --oneline
+
+# 2. Si besoin, commiter les changements
 git add .
 git commit -m "feat: Add complete chat system with Socket.IO"
+
+# 3. Pusher vers votre repository
 git push origin main
 
-# 2. Render redéploiera automatiquement si auto-deploy est activé
+# 4. Render redéploiera automatiquement si auto-deploy est activé
 # Sinon: Dashboard Render → Manual Deploy → Deploy latest commit
 ```
 
@@ -95,9 +142,14 @@ curl https://api.altusfinancesgroup.com/api/chat/conversations
 # ❌ Mauvais résultat: Cannot GET /api/chat/conversations ou 404
 ```
 
+**Si vous obtenez encore des 404 après déploiement**:
+1. Vérifier les logs de build Render pour voir si le build a réussi
+2. Vérifier que le bon repository/branche est configuré sur Render
+3. Forcer un redéploiement manuel: Dashboard → "Manual Deploy"
+
 ---
 
-### ✅ ÉTAPE 4: Variables d'Environnement Vercel
+### ✅ ÉTAPE 5: Variables d'Environnement Vercel
 
 **Action**: Ajouter les variables Socket.IO sur Vercel
 
@@ -115,7 +167,7 @@ VITE_SOCKET_URL=https://api.altusfinancesgroup.com
 
 ---
 
-### ✅ ÉTAPE 5: Redéployer le Frontend (Vercel)
+### ✅ ÉTAPE 6: Redéployer le Frontend (Vercel)
 
 **Action**: Redéployer pour prendre en compte les nouvelles variables
 
