@@ -79,10 +79,11 @@ export function useChatNotifications(userId: string): UseChatNotificationsReturn
     const handleMessageRead = (data: { conversationId: string; messageIds: string[] }) => {
       console.log('[CHAT NOTIFICATIONS] Socket chat:read-receipt received:', data);
       
-      setUnreadCounts((prev) => ({
-        ...prev,
-        [data.conversationId]: 0,
-      }));
+      // CRITICAL: Do NOT set unread count to 0 here!
+      // chat:read-receipt is notification that ANOTHER user marked THEIR messages as read
+      // It should NOT affect OUR unread badge count
+      // The source of truth for OUR unread count is chat:unread-count event only!
+      // Manually setting count to 0 here causes premature badge dismissal before server sends chat:unread-count
 
       queryClient.invalidateQueries({
         queryKey: ['chat', 'messages', data.conversationId],
@@ -90,9 +91,6 @@ export function useChatNotifications(userId: string): UseChatNotificationsReturn
       queryClient.invalidateQueries({
         queryKey: ['chat', 'conversations', 'user', userId],
       });
-      // CRITICAL: Do NOT invalidate unread counts here - it causes premature badge dismissal
-      // The socket event 'chat:unread-count' will send count: 0 if all messages are read
-      // Invalidating here forces a refetch that may return stale data
     };
 
     const handleUnreadCountUpdate = (data: { conversationId: string; count: number }) => {
