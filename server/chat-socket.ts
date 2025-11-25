@@ -96,20 +96,14 @@ export function initializeChatSocket(httpServer: HTTPServer, storage: IStorage, 
     try {
       const conversations = await storage.getUserConversations(userId);
       for (const conversation of conversations) {
-        // For admins: get unread count for admin in user's conversation
-        // For users: get unread count for user in admin's conversation
-        const isAdmin = userRole === 'admin';
-        const targetUserId = isAdmin ? conversation.userId : conversation.assignedAdminId;
-        
-        if (targetUserId === userId) {
-          const unreadCount = await storage.getUnreadMessageCount(conversation.id, userId);
-          if (unreadCount > 0) {
-            socket.emit('chat:unread-count', {
-              conversationId: conversation.id,
-              count: unreadCount,
-            });
-            console.log(`[CHAT WS] Hydrated unread count for ${userId} on reconnection: conversation ${conversation.id} = ${unreadCount}`);
-          }
+        // Get unread count for this user in each conversation
+        const unreadCount = await storage.getUnreadMessageCount(conversation.id, userId);
+        if (unreadCount > 0) {
+          socket.emit('chat:unread-count', {
+            conversationId: conversation.id,
+            count: unreadCount,
+          });
+          console.log(`[CHAT WS] Hydrated unread count for ${userId} on reconnection: conversation ${conversation.id} = ${unreadCount}`);
         }
       }
     } catch (error) {
