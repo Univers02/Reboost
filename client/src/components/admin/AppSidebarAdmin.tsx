@@ -19,6 +19,14 @@ export function AppSidebarAdmin() {
   const { setOpen } = useSidebar();
   const t = useTranslations();
 
+  const closeMenuOnMobileOnly = () => {
+    // Only close menu on mobile devices (max-width: 768px)
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile) {
+      setOpen(false);
+    }
+  };
+
   // Récupérer les compteurs de notifications en temps réel
   const { data: notificationCounts } = useQuery<{
     pendingLoans: number;
@@ -66,7 +74,7 @@ export function AppSidebarAdmin() {
                 return (
                   <SidebarMenuItem key={item.link}>
                     <SidebarMenuButton asChild data-testid={`link-admin-${item.label.toLowerCase()}`}>
-                      <Link href={item.link} onClick={() => setOpen(false)}>
+                      <Link href={item.link} onClick={closeMenuOnMobileOnly}>
                         <div
                           className={`flex items-center justify-between gap-3 p-3 rounded-xl transition-all w-full ${
                             isActive

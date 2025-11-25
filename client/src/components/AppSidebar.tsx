@@ -29,14 +29,22 @@ export default function AppSidebar() {
   const isAdminPath = location.startsWith('/admin');
   const isAdmin = user?.role === 'admin';
 
+  const closeMenuOnMobileOnly = () => {
+    // Only close menu on mobile devices (max-width: 768px)
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile) {
+      setOpen(false);
+    }
+  };
+
   const handleLogout = () => {
     setLocation('/');
-    setOpen(false);
+    closeMenuOnMobileOnly();
   };
 
   const handleNavigate = (url: string) => {
     setLocation(url);
-    setOpen(false);
+    closeMenuOnMobileOnly();
   };
 
   const { data: loans } = useQuery<any[]>({
