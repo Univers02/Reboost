@@ -52,6 +52,7 @@ Preferred communication style: Simple, everyday language. High standards for sec
 - **Loan Disbursement Workflow:** Multi-step approval process (Request -> Admin Approval -> Contract Signing -> Manual Admin Fund Disbursement).
 - **KYC Document Upload:** Local file system storage in `uploads/kyc_documents/` with file validation, sanitization, and cryptographic UUID identifiers. Documents are attached to admin notification emails.
 - **Signed Contracts:** Local file system storage in `uploads/signed-contracts/` with PDF validation and secure file handling.
+- **Chat File Storage (Nov 2025):** Supabase Storage integration with presigned URLs for secure, time-limited file uploads and downloads. PDFs preview inline with `<embed>`, images display inline, other files available for download. Upload URLs valid 5 min, preview URLs valid 1 hour. Backend generates URLs only - files uploaded directly to Supabase from browser.
 - **Notification System:** Database-backed persistent notifications with RESTful API, user ownership enforcement, `NotificationBell` component with polling, unread count badges, sound alerts, and a 2FA suggestion system. Supports multilingual notifications and covers 18 distinct critical user events.
 - **Loan Workflow Enhancement:** Implemented a 3-stage contract lifecycle with `status` and `contractStatus` fields for clear tracking.
 - **Transfer Code System:** Dynamic code numbering in admin emails and single source of truth for pause percentages stored in the database.
@@ -67,5 +68,6 @@ Preferred communication style: Simple, everyday language. High standards for sec
 **Form Management:** React Hook Form, Zod, `@hookform/resolvers`.
 **Authentication:** SendGrid for transactional email verification.
 **Two-Factor Authentication:** Speakeasy and qrcode libraries for TOTP generation and verification.
-**Cloud Storage:** Cloudinary for profile photo storage only.
+**Cloud Storage:** Cloudinary for profile photo storage only. Supabase Storage for chat file uploads with presigned URLs.
 **File Validation:** Sharp for image sanitization, PDF-lib for PDF sanitization, file-type for magic byte verification.
+**Chat File Management:** `@supabase/supabase-js` for presigned URL generation, React-PDF and pdfjs-dist for PDF preview support.

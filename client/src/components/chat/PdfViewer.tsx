@@ -18,7 +18,7 @@ export function PdfViewer({ storagePath, fileName, onClose }: PdfViewerProps) {
     const getPresignedUrl = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${getApiUrl()}/api/chat/file/presign`, {
+        const response = await fetch(`${getApiUrl('/api/chat/file/presign')}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
