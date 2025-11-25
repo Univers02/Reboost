@@ -88,19 +88,19 @@ export function Message({ message, isOwn, senderName, senderAvatar }: MessagePro
               : "bg-muted"
           )}
         >
-          {message.fileUrl && isImageFile(message.fileName) && (
+          {message.fileUrl && message.fileName && isImageFile(message.fileName) && (
             <div className="mt-2">
               <img
                 src={message.fileUrl}
-                alt={message.fileName || "Image jointe"}
+                alt={message.fileName}
                 className="max-w-xs rounded-md max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => window.open(message.fileUrl, '_blank')}
+                onClick={() => window.open(message.fileUrl!, '_blank')}
                 data-testid={`img-attachment-${message.id}`}
               />
             </div>
           )}
 
-          {message.fileUrl && isPdfFile(message.fileName) && (
+          {message.fileUrl && message.fileName && isPdfFile(message.fileName) && (
             <div className="mt-2 border border-current border-opacity-20 rounded-md p-3 space-y-2">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
@@ -133,7 +133,7 @@ export function Message({ message, isOwn, senderName, senderAvatar }: MessagePro
             </div>
           )}
 
-          {message.fileUrl && !isImageFile(message.fileName) && !isPdfFile(message.fileName) && (
+          {message.fileUrl && message.fileName && !isImageFile(message.fileName) && !isPdfFile(message.fileName) && (
             <div className="mt-2 border border-current border-opacity-20 rounded-md p-3">
               <a
                 href={message.fileUrl}
@@ -146,7 +146,7 @@ export function Message({ message, isOwn, senderName, senderAvatar }: MessagePro
               >
                 {getFileIcon(message.fileName)}
                 <span className="text-sm truncate flex-1">
-                  {message.fileName || "Fichier joint"}
+                  {message.fileName}
                 </span>
                 <Download className="h-4 w-4 flex-shrink-0" />
               </a>

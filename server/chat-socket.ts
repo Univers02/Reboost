@@ -133,9 +133,10 @@ export function initializeChatSocket(httpServer: HTTPServer, storage: IStorage, 
       conversationId: string;
       content: string;
       fileUrl?: string;
+      fileName?: string;
     }) => {
       try {
-        const { conversationId, content, fileUrl } = data;
+        const { conversationId, content, fileUrl, fileName } = data;
 
         const { authorized, conversation } = await checkConversationAccess(conversationId, userId, userRole);
         if (!authorized || !conversation) {
@@ -148,6 +149,7 @@ export function initializeChatSocket(httpServer: HTTPServer, storage: IStorage, 
           senderType: userRole === 'admin' ? 'admin' : 'user',
           content,
           fileUrl,
+          fileName,
         });
 
         // Émettre le message à TOUS les clients (incluant l'expéditeur)
