@@ -2,6 +2,39 @@
 
 ## Recent Changes (November 25, 2025)
 
+### ✅ CHAT UNREAD BADGE PERSISTENCE - RESOLVED 🎉
+**Real-time Chat Notifications - CRITICAL BUG FIXED**
+- ✅ **Problem:** Unread message badge disappeared after page refresh (socket reconnection didn't hydrate counts)
+- ✅ **Solution:** 
+  - Server: Added unread count hydration on socket reconnection in `server/chat-socket.ts`
+  - Client: Added `refetchOnMount: false` to prevent API refetch overwriting socket updates
+  - Pattern: Socket events are NOW the single source of truth for badge state
+- ✅ **Result:** Badge persists across page refreshes, disappears when chat opens, reappears on new messages
+- **Files Modified:**
+  - `server/chat-socket.ts` - Hydrate unread counts on connection
+  - `client/src/hooks/useChatNotifications.ts` - Trust socket as single source of truth
+- **Testing:** ✅ Multiple page refreshes tested, badge persists correctly
+
+---
+
+### ✅ MULTILINGUAL CONTRACTS NOTIFICATION - COMPLETE 🌍
+**Elegant Dashboard Alert for Pending Contracts**
+- ✅ Added beautiful banner notification in Dashboard (appears above greeting)
+- ✅ **Languages Supported (7):** FR, EN, DE, PT, ES, IT, NL
+- ✅ **Smart Messages:**
+  - Singular: "You have 1 contract to sign..."
+  - Plural: "You have {count} contracts to sign..."
+- ✅ **Design:** Gradient blue background, responsive (mobile/desktop), dark mode support
+- ✅ **Navigation:** "View" button links directly to `/contracts` page
+- **Files Modified:**
+  - `client/src/pages/Dashboard.tsx` - Added contracts notification banner with translations
+- **Features:**
+  - Automatically detects loans with `contractStatus === 'awaiting_user_signature'`
+  - Test IDs for automated testing
+  - Elegant UI with FileSignature icon
+
+---
+
 ### ✅ FAVICON & PWA IMPLEMENTATION - COMPLETE
 **SEO & Branding Enhancement**
 - ✅ Created complete favicon set (favicon.ico, favicon-16x16.png, favicon-32x32.png)
