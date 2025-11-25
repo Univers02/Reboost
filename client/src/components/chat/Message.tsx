@@ -109,33 +109,11 @@ export function Message({ message, isOwn, senderName, senderAvatar }: MessagePro
 
           {message.fileUrl && isPdfFile(message.fileName, message.fileUrl) && (
             <div className="mt-2">
-              {showPdfPreview && message.fileUrl ? (
-                <PdfViewer
-                  storagePath={getFileUrl(message.fileUrl) || message.fileUrl}
-                  fileName={message.fileName || 'Document.pdf'}
-                  onClose={() => setShowPdfPreview(false)}
-                />
-              ) : (
-                <div
-                  className="w-40 h-40 rounded-md p-3 flex flex-col items-center justify-center cursor-pointer hover:opacity-90 transition-opacity bg-gradient-to-br from-red-500 to-red-600 text-white"
-                  onClick={() => setShowPdfPreview(true)}
-                  data-testid={`pdf-thumbnail-${message.id}`}
-                >
-                  <FileText className="h-12 w-12 mb-2" />
-                  <span className="text-xs font-medium text-center truncate max-w-32">{message.fileName}</span>
-                  <span className="text-xs opacity-80 mt-1">PDF</span>
-                  <div className="mt-2 text-xs opacity-70 flex gap-1">
-                    <a
-                      href={getFileUrl(message.fileUrl)}
-                      download
-                      className="underline hover:opacity-100"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Télécharger
-                    </a>
-                  </div>
-                </div>
-              )}
+              <PdfViewer
+                storagePath={getFileUrl(message.fileUrl) || message.fileUrl}
+                fileName={message.fileName || 'Document.pdf'}
+                onClose={() => {}}
+              />
             </div>
           )}
 
