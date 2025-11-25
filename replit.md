@@ -1,128 +1,5 @@
 # ALTUS - Professional Loan Platform
 
-## Recent Changes (November 25, 2025)
-
-### Loan Offers - Clickable Cards & Detail Pages ✅
-- **Problem:** Loan offer cards were non-clickable; they only triggered a callback with no redirection
-- **Solution Implemented:**
-  1. Made entire cards clickable with hover effect (`cursor-pointer` + `onClick`)
-  2. Created dedicated `LoanOfferDetail.tsx` page showing full offer details
-  3. Added routes: `/loan-request` and `/loan-offers/:offerId`
-  4. Both card click and button click now redirect to detail page
-  5. Detail page includes: full offer info, key metrics cards, features list, "Apply Now" CTA
-- **Files Modified:** 
-  - `client/src/components/LoanOffersCatalog.tsx` - Added navigation logic
-  - `client/src/App.tsx` - Added routes for detail page
-- **Files Created:** 
-  - `client/src/pages/LoanOfferDetail.tsx` - Full offer details page with professional layout
-- **Status:** ✅ Fully functional - users can now click offers to see details and apply
-
-### User Space Chat Widget - English Localization ✅
-- **Feature:** Chat widget UI now 100% in English for international accessibility
-- **Rationale:** Platform supports 7 languages, but backend chat cannot support multilingual content. English as reference language ensures accessibility to global audience and professional credibility in finance sector
-- **Changes Made:**
-  - ChatWidget.tsx: User name fallback "You" (instead of "Vous")
-  - ChatWindow.tsx: Status indicators "Online"/"Offline" (instead of French)
-  - MessageInput.tsx: Placeholder "Type your message..." and hints in English
-  - TypingIndicator: "is typing..." / "Someone is typing..."
-- **Files Modified:** `client/src/components/chat/ChatWidget.tsx`, `ChatWindow.tsx`, `MessageInput.tsx`
-- **Status:** ✅ Fully deployed and tested
-
-### Chat Widget Error Fix - Undefined Translation Crash FIXED ✅
-- **Problem:** Clicking chat widget button showed blank page with TypeError: "Cannot read properties of undefined (reading 'title')"
-- **Root Cause:** Translation object could be undefined when accessing nested properties
-- **Solution Applied:**
-  1. Added robust fallbacks: `translations[language || 'fr'] || translations['fr'] || {}`
-  2. Used optional chaining with type casting: `(t as any)?.chat?.widget?.title || 'Support'`
-  3. Replaced all hardcoded translation fallbacks with English strings for consistency
-- **Files Modified:** `ChatWidget.tsx` (lines 30, 86-87), `ChatWindow.tsx` (lines 38, 46, 118)
-- **Status:** ✅ Chat widget now fully functional with no crashes
-
-### Admin Chat Page - Back Button Added ✅
-- **Feature:** Added elegant back button to admin chat page
-- **Location:** Top-left of chat interface (`client/src/pages/AdminChat.tsx`)
-- **Functionality:** Navigates back to administration dashboard (`/admin`)
-- **Design:** Ghost variant with arrow icon, subtle hover effect
-- **Status:** ✅ Fully functional and integrated
-
-### CRITICAL FIXES - Session & Toast Management ✅
-
-#### 1. Page Refresh 404 Issue FIXED ✅
-- **Problem:** Refreshing authenticated pages (e.g., `/dashboard`) caused 404 error on Vercel
-- **Root Cause:** Missing `vercel.json` configuration for SPA routing
-- **Solution:** Created `vercel.json` with rewrite rules
-  - All requests now rewrite to `index.html` (SPA pattern)
-  - React + wouter router handles client-side routing
-  - Cache headers: No-cache for `index.html`, 30-day cache for `/assets`
-- **Files Created:** `vercel.json`
-- **Status:** ✅ Users can now refresh any page without 404 errors
-
-#### 2. Toast Auto-Dismiss System FIXED ✅
-- **Problem:** All toasts stayed visible indefinitely until manually closed
-- **Root Cause:** Toast system had no auto-dismiss logic, only manual dismissal
-- **Solution:** Implemented intelligent auto-dismiss in `use-toast.ts`
-  - Success toasts: disappear after **3 seconds** ✅
-  - Error toasts (destructive): remain for **5 seconds** ⚠️ (more time to read)
-  - Manual close still works anytime
-  - Timeout properly cleaned up on manual dismiss
-- **Files Modified:** `client/src/hooks/use-toast.ts`
-- **Status:** ✅ All toasts now auto-dismiss with appropriate timing
-
-### Navigation Fix - Critical wouter Issue Resolved ✅
-- ✅ **NAVIGATION RESTORED:** All wouter-based navigation working again
-  - Problem: Previous `window.history.pushState` approach was breaking wouter router
-  - Solution: Reverted to `useLocation()` + `setLocation()` pattern used everywhere
-  - ExpertisesModern.tsx: Fixed with proper `setLocation('/expertise')` handler
-  - Status: Navigation now consistent across all components
-  
-### Expertise Page - Professional Implementation ✅
-- ✅ **PAGE FULLY FUNCTIONAL:** `/pages/Expertise.tsx` with complete design
-  - Hero section, 4 expertise domains, feature lists, differentiators, CTAs
-  - "En savoir plus" buttons now correctly navigate to `/expertise`
-- ✅ **ROUTE REGISTERED:** Route working properly in App.tsx
-- ✅ **NO LSP ERRORS:** Clean compilation
-
-### Security Audit & Fixes ✅
-1. **CSP Policy Enhancement (CRITICAL)** - Fixed production API backend blocking
-   - Added `https://api.altusfinancesgroup.com` to `connectSrc` directive in helmet CSP config
-   - Before: Frontend could not connect to backend in production (CSP violation)
-   - After: Production API calls now fully allowed and working
-   - File: `server/index.ts` line 112
-
-2. **npm Audit Security Fixes** - Resolved esbuild vulnerability (MODERATE)
-   - Vulnerability: esbuild <= 0.24.2 allowed arbitrary requests to dev server
-   - Action: Ran `npm audit fix --force` to patch dependencies
-   - Impact: Development server now protected from HTTP request exploitation
-
-3. **Tailwind CSS Warnings Resolved** - Fixed ambiguous class warnings
-   - Changed `duration-[2000ms]` to `duration-2000` (HeroCarousel.tsx)
-   - Changed `duration-[600ms]` to `duration-600` (ui/progress.tsx)
-   - Impact: Cleaner build output, no more PostCSS warnings
-
-4. **dangerouslySetInnerHTML Audit** - Verified safe usage
-   - Location: `client/src/components/ui/chart.tsx` (ChartStyle component)
-   - Status: ✅ SECURE - Only generating CSS from internal config, no user input
-   - No action needed
-
-### UI Updates ✅
-- **Dashboard Sidebar Logo Redesign (November 25, 2025)** ✅
-  - Replaced old icon-based logo with official ALTUS brand SVG logo
-  - **New Design:** Professional SVG with golden triangle (A), navy wave, and brand text
-  - **Location:** Dashboard sidebar header (`client/src/components/AppSidebar.tsx`)
-  - **Features:**
-    - Golden triangle icon representing "A" for ALTUS
-    - Navy blue wave arc beneath the triangle
-    - "ALTUS" text in professional navy blue
-    - "FINANCE GROUP" subtitle in complementary gray
-    - Smooth drop-shadow with hover elevation effect
-    - Responsive sizing that adapts to sidebar width
-  - **Proportions:** Elegant 1:1 aspect ratio, centered positioning
-  - **Status:** ✅ Fully integrated and tested on dashboard
-
-### Multilingual Chat (Previous Session) ✅
-- Full i18n support for 7 languages in chat widget/window/input components
-- All user-facing chat text translates automatically
-
 ## Overview
 
 ALTUS is a multi-language professional loan management platform designed for business clients. It provides a comprehensive dashboard for managing loans, transfers, fees, and financial transactions. The platform aims to foster trust, clarity, and data-driven decision-making with features like multi-language support (French, English, Spanish, Portuguese, Italian, German, Dutch), an interactive amortization calculator, real-time transfer tracking, external bank account management, KYC document upload, and financial analytics. Its primary purpose is to equip business professionals and enterprises with robust tools for loan financing and financial management, offering a robust and secure environment for financial operations.
@@ -162,20 +39,21 @@ Preferred communication style: Simple, everyday language.
 - Automatic visual transfer progression with pause checkpoints requiring validation codes.
 - Multi-channel notification system for contract signatures, including persistent banners, bell notifications, and email notifications.
 - Admin messages with cross-domain WebSocket authentication and real-time native chat system.
-- Layout and scrolling issues resolved for a single scroll context.
+- Dashboard sidebar with official ALTUS brand SVG logo.
 
 ### Technical Implementations
 
 - **Authentication:** Comprehensive forgot/reset password with email notifications and rate limiting. Email verification includes automatic login. TOTP-based Two-Factor Authentication (2FA) is optional. Single session enforcement and CSRF protection are implemented.
 - **Session Management & Error Handling:** Global 401/403 interceptor redirects to login. `SessionMonitor` ensures periodic session validation. Intelligent retry logic.
-- **Security Features:** IDOR protection, Zod validation, XSS protection, strong password requirements, UUID usernames, generic error messages, file upload validation with magic byte verification. Comprehensive rate limiting on sensitive endpoints. Encrypted 2FA secrets. SSL configuration hardened for production. Transfer validation now strictly requires security code input, removing any bypass paths.
+- **Security Features:** IDOR protection, Zod validation, XSS protection, strong password requirements, UUID usernames, generic error messages, file upload validation with magic byte verification. Comprehensive rate limiting on sensitive endpoints. Encrypted 2FA secrets. SSL configuration hardened for production. Transfer validation now strictly requires security code input, removing any bypass paths. CSP policy for production API backend.
 - **Loan Disbursement Workflow:** Multi-step approval process (Request -> Admin Approval -> Contract Signing -> Manual Admin Fund Disbursement).
-- **KYC Document Upload:** Local file system storage in `uploads/kyc_documents/` with file validation, sanitization, and cryptographic UUID identifiers. Documents are attached to admin notification emails via SendGrid.
-- **Profile Photo Upload:** Cloudinary cloud-based image storage.
+- **KYC Document Upload:** Local file system storage in `uploads/kyc_documents/` with file validation, sanitization, and cryptographic UUID identifiers. Documents are attached to admin notification emails.
 - **Signed Contracts:** Local file system storage in `uploads/signed-contracts/` with PDF validation and secure file handling.
 - **Notification System:** Database-backed persistent notifications with RESTful API, user ownership enforcement, `NotificationBell` component with polling, unread count badges, sound alerts, and a 2FA suggestion system. Supports multilingual notifications and covers 18 distinct critical user events.
 - **Loan Workflow Enhancement:** Implemented a 3-stage contract lifecycle with `status` and `contractStatus` fields for clear tracking.
 - **Transfer Code System:** Dynamic code numbering in admin emails and single source of truth for pause percentages stored in the database.
+- **SPA Routing:** `vercel.json` configured for proper single-page application routing on Vercel.
+- **Toast Management:** Toasts auto-dismiss with appropriate timings (3s for success, 5s for error).
 
 ## External Dependencies
 

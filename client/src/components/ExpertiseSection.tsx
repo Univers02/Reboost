@@ -1,9 +1,11 @@
 import { Building2, User, Briefcase, RefreshCcw, TrendingUp, Home } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { motion } from 'framer-motion';
+import { useLocation } from 'wouter';
 
 export default function ExpertiseSection() {
   const t = useTranslations();
+  const [, setLocation] = useLocation();
   
   const expertiseAreas = [
     {
@@ -96,8 +98,16 @@ export default function ExpertiseSection() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="group"
+                className="group cursor-pointer"
                 data-testid={`card-expertise-${index}`}
+                onClick={() => setLocation('/expertise')}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setLocation('/expertise');
+                  }
+                }}
               >
                 <div className="relative h-full bg-card rounded-xl p-6 md:p-8 hover-elevate active-elevate-2 overflow-visible transition-all duration-300">
                   <div className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${area.gradient} mb-6 transition-transform duration-300 group-hover:scale-110`}>

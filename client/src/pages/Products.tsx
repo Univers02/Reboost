@@ -4,7 +4,7 @@ import SEO from '@/components/SEO';
 import { useTranslations, useLanguage } from '@/lib/i18n';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { getIndividualLoans, getBusinessLoans } from '@/lib/loan-catalog';
 import { loanProductSchema } from '@/lib/seo-data';
@@ -15,6 +15,7 @@ import { getOfficialStats } from '@/lib/constants';
 export default function Products() {
   const t = useTranslations();
   const { language } = useLanguage();
+  const [, setLocation] = useLocation();
   const seo = getProductsSEOByLocale(language);
   
   const individualProducts = getIndividualLoans(t);
@@ -116,8 +117,16 @@ export default function Products() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="group"
+                  className="group cursor-pointer"
                   data-testid={`card-individual-loan-${index}`}
+                  onClick={() => setLocation('/loans/new')}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      setLocation('/loans/new');
+                    }
+                  }}
                 >
                   <Card className="relative h-full p-8 bg-white border border-gray-100 hover:border-transparent hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-visible">
                     <div className={`inline-flex p-4 rounded-2xl ${product.bgColor} mb-6 group-hover:scale-110 transition-transform duration-300`}>
@@ -194,8 +203,16 @@ export default function Products() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="group"
+                  className="group cursor-pointer"
                   data-testid={`card-business-loan-${index}`}
+                  onClick={() => setLocation('/loans/new')}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      setLocation('/loans/new');
+                    }
+                  }}
                 >
                   <Card className="relative h-full p-10 bg-white border border-gray-100 hover:border-transparent hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-visible">
                     <div className={`inline-flex p-5 rounded-2xl ${product.bgColor} mb-6 group-hover:scale-110 transition-transform duration-300`}>
