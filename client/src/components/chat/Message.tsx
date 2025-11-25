@@ -13,9 +13,10 @@ interface MessageProps {
   isOwn: boolean;
   senderName?: string;
   senderAvatar?: string;
+  nextMessage?: ChatMessage | null;
 }
 
-export function Message({ message, isOwn, senderName, senderAvatar }: MessageProps) {
+export function Message({ message, isOwn, senderName, senderAvatar, nextMessage }: MessageProps) {
   const [showPdfPreview, setShowPdfPreview] = useState(false);
 
   const getInitials = (name?: string) => {
@@ -40,6 +41,27 @@ export function Message({ message, isOwn, senderName, senderAvatar }: MessagePro
     // Fallback: check URL if fileName is missing (for old messages)
     if (fileUrl && fileUrl.toLowerCase().includes('.pdf')) return true;
     return false;
+  };
+
+  // Get spacing based on current message type and next message type
+  const getSpacing = () => {
+    if (!nextMessage || !nextMessage.senderId || nextMessage.senderId !== message.senderId) {
+      return "mb-5"; // Default spacing when next message is from different sender or doesn't exist
+    }
+
+    const currentIsPdf = message.fileUrl && isPdfFile(message.fileName, message.fileUrl);
+    const currentIsImage = message.fileUrl && message.fileName && isImageFile(message.fileName);
+    const nextIsImage = nextMessage.fileUrl && nextMessage.fileName && isImageFile(nextMessage.fileName);
+    const nextIsPdf = nextMessage.fileUrl && isPdfFile(nextMessage.fileName, nextMessage.fileUrl);
+
+    // PDF followed by image: increase spacing
+    if (currentIsPdf && nextIsImage) return "mb-8";
+    // Image followed by image: reduce spacing
+    if (currentIsImage && nextIsImage) return "mb-2";
+    // Image/PDF followed by text: default spacing
+    if ((currentIsImage || currentIsPdf) && nextMessage.content) return "mb-5";
+    // Default
+    return "mb-5";
   };
 
   const getFileIcon = (fileName?: string) => {
@@ -89,7 +111,7 @@ export function Message({ message, isOwn, senderName, senderAvatar }: MessagePro
 
         {/* File with timestamp directly below */}
         {message.fileUrl && message.fileName && isImageFile(message.fileName) && (
-          <div className="mb-5">
+          <div className={getSpacing()}>
             <img
               src={getFileUrl(message.fileUrl)}
               alt={message.fileName}
@@ -124,7 +146,7 @@ export function Message({ message, isOwn, senderName, senderAvatar }: MessagePro
         )}
 
         {message.fileUrl && isPdfFile(message.fileName, message.fileUrl) && (
-          <div className="mb-5">
+          <div className={getSpacing()}>
             <PdfViewer
               storagePath={getFileUrl(message.fileUrl) || ''}
               fileName={message.fileName || 'Document.pdf'}
@@ -156,7 +178,7 @@ export function Message({ message, isOwn, senderName, senderAvatar }: MessagePro
         )}
 
         {message.fileUrl && message.fileName && !isImageFile(message.fileName) && !isPdfFile(message.fileName, message.fileUrl) && (
-          <div className="mb-5">
+          <div className={getSpacing()}>
             <div className="rounded-md p-3">
               <a
                 href={getFileUrl(message.fileUrl)}
@@ -204,7 +226,8 @@ export function Message({ message, isOwn, senderName, senderAvatar }: MessagePro
         {message.content && (
           <div
             className={cn(
-              "flex items-center gap-2 px-3 relative z-10 flex-col mb-5",
+              "flex items-center gap-2 px-3 relative z-10 flex-col",
+              getSpacing(),
               isOwn ? "items-end" : "items-start"
             )}
           >

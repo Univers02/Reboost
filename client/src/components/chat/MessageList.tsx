@@ -199,6 +199,14 @@ export function MessageList({
                       isOwn={item.message.senderId === currentUserId}
                       senderName={getUserName?.(item.message.senderId)}
                       senderAvatar={getUserAvatar?.(item.message.senderId)}
+                      nextMessage={
+                        virtualItem.index + 1 < flattenedItems.length
+                          ? (() => {
+                              const nextItem = flattenedItems[virtualItem.index + 1];
+                              return nextItem.type === "message" ? nextItem.message : null;
+                            })()
+                          : null
+                      }
                     />
                   )}
                 </div>
