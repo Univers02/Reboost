@@ -62,7 +62,7 @@ export function MessageList({
       // Estimate larger size to account for images/PDFs
       // Images can be up to 256px (max-h-64) + padding/margins
       const message = item.message;
-      if (message.fileUrl && message.fileName) {
+      if (message?.fileUrl && message?.fileName) {
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
         const isPdf = message.fileName.toLowerCase().endsWith('.pdf');
         if (imageExtensions.some(ext => message.fileName.toLowerCase().endsWith(ext))) {
