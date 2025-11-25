@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Search, Filter, Clock, CheckCircle2, XCircle, MessageCircle } from "lucide-react";
+import { Search, Filter, Clock, CheckCircle2, XCircle, MessageCircle, ArrowLeft } from "lucide-react";
+import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +23,7 @@ import type { ChatConversation } from "@shared/schema";
 
 export default function AdminChat() {
   const { data: user } = useUser();
+  const [, setLocation] = useLocation();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | "open" | "closed">("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -158,6 +160,20 @@ export default function AdminChat() {
       </div>
 
       <div className="flex-1 flex flex-col">
+        {/* Back Button Header */}
+        <div className="border-b bg-background/50 backdrop-blur-sm p-4 flex items-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setLocation('/admin')}
+            data-testid="button-back-to-admin"
+            className="rounded-lg hover:bg-muted"
+            title="Retour à l'administration"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        </div>
+
         {selectedConversation ? (
           <ChatWindow
             conversationId={selectedConversation.id}

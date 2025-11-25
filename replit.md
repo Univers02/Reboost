@@ -2,6 +2,13 @@
 
 ## Recent Changes (November 25, 2025)
 
+### Admin Chat Page - Back Button Added ✅
+- **Feature:** Added elegant back button to admin chat page
+- **Location:** Top-left of chat interface (`client/src/pages/AdminChat.tsx`)
+- **Functionality:** Navigates back to administration dashboard (`/admin`)
+- **Design:** Ghost variant with arrow icon, subtle hover effect
+- **Status:** ✅ Fully functional and integrated
+
 ### CRITICAL FIXES - Session & Toast Management ✅
 
 #### 1. Page Refresh 404 Issue FIXED ✅
