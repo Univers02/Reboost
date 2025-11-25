@@ -2,6 +2,27 @@
 
 ## Recent Changes (November 25, 2025)
 
+### User Space Chat Widget - English Localization ✅
+- **Feature:** Chat widget UI now 100% in English for international accessibility
+- **Rationale:** Platform supports 7 languages, but backend chat cannot support multilingual content. English as reference language ensures accessibility to global audience and professional credibility in finance sector
+- **Changes Made:**
+  - ChatWidget.tsx: User name fallback "You" (instead of "Vous")
+  - ChatWindow.tsx: Status indicators "Online"/"Offline" (instead of French)
+  - MessageInput.tsx: Placeholder "Type your message..." and hints in English
+  - TypingIndicator: "is typing..." / "Someone is typing..."
+- **Files Modified:** `client/src/components/chat/ChatWidget.tsx`, `ChatWindow.tsx`, `MessageInput.tsx`
+- **Status:** ✅ Fully deployed and tested
+
+### Chat Widget Error Fix - Undefined Translation Crash FIXED ✅
+- **Problem:** Clicking chat widget button showed blank page with TypeError: "Cannot read properties of undefined (reading 'title')"
+- **Root Cause:** Translation object could be undefined when accessing nested properties
+- **Solution Applied:**
+  1. Added robust fallbacks: `translations[language || 'fr'] || translations['fr'] || {}`
+  2. Used optional chaining with type casting: `(t as any)?.chat?.widget?.title || 'Support'`
+  3. Replaced all hardcoded translation fallbacks with English strings for consistency
+- **Files Modified:** `ChatWidget.tsx` (lines 30, 86-87), `ChatWindow.tsx` (lines 38, 46, 118)
+- **Status:** ✅ Chat widget now fully functional with no crashes
+
 ### Admin Chat Page - Back Button Added ✅
 - **Feature:** Added elegant back button to admin chat page
 - **Location:** Top-left of chat interface (`client/src/pages/AdminChat.tsx`)

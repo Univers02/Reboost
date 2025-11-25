@@ -19,8 +19,8 @@ export function MessageInput({
   onTyping,
   disabled = false,
   maxLength = 2000,
-  placeholder = "Écrivez votre message...",
-  sendHint = "Appuyez sur Ctrl+Entrée pour envoyer",
+  placeholder = "Type your message...",
+  sendHint = "Press Ctrl+Enter to send",
   allowFileUpload = false,
 }: MessageInputProps) {
   const [content, setContent] = useState("");

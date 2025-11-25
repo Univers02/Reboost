@@ -80,10 +80,10 @@ export function ChatWidget({
               <ChatWindow
                 conversationId={conversationId}
                 currentUserId={userId}
-                title={(t as any)?.chat?.widget?.title || 'Support'}
-                subtitle={(t as any)?.chat?.widget?.subtitle}
+                title="Support"
+                subtitle={undefined}
                 onClose={() => setIsOpen(false)}
-                getUserName={(id) => (id === userId ? userName || "Vous" : "Support")}
+                getUserName={(id) => (id === userId ? userName || "You" : "Support")}
                 getUserAvatar={(id) => (id === userId ? userAvatar || "" : "")}
               />
             </motion.div>

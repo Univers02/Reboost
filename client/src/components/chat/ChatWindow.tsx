@@ -40,7 +40,7 @@ export function ChatWindow({
   const markAsReadMutation = useMarkAsRead();
   const [typingUsername, setTypingUsername] = useState<string | null>(null);
 
-  const defaultTitle = title || (t as any)?.chat?.window?.title || 'Conversation';
+  const defaultTitle = title || 'Support';
   const defaultSubtitle = subtitle;
 
   const { sendMessage, startTyping, typingUsers } = useChatMessages({
@@ -112,7 +112,7 @@ export function ChatWindow({
                   )}
                 />
                 <span className="text-xs text-muted-foreground" data-testid="text-connection-status">
-                  {connected ? ((t as any)?.chat?.window?.online || 'En ligne') : ((t as any)?.chat?.window?.offline || 'Hors ligne')}
+                  {connected ? 'Online' : 'Offline'}
                 </span>
               </div>
             )}
@@ -144,8 +144,8 @@ export function ChatWindow({
           <TypingIndicator 
             isTyping={isTyping} 
             username={displayTypingUsername}
-            typingText={t?.chat?.window?.typing || 'écrit...'}
-            typingGeneralText={t?.chat?.window?.typingGeneral || 'Quelqu\'un écrit...'}
+            typingText="is typing..."
+            typingGeneralText="Someone is typing..."
           />
         )}
 
@@ -154,8 +154,8 @@ export function ChatWindow({
           onTyping={startTyping}
           disabled={!connected}
           allowFileUpload={false}
-          placeholder={t?.chat?.input?.placeholder || 'Écrivez votre message...'}
-          sendHint={t?.chat?.input?.sendHint || 'Appuyez sur Entrée pour envoyer'}
+          placeholder="Type your message..."
+          sendHint="Press Enter to send"
         />
       </CardContent>
     </Card>
