@@ -653,68 +653,102 @@ const getContractTemplate = (data: ContractData): string => {
       font-size: 11pt;
     }
     .header {
-      background: #ffffff;
+      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
       color: #1a1a1a;
-      padding: 30px 40px;
-      margin: -2cm -2cm 30px -2cm;
+      padding: 40px 50px 35px;
+      margin: -2cm -2cm 40px -2cm;
       position: relative;
-      border-bottom: 3px solid #2563eb;
-      text-align: center;
+      border-bottom: 4px solid #2563eb;
     }
     .header-top {
-      margin-bottom: 25px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgba(37, 99, 235, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      gap: 40px;
     }
     .logo-section {
-      margin-bottom: 18px;
+      flex: 0 0 auto;
+      border-right: 2px solid #e5e7eb;
+      padding-right: 35px;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+    .logo-icon-text {
+      font-size: 32pt;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+    .logo-text-group {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
     .logo {
-      font-size: 28pt;
-      font-weight: 900;
-      letter-spacing: 2.5px;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      line-height: 1;
+      font-size: 26pt;
+      font-weight: 800;
+      letter-spacing: 1px;
+      line-height: 1.1;
       color: #1e3a8a;
+      margin-bottom: 3px;
     }
     .logo-subtitle {
-      font-size: 11pt;
-      opacity: 0.92;
-      font-weight: 300;
-      letter-spacing: 1.8px;
+      font-size: 10pt;
+      font-weight: 500;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      color: #475569;
+      color: #64748b;
     }
     .header-info {
-      font-size: 8pt;
-      line-height: 1.6;
-      color: #475569;
+      flex: 1;
+      text-align: right;
+      line-height: 1.8;
     }
-    .header-info strong {
-      display: block;
-      font-size: 9pt;
-      margin-bottom: 6px;
-      letter-spacing: 0.3px;
-      color: #1e3a8a;
+    .company-name {
+      font-size: 11pt;
       font-weight: 700;
+      color: #1e3a8a;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
     }
     .header-info .contact-line {
       display: block;
-      opacity: 0.85;
+      font-size: 8.5pt;
       color: #475569;
+      margin: 3px 0;
+    }
+    .contact-line strong {
+      color: #1e3a8a;
+      font-weight: 600;
     }
     .contract-ref {
-      background: #f8fafc;
-      padding: 14px 24px;
-      border-radius: 8px;
-      display: inline-block;
-      font-size: 11pt;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      padding: 16px 30px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 10.5pt;
       font-weight: 700;
-      letter-spacing: 1.2px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      letter-spacing: 1px;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.15);
       border: 2px solid #2563eb;
       color: #1e3a8a;
+      margin: 0 auto;
+      display: inline-block;
     }
     h1 {
       color: #1e3a8a;
@@ -886,19 +920,28 @@ const getContractTemplate = (data: ContractData): string => {
   <div class="header">
     <div class="header-top">
       <div class="logo-section">
-        <div class="logo">ALTUS</div>
-        <div class="logo-subtitle">Finances Group</div>
+        <div class="logo-container">
+          <div class="logo-icon">
+            <div class="logo-icon-text">A</div>
+          </div>
+          <div class="logo-text-group">
+            <div class="logo">ALTUS</div>
+            <div class="logo-subtitle">FINANCES GROUP</div>
+          </div>
+        </div>
       </div>
       <div class="header-info">
-        <strong>ALTUS FINANCES GROUP S.à r.l.</strong>
-        <span class="contact-line">19 Rue Sigismond, L-2537 Luxembourg</span>
-        <span class="contact-line">RCS Luxembourg B123456</span>
-        <span class="contact-line">Tél: +352 40 63 48</span>
-        <span class="contact-line">Email: contact@altusfinancesgroup.com</span>
-        <span class="contact-line">www.altusfinancesgroup.com</span>
+        <div class="company-name">ALTUS FINANCES GROUP S.à r.l.</div>
+        <span class="contact-line"><strong>Siège:</strong> 19 Rue Sigismond, L-2537 Luxembourg</span>
+        <span class="contact-line"><strong>RCS:</strong> Luxembourg B123456</span>
+        <span class="contact-line"><strong>Tél:</strong> +352 40 63 48</span>
+        <span class="contact-line"><strong>Email:</strong> contact@altusfinancesgroup.com</span>
+        <span class="contact-line"><strong>Web:</strong> www.altusfinancesgroup.com</span>
       </div>
     </div>
-    <div class="contract-ref">${t.contractNumber} ${loan.id.toUpperCase()}</div>
+    <div style="text-align: center;">
+      <div class="contract-ref">${t.contractNumber} ${loan.id.toUpperCase()}</div>
+    </div>
   </div>
 
   <h1>${t.contractTitle}</h1>
