@@ -1,12 +1,13 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from 'wouter';
+import { useLocation } from 'wouter';
 import { ArrowRight } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { getBusinessLoans } from '@/lib/loan-catalog';
 
 export default function BusinessLoanShowcase() {
   const t = useTranslations();
+  const [, setLocation] = useLocation();
   const businessLoans = getBusinessLoans(t);
 
   return (
@@ -66,11 +67,13 @@ export default function BusinessLoanShowcase() {
                   </ul>
                 )}
 
-                <Button className="w-full gap-2" asChild>
-                  <Link href="/loans/new">
-                    {t.businessLoans.learnMore}
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
+                <Button 
+                  className="w-full gap-2" 
+                  onClick={() => setLocation('/loans/new')}
+                  data-testid={`button-loan-learn-more-${index}`}
+                >
+                  {t.businessLoans.learnMore}
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </Card>
             );
@@ -111,16 +114,23 @@ export default function BusinessLoanShowcase() {
             {t.businessLoans.rateDisclaimer}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/loans/new" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto" data-testid="button-simulate-business-loan">
-                {t.businessLoans.simulateLoan}
-              </Button>
-            </Link>
-            <Link href="/contact" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto" data-testid="button-contact-advisor">
-                {t.businessLoans.contactAdvisor}
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="w-full sm:w-auto" 
+              onClick={() => setLocation('/loans/new')}
+              data-testid="button-simulate-business-loan"
+            >
+              {t.businessLoans.simulateLoan}
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="w-full sm:w-auto" 
+              onClick={() => setLocation('/contact')}
+              data-testid="button-contact-advisor"
+            >
+              {t.businessLoans.contactAdvisor}
+            </Button>
           </div>
         </div>
       </div>

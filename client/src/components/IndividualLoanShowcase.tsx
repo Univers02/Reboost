@@ -1,12 +1,13 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from 'wouter';
+import { useLocation } from 'wouter';
 import { ArrowRight } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { getIndividualLoans } from '@/lib/loan-catalog';
 
 export default function IndividualLoanShowcase() {
   const t = useTranslations();
+  const [, setLocation] = useLocation();
   const individualLoans = getIndividualLoans(t);
 
   return (
@@ -56,11 +57,13 @@ export default function IndividualLoanShowcase() {
                     <span className="font-semibold">{loan.duration}</span>
                   </div>
                 </div>
-                <Button className="w-full gap-2" asChild>
-                  <Link href="/loans/new">
-                    {t.hero.cta1}
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
+                <Button 
+                  className="w-full gap-2" 
+                  onClick={() => setLocation('/loans/new')}
+                  data-testid={`button-individual-loan-cta-${index}`}
+                >
+                  {t.hero.cta1}
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </Card>
             );
@@ -71,10 +74,13 @@ export default function IndividualLoanShowcase() {
           <p className="text-sm text-muted-foreground mb-4">
             {t.individualLoans.rateDisclaimer}
           </p>
-          <Button variant="outline" size="lg" asChild>
-            <Link href="/products">
-              {t.individualLoans.compareLoans}
-            </Link>
+          <Button 
+            variant="outline" 
+            size="lg" 
+            onClick={() => setLocation('/products')}
+            data-testid="button-compare-loans"
+          >
+            {t.individualLoans.compareLoans}
           </Button>
         </div>
       </div>
