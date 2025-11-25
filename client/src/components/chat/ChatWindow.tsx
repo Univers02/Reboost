@@ -70,13 +70,55 @@ export function ChatWindow({
     }
   }, [messages, conversationId, currentUserId, markAsReadMutation]);
 
-  const handleSendMessage = (content: string, file?: File) => {
+  const handleSendMessage = async (content: string, file?: File) => {
     if (file) {
-      console.log("File upload not yet implemented:", file.name);
-      return;
-    }
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await fetch('/api/chat/upload', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        });
 
-    sendMessage(content);
+        if (!response.ok) {
+          throw new Error('File upload failed');
+        }
+
+        const { fileUrl, fileName } = await response.json();
+        sendMessage(content, fileUrl, fileName);
+      } catch (error) {
+        console.error('Failed to upload file:', error);
+        // Still send message without file if upload fails
+        sendMessage(content);
+      }
+    } else {
+      sendMessage(content);
+    }
+    playNotificationSound();
+  };
+
+  const playNotificationSound = () => {
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    } catch (e) {
+      // Audio context not available, silent fail
+    }
   };
 
   const isTyping = typingUsers.length > 0;
@@ -153,7 +195,7 @@ export function ChatWindow({
           onSend={handleSendMessage}
           onTyping={startTyping}
           disabled={!connected}
-          allowFileUpload={false}
+          allowFileUpload={true}
           placeholder="Type your message..."
           sendHint="Press Enter to send"
         />

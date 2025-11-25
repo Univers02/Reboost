@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Paperclip, Send } from "lucide-react";
+import { Paperclip, Send, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -95,6 +95,13 @@ export function MessageInput({
     }
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      setSelectedFile(file);
+    }
+  };
+
   const removeFile = () => {
     setSelectedFile(null);
     if (fileInputRef.current) {
@@ -163,14 +170,42 @@ export function MessageInput({
                   className="hidden"
                   data-testid="input-file"
                 />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                  data-testid="input-image"
+                />
                 <Button
                   size="icon"
                   variant="ghost"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={disabled}
                   data-testid="button-attach-file"
+                  title="Attach document"
                 >
                   <Paperclip className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => {
+                    const imageInput = document.createElement('input');
+                    imageInput.type = 'file';
+                    imageInput.accept = 'image/*';
+                    imageInput.onchange = (e: any) => {
+                      const file = e.target.files?.[0];
+                      if (file) setSelectedFile(file);
+                    };
+                    imageInput.click();
+                  }}
+                  disabled={disabled}
+                  data-testid="button-attach-image"
+                  title="Send photo"
+                >
+                  <ImageIcon className="h-4 w-4" />
                 </Button>
               </>
             )}

@@ -4668,6 +4668,79 @@ ${urls.map(url => `  <url>
     content: z.string().min(1, 'Le message ne peut pas être vide').max(5000, 'Message trop long'),
   });
 
+  // Configure multer for chat file uploads
+  const chatUploadDir = path.join(process.cwd(), 'uploads', 'chat');
+  if (!fs.existsSync(chatUploadDir)) {
+    fs.mkdirSync(chatUploadDir, { recursive: true });
+  }
+
+  const chatUpload = multer({
+    storage: multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, chatUploadDir);
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+      },
+    }),
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+    fileFilter: (req, file, cb) => {
+      // Allow common file types for chat
+      const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx|txt|xls|xlsx/;
+      const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+      const mimetype = allowedTypes.test(file.mimetype);
+      if (mimetype && extname) {
+        return cb(null, true);
+      } else {
+        cb(new Error('Invalid file type'));
+      }
+    },
+  });
+
+  // Upload file for chat message
+  app.post("/api/chat/upload", requireAuth, requireCSRF, chatUpload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file provided' });
+      }
+
+      const fileUrl = `/api/chat/file/${req.file.filename}`;
+      const fileName = req.file.originalname;
+
+      res.json({
+        fileUrl,
+        fileName,
+      });
+    } catch (error: any) {
+      console.error('[CHAT] File upload error:', error);
+      res.status(500).json({ error: 'File upload failed' });
+    }
+  });
+
+  // Download file from chat message (secure route with auth)
+  app.get("/api/chat/file/:filename", requireAuth, async (req, res) => {
+    try {
+      const filename = req.params.filename;
+      const filepath = path.join(chatUploadDir, filename);
+      
+      // Security: ensure the file is within the chat upload directory
+      if (!filepath.startsWith(chatUploadDir)) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+      
+      // Check if file exists
+      if (!fs.existsSync(filepath)) {
+        return res.status(404).json({ error: 'File not found' });
+      }
+      
+      res.download(filepath);
+    } catch (error: any) {
+      console.error('[CHAT] File download error:', error);
+      res.status(500).json({ error: 'File download failed' });
+    }
+  });
+
   // CONVERSATIONS - User routes
   app.get("/api/chat/conversations", requireAuth, async (req, res) => {
     try {

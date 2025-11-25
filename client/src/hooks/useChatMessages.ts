@@ -12,7 +12,7 @@ interface UseChatMessagesOptions {
 }
 
 interface UseChatMessagesReturn {
-  sendMessage: (content: string, fileUrl?: string, fileName?: string) => void;
+  sendMessage: (content: string, fileUrl?: string | File, fileName?: string) => void;
   startTyping: () => void;
   stopTyping: () => void;
   isTyping: boolean;
@@ -139,11 +139,14 @@ export function useChatMessages({
   }, [socket, connected, conversationId, queryClient, currentUser]);
 
   const sendMessage = useCallback(
-    (content: string, fileUrl?: string, fileName?: string) => {
+    (content: string, fileUrlOrFile?: string | File, fileName?: string) => {
       if (!socket || !connected) {
         console.error("Socket not connected");
         return;
       }
+
+      // Handle File object or string URL
+      const fileUrl = typeof fileUrlOrFile === 'string' ? fileUrlOrFile : null;
 
       // Optimistic update: ajouter le message immédiatement au cache
       const optimisticMessage: ChatMessage = {
