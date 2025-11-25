@@ -59,29 +59,17 @@ export function useChatNotifications(userId: string): UseChatNotificationsReturn
     if (!socket || !connected || !userId) return;
 
     const handleNewMessage = (message: ChatMessage) => {
-      if (message.senderId !== userId && !message.isRead) {
-        setUnreadCounts((prev) => ({
-          ...prev,
-          [message.conversationId]: (prev[message.conversationId] || 0) + 1,
-        }));
-      }
-
-      queryClient.invalidateQueries({
-        queryKey: ['chat', 'messages', message.conversationId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['chat', 'conversations', 'user', userId],
-      });
-      // IMPORTANT: Also invalidate admin conversations (important for admins receiving messages)
-      queryClient.invalidateQueries({
-        queryKey: ['chat', 'conversations', 'admin'],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['chat', 'conversations', 'detail', message.conversationId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['chat', 'unread', 'user', userId],
-      });
+      // CRITICAL: Do NOT invalidate conversations here - the backend will send chat:unread-count separately
+      // Invalidating here causes refetch that overwrites the unread count before chat:unread-count arrives
+      
+      // Only update messages cache
+      queryClient.setQueryData(
+        ['chat', 'messages', message.conversationId],
+        (oldMessages: ChatMessage[] | undefined) => {
+          if (!oldMessages) return [message];
+          return [...oldMessages, message];
+        }
+      );
     };
 
     const handleMessageRead = (data: { conversationId: string; messageIds: string[] }) => {
