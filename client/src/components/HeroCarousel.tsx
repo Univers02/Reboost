@@ -30,7 +30,7 @@ export default function HeroCarousel() {
           className={`absolute inset-0 transition-all ease-out
             ${i === index 
               ? "opacity-100 scale-100 translate-x-0 duration-1000" 
-              : "opacity-0 scale-105 translate-x-8 duration-[2000ms]"
+              : "opacity-0 scale-105 translate-x-8 duration-2000"
             }
           `}
         >

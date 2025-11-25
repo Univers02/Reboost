@@ -1,5 +1,38 @@
 # ALTUS - Professional Loan Platform
 
+## Recent Changes (November 25, 2025)
+
+### Security Audit & Fixes ✅
+1. **CSP Policy Enhancement (CRITICAL)** - Fixed production API backend blocking
+   - Added `https://api.altusfinancesgroup.com` to `connectSrc` directive in helmet CSP config
+   - Before: Frontend could not connect to backend in production (CSP violation)
+   - After: Production API calls now fully allowed and working
+   - File: `server/index.ts` line 112
+
+2. **npm Audit Security Fixes** - Resolved esbuild vulnerability (MODERATE)
+   - Vulnerability: esbuild <= 0.24.2 allowed arbitrary requests to dev server
+   - Action: Ran `npm audit fix --force` to patch dependencies
+   - Impact: Development server now protected from HTTP request exploitation
+
+3. **Tailwind CSS Warnings Resolved** - Fixed ambiguous class warnings
+   - Changed `duration-[2000ms]` to `duration-2000` (HeroCarousel.tsx)
+   - Changed `duration-[600ms]` to `duration-600` (ui/progress.tsx)
+   - Impact: Cleaner build output, no more PostCSS warnings
+
+4. **dangerouslySetInnerHTML Audit** - Verified safe usage
+   - Location: `client/src/components/ui/chart.tsx` (ChartStyle component)
+   - Status: ✅ SECURE - Only generating CSS from internal config, no user input
+   - No action needed
+
+### UI Updates ✅
+- **Logo Replacement:** New ALTUS branding logo added to public folder (`/public/logo.png`)
+  - Larger, high-quality design in user dashboard and homepage header
+  - Displays in both light and dark modes
+
+### Multilingual Chat (Previous Session) ✅
+- Full i18n support for 7 languages in chat widget/window/input components
+- All user-facing chat text translates automatically
+
 ## Overview
 
 ALTUS is a multi-language professional loan management platform designed for business clients. It provides a comprehensive dashboard for managing loans, transfers, fees, and financial transactions. The platform aims to foster trust, clarity, and data-driven decision-making with features like multi-language support (French, English, Spanish, Portuguese, Italian, German, Dutch), an interactive amortization calculator, real-time transfer tracking, external bank account management, KYC document upload, and financial analytics. Its primary purpose is to equip business professionals and enterprises with robust tools for loan financing and financial management, offering a robust and secure environment for financial operations.

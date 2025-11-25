@@ -106,7 +106,7 @@ app.use(helmet({
         : ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https:"],
       connectSrc: process.env.NODE_ENV === 'production'
-        ? ["'self'", ...allowedOrigins.filter((origin): origin is string => origin !== undefined)]
+        ? ["'self'", "https://api.altusfinancesgroup.com", ...allowedOrigins.filter((origin): origin is string => origin !== undefined)]
         : ["'self'"],
       fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
       objectSrc: ["'none'"],
