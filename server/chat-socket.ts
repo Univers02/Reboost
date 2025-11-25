@@ -149,11 +149,6 @@ export function initializeChatSocket(httpServer: HTTPServer, storage: IStorage, 
             count: unreadCount,
           });
           
-          // AUSSI invalider le cache pour les autres onglets/sessions
-          io.to(`user:${recipientUserId}`).emit('unread_sync_required', { 
-            userId: recipientUserId 
-          });
-          
           console.log(`[CHAT WS] Unread count mis à jour pour ${recipientUserId}: ${unreadCount} pour conversation ${conversationId}`);
         }
         
