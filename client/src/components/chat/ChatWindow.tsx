@@ -73,6 +73,12 @@ export function ChatWindow({
   const handleSendMessage = async (content: string, file?: File) => {
     if (file) {
       try {
+        // Récupérer le token CSRF
+        const csrfResponse = await fetch('/api/csrf-token', {
+          credentials: 'include',
+        });
+        const { csrfToken } = await csrfResponse.json();
+
         const formData = new FormData();
         formData.append('file', file);
         
@@ -80,6 +86,9 @@ export function ChatWindow({
           method: 'POST',
           body: formData,
           credentials: 'include',
+          headers: {
+            'X-CSRF-Token': csrfToken,
+          },
         });
 
         if (!response.ok) {
