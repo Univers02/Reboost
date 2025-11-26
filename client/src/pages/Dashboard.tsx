@@ -16,7 +16,8 @@ import {
   Send,
   FileSignature,
   Eye,
-  Download
+  Download,
+  FileText
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -231,14 +232,27 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Hero Section - Greeting */}
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-            {getGreeting()}
-          </h1>
-          <p className="text-sm sm:text-base text-muted-foreground">
-            {t.dashboard.financeOverview}
-          </p>
+        {/* Hero Section - Greeting with KYC Status */}
+        <div className="space-y-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div className="space-y-1">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+              {getGreeting()}
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              {t.dashboard.financeOverview}
+            </p>
+          </div>
+          {user && (
+            <div className="flex items-center gap-2">
+              <Badge 
+                variant={user.kycStatus === 'approved' ? 'default' : user.kycStatus === 'pending' ? 'secondary' : 'destructive'}
+                className="text-xs whitespace-nowrap"
+                data-testid="badge-kyc-status"
+              >
+                KYC: {user.kycStatus === 'approved' ? '✓ Approuvé' : user.kycStatus === 'pending' ? '⏳ En attente' : '✗ Rejeté'}
+              </Badge>
+            </div>
+          )}
         </div>
 
 
@@ -334,6 +348,39 @@ export default function Dashboard() {
             </Button>
           </Link>
         </div>
+
+        {/* Alerts Section - Upcoming Payments */}
+        {dashboardData.loans.some(loan => {
+          if (!loan.nextPaymentDate) return false;
+          const daysUntilPayment = Math.ceil((new Date(loan.nextPaymentDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+          return daysUntilPayment > 0 && daysUntilPayment <= 7;
+        }) && (
+          <div className="bg-gradient-to-r from-orange-50 to-orange-50/50 dark:from-orange-950/20 dark:to-orange-950/10 border border-orange-200 dark:border-orange-900/30 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 w-full" data-testid="banner-upcoming-payment">
+            <div className="flex items-start gap-4">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/50 flex-shrink-0 mt-0.5">
+                <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-foreground text-sm sm:text-base mb-1" data-testid="text-payment-alert">
+                  Paiement prévu très bientôt
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Vous avez un paiement prévu dans les 7 prochains jours
+                </p>
+              </div>
+            </div>
+            <Link href="/loans">
+              <Button 
+                size="sm" 
+                className="whitespace-nowrap bg-orange-600 hover:bg-orange-700 text-white gap-2"
+                data-testid="button-view-payments"
+              >
+                <Clock className="w-4 h-4" />
+                <span>Détails</span>
+              </Button>
+            </Link>
+          </div>
+        )}
 
         {/* Analytics Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 w-full">
@@ -440,6 +487,52 @@ export default function Dashboard() {
           </DashboardCard>
         </div>
 
+        {/* Monthly Summary Section */}
+        <DashboardCard
+          title="Résumé du mois"
+          subtitle="Statistiques financières du mois en cours"
+          icon={TrendingUp}
+          iconColor="text-primary"
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+            <div className="p-4 rounded-lg bg-muted/50">
+              <p className="text-xs text-muted-foreground mb-1">Intérêts payés</p>
+              <p className="text-2xl font-bold text-foreground" data-testid="text-monthly-interest">
+                {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(
+                  dashboardData.fees
+                    .filter(f => f.createdAt && new Date(f.createdAt).getMonth() === new Date().getMonth())
+                    .filter(f => f.feeType.toLowerCase().includes('intérêt') || f.feeType.toLowerCase().includes('interest'))
+                    .reduce((sum, f) => sum + parseFloat(f.amount), 0)
+                )}
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-muted/50">
+              <p className="text-xs text-muted-foreground mb-1">Frais appliqués</p>
+              <p className="text-2xl font-bold text-destructive" data-testid="text-monthly-fees">
+                {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(
+                  dashboardData.fees
+                    .filter(f => f.createdAt && new Date(f.createdAt).getMonth() === new Date().getMonth())
+                    .reduce((sum, f) => sum + parseFloat(f.amount), 0)
+                )}
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-muted/50">
+              <p className="text-xs text-muted-foreground mb-1">Crédits utilisés</p>
+              <p className="text-2xl font-bold text-accent" data-testid="text-monthly-credit">
+                {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(creditUtilization * dashboardData.borrowingCapacity.maxCapacity / 100)}
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-muted/50">
+              <p className="text-xs text-muted-foreground mb-1">Remboursement</p>
+              <p className="text-2xl font-bold text-primary" data-testid="text-monthly-repayment">
+                {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(
+                  dashboardData.loans.reduce((sum, loan) => sum + parseFloat(loan.totalRepaid), 0)
+                )}
+              </p>
+            </div>
+          </div>
+        </DashboardCard>
+
         {/* Loans & Repayments Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6 w-full">
           {/* Active Loans */}
@@ -486,9 +579,24 @@ export default function Dashboard() {
                             {loan.interestRate}% APR
                           </p>
                         </div>
-                        <Badge variant={loan.status === 'active' ? 'default' : 'secondary'}>
-                          {loan.status}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={loan.status === 'active' ? 'default' : 'secondary'}>
+                            {loan.status}
+                          </Badge>
+                          {loan.status === 'active' && (
+                            <a
+                              href={`/api/loans/${loan.id}/download-amortization`}
+                              download
+                              className="opacity-0 group-hover:opacity-100 transition-opacity"
+                              data-testid={`button-download-amortization-${loan.id}`}
+                              title="Télécharger tableau d'amortissement"
+                            >
+                              <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                                <Download className="w-4 h-4" />
+                              </Button>
+                            </a>
+                          )}
+                        </div>
                       </div>
                       
                       <div className="space-y-2">

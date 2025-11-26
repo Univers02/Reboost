@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, TrendingUp, TrendingDown, Receipt, ArrowUpRight, ArrowDownLeft, FileText } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, Receipt, ArrowUpRight, ArrowDownLeft, FileText, Download } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { DashboardCard, SectionTitle } from '@/components/fintech';
 
@@ -116,6 +116,34 @@ export default function History() {
 
   const netBalance = totalCredit - totalDebit;
 
+  const handleExportCSV = () => {
+    if (!filteredTransactions) return;
+    
+    const headers = ['ID', 'Date', 'Type', 'Description', 'Montant (€)'];
+    const rows = filteredTransactions.map(t => [
+      t.id,
+      new Date(t.createdAt).toLocaleDateString('fr-FR'),
+      t.type,
+      t.description,
+      t.amount
+    ]);
+    
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `transactions_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (isLoading) {
     return (
       <div className="p-6 md:p-8 max-w-[1400px] mx-auto space-y-6 animate-fade-in">
@@ -181,7 +209,7 @@ export default function History() {
 
         {/* Filters */}
         <DashboardCard>
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col md:flex-row gap-4 md:items-center">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
@@ -192,17 +220,32 @@ export default function History() {
                 data-testid="input-search-history"
               />
             </div>
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-full md:w-[200px] border-border/50" data-testid="select-type-filter">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t.history.allTypes}</SelectItem>
-                <SelectItem value="credit">{t.history.typeCredit}</SelectItem>
-                <SelectItem value="debit">{t.history.typeDebit}</SelectItem>
-                <SelectItem value="fee">{t.history.typeFee}</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2 flex-col md:flex-row md:items-center">
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-full md:w-[200px] border-border/50" data-testid="select-type-filter">
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t.history.allTypes}</SelectItem>
+                  <SelectItem value="credit">{t.history.typeCredit}</SelectItem>
+                  <SelectItem value="debit">{t.history.typeDebit}</SelectItem>
+                  <SelectItem value="fee">{t.history.typeFee}</SelectItem>
+                </SelectContent>
+              </Select>
+              {filteredTransactions && filteredTransactions.length > 0 && (
+                <Button 
+                  onClick={handleExportCSV}
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  data-testid="button-export-csv"
+                >
+                  <Download className="w-4 h-4" />
+                  <span className="hidden sm:inline">Exporter CSV</span>
+                  <span className="sm:hidden">CSV</span>
+                </Button>
+              )}
+            </div>
           </div>
         </DashboardCard>
 
