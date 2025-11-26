@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { useLocation } from 'wouter';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -37,6 +37,7 @@ function HistorySkeleton() {
 
 export default function History() {
   const t = useTranslations();
+  const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
 
@@ -225,12 +226,25 @@ export default function History() {
             <div className="divide-y divide-border/50">
               {filteredTransactions.map((transaction, index) => {
                 const isTransfer = transaction.type === 'debit' && transaction.description.toLowerCase().includes('transfer');
-                const transferUrl = transaction.transferId ? `/transfer/${transaction.transferId}` : (isTransfer ? `/transfer/${transaction.id}` : null);
+                const isClickable = isTransfer || !!transaction.transferId;
                 
-                const content = (
-                  <div className={`p-5 hover-elevate active-elevate-2 transition-all ${index === 0 ? 'rounded-t-2xl' : ''} ${
-                    index === filteredTransactions.length - 1 ? 'rounded-b-2xl' : ''
-                  }`}>
+                return (
+                  <div
+                    key={transaction.id}
+                    data-testid={`row-transaction-${transaction.id}`}
+                    onClick={() => {
+                      if (isTransfer) {
+                        setLocation(`/transfer/${transaction.id}`);
+                      } else if (transaction.transferId) {
+                        setLocation(`/transfer/${transaction.transferId}`);
+                      }
+                    }}
+                    className={`p-5 hover-elevate active-elevate-2 transition-all ${
+                      isClickable ? 'cursor-pointer' : ''
+                    } ${index === 0 ? 'rounded-t-2xl' : ''} ${
+                      index === filteredTransactions.length - 1 ? 'rounded-b-2xl' : ''
+                    }`}
+                  >
                     <div className="flex items-center gap-5">
                       {/* Icon */}
                       <div className="flex-shrink-0">
@@ -271,16 +285,6 @@ export default function History() {
                         </p>
                       </div>
                     </div>
-                  </div>
-                );
-                
-                return (
-                  <div key={transaction.id} data-testid={`row-transaction-${transaction.id}`}>
-                    {transferUrl ? (
-                      <Link href={transferUrl}>{content}</Link>
-                    ) : (
-                      content
-                    )}
                   </div>
                 );
               })}
