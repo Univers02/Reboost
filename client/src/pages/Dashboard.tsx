@@ -197,11 +197,11 @@ export default function Dashboard() {
     : 0;
 
   return (
-    <div className="bg-background">
-      <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 max-w-[1600px] mx-auto animate-fade-in">
+    <div className="bg-background min-h-screen">
+      <div className="p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 sm:space-y-6 md:space-y-8 max-w-[1600px] mx-auto animate-fade-in w-full overflow-x-hidden">
         {/* Contracts Notification Banner */}
         {contractsToSign.length > 0 && (
-          <div className="bg-gradient-to-r from-blue-50 to-blue-50/50 dark:from-blue-950/20 dark:to-blue-950/10 border border-blue-200 dark:border-blue-900/30 rounded-xl p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4" data-testid="banner-pending-contracts">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-50/50 dark:from-blue-950/20 dark:to-blue-950/10 border border-blue-200 dark:border-blue-900/30 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 w-full" data-testid="banner-pending-contracts">
             <div className="flex items-start gap-4">
               <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex-shrink-0 mt-0.5">
                 <FileSignature className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -255,7 +255,7 @@ export default function Dashboard() {
                 </h2>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6" data-testid="section-balance-kpis">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6" data-testid="section-balance-kpis">
                 <UserStat
                   label={t.dashboard.availableCredit}
                   value={dashboardData.balance.availableCredit}
@@ -278,7 +278,7 @@ export default function Dashboard() {
             </div>
 
             {/* Trend Visualization */}
-            <div className="h-24 sm:h-32 w-full lg:w-96 flex items-end" data-testid="chart-balance-trend">
+            <div className="h-20 sm:h-24 md:h-32 w-full lg:w-96 flex items-end" data-testid="chart-balance-trend">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={[
                   { month: 1, value: 45000 },
@@ -309,40 +309,41 @@ export default function Dashboard() {
         </DashboardCard>
 
         {/* Quick Actions - Fintech Style */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4 w-full">
           <Link href="/transfer/new">
-            <Button size="lg" className="gap-2 shadow-md w-full" data-testid="button-new-transfer">
-              <Send className="w-4 h-4" />
-              <span className="text-sm sm:text-base">{t.dashboard.newTransfer}</span>
+            <Button size="sm" sm:size="lg" className="gap-1 sm:gap-2 shadow-md w-full text-xs sm:text-sm" data-testid="button-new-transfer">
+              <Send className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span>{t.dashboard.newTransfer}</span>
             </Button>
           </Link>
           <Button 
-            size="lg"
+            size="sm" 
+            sm:size="lg"
             variant="outline" 
-            className="gap-2 w-full" 
+            className="gap-1 sm:gap-2 w-full text-xs sm:text-sm" 
             onClick={() => setLoanModalOpen(true)}
             data-testid="button-request-loan"
           >
-            <Plus className="w-4 h-4" />
-            <span className="text-sm sm:text-base">{t.dashboard.requestLoan}</span>
+            <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span>{t.dashboard.requestLoan}</span>
           </Button>
           <Link href="/accounts">
-            <Button size="lg" variant="outline" className="gap-2 w-full" data-testid="button-manage-accounts">
-              <Wallet className="w-4 h-4" />
-              <span className="text-sm sm:text-base">{t.dashboard.manageAccounts}</span>
+            <Button size="sm" sm:size="lg" variant="outline" className="gap-1 sm:gap-2 w-full text-xs sm:text-sm" data-testid="button-manage-accounts">
+              <Wallet className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span>{t.dashboard.manageAccounts}</span>
             </Button>
           </Link>
         </div>
 
         {/* Analytics Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 w-full">
           {/* Cashflow Chart - Stripe Style */}
           <DashboardCard 
             title={t.dashboard.cashflow}
             subtitle={t.dashboard.incomeExpensesSixMonths}
             className="lg:col-span-2"
           >
-            <div className="h-64 sm:h-72 md:h-80" data-testid="chart-cashflow">
+            <div className="h-48 sm:h-60 md:h-72 lg:h-80" data-testid="chart-cashflow">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={mockCashflowData}>
                   <defs>
@@ -440,7 +441,7 @@ export default function Dashboard() {
         </div>
 
         {/* Loans & Repayments Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6 w-full">
           {/* Active Loans */}
           <DashboardCard
             title={t.dashboard.activeLoans}
@@ -531,7 +532,7 @@ export default function Dashboard() {
                 <Skeleton className="h-24 w-full" />
               </div>
             ) : repaymentsData && repaymentsData.length > 0 ? (
-              <div className="h-64 mt-4" data-testid="chart-upcoming-repayments">
+              <div className="h-48 sm:h-60 md:h-64 mt-3 sm:mt-4" data-testid="chart-upcoming-repayments">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={repaymentsData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
