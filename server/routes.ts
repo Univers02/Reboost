@@ -31,6 +31,7 @@ import { fileTypeFromFile } from "file-type";
 import { db } from "./db";
 import { generateAndSendOTP, verifyOTP } from "./services/otp";
 import { generateTwoFactorSecret, generateQRCode, verifyTwoFactorToken } from "./services/twoFactor";
+import { encryptSecret } from "./services/encryption";
 import jwt from "jsonwebtoken";
 import { 
   notifyLoanApproved, 
@@ -879,8 +880,10 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
 
       // Persister le secret temporairement (sans activer le 2FA encore)
       // Cela permet de vérifier le code lors de l'étape suivante
+      // 🔐 Le secret est chiffré avant stockage
+      const encryptedSecret = encryptSecret(secret);
       await db.update(users)
-        .set({ twoFactorSecret: secret, updatedAt: new Date() })
+        .set({ twoFactorSecret: encryptedSecret, updatedAt: new Date() })
         .where(eq(users.id, userId));
 
       res.json({
@@ -920,12 +923,13 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
         return res.status(403).json({ error: 'Accès refusé - Administrateurs uniquement' });
       }
 
-      // Vérifier que le secret correspond à celui dans la BD
-      if (!user.twoFactorSecret || user.twoFactorSecret !== secret) {
+      // Vérifier le token contre le secret persisté (qui est chiffré en BD)
+      // verifyTwoFactorToken déchiffre automatiquement
+      if (!user.twoFactorSecret) {
         return res.status(401).json({ error: 'Secret invalide ou expiré. Veuillez recommencer la configuration.' });
       }
 
-      // Vérifier le token contre le secret persisté
+      // Vérifier le token contre le secret persisté (déchiffrement auto)
       const isValid = verifyTwoFactorToken(user.twoFactorSecret, token);
       if (!isValid) {
         return res.status(401).json({ error: 'Code invalide' });

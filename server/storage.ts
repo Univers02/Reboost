@@ -61,6 +61,7 @@ import { db } from "./db";
 import { eq, desc, and, or, isNull, notExists, inArray, sql, sql as sqlDrizzle } from "drizzle-orm";
 import path from "path";
 import fs from "fs";
+import { encryptSecret } from "./services/encryption";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -2801,9 +2802,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async enable2FA(userId: string, secret: string): Promise<User | undefined> {
+    // 🔐 Chiffrer le secret avant stockage
+    const encryptedSecret = encryptSecret(secret);
     const result = await db.update(users)
       .set({ 
-        twoFactorSecret: secret,
+        twoFactorSecret: encryptedSecret,
         twoFactorEnabled: true,
         updatedAt: new Date()
       })
