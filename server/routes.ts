@@ -5065,7 +5065,7 @@ ${urls.map(url => `  <url>
       });
       
       // Also notify the other party that their message was read
-      const otherUserId = user.role === 'admin' ? conversation.userId : (conversation.assignedAdminId || 'admin');
+      const otherUserId = user?.role === 'admin' ? conversation.userId : (conversation.assignedAdminId || 'admin');
       if (otherUserId) {
         io.to(`user:${otherUserId}`).emit('chat:read-receipt', {
           conversationId: conversationId,
