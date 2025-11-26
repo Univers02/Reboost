@@ -139,104 +139,104 @@ export default function AdminChat() {
 
       <div className="flex h-screen bg-background">
         <div className="w-96 border-r flex flex-col" data-testid="admin-chat-sidebar">
-        <div className="p-4 border-b">
-          <h2 className="text-xl font-bold mb-4" data-testid="text-admin-chat-title">
-            Conversations
-          </h2>
+          <div className="p-4 border-b">
+            <h2 className="text-xl font-bold mb-4" data-testid="text-admin-chat-title">
+              Conversations
+            </h2>
 
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <Card className="hover-elevate">
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-yellow-500" />
-                  <div>
-                    <div className="text-2xl font-bold" data-testid="text-open-count">
-                      {openCount}
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              <Card className="hover-elevate">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-yellow-500" />
+                    <div>
+                      <div className="text-2xl font-bold" data-testid="text-open-count">
+                        {openCount}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Ouvertes</div>
                     </div>
-                    <div className="text-xs text-muted-foreground">Ouvertes</div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card className="hover-elevate">
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  <div>
-                    <div className="text-2xl font-bold" data-testid="text-closed-count">
-                      {closedCount}
+              <Card className="hover-elevate">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <div>
+                      <div className="text-2xl font-bold" data-testid="text-closed-count">
+                        {closedCount}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Fermées</div>
                     </div>
-                    <div className="text-xs text-muted-foreground">Fermées</div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card className="hover-elevate">
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2">
-                  <XCircle className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <div className="text-2xl font-bold" data-testid="text-total-count">
-                      {allConversations.length}
+              <Card className="hover-elevate">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2">
+                    <XCircle className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <div className="text-2xl font-bold" data-testid="text-total-count">
+                        {allConversations.length}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Total</div>
                     </div>
-                    <div className="text-xs text-muted-foreground">Total</div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="space-y-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Rechercher..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-                data-testid="input-search-conversations"
-              />
+                </CardContent>
+              </Card>
             </div>
 
-            <Select
-              value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value as "all" | "open" | "closed")}
-            >
-              <SelectTrigger data-testid="select-status-filter">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toutes</SelectItem>
-                <SelectItem value="open">Ouvertes</SelectItem>
-                <SelectItem value="closed">Fermées</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-2">
-          {filteredConversations.length === 0 ? (
-            <div className="text-center text-muted-foreground p-6" data-testid="empty-conversations">
-              <p>Aucune conversation</p>
-            </div>
-          ) : (
             <div className="space-y-2">
-              {filteredConversations.map((conversation) => (
-                <ConversationCard
-                  key={conversation.id}
-                  conversation={conversation}
-                  isSelected={selectedConversationId === conversation.id}
-                  onClick={() => setSelectedConversationId(conversation.id)}
-                  onAssign={() => handleAssignToMe(conversation.id)}
-                  currentAdminId={user?.id}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Rechercher..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                  data-testid="input-search-conversations"
                 />
-              ))}
+              </div>
+
+              <Select
+                value={statusFilter}
+                onValueChange={(value) => setStatusFilter(value as "all" | "open" | "closed")}
+              >
+                <SelectTrigger data-testid="select-status-filter">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Toutes</SelectItem>
+                  <SelectItem value="open">Ouvertes</SelectItem>
+                  <SelectItem value="closed">Fermées</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          )}
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-2">
+            {filteredConversations.length === 0 ? (
+              <div className="text-center text-muted-foreground p-6" data-testid="empty-conversations">
+                <p>Aucune conversation</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filteredConversations.map((conversation) => (
+                  <ConversationCard
+                    key={conversation.id}
+                    conversation={conversation}
+                    isSelected={selectedConversationId === conversation.id}
+                    onClick={() => setSelectedConversationId(conversation.id)}
+                    onAssign={() => handleAssignToMe(conversation.id)}
+                    currentAdminId={user?.id}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
       <div className="flex-1 flex flex-col">
         {/* Back Button Header */}
@@ -301,6 +301,8 @@ export default function AdminChat() {
             </div>
           </div>
         )}
+      </div>
+        </div>
       </div>
     </>
   );
