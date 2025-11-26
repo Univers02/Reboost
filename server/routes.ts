@@ -63,6 +63,7 @@ import cloudinary from "./config/cloudinary";
 import { PassThrough } from "stream";
 import { generateUploadUrl, generateDownloadUrl, uploadFile } from "./services/supabase-storage";
 import DOMPurify from "isomorphic-dompurify";
+import { PDFDocument, PDFPage, rgb } from "pdf-lib";
 
 export async function registerRoutes(app: Express, sessionMiddleware: any): Promise<Server> {
   // SÉCURITÉ: Accès aux fichiers via endpoints protégés uniquement
@@ -5444,6 +5445,243 @@ ${urls.map(url => `  <url>
     } catch (error: any) {
       console.error('[CHAT] Erreur récupération utilisateurs en ligne:', error);
       res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs en ligne' });
+    }
+  });
+
+  // Download Amortization Table PDF
+  app.get("/api/loans/:id/download-amortization", requireAuth, async (req, res) => {
+    try {
+      const loan = await storage.getLoan(req.params.id);
+      
+      if (!loan) {
+        return res.status(404).json({ error: 'Prêt non trouvé' });
+      }
+
+      if (loan.userId !== req.session.userId) {
+        const user = await storage.getUser(req.session.userId!);
+        if (!user || user.role !== 'admin') {
+          return res.status(403).json({ error: 'Accès refusé' });
+        }
+      }
+
+      if (loan.status !== 'active') {
+        return res.status(400).json({ error: 'Le tableau d\'amortissement n\'est disponible que pour les prêts actifs' });
+      }
+
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage([595, 842]);
+      const { height } = page.getSize();
+      
+      let yPosition = height - 50;
+      
+      // Header
+      page.drawText('TABLEAU D\'AMORTISSEMENT', {
+        x: 50,
+        y: yPosition,
+        size: 24,
+        color: rgb(0, 0, 0),
+      });
+      
+      yPosition -= 30;
+      page.drawText(`Prêt: ${loan.loanReference}`, {
+        x: 50,
+        y: yPosition,
+        size: 12,
+        color: rgb(0.3, 0.3, 0.3),
+      });
+      
+      yPosition -= 15;
+      page.drawText(`Montant: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(Number(loan.amount))}`, {
+        x: 50,
+        y: yPosition,
+        size: 11,
+        color: rgb(0.3, 0.3, 0.3),
+      });
+      
+      yPosition -= 15;
+      page.drawText(`Taux: ${loan.interestRate}% | Durée: ${loan.duration} mois`, {
+        x: 50,
+        y: yPosition,
+        size: 11,
+        color: rgb(0.3, 0.3, 0.3),
+      });
+      
+      yPosition -= 30;
+      
+      // Calculate amortization schedule
+      const monthlyRate = Number(loan.interestRate) / 100 / 12;
+      const numberOfPayments = loan.duration;
+      const principal = Number(loan.amount);
+      const monthlyPayment = (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+      
+      let remainingBalance = principal;
+      
+      // Table headers
+      page.drawText('Mois', { x: 50, y: yPosition, size: 10, color: rgb(1, 1, 1) });
+      page.drawText('Paiement', { x: 150, y: yPosition, size: 10, color: rgb(1, 1, 1) });
+      page.drawText('Intérêt', { x: 250, y: yPosition, size: 10, color: rgb(1, 1, 1) });
+      page.drawText('Principal', { x: 350, y: yPosition, size: 10, color: rgb(1, 1, 1) });
+      page.drawText('Solde', { x: 450, y: yPosition, size: 10, color: rgb(1, 1, 1) });
+      
+      // Draw header background
+      page.drawRectangle({
+        x: 40,
+        y: yPosition - 15,
+        width: 515,
+        height: 20,
+        color: rgb(0.2, 0.2, 0.2),
+      });
+      
+      yPosition -= 35;
+      
+      // Draw max 20 months per page
+      for (let i = 1; i <= Math.min(numberOfPayments, 20); i++) {
+        const interestPayment = remainingBalance * monthlyRate;
+        const principalPayment = monthlyPayment - interestPayment;
+        remainingBalance -= principalPayment;
+        
+        const rowText = `${i}`;
+        const paymentText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(monthlyPayment);
+        const interestText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(interestPayment);
+        const principalText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(principalPayment);
+        const balanceText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(Math.max(0, remainingBalance));
+        
+        page.drawText(rowText, { x: 50, y: yPosition, size: 9 });
+        page.drawText(paymentText, { x: 150, y: yPosition, size: 9 });
+        page.drawText(interestText, { x: 250, y: yPosition, size: 9 });
+        page.drawText(principalText, { x: 350, y: yPosition, size: 9 });
+        page.drawText(balanceText, { x: 450, y: yPosition, size: 9 });
+        
+        yPosition -= 15;
+      }
+      
+      const pdfBytes = await pdfDoc.save();
+      res.contentType('application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="amortization_${loan.loanReference}.pdf"`);
+      res.send(Buffer.from(pdfBytes));
+    } catch (error: any) {
+      console.error('Amortization PDF generation error:', error);
+      res.status(500).json({ error: 'Erreur lors de la génération du tableau d\'amortissement' });
+    }
+  });
+
+  // Download Monthly Statement PDF
+  app.get("/api/statement/download", requireAuth, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const user = await storage.getUser(userId);
+      const transactions = await storage.getUserTransactions(userId);
+      const loans = await storage.getUserLoans(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      }
+
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      
+      const monthTransactions = transactions?.filter(t => {
+        const transDate = new Date(t.createdAt);
+        return transDate >= monthStart && transDate <= monthEnd;
+      }) || [];
+
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage([595, 842]);
+      const { height } = page.getSize();
+      
+      let yPosition = height - 50;
+      
+      // Header
+      page.drawText('RELEVÉ DE COMPTE MENSUEL', {
+        x: 50,
+        y: yPosition,
+        size: 24,
+        color: rgb(0, 0, 0),
+      });
+      
+      yPosition -= 30;
+      page.drawText(`Client: ${user.fullName}`, {
+        x: 50,
+        y: yPosition,
+        size: 12,
+        color: rgb(0.3, 0.3, 0.3),
+      });
+      
+      yPosition -= 15;
+      page.drawText(`Période: ${monthStart.toLocaleDateString('fr-FR')} - ${monthEnd.toLocaleDateString('fr-FR')}`, {
+        x: 50,
+        y: yPosition,
+        size: 11,
+        color: rgb(0.3, 0.3, 0.3),
+      });
+      
+      yPosition -= 30;
+      
+      // Calculate summary
+      const totalCredits = monthTransactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+      const totalDebits = monthTransactions.filter(t => t.type === 'debit' || t.type === 'fee').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+      const monthlyFees = monthTransactions.filter(t => t.type === 'fee').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+      
+      // Summary section
+      page.drawText('RÉSUMÉ DU MOIS', { x: 50, y: yPosition, size: 12, color: rgb(0.2, 0.2, 0.2) });
+      yPosition -= 20;
+      
+      page.drawText(`Crédits reçus: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totalCredits)}`, {
+        x: 50,
+        y: yPosition,
+        size: 10,
+      });
+      yPosition -= 15;
+      
+      page.drawText(`Débits et frais: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totalDebits)}`, {
+        x: 50,
+        y: yPosition,
+        size: 10,
+      });
+      yPosition -= 15;
+      
+      page.drawText(`Frais appliqués: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(monthlyFees)}`, {
+        x: 50,
+        y: yPosition,
+        size: 10,
+      });
+      yPosition -= 25;
+      
+      // Transactions section
+      page.drawText('TRANSACTIONS', { x: 50, y: yPosition, size: 12, color: rgb(0.2, 0.2, 0.2) });
+      yPosition -= 20;
+      
+      // Table header
+      page.drawText('Date', { x: 50, y: yPosition, size: 9 });
+      page.drawText('Description', { x: 120, y: yPosition, size: 9 });
+      page.drawText('Type', { x: 350, y: yPosition, size: 9 });
+      page.drawText('Montant', { x: 450, y: yPosition, size: 9 });
+      
+      yPosition -= 15;
+      
+      // Draw transactions (max 20 per page)
+      const displayTransactions = monthTransactions.slice(0, 20);
+      for (const transaction of displayTransactions) {
+        const dateStr = new Date(transaction.createdAt).toLocaleDateString('fr-FR');
+        page.drawText(dateStr, { x: 50, y: yPosition, size: 8 });
+        page.drawText(transaction.description.substring(0, 25), { x: 120, y: yPosition, size: 8 });
+        page.drawText(transaction.type, { x: 350, y: yPosition, size: 8 });
+        page.drawText(new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(parseFloat(transaction.amount)), {
+          x: 450,
+          y: yPosition,
+          size: 8,
+        });
+        yPosition -= 12;
+      }
+      
+      const pdfBytes = await pdfDoc.save();
+      res.contentType('application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="statement_${now.getFullYear()}_${String(now.getMonth() + 1).padStart(2, '0')}.pdf"`);
+      res.send(Buffer.from(pdfBytes));
+    } catch (error: any) {
+      console.error('Statement PDF generation error:', error);
+      res.status(500).json({ error: 'Erreur lors de la génération du relevé de compte' });
     }
   });
 
