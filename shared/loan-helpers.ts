@@ -73,7 +73,7 @@ export function getLoanOfferLimits(loanType: string, accountType: 'individual' |
     return { minAmount: 1000, maxAmount: 75000, minDuration: 12, maxDuration: 84 };
   }
   
-  const amountRange = offer.amount.match(/(\d+\s?\d*)/g);
+  const amountRange = offer.amount.match(/\d{1,3}(?:\s\d{3})*/g);
   const minAmount = amountRange ? parseInt(amountRange[0].replace(/\s/g, '')) : 1000;
   const maxAmount = amountRange ? parseInt(amountRange[1].replace(/\s/g, '')) : 75000;
   
