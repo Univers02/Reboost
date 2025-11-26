@@ -48,7 +48,13 @@ export function MessageList({
 
   Object.entries(groupedMessages).forEach(([dateKey, { date, messages: dayMessages }]) => {
     flattenedItems.push({ type: "date", date, key: `date-${dateKey}` });
-    dayMessages.forEach((message) => {
+    // CRITICAL FIX: Sort messages by createdAt (ascending) within each day
+    // This ensures proper message ordering regardless of sender (user vs admin)
+    // Messages must be chronologically ordered like WhatsApp/Messenger
+    const sortedMessages = [...dayMessages].sort((a, b) => 
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    sortedMessages.forEach((message) => {
       flattenedItems.push({ type: "message", message, key: message.id });
     });
   });
