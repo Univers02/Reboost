@@ -4776,50 +4776,114 @@ ${urls.map(url => `  <url>
     content: z.string().min(1, 'Le message ne peut pas être vide').max(5000, 'Message trop long'),
   });
 
-  // Configure multer for chat file uploads
+  // Configure multer for chat file uploads with strict validation
   const chatUploadDir = path.join(process.cwd(), 'uploads', 'chat');
   if (!fs.existsSync(chatUploadDir)) {
     fs.mkdirSync(chatUploadDir, { recursive: true });
   }
 
+  // Temporary directory for multer uploads before validation
+  const chatTempDir = path.join(process.cwd(), 'uploads', 'chat_temp');
+  if (!fs.existsSync(chatTempDir)) {
+    fs.mkdirSync(chatTempDir, { recursive: true });
+  }
+
   const chatUpload = multer({
     storage: multer.diskStorage({
       destination: (req, file, cb) => {
-        cb(null, chatUploadDir);
+        cb(null, chatTempDir);
       },
       filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        // Use UUID for temporary file
+        const tempName = `${randomUUID()}_${Date.now()}`;
+        cb(null, tempName);
       },
     }),
-    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit (matches KYC documents)
     fileFilter: (req, file, cb) => {
-      // Allow common file types for chat
-      const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx|txt|xls|xlsx/;
+      // Initial quick validation - will do strict validation in endpoint
+      const allowedTypes = /jpeg|jpg|png|pdf|webp/i;
       const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-      const mimetype = allowedTypes.test(file.mimetype);
-      if (mimetype && extname) {
+      if (extname) {
         return cb(null, true);
       } else {
-        cb(new Error('Invalid file type'));
+        cb(new Error('Type de fichier non autorisé. Formats acceptés: PDF, JPEG, PNG, WEBP'));
       }
     },
   });
 
-  // Direct local upload endpoint (fallback)
+  // Direct local upload endpoint with security validation
   app.post("/api/chat/upload", requireAuth, requireCSRF, chatUpload.single('file'), async (req, res) => {
+    let tempFilePath: string | null = null;
     try {
       if (!req.file) {
-        return res.status(400).json({ error: 'No file provided' });
+        return res.status(400).json({ error: 'Aucun fichier fourni' });
       }
       
-      const fileUrl = req.file.filename;
-      const fileName = req.file.originalname;
+      tempFilePath = req.file.path;
+      const { validateAndCleanFile, deleteTemporaryFile } = await import('./fileValidator');
       
-      res.json({ fileUrl, fileName });
+      // Validate and clean file with magic byte verification
+      const cleanedFile = await validateAndCleanFile(tempFilePath, req.file.originalname);
+      console.log(`✓ Chat file cleaned and validated: ${cleanedFile.filename}`);
+      
+      // Save cleaned file with UUID name
+      const uniqueFileName = `${randomUUID()}_${cleanedFile.filename}`;
+      const finalFilePath = path.join(chatUploadDir, uniqueFileName);
+      await fs.promises.writeFile(finalFilePath, cleanedFile.buffer);
+      
+      const fileUrl = `/uploads/chat/${uniqueFileName}`;
+      
+      // Delete temporary file
+      await deleteTemporaryFile(tempFilePath);
+      
+      // Create audit log for file upload
+      try {
+        await storage.createAuditLog({
+          actorId: req.session.userId!,
+          actorRole: req.session.userRole || 'user',
+          action: 'upload_chat_file',
+          entityType: 'chat_message',
+          entityId: 'pending',
+          metadata: { 
+            fileName: cleanedFile.filename,
+            mimeType: cleanedFile.mimeType,
+            originalName: req.file.originalname
+          }
+        });
+      } catch (auditError) {
+        console.error('Failed to create audit log for chat file upload:', auditError);
+      }
+      
+      res.json({ 
+        fileUrl, 
+        fileName: cleanedFile.filename,
+        mimeType: cleanedFile.mimeType
+      });
     } catch (error: any) {
       console.error('[CHAT] Upload error:', error);
-      res.status(500).json({ error: 'File upload failed' });
+      
+      // Clean up temp file on error
+      if (tempFilePath) {
+        try {
+          const { deleteTemporaryFile } = await import('./fileValidator');
+          await deleteTemporaryFile(tempFilePath);
+        } catch (cleanupError) {
+          console.error('Failed to cleanup temp file:', cleanupError);
+        }
+      }
+      
+      if (error.message?.includes('Type de fichier')) {
+        return res.status(400).json({ error: error.message });
+      }
+      if (error.message?.includes('dépasse la taille')) {
+        return res.status(413).json({ error: 'Le fichier dépasse la taille maximale autorisée (10MB)' });
+      }
+      if (error.message?.includes('non autorisé')) {
+        return res.status(400).json({ error: 'Type de fichier non autorisé. Formats acceptés: PDF, JPEG, PNG, WEBP' });
+      }
+      
+      res.status(500).json({ error: 'Erreur lors de l\'envoi du fichier' });
     }
   });
 
