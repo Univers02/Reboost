@@ -157,9 +157,40 @@ export default function Auth() {
           variant: 'destructive',
         });
       } else if (error.errorCode === 'ACCOUNT_SUSPENDED') {
+        let description = translateBackendMessage(error.message, language) || 'Votre compte a été suspendu. Veuillez contacter le support.';
+        
+        // Ajouter les détails de suspension s'ils existent
+        if (error.suspendedUntil || error.reason) {
+          let details = [];
+          
+          if (error.reason) {
+            details.push(`Motif: ${error.reason}`);
+          }
+          
+          if (error.suspendedUntil) {
+            try {
+              const suspendDate = new Date(error.suspendedUntil);
+              const formattedDate = suspendDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+              details.push(`Jusqu'au: ${formattedDate}`);
+            } catch (e) {
+              // Ignore date formatting errors
+            }
+          }
+          
+          if (details.length > 0) {
+            description += '\n\n' + details.join('\n');
+          }
+        }
+        
         toast({
           title: t.auth.accountSuspended || 'Compte suspendu',
-          description: translateBackendMessage(error.message, language) || 'Votre compte a été suspendu. Veuillez contacter le support.',
+          description: description,
           variant: 'destructive',
         });
       } else if (error.errorCode === 'ACCOUNT_BLOCKED') {
