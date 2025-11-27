@@ -656,7 +656,7 @@ export default function TransferFlow() {
                     </SelectTrigger>
                     <SelectContent>
                       {externalAccounts?.map((account) => (
-                        <SelectItem key={account.id} value={account.id}>
+                        <SelectItem key={account.id} value={account.id} className="bg-transparent">
                           <div className="flex flex-col items-start">
                             <span className="font-medium">{account.accountLabel}</span>
                             <span className="text-xs text-muted-foreground font-mono">{account.iban}</span>
