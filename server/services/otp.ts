@@ -2,24 +2,27 @@ import crypto from "crypto";
 import { db } from "../db";
 import { userOtps } from "@shared/schema";
 import { eq, and, lt } from "drizzle-orm";
-import sgMail from '@sendgrid/mail';
+import * as brevo from '@getbrevo/brevo';
 
 async function getCredentials() {
-  const apiKey = process.env.SENDGRID_API_KEY;
-  const email = process.env.SENDGRID_FROM_EMAIL;
+  const apiKey = process.env.BREVO_API_KEY;
+  const email = process.env.BREVO_FROM_EMAIL;
 
   if (!apiKey || !email) {
-    throw new Error('SendGrid configuration missing: SENDGRID_API_KEY and SENDGRID_FROM_EMAIL must be set');
+    throw new Error('Brevo configuration missing: BREVO_API_KEY and BREVO_FROM_EMAIL must be set');
   }
 
   return { apiKey, email };
 }
 
-async function getSendGridClient() {
+async function getBrevoClient() {
   const { apiKey, email } = await getCredentials();
-  sgMail.setApiKey(apiKey);
+  
+  const apiInstance = new brevo.TransactionalEmailsApi();
+  apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, apiKey);
+  
   return {
-    client: sgMail,
+    client: apiInstance,
     fromEmail: email
   };
 }
@@ -36,7 +39,7 @@ export async function generateAndSendOTP(userId: string, userEmail: string, full
       used: false,
     });
 
-    const { client, fromEmail } = await getSendGridClient();
+    const { client, fromEmail } = await getBrevoClient();
     const { getOtpEmailTemplate } = await import('../emailTemplates');
     
     const template = getOtpEmailTemplate(language as any, {
@@ -44,15 +47,14 @@ export async function generateAndSendOTP(userId: string, userEmail: string, full
       otpCode: code,
     });
 
-    const msg = {
-      to: userEmail,
-      from: fromEmail,
-      subject: template.subject,
-      html: template.html,
-      text: template.text,
-    };
+    const sendSmtpEmail = new brevo.SendSmtpEmail();
+    sendSmtpEmail.subject = template.subject;
+    sendSmtpEmail.htmlContent = template.html;
+    sendSmtpEmail.textContent = template.text;
+    sendSmtpEmail.sender = { email: fromEmail, name: 'ALTUS FINANCES GROUP' };
+    sendSmtpEmail.to = [{ email: userEmail }];
 
-    await client.send(msg);
+    await client.sendTransacEmail(sendSmtpEmail);
     console.log(`OTP code sent to ${userEmail} in ${language}`);
   } catch (error) {
     console.error('Error generating/sending OTP:', error);

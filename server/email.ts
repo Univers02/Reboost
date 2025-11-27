@@ -1,4 +1,4 @@
-import sgMail from '@sendgrid/mail';
+import * as brevo from '@getbrevo/brevo';
 
 function escapeHtml(unsafe: string): string {
   return unsafe
@@ -10,23 +10,62 @@ function escapeHtml(unsafe: string): string {
 }
 
 async function getCredentials() {
-  const apiKey = process.env.SENDGRID_API_KEY;
-  const email = process.env.SENDGRID_FROM_EMAIL;
+  const apiKey = process.env.BREVO_API_KEY;
+  const email = process.env.BREVO_FROM_EMAIL;
 
   if (!apiKey || !email) {
-    throw new Error('SendGrid configuration missing: SENDGRID_API_KEY and SENDGRID_FROM_EMAIL must be set');
+    throw new Error('Brevo configuration missing: BREVO_API_KEY and BREVO_FROM_EMAIL must be set');
   }
 
   return { apiKey, email };
 }
 
-async function getUncachableSendGridClient() {
+async function getBrevoClient() {
   const { apiKey, email } = await getCredentials();
-  sgMail.setApiKey(apiKey);
+  
+  const apiInstance = new brevo.TransactionalEmailsApi();
+  apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, apiKey);
+  
   return {
-    client: sgMail,
+    client: apiInstance,
     fromEmail: email
   };
+}
+
+async function sendEmail(options: {
+  to: string;
+  from: string;
+  subject: string;
+  html: string;
+  text: string;
+  replyTo?: string;
+  attachments?: Array<{
+    content: string;
+    filename: string;
+    type: string;
+  }>;
+}) {
+  const { client, fromEmail } = await getBrevoClient();
+  
+  const sendSmtpEmail = new brevo.SendSmtpEmail();
+  sendSmtpEmail.subject = options.subject;
+  sendSmtpEmail.htmlContent = options.html;
+  sendSmtpEmail.textContent = options.text;
+  sendSmtpEmail.sender = { email: options.from, name: 'ALTUS FINANCES GROUP' };
+  sendSmtpEmail.to = [{ email: options.to }];
+  
+  if (options.replyTo) {
+    sendSmtpEmail.replyTo = { email: options.replyTo };
+  }
+  
+  if (options.attachments && options.attachments.length > 0) {
+    sendSmtpEmail.attachment = options.attachments.map(att => ({
+      content: att.content,
+      name: att.filename,
+    }));
+  }
+  
+  await client.sendTransacEmail(sendSmtpEmail);
 }
 
 function getBaseUrl(): string {
@@ -40,7 +79,7 @@ function getBaseUrl(): string {
 
 export async function sendVerificationEmail(toEmail: string, fullName: string, token: string, accountType: string, language: string = 'fr') {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     const { getEmailTemplate } = await import('./emailTemplates');
     
     const verificationUrl = `${getBaseUrl()}/verify/${token}`;
@@ -52,15 +91,14 @@ export async function sendVerificationEmail(toEmail: string, fullName: string, t
       accountTypeText,
     });
     
-    const msg = {
+    await sendEmail({
       to: toEmail,
       from: fromEmail,
       subject: template.subject,
       html: template.html,
       text: template.text,
-    };
+    });
 
-    await client.send(msg);
     console.log(`Verification email sent to ${toEmail} in ${language}`);
     return true;
   } catch (error) {
@@ -71,7 +109,7 @@ export async function sendVerificationEmail(toEmail: string, fullName: string, t
 
 export async function sendWelcomeEmail(toEmail: string, fullName: string, accountType: string, language: string = 'fr') {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     const { getEmailTemplate } = await import('./emailTemplates');
     
     const accountTypeText = accountType === 'personal' ? 'personal' : 'business';
@@ -83,15 +121,14 @@ export async function sendWelcomeEmail(toEmail: string, fullName: string, accoun
       loginUrl,
     });
     
-    const msg = {
+    await sendEmail({
       to: toEmail,
       from: fromEmail,
       subject: template.subject,
       html: template.html,
       text: template.text,
-    };
+    });
 
-    await client.send(msg);
     console.log(`Welcome email sent to ${toEmail} in ${language}`);
     return true;
   } catch (error) {
@@ -102,7 +139,7 @@ export async function sendWelcomeEmail(toEmail: string, fullName: string, accoun
 
 export async function sendContractEmail(toEmail: string, fullName: string, loanId: string, amount: string, contractUrl: string, language: string = 'fr') {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     const { getEmailTemplate } = await import('./emailTemplates');
     
     const dashboardUrl = `${getBaseUrl()}/contracts`;
@@ -115,15 +152,14 @@ export async function sendContractEmail(toEmail: string, fullName: string, loanI
       fromEmail,
     });
     
-    const msg = {
+    await sendEmail({
       to: toEmail,
       from: fromEmail,
       subject: template.subject,
       html: template.html,
       text: template.text,
-    };
+    });
 
-    await client.send(msg);
     console.log(`Contract email sent to ${toEmail} in ${language}`);
     return true;
   } catch (error) {
@@ -134,7 +170,7 @@ export async function sendContractEmail(toEmail: string, fullName: string, loanI
 
 export async function sendResetPasswordEmail(toEmail: string, fullName: string, token: string, language: string = 'fr') {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     
     const resetUrl = `${getBaseUrl()}/reset-password/${token}`;
     const safeName = escapeHtml(fullName);
@@ -157,7 +193,7 @@ export async function sendResetPasswordEmail(toEmail: string, fullName: string, 
         <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <tr>
             <td style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); padding: 40px 20px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">🔐 ${language === 'en' ? 'Password Reset' : 'Réinitialisation du mot de passe'}</h1>
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">${language === 'en' ? 'Password Reset' : 'Réinitialisation du mot de passe'}</h1>
             </td>
           </tr>
           <tr>
@@ -194,7 +230,7 @@ export async function sendResetPasswordEmail(toEmail: string, fullName: string, 
               </p>
               <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 0 0 20px 0;">
                 <p style="color: #92400e; font-size: 14px; line-height: 1.5; margin: 0;">
-                  <strong>⚠️ ${language === 'en' ? 'Important' : 'Important'} :</strong><br>
+                  <strong>${language === 'en' ? 'Important' : 'Important'} :</strong><br>
                   ${language === 'en'
                     ? 'This link will expire in 1 hour. If you didn\'t request a password reset, please ignore this email.'
                     : 'Ce lien expirera dans 1 heure. Si vous n\'avez pas demandé de réinitialisation de mot de passe, veuillez ignorer cet email.'}
@@ -206,7 +242,7 @@ export async function sendResetPasswordEmail(toEmail: string, fullName: string, 
             <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
               <p style="color: #6b7280; font-size: 14px; margin: 0;">
                 ALTUS FINANCES GROUP - ${language === 'en' ? 'Financing Solutions' : 'Solutions de financement'}<br>
-                © ${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
+                ${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
               </p>
             </td>
           </tr>
@@ -235,18 +271,17 @@ ${language === 'en'
   : 'Ce lien expirera dans 1 heure. Si vous n\'avez pas demandé de réinitialisation de mot de passe, veuillez ignorer cet email.'}
 
 ALTUS FINANCES GROUP
-© ${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
+${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
     `;
     
-    const msg = {
+    await sendEmail({
       to: toEmail,
       from: fromEmail,
       subject,
       html,
       text,
-    };
+    });
 
-    await client.send(msg);
     console.log(`Reset password email sent to ${toEmail} in ${language}`);
     return true;
   } catch (error) {
@@ -257,7 +292,7 @@ ALTUS FINANCES GROUP
 
 export async function sendContactFormEmail(name: string, email: string, phone: string, message: string) {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     
     const safeName = escapeHtml(name);
     const safeEmail = escapeHtml(email);
@@ -280,7 +315,7 @@ export async function sendContactFormEmail(name: string, email: string, phone: s
         <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <tr>
             <td style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); padding: 40px 20px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">📧 Nouveau message de contact</h1>
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Nouveau message de contact</h1>
             </td>
           </tr>
           <tr>
@@ -318,7 +353,7 @@ export async function sendContactFormEmail(name: string, email: string, phone: s
             <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
               <p style="color: #6b7280; font-size: 12px; margin: 0;">
                 ALTUS FINANCES GROUP<br>
-                © ${new Date().getFullYear()} Tous droits réservés.
+                ${new Date().getFullYear()} Tous droits réservés.
               </p>
             </td>
           </tr>
@@ -343,19 +378,18 @@ ${message}
 ---
 Ce message a été envoyé depuis le formulaire de contact du site Altus Finances Group.
 ALTUS FINANCES GROUP
-© ${new Date().getFullYear()} Tous droits réservés.
+${new Date().getFullYear()} Tous droits réservés.
     `;
     
-    const msg = {
+    await sendEmail({
       to: fromEmail,
       from: fromEmail,
       replyTo: email,
       subject,
       html,
       text,
-    };
+    });
 
-    await client.send(msg);
     console.log(`Contact form email sent from ${email}`);
     return true;
   } catch (error) {
@@ -373,7 +407,7 @@ export async function sendLoanRequestUserEmail(
   language: string = 'fr'
 ) {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     const { getEmailTemplate } = await import('./emailTemplates');
     
     const dashboardUrl = `${getBaseUrl()}/dashboard`;
@@ -386,15 +420,14 @@ export async function sendLoanRequestUserEmail(
       dashboardUrl,
     });
     
-    const msg = {
+    await sendEmail({
       to: toEmail,
       from: fromEmail,
       subject: template.subject,
       html: template.html,
       text: template.text,
-    };
+    });
 
-    await client.send(msg);
     console.log(`Loan request confirmation email sent to ${toEmail} in ${language}`);
     return true;
   } catch (error) {
@@ -423,7 +456,7 @@ export async function sendLoanRequestAdminEmail(
   language: string = 'fr'
 ) {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     const { getEmailTemplate } = await import('./emailTemplates');
     const fs = await import('fs/promises');
     const path = await import('path');
@@ -450,12 +483,10 @@ export async function sendLoanRequestAdminEmail(
       content: string;
       filename: string;
       type: string;
-      disposition: string;
     }> = [];
 
     for (const doc of documents) {
       try {
-        // Lire le fichier depuis le système de fichiers local
         const filePath = path.join(process.cwd(), doc.fileUrl);
         
         if (!(await fs.access(filePath).then(() => true).catch(() => false))) {
@@ -463,43 +494,35 @@ export async function sendLoanRequestAdminEmail(
           continue;
         }
 
-        // Lire le fichier (déjà validé et nettoyé lors de l'upload)
         const buffer = await fs.readFile(filePath);
         
-        // Détecter le type MIME
         const fileType = await fileTypeFromFile(filePath);
         const mimeType = fileType?.mime || 'application/octet-stream';
         
-        // Convertir en base64 pour SendGrid
         const base64Content = buffer.toString('base64');
         
         attachments.push({
           content: base64Content,
           filename: doc.fileName,
           type: mimeType,
-          disposition: 'attachment'
         });
         
-        console.log(`✓ Document attached: ${doc.fileName}`);
+        console.log(`Document attached: ${doc.fileName}`);
       } catch (error: any) {
         console.error(`Error processing document ${doc.fileName}:`, error.message || error);
       }
     }
     
-    const msg: any = {
+    await sendEmail({
       to: adminEmail,
       from: fromEmail,
       subject: template.subject,
       html: template.html,
       text: template.text,
-    };
+      attachments: attachments.length > 0 ? attachments : undefined,
+    });
 
-    if (attachments.length > 0) {
-      msg.attachments = attachments;
-    }
-
-    await client.send(msg);
-    console.log(`✅ Loan request admin notification sent to ${adminEmail} in ${language} with ${documents.length} documents (${attachments.length} cleaned & attached)`);
+    console.log(`Loan request admin notification sent to ${adminEmail} in ${language} with ${documents.length} documents (${attachments.length} attached)`);
     return true;
   } catch (error) {
     console.error('Error sending loan request admin notification:', error);
@@ -516,7 +539,7 @@ export async function sendKYCUploadedAdminEmail(
   language: string = 'fr'
 ) {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     const { getEmailTemplate } = await import('./emailTemplates');
     
     const adminEmail = process.env.ADMIN_EMAIL || fromEmail;
@@ -531,15 +554,14 @@ export async function sendKYCUploadedAdminEmail(
       reviewUrl,
     });
     
-    const msg = {
+    await sendEmail({
       to: adminEmail,
       from: fromEmail,
       subject: template.subject,
       html: template.html,
       text: template.text,
-    };
+    });
 
-    await client.send(msg);
     console.log(`KYC uploaded admin notification sent to ${adminEmail} in ${language}`);
     return true;
   } catch (error) {
@@ -557,7 +579,7 @@ export async function sendLoanApprovedEmail(
   language: string = 'fr'
 ) {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     const { getEmailTemplate } = await import('./emailTemplates');
     
     const loginUrl = `${getBaseUrl()}/login`;
@@ -570,15 +592,14 @@ export async function sendLoanApprovedEmail(
       loginUrl,
     });
     
-    const msg = {
+    await sendEmail({
       to: toEmail,
       from: fromEmail,
       subject: template.subject,
       html: template.html,
       text: template.text,
-    };
+    });
 
-    await client.send(msg);
     console.log(`Loan approved email sent to ${toEmail} in ${language}`);
     return true;
   } catch (error) {
@@ -597,7 +618,7 @@ export async function sendTransferInitiatedAdminEmail(
   language: string = 'fr'
 ) {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     const { getEmailTemplate } = await import('./emailTemplates');
     
     const adminEmail = process.env.ADMIN_EMAIL || fromEmail;
@@ -613,15 +634,14 @@ export async function sendTransferInitiatedAdminEmail(
       reviewUrl,
     });
     
-    const msg = {
+    await sendEmail({
       to: adminEmail,
       from: fromEmail,
       subject: template.subject,
       html: template.html,
       text: template.text,
-    };
+    });
 
-    await client.send(msg);
     console.log(`Transfer initiated admin notification sent to ${adminEmail} in ${language}`);
     return true;
   } catch (error) {
@@ -641,7 +661,7 @@ export async function sendTransferCodeEmail(
   language: string = 'fr'
 ) {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
+    const { fromEmail } = await getBrevoClient();
     const { getEmailTemplate } = await import('./emailTemplates');
     
     const template = getEmailTemplate('transferCodeUser', language as any, {
@@ -653,15 +673,14 @@ export async function sendTransferCodeEmail(
       totalCodes: totalCodes.toString(),
     });
     
-    const msg = {
+    await sendEmail({
       to: toEmail,
       from: fromEmail,
       subject: template.subject,
       html: template.html,
       text: template.text,
-    };
+    });
 
-    await client.send(msg);
     console.log(`Transfer code email (${codeSequence}/${totalCodes}) sent to ${toEmail} in ${language}`);
     return true;
   } catch (error) {
@@ -680,27 +699,113 @@ export async function sendTransferCompletedEmail(
   language: string = 'fr'
 ) {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
-    const { getEmailTemplate } = await import('./emailTemplates');
+    const { fromEmail } = await getBrevoClient();
+    const safeName = escapeHtml(fullName);
+    const safeRecipient = escapeHtml(recipient);
     
-    const template = getEmailTemplate('transferCompletedUser', language as any, {
-      fullName,
-      amount,
-      recipient,
-      recipientIban,
-      transferId,
-      supportEmail: 'support@altusfinancesgroup.com',
-    });
+    const subject = language === 'en' 
+      ? `Transfer Completed - ${amount}` 
+      : `Virement effectué - ${amount}`;
     
-    const msg = {
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f4f4f4; padding: 20px 0;">
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <tr>
+            <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">${language === 'en' ? 'Transfer Completed' : 'Virement effectué'}</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 40px 30px;">
+              <p style="color: #374151; font-size: 16px; line-height: 1.5; margin: 0 0 20px 0;">
+                ${language === 'en' ? 'Hello' : 'Bonjour'} <strong>${safeName}</strong>,
+              </p>
+              <p style="color: #374151; font-size: 16px; line-height: 1.5; margin: 0 0 30px 0;">
+                ${language === 'en' 
+                  ? 'Your transfer has been successfully completed.'
+                  : 'Votre virement a été effectué avec succès.'}
+              </p>
+              
+              <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                <table cellpadding="8" cellspacing="0" border="0" width="100%">
+                  <tr>
+                    <td style="color: #6b7280; font-weight: bold; width: 140px;">${language === 'en' ? 'Amount' : 'Montant'} :</td>
+                    <td style="color: #059669; font-weight: bold; font-size: 18px;">${amount}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #6b7280; font-weight: bold;">${language === 'en' ? 'Recipient' : 'Bénéficiaire'} :</td>
+                    <td style="color: #1f2937;">${safeRecipient}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #6b7280; font-weight: bold;">IBAN :</td>
+                    <td style="color: #1f2937; font-family: monospace;">${recipientIban}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #6b7280; font-weight: bold;">${language === 'en' ? 'Reference' : 'Référence'} :</td>
+                    <td style="color: #1f2937; font-family: monospace;">${transferId}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              <p style="color: #6b7280; font-size: 14px; line-height: 1.5; margin: 0;">
+                ${language === 'en'
+                  ? 'You can view this transaction in your dashboard.'
+                  : 'Vous pouvez consulter cette transaction dans votre tableau de bord.'}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="color: #6b7280; font-size: 14px; margin: 0;">
+                ALTUS FINANCES GROUP - ${language === 'en' ? 'Financing Solutions' : 'Solutions de financement'}<br>
+                ${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `;
+    
+    const text = `${language === 'en' ? 'Hello' : 'Bonjour'} ${fullName},
+
+${language === 'en' 
+  ? 'Your transfer has been successfully completed.'
+  : 'Votre virement a été effectué avec succès.'}
+
+${language === 'en' ? 'Amount' : 'Montant'}: ${amount}
+${language === 'en' ? 'Recipient' : 'Bénéficiaire'}: ${recipient}
+IBAN: ${recipientIban}
+${language === 'en' ? 'Reference' : 'Référence'}: ${transferId}
+
+${language === 'en'
+  ? 'You can view this transaction in your dashboard.'
+  : 'Vous pouvez consulter cette transaction dans votre tableau de bord.'}
+
+ALTUS FINANCES GROUP
+${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
+    `;
+    
+    await sendEmail({
       to: toEmail,
       from: fromEmail,
-      subject: template.subject,
-      html: template.html,
-      text: template.text,
-    };
+      subject,
+      html,
+      text,
+    });
 
-    await client.send(msg);
     console.log(`Transfer completed email sent to ${toEmail} in ${language}`);
     return true;
   } catch (error) {
@@ -709,130 +814,19 @@ export async function sendTransferCompletedEmail(
   }
 }
 
-export async function sendAdminTransferCompletionReport(
-  transferId: string,
-  userId: string,
+export async function sendOTPEmail(
+  toEmail: string,
   fullName: string,
-  email: string,
-  amount: string,
-  recipient: string,
-  recipientIban: string,
-  completedAt: Date,
-  totalValidations: number,
+  otpCode: string,
   language: string = 'fr'
 ) {
   try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
-    const { getEmailTemplate } = await import('./emailTemplates');
-    
-    const adminEmail = process.env.ADMIN_EMAIL || fromEmail;
-    const reviewUrl = `${getBaseUrl()}/admin/transfers/${transferId}`;
-    
-    const template = getEmailTemplate('transferCompletedAdmin', language as any, {
-      fullName,
-      email,
-      amount,
-      recipient,
-      recipientIban,
-      transferId,
-      userId,
-      completedAt: completedAt.toLocaleString('fr-FR'),
-      totalValidations: totalValidations.toString(),
-      reviewUrl,
-    });
-    
-    const msg = {
-      to: adminEmail,
-      from: fromEmail,
-      subject: template.subject,
-      html: template.html,
-      text: template.text,
-    };
-
-    await client.send(msg);
-    console.log(`Transfer completion report sent to admin at ${adminEmail} in ${language}`);
-    return true;
-  } catch (error) {
-    console.error('Error sending admin transfer completion report:', error);
-    throw error;
-  }
-}
-
-export async function sendTransferCodesAdminEmail(
-  fullName: string,
-  amount: string,
-  loanId: string,
-  codes: Array<{ sequence: number; code: string; pausePercent: number; context: string }>,
-  language: string = 'fr'
-) {
-  try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
-    const { getEmailTemplate } = await import('./emailTemplates');
-    
-    const adminEmail = process.env.ADMIN_EMAIL || fromEmail;
-    
-    const template = getEmailTemplate('transferCodesAdmin', language as any, {
-      fullName,
-      amount,
-      loanId,
-      codes,
-    });
-    
-    const msg = {
-      to: adminEmail,
-      from: fromEmail,
-      subject: template.subject,
-      html: template.html,
-      text: template.text,
-    };
-
-    await client.send(msg);
-    console.log(`Transfer codes admin email sent to ${adminEmail} in ${language}`);
-    return true;
-  } catch (error) {
-    console.error('Error sending transfer codes admin email:', error);
-    throw error;
-  }
-}
-
-export async function sendSignedContractToAdmins(
-  userFullName: string,
-  userEmail: string,
-  loanId: string,
-  amount: string,
-  fileBuffer: Buffer,
-  fileName: string,
-  mimeType: string,
-  language: string = 'fr'
-) {
-  try {
-    const { client, fromEmail } = await getUncachableSendGridClient();
-    const { storage } = await import('./storage');
-    
-    // Get admin email from env or fetch admin users from database
-    let adminEmails: string[] = [];
-    const adminEmailEnv = process.env.ADMIN_EMAIL || process.env.SENDGRID_ADMIN_EMAILS;
-    
-    if (adminEmailEnv) {
-      adminEmails = adminEmailEnv.split(',').map(e => e.trim());
-    } else {
-      // Fallback: fetch all admin users from database
-      const allUsers = await storage.getAllUsers();
-      const admins = allUsers.filter(u => u.role === 'admin');
-      adminEmails = admins.map(a => a.email);
-    }
-    
-    if (adminEmails.length === 0) {
-      adminEmails = [fromEmail];
-    }
-    
-    const reviewUrl = `${getBaseUrl()}/admin/loans`;
-    const safeName = escapeHtml(userFullName);
-    const safeEmail = escapeHtml(userEmail);
+    const { fromEmail } = await getBrevoClient();
+    const safeName = escapeHtml(fullName);
     
     const subject = language === 'en' 
-      ? `Signed Contract Received - Loan #${loanId}`
-      : `Contrat signé reçu - Prêt #${loanId}`;
+      ? 'Your verification code - ALTUS FINANCES GROUP'
+      : 'Votre code de vérification - ALTUS FINANCES GROUP';
     
     const html = `
 <!DOCTYPE html>
@@ -848,69 +842,34 @@ export async function sendSignedContractToAdmins(
         <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <tr>
             <td style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); padding: 40px 20px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">📄 ${language === 'en' ? 'Signed Contract Received' : 'Contrat signé reçu'}</h1>
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">${language === 'en' ? 'Verification Code' : 'Code de vérification'}</h1>
             </td>
           </tr>
           <tr>
             <td style="padding: 40px 30px;">
-              <h2 style="color: #1f2937; font-size: 20px; margin: 0 0 20px 0;">${language === 'en' ? 'Loan Details:' : 'Détails du prêt :'}</h2>
-              
-              <table cellpadding="8" cellspacing="0" border="0" width="100%" style="margin-bottom: 30px;">
-                <tr>
-                  <td style="color: #6b7280; font-weight: bold; width: 180px;">${language === 'en' ? 'Borrower:' : 'Emprunteur :'}</td>
-                  <td style="color: #1f2937;">${safeName}</td>
-                </tr>
-                <tr>
-                  <td style="color: #6b7280; font-weight: bold;">${language === 'en' ? 'Email:' : 'Email :'}</td>
-                  <td style="color: #1f2937;"><a href="mailto:${safeEmail}" style="color: #2563eb; text-decoration: none;">${safeEmail}</a></td>
-                </tr>
-                <tr>
-                  <td style="color: #6b7280; font-weight: bold;">${language === 'en' ? 'Loan ID:' : 'ID du prêt :'}</td>
-                  <td style="color: #1f2937;">${loanId}</td>
-                </tr>
-                <tr>
-                  <td style="color: #6b7280; font-weight: bold;">${language === 'en' ? 'Amount:' : 'Montant :'}</td>
-                  <td style="color: #1f2937; font-weight: bold; font-size: 18px;">${amount}€</td>
-                </tr>
-                <tr>
-                  <td style="color: #6b7280; font-weight: bold;">${language === 'en' ? 'Uploaded at:' : 'Uploadé le :'}</td>
-                  <td style="color: #1f2937;">${new Date().toLocaleString(language === 'en' ? 'en-US' : 'fr-FR')}</td>
-                </tr>
-              </table>
-              
-              <div style="background-color: #e0f2fe; border-left: 4px solid #0ea5e9; padding: 20px; border-radius: 4px; margin-bottom: 30px;">
-                <p style="color: #0c4a6e; font-size: 15px; line-height: 1.6; margin: 0;">
-                  <strong>📎 ${language === 'en' ? 'Attachment:' : 'Pièce jointe :'}</strong><br>
-                  ${language === 'en' 
-                    ? 'The signed contract is attached to this email for your review.' 
-                    : 'Le contrat signé est joint à cet email pour vérification.'}
-                </p>
+              <p style="color: #374151; font-size: 16px; line-height: 1.5; margin: 0 0 20px 0;">
+                ${language === 'en' ? 'Hello' : 'Bonjour'} <strong>${safeName}</strong>,
+              </p>
+              <p style="color: #374151; font-size: 16px; line-height: 1.5; margin: 0 0 30px 0;">
+                ${language === 'en' 
+                  ? 'Here is your verification code:'
+                  : 'Voici votre code de vérification :'}
+              </p>
+              <div style="background-color: #f3f4f6; border-radius: 8px; padding: 30px; text-align: center; margin-bottom: 30px;">
+                <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #1f2937;">${otpCode}</span>
               </div>
-              
-              <table cellpadding="0" cellspacing="0" border="0" width="100%">
-                <tr>
-                  <td align="center" style="padding: 0 0 20px 0;">
-                    <a href="${reviewUrl}" style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;">
-                      ${language === 'en' ? 'Review in Admin Panel' : 'Consulter dans le panneau admin'}
-                    </a>
-                  </td>
-                </tr>
-              </table>
-              
-              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                <p style="color: #6b7280; font-size: 13px; margin: 0;">
-                  ${language === 'en' 
-                    ? 'This email was automatically sent by ALTUS FINANCES GROUP platform.' 
-                    : 'Cet email a été envoyé automatiquement par la plateforme ALTUS FINANCES GROUP.'}
-                </p>
-              </div>
+              <p style="color: #6b7280; font-size: 14px; line-height: 1.5; margin: 0 0 20px 0;">
+                ${language === 'en'
+                  ? 'This code will expire in 10 minutes. Do not share it with anyone.'
+                  : 'Ce code expirera dans 10 minutes. Ne le partagez avec personne.'}
+              </p>
             </td>
           </tr>
           <tr>
-            <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
-              <p style="color: #6b7280; font-size: 12px; margin: 0;">
-                ALTUS FINANCES GROUP<br>
-                © ${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
+            <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="color: #6b7280; font-size: 14px; margin: 0;">
+                ALTUS FINANCES GROUP - ${language === 'en' ? 'Financing Solutions' : 'Solutions de financement'}<br>
+                ${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
               </p>
             </td>
           </tr>
@@ -922,54 +881,34 @@ export async function sendSignedContractToAdmins(
 </html>
     `;
     
-    const text = `${language === 'en' ? 'Signed Contract Received' : 'Contrat signé reçu'}
-
-${language === 'en' ? 'Loan Details:' : 'Détails du prêt :'}
-${language === 'en' ? 'Borrower:' : 'Emprunteur :'} ${userFullName}
-${language === 'en' ? 'Email:' : 'Email :'} ${userEmail}
-${language === 'en' ? 'Loan ID:' : 'ID du prêt :'} ${loanId}
-${language === 'en' ? 'Amount:' : 'Montant :'} ${amount}€
-${language === 'en' ? 'Uploaded at:' : 'Uploadé le :'} ${new Date().toLocaleString(language === 'en' ? 'en-US' : 'fr-FR')}
+    const text = `${language === 'en' ? 'Hello' : 'Bonjour'} ${fullName},
 
 ${language === 'en' 
-  ? 'The signed contract is attached to this email for your review.' 
-  : 'Le contrat signé est joint à cet email pour vérification.'}
+  ? 'Here is your verification code:'
+  : 'Voici votre code de vérification :'}
 
-${language === 'en' ? 'Review in admin panel:' : 'Consulter dans le panneau admin :'}
-${reviewUrl}
+${otpCode}
 
----
-${language === 'en' 
-  ? 'This email was automatically sent by ALTUS FINANCES GROUP platform.' 
-  : 'Cet email a été envoyé automatiquement par la plateforme ALTUS FINANCES GROUP.'}
+${language === 'en'
+  ? 'This code will expire in 10 minutes. Do not share it with anyone.'
+  : 'Ce code expirera dans 10 minutes. Ne le partagez avec personne.'}
+
 ALTUS FINANCES GROUP
-© ${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
+${new Date().getFullYear()} ${language === 'en' ? 'All rights reserved' : 'Tous droits réservés'}.
     `;
     
-    // Convert file buffer to base64
-    const base64Content = fileBuffer.toString('base64');
-    
-    const msg: any = {
-      to: adminEmails,
+    await sendEmail({
+      to: toEmail,
       from: fromEmail,
       subject,
       html,
       text,
-      attachments: [
-        {
-          content: base64Content,
-          filename: fileName,
-          type: mimeType,
-          disposition: 'attachment',
-        },
-      ],
-    };
+    });
 
-    await client.send(msg);
-    console.log(`✅ Signed contract email sent to ${adminEmails.length} admin(s) with attachment: ${fileName}`);
+    console.log(`OTP email sent to ${toEmail} in ${language}`);
     return true;
   } catch (error) {
-    console.error('Error sending signed contract to admins:', error);
+    console.error('Error sending OTP email:', error);
     throw error;
   }
 }
