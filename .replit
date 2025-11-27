@@ -110,6 +110,7 @@ expertMode = true
 
 [userenv.development]
 PORT = "5000"
+VITE_API_URL = "https://7d53c0b2-92aa-46c9-b3c5-6c87c88c29a6-00-36uqu2x6utts3.riker.replit.dev"
 
 [userenv.shared]
 COMETCHAT_APP_ID = "1671924081918af0d"

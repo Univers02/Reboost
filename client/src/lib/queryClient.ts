@@ -51,8 +51,12 @@ function getErrorMessage(status: number): string {
 }
 
 // In production: use the API subdomain URL
-// In development: always use empty string to use same-port requests via Vite proxy
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+// In development on Replit: use the Replit dev domain (VITE_API_URL)
+// In development locally: use empty string for same-port requests
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (typeof window !== 'undefined' && window.location.hostname === '127.0.0.1' 
+    ? '' 
+    : 'https://api.altusfinancesgroup.com');
 
 export function getApiUrl(path: string): string {
   if (!path.startsWith('/')) {
