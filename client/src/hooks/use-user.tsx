@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import type { User } from '@shared/schema';
 import { queryClient, getApiUrl } from '@/lib/queryClient';
 import { isProtectedRoute } from '@/lib/route-utils';
-import { io } from 'socket.io-client';
 
 export function useUser() {
   const [location] = useLocation();
@@ -20,27 +19,6 @@ export function useUser() {
     staleTime: 5 * 60 * 1000,
     retry: false,
   });
-
-  // Listen to real-time user updates via socket
-  useEffect(() => {
-    if (!queryEnabled) return;
-
-    const socket = io();
-    
-    const handleDataUpdate = (event: any) => {
-      if (event.type === 'user' && event.action === 'updated') {
-        // Invalidate the user query to refetch it
-        queryClient.invalidateQueries({ queryKey: ['/api/user'] });
-      }
-    };
-
-    socket.on('data:update', handleDataUpdate);
-
-    return () => {
-      socket.off('data:update', handleDataUpdate);
-      socket.disconnect();
-    };
-  }, [queryEnabled]);
 
   return query;
 }
