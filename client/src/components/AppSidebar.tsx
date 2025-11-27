@@ -23,38 +23,27 @@ import { useEffect, useCallback } from 'react';
 export default function AppSidebar() {
   const t = useTranslations();
   const [location, setLocation] = useLocation();
-  const { setOpen } = useSidebar();
+  const { setOpenMobile } = useSidebar();
   const { data: user, isLoading: isUserLoading } = useUser();
   const profilePhotoUrl = useUserProfilePhotoUrl();
 
   const isAdminPath = location.startsWith('/admin');
   const isAdmin = user?.role === 'admin';
 
-  // Check if device is mobile
-  // Covers ALL smartphones: iPhone 4.7" (375px) to Samsung S24 Ultra 6.8" (430px)
-  // Breakpoint 768px ensures menu closes on all phones but not tablets
-  const isMobileDevice = () => window.matchMedia('(max-width: 768px)').matches;
-
-  // Auto-close menu when location changes (works on all devices)
+  // Auto-close mobile menu when location changes
   useEffect(() => {
-    setOpen(false);
-    console.debug('[AppSidebar] Closing menu - location changed to:', location);
-  }, [location, setOpen]);
+    setOpenMobile(false);
+  }, [location, setOpenMobile]);
 
   const handleLogout = useCallback(() => {
-    if (isMobileDevice()) {
-      setOpen(false);
-    }
+    setOpenMobile(false);
     setLocation('/');
-  }, [setLocation, setOpen]);
+  }, [setLocation, setOpenMobile]);
 
   const handleNavigate = useCallback((url: string) => {
-    if (isMobileDevice()) {
-      setOpen(false);
-      console.debug('[AppSidebar] Closing menu before navigation to:', url);
-    }
+    setOpenMobile(false);
     setLocation(url);
-  }, [setLocation, setOpen]);
+  }, [setLocation, setOpenMobile]);
 
   const { data: loans } = useQuery<any[]>({
     queryKey: ['/api/loans'],
