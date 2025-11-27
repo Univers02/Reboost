@@ -174,6 +174,25 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
     next();
   };
 
+  // CSRF middleware for public routes (login, signup, etc.) - doesn't require existing session
+  const requireCSRFPublic = (req: any, res: any, next: any) => {
+    if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS') {
+      return next();
+    }
+
+    // For public auth routes, just verify CSRF token was provided
+    // We don't require a pre-existing session since these routes CREATE sessions
+    const token = req.headers['x-csrf-token'] || req.body._csrf;
+    if (!token) {
+      return res.status(403).json({ 
+        error: 'Token CSRF requis',
+        code: 'CSRF_MISSING',
+      });
+    }
+
+    next();
+  };
+
   const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 5,
@@ -612,7 +631,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
   });
 
 
-  app.post("/api/auth/signup", authLimiter, requireCSRF, async (req, res) => {
+  app.post("/api/auth/signup", authLimiter, requireCSRFPublic, async (req, res) => {
     try {
       const signupSchema = z.object({
         email: z.string().email('Email invalide'),
@@ -684,7 +703,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
     }
   });
 
-  app.post("/api/auth/login", authLimiter, requireCSRF, async (req, res) => {
+  app.post("/api/auth/login", authLimiter, requireCSRFPublic, async (req, res) => {
     try {
       const validatedInput = loginSchema.parse(req.body);
       const { email, password } = validatedInput;
@@ -772,7 +791,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
     code: z.string().length(6, 'Le code doit contenir 6 chiffres')
   });
 
-  app.post("/api/auth/verify-otp", authLimiter, requireCSRF, async (req, res) => {
+  app.post("/api/auth/verify-otp", authLimiter, requireCSRFPublic, async (req, res) => {
     try {
       const validatedInput = verifyOtpSchema.parse(req.body);
       const { userId, code } = validatedInput;
@@ -1068,7 +1087,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
     token: z.string().length(6, 'Le code doit contenir 6 chiffres'),
   });
 
-  app.post("/api/2fa/validate", authLimiter, requireCSRF, async (req, res) => {
+  app.post("/api/2fa/validate", authLimiter, requireCSRFPublic, async (req, res) => {
     try {
       const validatedInput = validate2FASchema.parse(req.body);
       const { userId, token } = validatedInput;
@@ -1262,7 +1281,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
     }
   });
 
-  app.post("/api/auth/resend-verification", requireCSRF, async (req, res) => {
+  app.post("/api/auth/resend-verification", requireCSRFPublic, async (req, res) => {
     try {
       const { email } = req.body;
       
@@ -1291,7 +1310,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
     }
   });
 
-  app.post("/api/auth/forgot-password", authLimiter, async (req, res) => {
+  app.post("/api/auth/forgot-password", authLimiter, requireCSRFPublic, async (req, res) => {
     try {
       const forgotPasswordSchema = z.object({
         email: z.string().email('Email invalide'),
@@ -1353,7 +1372,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
     }
   });
 
-  app.post("/api/auth/reset-password", authLimiter, async (req, res) => {
+  app.post("/api/auth/reset-password", authLimiter, requireCSRFPublic, async (req, res) => {
     try {
       const resetPasswordSchema = z.object({
         token: z.string().min(1, 'Token requis'),
