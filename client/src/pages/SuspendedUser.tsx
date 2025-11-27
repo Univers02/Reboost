@@ -1,6 +1,7 @@
 import { useUser } from '@/hooks/use-user';
 import { useLocation } from 'wouter';
 import { useEffect } from 'react';
+import { useTranslations } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { LogOut, AlertTriangle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -8,6 +9,7 @@ import { Card } from '@/components/ui/card';
 export default function SuspendedUser() {
   const { data: user } = useUser();
   const [, setLocation] = useLocation();
+  const t = useTranslations();
 
   useEffect(() => {
     if (user && user.status !== 'suspended') {
@@ -36,16 +38,16 @@ export default function SuspendedUser() {
           </div>
 
           <h1 className="text-2xl font-bold text-center text-foreground mb-2" data-testid="text-suspended-title">
-            Account Suspended
+            {t.suspended?.title || 'Account Suspended'}
           </h1>
 
           <p className="text-center text-muted-foreground mb-6" data-testid="text-suspended-message">
-            Your account has been suspended and is currently unavailable.
+            {t.suspended?.message || 'Your account has been suspended and is currently unavailable.'}
           </p>
 
           {user?.suspensionReason && (
             <div className="bg-muted/50 p-4 rounded-lg mb-6">
-              <p className="text-sm font-semibold text-foreground mb-2">Reason:</p>
+              <p className="text-sm font-semibold text-foreground mb-2">{t.suspended?.reason || 'Reason'}:</p>
               <p className="text-sm text-muted-foreground" data-testid="text-suspension-reason">
                 {user.suspensionReason}
               </p>
@@ -54,7 +56,7 @@ export default function SuspendedUser() {
 
           {user?.suspendedUntil && (
             <div className="bg-muted/50 p-4 rounded-lg mb-6">
-              <p className="text-sm font-semibold text-foreground mb-2">Suspension until:</p>
+              <p className="text-sm font-semibold text-foreground mb-2">{t.suspended?.until || 'Suspension until'}:</p>
               <p className="text-sm text-muted-foreground" data-testid="text-suspension-date">
                 {new Date(user.suspendedUntil).toLocaleDateString('fr-FR', {
                   weekday: 'long',
@@ -67,7 +69,7 @@ export default function SuspendedUser() {
           )}
 
           <p className="text-sm text-muted-foreground text-center mb-8">
-            If you believe this is a mistake or have questions, please contact our support team.
+            {t.suspended?.contact || 'If you believe this is a mistake or have questions, please contact our support team.'}
           </p>
 
           <Button
@@ -77,7 +79,7 @@ export default function SuspendedUser() {
             data-testid="button-logout"
           >
             <LogOut className="w-4 h-4" />
-            Sign Out
+            {t.suspended?.signOut || 'Sign Out'}
           </Button>
         </div>
       </Card>
