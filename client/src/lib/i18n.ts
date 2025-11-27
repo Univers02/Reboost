@@ -20635,3 +20635,4 @@ export function useTranslations() {
   const { language } = useLanguage();
   return translations[language];
 
+}
