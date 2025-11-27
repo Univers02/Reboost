@@ -379,7 +379,7 @@ export default function AdminUsers() {
                       </Badge>
                     </TableCell>
                     <TableCell data-testid={`text-user-balance-${user.id}`}>
-                      {user.balance?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) || '0 €'}
+                      {(user.balance ?? 0).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
                     </TableCell>
                     <TableCell data-testid={`text-user-loans-${user.id}`}>{user.loansCount || 0}</TableCell>
                     <TableCell className="text-right">
