@@ -2071,6 +2071,51 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
         });
       }
       
+      // Validation du cumul des demandes de prêt (server-side obligatoire)
+      const user = await storage.getUser(req.session.userId!);
+      if (!user) {
+        return res.status(401).json({ error: 'Utilisateur non trouvé', code: 'USER_NOT_FOUND' });
+      }
+      
+      // Définir le plafond selon le type de compte
+      const DEFAULT_MAX_INDIVIDUAL = 500000; // 500.000€ pour les particuliers
+      const DEFAULT_MAX_BUSINESS = 2000000;  // 2.000.000€ pour les entreprises
+      
+      // Utiliser le maxLoanAmount personnalisé de l'utilisateur s'il existe, sinon utiliser les défauts
+      let maxLoanAmount: number;
+      if (user.maxLoanAmount && parseFloat(user.maxLoanAmount) > 0) {
+        maxLoanAmount = parseFloat(user.maxLoanAmount);
+      } else {
+        maxLoanAmount = user.accountType === 'business' ? DEFAULT_MAX_BUSINESS : DEFAULT_MAX_INDIVIDUAL;
+      }
+      
+      // Calculer le cumul des demandes existantes (pending et approved uniquement, non supprimées)
+      const activeStatuses = ['pending', 'pending_review', 'approved', 'documents_pending', 'contract_pending', 'contract_signed', 'funds_pending'];
+      const cumulativeLoanAmount = userLoans
+        .filter(loan => 
+          loan.deletedAt === null && 
+          activeStatuses.includes(loan.status)
+        )
+        .reduce((total, loan) => total + parseFloat(loan.amount), 0);
+      
+      // Vérifier si le cumul + nouveau montant dépasse le plafond
+      const projectedTotal = cumulativeLoanAmount + amount;
+      if (projectedTotal > maxLoanAmount) {
+        const remainingCapacity = Math.max(0, maxLoanAmount - cumulativeLoanAmount);
+        return res.status(400).json({ 
+          error: `Le montant demandé dépasse votre plafond de financement autorisé. Montant cumulé actuel: ${cumulativeLoanAmount.toLocaleString('fr-FR')}€. Plafond maximum: ${maxLoanAmount.toLocaleString('fr-FR')}€. Capacité restante: ${remainingCapacity.toLocaleString('fr-FR')}€.`,
+          code: 'CUMULATIVE_LIMIT_EXCEEDED',
+          details: {
+            currentCumulative: cumulativeLoanAmount,
+            requestedAmount: amount,
+            projectedTotal: projectedTotal,
+            maxAllowed: maxLoanAmount,
+            remainingCapacity: remainingCapacity,
+            accountType: user.accountType
+          }
+        });
+      }
+      
       const interestRate = await calculateInterestRate(loanType, amount);
       
       const validated = insertLoanSchema.parse({
@@ -2085,8 +2130,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
       
       const loan = await storage.createLoan(validated);
       
-      // Get user data for notifications
-      const user = await storage.getUser(req.session.userId!);
+      // user is already fetched above for cumulative validation
       
       const uploadedDocuments: any[] = [];
       
