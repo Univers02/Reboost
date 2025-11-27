@@ -39,17 +39,26 @@ export default function AppSidebar() {
   // Simplified: directly close menu on any route change on mobile
   useEffect(() => {
     if (isMobileDevice()) {
+      // Force close the sidebar
       setOpen(false);
+      console.debug('[AppSidebar] Closing menu on mobile - location changed to:', location);
     }
   }, [location, setOpen]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
+    if (isMobileDevice()) {
+      setOpen(false);
+    }
     setLocation('/');
-  };
+  }, [setLocation, setOpen]);
 
-  const handleNavigate = (url: string) => {
+  const handleNavigate = useCallback((url: string) => {
+    if (isMobileDevice()) {
+      setOpen(false);
+      console.debug('[AppSidebar] Closing menu before navigation to:', url);
+    }
     setLocation(url);
-  };
+  }, [setLocation, setOpen]);
 
   const { data: loans } = useQuery<any[]>({
     queryKey: ['/api/loans'],
