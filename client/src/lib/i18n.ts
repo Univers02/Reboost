@@ -3388,6 +3388,7 @@ export const translations: Record<Language, TranslationKeys> = {
       twoFactorEnabledSuccess: 'Authentification à deux facteurs activée avec succès',
       twoFactorDisabledSuccess: 'Authentification à deux facteurs désactivée',
       passwordResetSuccess: 'Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.',
+      invalidEmailDomain: 'Le domaine de l'adresse email n'existe pas. Veuillez vérifier votre email.',
       verificationEmailResent: 'Email de vérification renvoyé avec succès',
       logoutSuccess: 'Déconnexion réussie',
       authRequired: 'Authentification requise',

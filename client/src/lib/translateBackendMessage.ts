@@ -18,6 +18,10 @@ const messageMapping: Record<string, { key: string; path: string[] }> = {
     key: 'emailAlreadyExists',
     path: ['auth']
   },
+  'Le domaine de l'adresse email n'existe pas. Veuillez vérifier votre email.': {
+    key: 'invalidEmailDomain',
+    path: ['auth']
+  },
   
   // Auth - Login
   'Identifiants invalides': {

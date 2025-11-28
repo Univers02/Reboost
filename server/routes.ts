@@ -2,6 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage, ValidationError } from "./storage";
+import { promises as dnsPromises } from "dns";
 import { 
   insertLoanSchema, 
   insertTransferSchema, 
@@ -631,6 +632,19 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
     },
   });
 
+  // Fonction de validation DNS pour les emails
+  const validateEmailDomainDNS = async (email: string): Promise<boolean> => {
+    try {
+      const domain = email.split('@')[1];
+      if (!domain) return false;
+      
+      const mxRecords = await dnsPromises.resolveMx(domain);
+      return mxRecords && mxRecords.length > 0;
+    } catch (error) {
+      // Si la vérification DNS échoue, retourner false
+      return false;
+    }
+  };
 
   app.post("/api/auth/signup", authLimiter, requireCSRFPublic, async (req, res) => {
     try {
@@ -652,6 +666,12 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
 
       const validatedInput = signupSchema.parse(req.body);
       const { email, password, fullName, phone, preferredLanguage, accountType, companyName, siret } = validatedInput;
+      
+      // VALIDATION DNS: Vérifier que le domaine de l'email existe
+      const isValidDomain = await validateEmailDomainDNS(email);
+      if (!isValidDomain) {
+        return res.status(400).json({ error: 'Le domaine de l\'adresse email n\'existe pas. Veuillez vérifier votre email.' });
+      }
       
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
