@@ -132,6 +132,14 @@ export default function TransferFlow() {
   const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const notificationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  
+  // Ref pour suivre si l'hydratation initiale a été faite (éviter les ré-animations)
+  const initialHydrationDoneRef = useRef(false);
+  const lastHydratedTransferIdRef = useRef<string | null>(null);
+  
+  // Refs pour la gestion des validations et animations
+  const prevCodesValidatedRef = useRef<number | null>(null);
+  const justValidatedRef = useRef(false);
 
   // Vérifier si un transfert est déjà en cours pour cet utilisateur
   const { data: activeTransferData, isLoading: isLoadingActiveTransfer } = useQuery<ActiveTransferResponse>({
@@ -174,6 +182,7 @@ export default function TransferFlow() {
   });
 
   // Déterminer le step basé sur le status du transfert existant
+  // CORRECTION BUG: Hydratation complète de l'état lors du retour sur un transfert existant
   useEffect(() => {
     if (!isRealTransferId(transferId)) return;
     
@@ -184,18 +193,65 @@ export default function TransferFlow() {
     setIsLoadingExistingTransfer(false);
     
     if (transferData?.transfer) {
-      const status = transferData.transfer.status;
+      const transfer = transferData.transfer;
+      const codes = transferData.codes || [];
+      const nextSequence = transferData.nextSequence;
+      const status = transfer.status;
+      
+      // Vérifier si c'est la première hydratation pour ce transfert
+      const isInitialHydration = lastHydratedTransferIdRef.current !== transferId;
       
       // Handle all possible statuses - completed goes to complete screen, everything else to progress
       if (status === 'completed') {
         setStep('complete');
+        setSimulatedProgress(100);
+        initialHydrationDoneRef.current = true;
+        lastHydratedTransferIdRef.current = transferId;
       } else {
         // For pending, in-progress, suspended, rejected, or any other status:
         // Show the progress page at the correct step
         setStep('progress');
-        setCurrentCodeSequence((transferData.transfer.codesValidated || 0) + 1);
-        // Sync progress from server
-        setSimulatedProgress(transferData.transfer.progressPercent || 0);
+        
+        // CORRECTION CRITIQUE: Hydrater TOUS les états depuis le backend lors du retour
+        if (isInitialHydration) {
+          const codesValidated = transfer.codesValidated || 0;
+          const backendProgress = transfer.progressPercent || 0;
+          
+          // Synchroniser la progression avec le backend
+          setSimulatedProgress(backendProgress);
+          
+          // Synchroniser lastValidatedSequence pour éviter la ré-animation
+          setLastValidatedSequence(codesValidated);
+          
+          // Synchroniser currentCodeSequence
+          setCurrentCodeSequence(codesValidated + 1);
+          
+          // Trouver et définir le prochain code
+          const computedNextCode = nextSequence 
+            ? codes.find(c => c.sequence === nextSequence) || null
+            : null;
+          setNextCode(computedNextCode);
+          
+          // Déterminer si on doit afficher le champ de code
+          // On est en pause si on a atteint le pourcentage d'arrêt du code précédent
+          // ou si le transfert attend un nouveau code
+          if (computedNextCode) {
+            const targetPercent = computedNextCode.pausePercent || 90;
+            // Si la progression actuelle est >= au pourcentage cible, on attend un code
+            if (backendProgress >= targetPercent - 1) {
+              setIsPausedForCode(true);
+            } else {
+              setIsPausedForCode(false);
+            }
+          } else {
+            // Pas de code suivant - pas en pause
+            setIsPausedForCode(false);
+          }
+          
+          // Marquer l'hydratation comme faite pour ce transfert
+          initialHydrationDoneRef.current = true;
+          lastHydratedTransferIdRef.current = transferId;
+        }
       }
     } else {
       // Transfer doesn't exist - redirect back to Transfers page
@@ -378,6 +434,9 @@ export default function TransferFlow() {
         duration: 3000,
       });
       
+      // CORRECTION: Marquer qu'une validation vient de se produire pour déclencher l'animation
+      justValidatedRef.current = true;
+      
       setLastValidatedSequence(currentCodeSequence);
       setIsPausedForCode(false);
       setNextCode(null);
@@ -400,8 +459,8 @@ export default function TransferFlow() {
       const codes = transferData.codes || [];
       const nextSequence = transferData.nextSequence;
       
-      // CORRECTION PROBLÈME 1: Utiliser transfer.progressPercent du backend comme source de vérité
       const backendProgress = transfer.progressPercent || 0;
+      const currentCodesValidated = transfer.codesValidated || 0;
       
       if (transfer.status === 'completed') {
         if (progressIntervalRef.current) {
@@ -410,6 +469,8 @@ export default function TransferFlow() {
         }
         setSimulatedProgress(100);
         setStep('complete');
+        prevCodesValidatedRef.current = currentCodesValidated;
+        justValidatedRef.current = false;
         return;
       }
       
@@ -420,11 +481,6 @@ export default function TransferFlow() {
       
       setNextCode(computedNextCode);
       
-      // Synchroniser uniquement si le backend est en avance (ne jamais reculer la barre)
-      if (backendProgress > simulatedProgress && Math.abs(simulatedProgress - backendProgress) > 5) {
-        setSimulatedProgress(backendProgress);
-      }
-      
       // Si pas de code suivant (transfert terminé ou en attente), utiliser la progression du backend
       if (!computedNextCode || !nextSequence) {
         if (progressIntervalRef.current) {
@@ -433,35 +489,61 @@ export default function TransferFlow() {
         }
         setSimulatedProgress(backendProgress);
         setIsPausedForCode(false);
+        prevCodesValidatedRef.current = currentCodesValidated;
+        justValidatedRef.current = false;
         return;
       }
       
       const targetPercent = computedNextCode.pausePercent || 90;
-      const justValidated = lastValidatedSequence === nextSequence - 1;
       
-      // CORRECTION PROBLÈME 1: Permettre la progression automatique au démarrage (séquence 1)
-      // CORRECTION PROBLÈME 2: Utiliser animateProgress pour une animation fluide de 8 secondes
-      const isFirstCode = nextSequence === 1 && lastValidatedSequence === 0;
-      const shouldProgress = (justValidated || isFirstCode) && simulatedProgress < targetPercent;
+      // CORRECTION CRITIQUE: Détecter si une validation VIENT de se produire via la mutation
+      // La ref justValidatedRef est mise à true dans validateMutation.onSuccess
+      const isNewValidation = justValidatedRef.current;
       
-      if (shouldProgress) {
+      // Nouveau transfert fraîchement initié: première séquence, aucun code validé
+      // Un nouveau transfert a codesValidated === 0, progressPercent faible, et c'est le premier chargement (prevCodesValidatedRef === null)
+      // On vérifie aussi que la progression est inférieure au target pour éviter de relancer l'animation
+      const isNewTransfer = prevCodesValidatedRef.current === null && 
+                           currentCodesValidated === 0 && 
+                           nextSequence === 1 &&
+                           backendProgress < targetPercent - 1;
+      
+      // Animation UNIQUEMENT si:
+      // 1. Une validation vient de se produire (justValidatedRef.current = true)
+      // 2. C'est un nouveau transfert fraîchement initié (première animation vers le premier checkpoint)
+      const shouldAnimate = (isNewValidation || isNewTransfer) && simulatedProgress < targetPercent;
+      
+      if (shouldAnimate) {
         // Calculer la durée dynamiquement : 1 seconde par point de pourcentage
         const progressDelta = targetPercent - simulatedProgress;
-        const duration = progressDelta * 1000; // 1000ms = 1 seconde par %
+        const duration = progressDelta * 1000;
         animateProgress(simulatedProgress, targetPercent, duration, computedNextCode?.sequence);
-      } else if (simulatedProgress >= targetPercent && !justValidated) {
-        // FORCER la pause UNIQUEMENT quand on atteint le pourcentage d'arrêt
-        setIsPausedForCode(true);
-        // Annuler toute animation en cours
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-          animationFrameRef.current = null;
+        // Réinitialiser la ref après avoir lancé l'animation
+        justValidatedRef.current = false;
+      } else {
+        // CAS RETOUR SUR TRANSFERT EXISTANT: Synchroniser immédiatement sans animation
+        // Mettre à jour la progression si elle diffère
+        if (Math.abs(simulatedProgress - backendProgress) > 0.5) {
+          setSimulatedProgress(backendProgress);
         }
-        if (progressIntervalRef.current) {
-          clearInterval(progressIntervalRef.current);
-          progressIntervalRef.current = null;
+        
+        // IMMÉDIATEMENT afficher le champ de code si on a atteint le pourcentage cible
+        if (backendProgress >= targetPercent - 1) {
+          setIsPausedForCode(true);
+          // Annuler toute animation en cours
+          if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+            animationFrameRef.current = null;
+          }
+          if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current);
+            progressIntervalRef.current = null;
+          }
         }
       }
+      
+      // Mettre à jour la référence
+      prevCodesValidatedRef.current = currentCodesValidated;
     }
     
     return () => {
@@ -474,7 +556,7 @@ export default function TransferFlow() {
         animationFrameRef.current = null;
       }
     };
-  }, [step, transferData, lastValidatedSequence]);
+  }, [step, transferData]);
 
   useEffect(() => {
     if (transferData?.transfer) {
