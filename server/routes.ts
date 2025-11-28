@@ -1497,7 +1497,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
           currentBalance: data.balance,
           activeLoansCount: data.loans.filter(l => l.status === 'active').length,
           totalBorrowed: data.loans.reduce((sum, loan) => sum + parseFloat(loan.amount), 0),
-          availableCredit: parseFloat(data.user.maxLoanAmount || "500000") - data.balance,
+          availableCredit: (data.user.accountType === 'business' || data.user.accountType === 'professional' ? 2000000 : 500000) - data.balance,
           lastUpdated: lastUpdated,
         },
         loans: data.loans.map(loan => ({
@@ -2143,13 +2143,8 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
       const DEFAULT_MAX_INDIVIDUAL = 500000; // 500.000€ pour les particuliers
       const DEFAULT_MAX_BUSINESS = 2000000;  // 2.000.000€ pour les entreprises
       
-      // Utiliser le maxLoanAmount personnalisé de l'utilisateur s'il existe, sinon utiliser les défauts
-      let maxLoanAmount: number;
-      if (user.maxLoanAmount && parseFloat(user.maxLoanAmount) > 0) {
-        maxLoanAmount = parseFloat(user.maxLoanAmount);
-      } else {
-        maxLoanAmount = user.accountType === 'business' ? DEFAULT_MAX_BUSINESS : DEFAULT_MAX_INDIVIDUAL;
-      }
+      // TOUJOURS utiliser le plafond basé sur le type de compte (jamais la valeur stockée qui peut être incorrecte)
+      const maxLoanAmount = user.accountType === 'business' || user.accountType === 'professional' ? DEFAULT_MAX_BUSINESS : DEFAULT_MAX_INDIVIDUAL;
       
       // Calculer le cumul des demandes existantes (pending et approved uniquement, non supprimées)
       const activeStatuses = ['pending', 'pending_review', 'approved', 'documents_pending', 'contract_pending', 'contract_signed', 'funds_pending'];
@@ -3262,17 +3257,6 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
         if (user) {
           const recipientIban = externalAccount?.iban || 'Non spécifié';
           
-          // Update available credit after transfer completion
-          const currentMaxLoanAmount = parseFloat(user.maxLoanAmount || "0");
-          const transferAmount = parseFloat(transfer.amount.toString());
-          const newMaxLoanAmount = Math.max(0, currentMaxLoanAmount - transferAmount);
-          
-          await storage.updateUser(transfer.userId, {
-            maxLoanAmount: newMaxLoanAmount.toString(),
-          });
-
-          console.log(`[TRANSFER COMPLETION] User ${transfer.userId}: Available credit reduced from ${currentMaxLoanAmount}€ to ${newMaxLoanAmount}€`);
-          
           await createAdminMessageTransferCompleted(
             transfer.userId,
             transfer.id,
@@ -3553,7 +3537,7 @@ Tous les codes de validation ont été vérifiés avec succès.`,
       const totalBorrowed = dashboardData.loans.reduce((sum, loan) => sum + parseFloat(loan.amount), 0);
       const totalRepaid = dashboardData.loans.reduce((sum, loan) => sum + parseFloat(loan.totalRepaid), 0);
       const currentBalance = totalBorrowed - totalRepaid;
-      const maxCapacity = parseFloat(dashboardData.user.maxLoanAmount || "500000");
+      const maxCapacity = dashboardData.user.accountType === 'business' || dashboardData.user.accountType === 'professional' ? 2000000 : 500000;
       const availableCredit = maxCapacity - currentBalance;
       
       const data = months.map((month, index) => {
