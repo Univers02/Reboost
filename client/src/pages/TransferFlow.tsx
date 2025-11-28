@@ -441,8 +441,8 @@ export default function TransferFlow() {
         const progressDelta = targetPercent - simulatedProgress;
         const duration = progressDelta * 1000; // 1000ms = 1 seconde par %
         animateProgress(simulatedProgress, targetPercent, duration, computedNextCode?.sequence);
-      } else if (backendProgress >= targetPercent && !justValidated) {
-        // FORCER la pause UNIQUEMENT quand on atteint le pourcentage d'arrêt (utiliser backendProgress, pas simulatedProgress)
+      } else if (simulatedProgress >= targetPercent && !justValidated) {
+        // FORCER la pause UNIQUEMENT quand on atteint le pourcentage d'arrêt
         setIsPausedForCode(true);
         // Annuler toute animation en cours
         if (animationFrameRef.current) {
@@ -1000,7 +1000,7 @@ export default function TransferFlow() {
 
     const renderProgressCard = () => (
       <div className="bg-white shadow-sm rounded-xl p-6 flex flex-col items-center">
-        <ProgressCircle percent={Math.round(transfer?.progressPercent ?? simulatedProgress)} />
+        <ProgressCircle percent={Math.round(simulatedProgress)} />
         <div className="mt-4 text-center">
           <p className="text-sm text-muted-foreground">{t.transferFlow.progress.progressLabelShort} {t.transferFlow.progress.transferProgressLabel}</p>
         </div>
