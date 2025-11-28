@@ -536,7 +536,7 @@ export default function TransferFlow() {
       const isNewTransfer = prevCodesValidatedRef.current === null && 
                            currentCodesValidated === 0 && 
                            nextSequence === 1 &&
-                           backendProgress < targetPercent - 1;
+                           backendProgress < targetPercent;
       
       // CORRECTION BUG: Vérifier si on a DÉJÀ animé vers ce target pour cette séquence
       // Cela empêche les boucles infinies lors des polls de refetch
@@ -565,7 +565,7 @@ export default function TransferFlow() {
                                       !alreadyAnimatedToTarget &&
                                       !animationRunningRef.current &&
                                       backendProgress > 0 &&
-                                      backendProgress < targetPercent - 1 &&
+                                      backendProgress < targetPercent &&
                                       currentSimulatedProgress < targetPercent;
       
       if (shouldAnimate) {
@@ -599,7 +599,7 @@ export default function TransferFlow() {
         // et si on n'a pas d'animation en cours
         if (!animationRunningRef.current) {
           // Si on a atteint le pourcentage cible, mettre en pause pour le code
-          if (backendProgress >= targetPercent - 1) {
+          if (backendProgress >= targetPercent) {
             setSimulatedProgress(backendProgress);
             setIsPausedForCode(true);
             // Marquer comme animé pour éviter les reboucles
