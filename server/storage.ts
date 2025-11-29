@@ -238,6 +238,11 @@ export interface IStorage {
   getUpcomingPayments(loanId: string, limit?: number): Promise<AmortizationSchedule[]>;
   markPaymentAsPaid(paymentId: string): Promise<AmortizationSchedule | undefined>;
   
+  // Tier system methods
+  getMaxActiveLoans(tier: string): number;
+  getActiveLoansCount(userId: string): Promise<number>;
+  getUserStats(userId: string): Promise<{ tier: string; completedLoans: number; activeLoans: number; maxActiveLoans: number; defaultedLoans: number }>;
+  
   // Chat System
   getUserConversations(userId: string): Promise<ChatConversation[]>;
   getAdminConversations(adminId?: string, status?: string): Promise<ChatConversation[]>;
@@ -3531,6 +3536,51 @@ export class DatabaseStorage implements IStorage {
       console.error('[STORAGE] Error resetting dashboard statistics:', error);
       throw error;
     }
+  }
+
+  // Tier system: determine max active loans based on tier
+  getMaxActiveLoans(tier: string): number {
+    switch (tier) {
+      case 'silver': return 2;
+      case 'gold': return 3;
+      case 'bronze':
+      default:
+        return 1;
+    }
+  }
+
+  // Count active loans for a user
+  async getActiveLoansCount(userId: string): Promise<number> {
+    const activeLoans = await db
+      .select()
+      .from(loans)
+      .where(
+        and(
+          eq(loans.userId, userId),
+          eq(loans.status, 'active'),
+          isNull(loans.deletedAt)
+        )
+      );
+    return activeLoans.length;
+  }
+
+  // Get user tier stats
+  async getUserStats(userId: string): Promise<{ tier: string; completedLoans: number; activeLoans: number; maxActiveLoans: number; defaultedLoans: number }> {
+    const user = await this.getUser(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const activeCount = await this.getActiveLoansCount(userId);
+    const maxActive = this.getMaxActiveLoans(user.verificationTier);
+
+    return {
+      tier: user.verificationTier,
+      completedLoans: user.completedLoansCount,
+      activeLoans: activeCount,
+      maxActiveLoans: maxActive,
+      defaultedLoans: user.defaultedLoansCount,
+    };
   }
 }
 

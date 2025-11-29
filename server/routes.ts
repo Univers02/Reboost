@@ -2035,6 +2035,16 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
     }
   });
 
+  app.get("/api/user/stats", requireAuth, async (req, res) => {
+    try {
+      const stats = await storage.getUserStats(req.session.userId!);
+      res.json({ success: true, data: stats });
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+      res.status(500).json({ success: false, error: 'Erreur lors de la récupération des statistiques' });
+    }
+  });
+
   // Endpoint pour récupérer le calendrier d'amortissement d'un prêt
   app.get("/api/loans/:id/amortization", requireAuth, async (req, res) => {
     try {
@@ -2129,35 +2139,27 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
 
       const { loanType, amount, duration, documents } = loanRequestSchema.parse(req.body);
       
-      const userLoans = await storage.getUserLoans(req.session.userId!);
-      const userTransfers = await storage.getUserTransfers(req.session.userId!);
-      
-      const hasActiveLoan = userLoans.some(loan => {
-        if (loan.deletedAt !== null) return false;
-        if (loan.status === 'rejected') return false;
-        
-        const loanTransfers = userTransfers.filter(t => t.loanId === loan.id);
-        
-        if (loanTransfers.length === 0) {
-          return true;
-        }
-        
-        const hasCompletedTransfer = loanTransfers.some(t => t.status === 'completed');
-        return !hasCompletedTransfer;
-      });
-      
-      if (hasActiveLoan) {
-        return res.status(400).json({ 
-          error: 'Vous avez déjà une demande de prêt active. Vous ne pouvez soumettre une nouvelle demande qu\'une fois votre prêt actuel entièrement finalisé (transfert effectué et terminé).',
-          code: 'ACTIVE_LOAN_EXISTS'
-        });
-      }
-      
-      // Validation du cumul des demandes de prêt (server-side obligatoire)
       const user = await storage.getUser(req.session.userId!);
       if (!user) {
         return res.status(401).json({ error: 'Utilisateur non trouvé', code: 'USER_NOT_FOUND' });
       }
+
+      // Tier-based validation: check max active loans
+      const stats = await storage.getUserStats(req.session.userId!);
+      if (stats.activeLoans >= stats.maxActiveLoans) {
+        return res.status(400).json({ 
+          error: `Vous avez atteint le nombre maximum de prêts actifs pour votre tier ${stats.tier} (${stats.activeLoans}/${stats.maxActiveLoans}). Complétez un prêt pour en demander un nouveau.`,
+          code: 'MAX_ACTIVE_LOANS_REACHED',
+          details: {
+            currentActive: stats.activeLoans,
+            maxAllowed: stats.maxActiveLoans,
+            tier: stats.tier
+          }
+        });
+      }
+      
+      const userLoans = await storage.getUserLoans(req.session.userId!);
+      const userTransfers = await storage.getUserTransfers(req.session.userId!);
       
       // Définir le plafond selon le type de compte
       const DEFAULT_MAX_INDIVIDUAL = 500000; // 500.000€ pour les particuliers
