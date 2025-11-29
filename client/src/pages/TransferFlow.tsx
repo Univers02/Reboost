@@ -67,6 +67,38 @@ function translateCodeContext(codeContext: string | null | undefined, t: ReturnT
   return codeContext;
 }
 
+// English fallback translations for transfer networks
+const englishNetworkFallbacks: Record<TransferNetwork, { name: string; description: string }> = {
+  'SEPA': { name: 'SEPA Credit Transfer', description: 'Transfer within the SEPA zone (Europe)' },
+  'SWIFT': { name: 'SWIFT International Transfer', description: 'International transfer via the SWIFT network' },
+  'ACH': { name: 'ACH Transfer', description: 'US domestic transfer (Automated Clearing House)' },
+  'WIRE': { name: 'Wire Transfer', description: 'Instant electronic transfer (Fedwire)' },
+  'FASTER_PAYMENTS': { name: 'Faster Payments', description: 'Instant transfer in the United Kingdom' },
+  'INTERAC': { name: 'Interac e-Transfer', description: 'Canadian electronic transfer' },
+  'LOCAL': { name: 'Local Transfer', description: 'Domestic transfer according to country' },
+};
+
+// Helper function to get translated network name and description
+function getTranslatedNetworkInfo(network: TransferNetwork, t: ReturnType<typeof useTranslations>): { name: string; description: string } {
+  const networkTranslations: Record<TransferNetwork, { nameKey: string; descKey: string }> = {
+    'SEPA': { nameKey: 'sepaTransferName', descKey: 'sepaTransferDesc' },
+    'SWIFT': { nameKey: 'swiftTransferName', descKey: 'swiftTransferDesc' },
+    'ACH': { nameKey: 'achTransferName', descKey: 'achTransferDesc' },
+    'WIRE': { nameKey: 'wireTransferName', descKey: 'wireTransferDesc' },
+    'FASTER_PAYMENTS': { nameKey: 'fasterPaymentsName', descKey: 'fasterPaymentsDesc' },
+    'INTERAC': { nameKey: 'interacTransferName', descKey: 'interacTransferDesc' },
+    'LOCAL': { nameKey: 'localTransferName', descKey: 'localTransferDesc' },
+  };
+  
+  const keys = networkTranslations[network];
+  const fallback = englishNetworkFallbacks[network];
+  
+  return {
+    name: (t.transferFlow.form as any)[keys.nameKey] || fallback.name,
+    description: (t.transferFlow.form as any)[keys.descKey] || fallback.description,
+  };
+}
+
 // Type pour la réponse de l'API transfert actif
 interface ActiveTransferResponse {
   hasActiveTransfer: boolean;
@@ -926,26 +958,28 @@ export default function TransferFlow() {
                   />
                 </div>
 
-                {transferNetworkInfo && (
+                {transferNetworkInfo && (() => {
+                  const translatedNetwork = getTranslatedNetworkInfo(transferNetworkInfo.network, t);
+                  return (
                   <div className="p-4 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 border border-primary/20 rounded-xl space-y-3" data-testid="transfer-network-info">
                     <div className="flex items-center gap-2">
                       <Globe className="w-5 h-5 text-primary" />
-                      <h4 className="font-semibold text-sm">{t.transferFlow.form.transferType || 'Type de transfert'}</h4>
+                      <h4 className="font-semibold text-sm">{t.transferFlow.form.transferType}</h4>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-3">
                       <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
                         <CreditCard className="w-4 h-4 text-muted-foreground" />
                         <div>
-                          <p className="text-xs text-muted-foreground">{t.transferFlow.form.network || 'Reseau'}</p>
-                          <p className="font-semibold text-sm">{transferNetworkInfo.typeInfo.name}</p>
+                          <p className="text-xs text-muted-foreground">{t.transferFlow.form.network}</p>
+                          <p className="font-semibold text-sm">{translatedNetwork.name}</p>
                         </div>
                       </div>
                       
                       <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
                         <Clock className="w-4 h-4 text-muted-foreground" />
                         <div>
-                          <p className="text-xs text-muted-foreground">{t.transferFlow.form.processingTime || 'Delai'}</p>
+                          <p className="text-xs text-muted-foreground">{t.transferFlow.form.processingTime}</p>
                           <p className="font-semibold text-sm">{transferNetworkInfo.typeInfo.processingTime}</p>
                         </div>
                       </div>
@@ -954,26 +988,27 @@ export default function TransferFlow() {
                     <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
                       <Banknote className="w-4 h-4 text-muted-foreground" />
                       <div className="flex-1">
-                        <p className="text-xs text-muted-foreground">{t.transferFlow.form.networkFees || 'Frais reseau'}</p>
+                        <p className="text-xs text-muted-foreground">{t.transferFlow.form.networkFees}</p>
                         <p className="font-semibold text-sm">
                           {transferNetworkInfo.fees === 0 
-                            ? (t.transferFlow.form.noFees || 'Gratuit')
+                            ? t.transferFlow.form.noFees
                             : `${transferNetworkInfo.fees.toFixed(2)} ${transferNetworkInfo.typeInfo.fees.currency}`
                           }
                         </p>
                       </div>
                       {transferNetworkInfo.network === 'SEPA' && (
                         <span className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full">
-                          {t.transferFlow.form.sepaZone || 'Zone SEPA'}
+                          {t.transferFlow.form.sepaZone}
                         </span>
                       )}
                     </div>
 
                     <p className="text-xs text-muted-foreground">
-                      {transferNetworkInfo.typeInfo.description}
+                      {translatedNetwork.description}
                     </p>
                   </div>
-                )}
+                  );
+                })()}
 
                 <Button 
                   onClick={handleInitiate}
