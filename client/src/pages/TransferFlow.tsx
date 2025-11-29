@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRoute, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
@@ -8,12 +8,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, getApiUrl } from '@/lib/queryClient';
-import { ArrowLeft, CheckCircle2, Clock, Send, Shield, AlertCircle, Loader2, AlertTriangle, Building, ArrowRight, Lock, Circle, TrendingUp } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Clock, Send, Shield, AlertCircle, Loader2, AlertTriangle, Building, ArrowRight, Lock, Circle, TrendingUp, Globe, CreditCard, Banknote } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { TransferDetailsResponse, ExternalAccount, TransferCodeMetadata } from '@shared/schema';
 import { useTranslations, useLanguage } from '@/lib/i18n';
 import { DashboardCard, SectionTitle } from '@/components/fintech';
 import CircularTransferProgress from '@/components/CircularTransferProgress';
+import { 
+  getRecommendedTransferNetwork, 
+  getTransferTypeInfo, 
+  calculateTransferFees,
+  getCountryInfo,
+  type TransferNetwork,
+  type TransferType
+} from '@/data/transfer-types';
 
 // Helper function to get locale code from language
 function getLocaleCode(language: string): string {
@@ -344,6 +352,32 @@ export default function TransferFlow() {
 
   const selectedLoan = availableLoans?.find(loan => loan.id === selectedLoanId);
   const amount = selectedLoan ? parseFloat(selectedLoan.amount).toString() : '';
+
+  const selectedAccount = useMemo(() => {
+    return externalAccounts?.find(a => a.id === externalAccountId);
+  }, [externalAccounts, externalAccountId]);
+
+  const transferNetworkInfo = useMemo(() => {
+    if (!selectedAccount?.iban || !amount) {
+      return null;
+    }
+
+    const ibanCountryCode = selectedAccount.iban.substring(0, 2).toUpperCase();
+    const sourceCountry = 'LU';
+    
+    const network = getRecommendedTransferNetwork(sourceCountry, ibanCountryCode, parseFloat(amount));
+    const typeInfo = getTransferTypeInfo(network);
+    const fees = calculateTransferFees(network, parseFloat(amount));
+    const destinationCountryInfo = getCountryInfo(ibanCountryCode);
+
+    return {
+      network,
+      typeInfo,
+      fees,
+      destinationCountry: destinationCountryInfo?.countryName || ibanCountryCode,
+      destinationCountryCode: ibanCountryCode,
+    };
+  }, [selectedAccount, amount]);
 
   const initiateMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -709,6 +743,9 @@ export default function TransferFlow() {
       recipient,
       loanId: selectedLoan.id,
       externalAccountId,
+      transferNetwork: transferNetworkInfo?.network || 'SEPA',
+      networkFees: transferNetworkInfo?.fees || 0,
+      processingTime: transferNetworkInfo?.typeInfo.processingTime || '1-2 jours ouvrables',
     });
   };
 
@@ -888,6 +925,55 @@ export default function TransferFlow() {
                     data-testid="input-recipient"
                   />
                 </div>
+
+                {transferNetworkInfo && (
+                  <div className="p-4 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 border border-primary/20 rounded-xl space-y-3" data-testid="transfer-network-info">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-5 h-5 text-primary" />
+                      <h4 className="font-semibold text-sm">{t.transferFlow.form.transferType || 'Type de transfert'}</h4>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
+                        <CreditCard className="w-4 h-4 text-muted-foreground" />
+                        <div>
+                          <p className="text-xs text-muted-foreground">{t.transferFlow.form.network || 'Reseau'}</p>
+                          <p className="font-semibold text-sm">{transferNetworkInfo.typeInfo.name}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
+                        <Clock className="w-4 h-4 text-muted-foreground" />
+                        <div>
+                          <p className="text-xs text-muted-foreground">{t.transferFlow.form.processingTime || 'Delai'}</p>
+                          <p className="font-semibold text-sm">{transferNetworkInfo.typeInfo.processingTime}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
+                      <Banknote className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-xs text-muted-foreground">{t.transferFlow.form.networkFees || 'Frais reseau'}</p>
+                        <p className="font-semibold text-sm">
+                          {transferNetworkInfo.fees === 0 
+                            ? (t.transferFlow.form.noFees || 'Gratuit')
+                            : `${transferNetworkInfo.fees.toFixed(2)} ${transferNetworkInfo.typeInfo.fees.currency}`
+                          }
+                        </p>
+                      </div>
+                      {transferNetworkInfo.network === 'SEPA' && (
+                        <span className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full">
+                          {t.transferFlow.form.sepaZone || 'Zone SEPA'}
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-xs text-muted-foreground">
+                      {transferNetworkInfo.typeInfo.description}
+                    </p>
+                  </div>
+                )}
 
                 <Button 
                   onClick={handleInitiate}
@@ -1168,6 +1254,47 @@ export default function TransferFlow() {
             </p>
           </div>
         </div>
+
+        {/* Type de transfert */}
+        {transfer?.transferNetwork && (
+          <div className="pt-4 border-t border-border">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Globe className="w-5 h-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                  {t.transferFlow.form.transferType || 'Type de transfert'}
+                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-base font-semibold text-foreground">
+                    {transfer.transferNetwork === 'SEPA' ? 'SEPA Credit Transfer' : 
+                     transfer.transferNetwork === 'SWIFT' ? 'Virement International SWIFT' :
+                     transfer.transferNetwork}
+                  </p>
+                  {transfer.transferNetwork === 'SEPA' && (
+                    <span className="text-xs px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full">
+                      {t.transferFlow.form.sepaZone || 'Zone SEPA'}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {transfer.processingTime || '1-2 jours ouvrables'}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Banknote className="w-3 h-3" />
+                    {parseFloat(transfer.networkFees || '0') === 0 
+                      ? (t.transferFlow.form.noFees || 'Gratuit')
+                      : `${transfer.networkFees} EUR`
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
 

@@ -2876,7 +2876,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
     }
     
     try {
-      const { amount, externalAccountId, recipient, loanId } = req.body;
+      const { amount, externalAccountId, recipient, loanId, transferNetwork, networkFees, processingTime } = req.body;
       
       console.log(`[TRANSFER-INITIATE] ${requestId} - Étape 1: Validation loanId`);
       if (!loanId) {
@@ -2970,6 +2970,9 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
         externalAccountId: externalAccountId || null,
         amount: amount.toString(),
         recipient,
+        transferNetwork: transferNetwork || 'SEPA',
+        networkFees: networkFees?.toString() || '0',
+        processingTime: processingTime || '1-2 jours ouvrables',
         status: 'pending',
         currentStep: 1,
         progressPercent: 0,
