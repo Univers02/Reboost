@@ -18,7 +18,13 @@ import {
   FileSignature,
   Eye,
   Download,
-  FileText
+  FileText,
+  Star,
+  Sparkles,
+  Circle,
+  Check,
+  HelpCircle,
+  AlertCircle
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -259,10 +265,14 @@ export default function Dashboard() {
               )}
               <Badge 
                 variant={user.kycStatus === 'verified' ? 'default' : user.kycStatus === 'pending' ? 'secondary' : 'destructive'}
-                className="text-xs whitespace-nowrap"
+                className="text-xs whitespace-nowrap flex items-center gap-1.5"
                 data-testid="badge-kyc-status"
               >
-                KYC: {user.kycStatus === 'verified' ? '✓ Verified' : user.kycStatus === 'pending' ? '⏳ Pending' : user.kycStatus === 'rejected' ? '✗ Rejected' : '? Not submitted'}
+                {user.kycStatus === 'verified' && <Check className="w-3.5 h-3.5" />}
+                {user.kycStatus === 'pending' && <Clock className="w-3.5 h-3.5" />}
+                {user.kycStatus === 'rejected' && <AlertCircle className="w-3.5 h-3.5" />}
+                {user.kycStatus !== 'verified' && user.kycStatus !== 'pending' && user.kycStatus !== 'rejected' && <HelpCircle className="w-3.5 h-3.5" />}
+                <span>KYC: {user.kycStatus === 'verified' ? 'Verified' : user.kycStatus === 'pending' ? 'Pending' : user.kycStatus === 'rejected' ? 'Rejected' : 'Not submitted'}</span>
               </Badge>
             </div>
           )}
@@ -279,10 +289,10 @@ export default function Dashboard() {
                   {t.dashboard.tierLabel}
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="text-3xl font-bold">
-                    {stats.tier === 'gold' && '⭐'}
-                    {stats.tier === 'silver' && '✦'}
-                    {stats.tier === 'bronze' && '●'}
+                  <div className="text-3xl">
+                    {stats.tier === 'gold' && <Star className="w-8 h-8 fill-yellow-500 text-yellow-500" />}
+                    {stats.tier === 'silver' && <Sparkles className="w-8 h-8 text-gray-400" />}
+                    {stats.tier === 'bronze' && <Circle className="w-8 h-8 fill-orange-600 text-orange-600" />}
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">
