@@ -54,6 +54,16 @@ export default function AdminLoans() {
     return template.replace(/{(\w+)}/g, (match, key) => values[key] || match);
   };
 
+  const isContractAwaitingAdminReview = (loan: any): boolean => {
+    const pendingReviewStatuses = [
+      'awaiting_admin_review',
+      'signed_pending_processing',
+      'signed_pending_admin',
+      'signed_pending_validation'
+    ];
+    return pendingReviewStatuses.includes(loan.contractStatus);
+  };
+
   const approveLoanMutation = useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
       return await apiRequest("POST", `/api/admin/loans/${id}/approve`, { reason });
@@ -307,7 +317,7 @@ export default function AdminLoans() {
                     <div>
                       <p className="text-muted-foreground text-xs">{t.admin.common.labels.contract}</p>
                       <p className="font-medium text-xs">
-                        {loan.signedContractUrl ? t.admin.loans.contractSigned : loan.contractUrl ? t.admin.loans.contractGenerated : '-'}
+                        {isContractAwaitingAdminReview(loan) ? t.admin.loans.contractSigned : loan.contractUrl ? t.admin.loans.contractGenerated : '-'}
                       </p>
                     </div>
                   </div>
@@ -409,7 +419,7 @@ export default function AdminLoans() {
                       </>
                     )}
 
-                    {!loan.signedContractUrl ? (
+                    {!isContractAwaitingAdminReview(loan) ? (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="w-full">
@@ -579,7 +589,7 @@ export default function AdminLoans() {
                     </Badge>
                   </TableCell>
                   <TableCell data-testid={`text-loan-contract-${loan.id}`}>
-                    {loan.signedContractUrl ? t.admin.loans.contractSigned : loan.contractUrl ? t.admin.loans.contractGenerated : '-'}
+                    {isContractAwaitingAdminReview(loan) ? t.admin.loans.contractSigned : loan.contractUrl ? t.admin.loans.contractGenerated : '-'}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
@@ -677,7 +687,7 @@ export default function AdminLoans() {
                         </>
                       )}
 
-                      {!loan.signedContractUrl ? (
+                      {!isContractAwaitingAdminReview(loan) ? (
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <span>
