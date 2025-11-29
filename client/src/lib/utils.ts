@@ -9,18 +9,16 @@ export function cn(...inputs: ClassValue[]) {
 export function getFileUrl(fileUrl?: string | null): string | undefined {
   if (!fileUrl) return undefined;
   
+  // Already a full URL
   if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
     return fileUrl;
   }
   
-  // Backend returns full path: "/uploads/chat/[UUID]_[filename]"
-  // Use PUBLIC endpoint (no auth required) for images/PDFs already validated on upload
-  if (fileUrl.startsWith('/uploads/chat/')) {
-    // Extract filename from path: "/uploads/chat/UUID_filename" -> "UUID_filename"
-    const filename = fileUrl.split('/').pop() || fileUrl;
-    return getApiUrl(`/api/chat/file/public/${filename}`);
-  }
+  // Extract filename from any path format
+  // "/uploads/chat/UUID_filename" -> "UUID_filename"
+  // "UUID_filename" -> "UUID_filename"
+  const filename = fileUrl.includes('/') ? fileUrl.split('/').pop() : fileUrl;
   
-  // Fallback for legacy messages with just filename
-  return getApiUrl(`/api/chat/file/${fileUrl}`);
+  // ALWAYS use: https://api.altusfinancesgroup.com/api/chat/file/{filename}
+  return getApiUrl(`/api/chat/file/${filename}`);
 }

@@ -226,12 +226,16 @@ export function Message({ message, isOwn, senderName, senderAvatar, nextMessage 
         {message.content && (
           <div
             className={cn(
-              "flex items-center gap-2 px-3 relative z-10 flex-col min-w-0",
+              "flex flex-col gap-1 px-3 relative z-10 w-full",
               getSpacing(),
               isOwn ? "items-end" : "items-start"
             )}
           >
-            <p className="text-sm whitespace-pre-wrap break-words overflow-wrap break-word" data-testid="text-message-content">
+            <p 
+              className="text-sm whitespace-pre-wrap break-words max-w-full"
+              style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}
+              data-testid="text-message-content"
+            >
               {message.content}
             </p>
             <span className="text-xs text-muted-foreground" data-testid="text-timestamp">

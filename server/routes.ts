@@ -5236,12 +5236,16 @@ ${urls.map(url => `  <url>
     }
   });
 
-  // Public endpoint to serve chat files (no auth required for images/PDFs already validated)
-  // Files here are already processed (images are JPEG 90%, PDFs are cleaned of scripts)
-  app.get("/api/chat/file/public/:filename", async (req, res) => {
+  // Serve chat files - PUBLIC endpoint (no auth required)
+  // Files are already validated on upload (magic bytes, size limit, sanitized)
+  app.get("/api/chat/file/:filename", async (req, res) => {
     try {
       const filename = req.params.filename;
       const filepath = path.join(chatUploadDir, filename);
+      
+      // CORS headers for cross-origin requests
+      res.setHeader("Access-Control-Allow-Origin", "https://altusfinancesgroup.com");
+      res.setHeader("Access-Control-Allow-Credentials", "true");
       
       // Security: ensure the file is within the chat upload directory (prevent path traversal)
       if (!filepath.startsWith(chatUploadDir)) {
@@ -5261,37 +5265,6 @@ ${urls.map(url => `  <url>
       } else {
         // For images, serve inline
         res.sendFile(filepath);
-      }
-    } catch (error: any) {
-      console.error('[CHAT] File download error:', error);
-      res.status(500).json({ error: 'File download failed' });
-    }
-  });
-
-  // Legacy: Keep local file download for backward compatibility with existing messages
-  app.get("/api/chat/file/:filename", requireAuth, async (req, res) => {
-    try {
-      const filename = req.params.filename;
-      const filepath = path.join(chatUploadDir, filename);
-      
-      // Security: ensure the file is within the chat upload directory
-      if (!filepath.startsWith(chatUploadDir)) {
-        return res.status(403).json({ error: 'Access denied' });
-      }
-      
-      // Check if file exists
-      if (!fs.existsSync(filepath)) {
-        return res.status(404).json({ error: 'File not found' });
-      }
-      
-      // For PDFs, serve inline so embed can display them
-      if (filename.toLowerCase().endsWith('.pdf')) {
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'inline');
-        res.sendFile(filepath);
-      } else {
-        // For other files, download
-        res.download(filepath);
       }
     } catch (error: any) {
       console.error('[CHAT] File download error:', error);
