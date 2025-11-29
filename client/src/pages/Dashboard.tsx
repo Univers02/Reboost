@@ -1,5 +1,6 @@
 import { useTranslations, useLanguage } from '@/lib/i18n';
 import { useDashboard, useUpcomingRepaymentsChart } from '@/hooks/use-dashboard';
+import { useUserStats } from '@/hooks/use-user-stats';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/hooks/use-user';
 import { Button } from '@/components/ui/button';
@@ -110,6 +111,7 @@ export default function Dashboard() {
   const { data: dashboardData, isLoading: isDashboardLoading, error: dashboardError } = useDashboard();
   const { data: repaymentsData, isLoading: isRepaymentsLoading } = useUpcomingRepaymentsChart();
   const { data: user } = useUser();
+  const { data: stats } = useUserStats();
   const [loanModalOpen, setLoanModalOpen] = useState(false);
   
   const mockCashflowData = getMockCashflowData(t);
@@ -243,7 +245,18 @@ export default function Dashboard() {
             </p>
           </div>
           {user && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              {stats && (
+                <Badge 
+                  variant="outline"
+                  className="text-xs whitespace-nowrap uppercase tracking-wide font-semibold"
+                  data-testid="badge-tier-status"
+                >
+                  {stats.tier === 'gold' && '👑 Gold'}
+                  {stats.tier === 'silver' && '🥈 Silver'}
+                  {stats.tier === 'bronze' && '🥉 Bronze'}
+                </Badge>
+              )}
               <Badge 
                 variant={user.kycStatus === 'verified' ? 'default' : user.kycStatus === 'pending' ? 'secondary' : 'destructive'}
                 className="text-xs whitespace-nowrap"
@@ -255,6 +268,54 @@ export default function Dashboard() {
           )}
         </div>
 
+
+        {/* Tier Status & Active Loans Card */}
+        {stats && (
+          <DashboardCard className="bg-gradient-to-br from-accent/10 via-background to-background border-accent/20">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Tier Info */}
+              <div className="space-y-3">
+                <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                  Trust Tier
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="text-3xl font-bold">
+                    {stats.tier === 'gold' && '👑'}
+                    {stats.tier === 'silver' && '🥈'}
+                    {stats.tier === 'bronze' && '🥉'}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg capitalize">{stats.tier}</h3>
+                    <p className="text-xs text-muted-foreground">
+                      {stats.completedLoans} completed loan{stats.completedLoans !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Loans Counter */}
+              <div className="space-y-3">
+                <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                  Active Loans
+                </div>
+                <div>
+                  <div className="flex items-baseline justify-between mb-2">
+                    <span className="text-2xl font-bold">{stats.activeLoans}/{stats.maxActiveLoans}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {stats.maxActiveLoans - stats.activeLoans} available
+                    </span>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-accent to-accent/80 transition-all duration-500 rounded-full"
+                      style={{ width: `${(stats.activeLoans / stats.maxActiveLoans) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DashboardCard>
+        )}
 
         {/* Balance Hero Card - Fintech Premium */}
         <DashboardCard className="bg-gradient-to-br from-primary/10 via-background to-background border-primary/20">
