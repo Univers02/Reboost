@@ -1292,7 +1292,7 @@ export default function TransferFlow() {
 
         {/* Type de transfert */}
         {transfer?.transferNetwork && (() => {
-          const translatedNetwork = getTranslatedNetworkInfo(transfer.transferNetwork, t);
+          const translatedNetwork = getTranslatedNetworkInfo(transfer.transferNetwork as TransferNetwork, t);
           return (
           <div className="pt-4 border-t border-border">
             <div className="flex items-start gap-4">
