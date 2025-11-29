@@ -1,38 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function CircularTransferProgress({ percent }: { percent: number }) {
   const r = 52;
   const circumference = 2 * Math.PI * r;
 
-  // On utilise displayedPercent pour piloter **TOUT** : texte + cercle SVG
   const [displayedPercent, setDisplayedPercent] = useState(0);
+  const currentValueRef = useRef(0);
 
   useEffect(() => {
-    // Animation progressive : target = percent
-    let start = displayedPercent;
-    const target = percent;
-    const delta = Math.abs(target - start);
+    const start = currentValueRef.current;
+    const end = percent;
+    
+    if (start === end) return;
 
-    let duration = delta < 5 ? Math.max(800, delta * 300) : 9000;
-    const startTime = performance.now();
+    const step = 0.5;
+    const intervalDuration = 30;
+    const direction = end > start ? 1 : -1;
 
-    let rafId: number;
-    const frame = (now: number) => {
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed / duration, 1);
-      const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-      const eased = easeOutCubic(t);
-      const current = start + (target - start) * eased;
-      setDisplayedPercent(current);
-      if (t < 1) {
-        rafId = requestAnimationFrame(frame);
-      } else {
-        setDisplayedPercent(target);
+    const interval = setInterval(() => {
+      currentValueRef.current += step * direction;
+
+      if ((direction > 0 && currentValueRef.current >= end) || 
+          (direction < 0 && currentValueRef.current <= end)) {
+        currentValueRef.current = end;
+        clearInterval(interval);
       }
-    };
-    rafId = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(rafId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+      setDisplayedPercent(currentValueRef.current);
+    }, intervalDuration);
+
+    return () => clearInterval(interval);
   }, [percent]);
 
   // Calculer le strokeDashoffset à partir du displayedPercent (pas du prop percent)
