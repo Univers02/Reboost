@@ -4920,6 +4920,26 @@ Tous les codes de validation ont été vérifiés avec succès.`,
             completedAt: new Date(),
           });
 
+          // Tier system: increment completed loans count and check for upgrade
+          if (currentTransfer.loanId) {
+            const loan = await storage.getLoan(currentTransfer.loanId);
+            if (loan) {
+              const user = await storage.getUser(loan.userId);
+              if (user) {
+                // Increment completed loans count
+                await storage.updateUser(loan.userId, {
+                  completedLoansCount: user.completedLoansCount + 1,
+                });
+                
+                // Check and auto-upgrade tier
+                const tierUpgrade = await storage.checkAndUpgradeTier(loan.userId);
+                if (tierUpgrade.upgraded) {
+                  console.log(`[TIER SYSTEM] User ${loan.userId} upgraded from ${tierUpgrade.oldTier} to ${tierUpgrade.newTier}`);
+                }
+              }
+            }
+          }
+
           await storage.createTransferEvent({
             transferId: transfer.id,
             eventType: 'completed',

@@ -242,6 +242,7 @@ export interface IStorage {
   getMaxActiveLoans(tier: string): number;
   getActiveLoansCount(userId: string): Promise<number>;
   getUserStats(userId: string): Promise<{ tier: string; completedLoans: number; activeLoans: number; maxActiveLoans: number; defaultedLoans: number }>;
+  checkAndUpgradeTier(userId: string): Promise<{ upgraded: boolean; oldTier: string; newTier: string }>;
   
   // Chat System
   getUserConversations(userId: string): Promise<ChatConversation[]>;
@@ -3581,6 +3582,33 @@ export class DatabaseStorage implements IStorage {
       maxActiveLoans: maxActive,
       defaultedLoans: user.defaultedLoansCount,
     };
+  }
+
+  // Auto-upgrade tier based on completed loans
+  async checkAndUpgradeTier(userId: string): Promise<{ upgraded: boolean; oldTier: string; newTier: string }> {
+    const user = await this.getUser(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const oldTier = user.verificationTier;
+    let newTier = oldTier;
+
+    // Gold: 5+ completed loans + 0 defaults
+    if (user.completedLoansCount >= 5 && user.defaultedLoansCount === 0 && oldTier !== 'gold') {
+      newTier = 'gold';
+    }
+    // Silver: 2-3 completed loans + 0 defaults (but not gold)
+    else if (user.completedLoansCount >= 2 && user.completedLoansCount < 5 && user.defaultedLoansCount === 0 && oldTier === 'bronze') {
+      newTier = 'silver';
+    }
+
+    if (newTier !== oldTier) {
+      await this.updateUser(userId, { verificationTier: newTier });
+      return { upgraded: true, oldTier, newTier };
+    }
+
+    return { upgraded: false, oldTier, newTier };
   }
 }
 
