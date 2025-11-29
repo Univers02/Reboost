@@ -14,9 +14,11 @@ export function getFileUrl(fileUrl?: string | null): string | undefined {
   }
   
   // Backend returns full path: "/uploads/chat/[UUID]_[filename]"
-  // Use getApiUrl() to build correct URL for both dev and production
+  // Use PUBLIC endpoint (no auth required) for images/PDFs already validated on upload
   if (fileUrl.startsWith('/uploads/chat/')) {
-    return getApiUrl(fileUrl);
+    // Extract filename from path: "/uploads/chat/UUID_filename" -> "UUID_filename"
+    const filename = fileUrl.split('/').pop() || fileUrl;
+    return getApiUrl(`/api/chat/file/public/${filename}`);
   }
   
   // Fallback for legacy messages with just filename
