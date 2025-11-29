@@ -285,7 +285,11 @@ export default function Dashboard() {
                     {stats.tier === 'bronze' && '●'}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg capitalize">{stats.tier}</h3>
+                    <h3 className="font-semibold text-lg">
+                      {stats.tier === 'gold' && t.dashboard.tierGold}
+                      {stats.tier === 'silver' && t.dashboard.tierSilver}
+                      {stats.tier === 'bronze' && t.dashboard.tierBronze}
+                    </h3>
                     <p className="text-xs text-muted-foreground">
                       {stats.completedLoans} {stats.completedLoans !== 1 ? t.dashboard.completedLoansPlural : t.dashboard.completedLoansSingular}
                     </p>
