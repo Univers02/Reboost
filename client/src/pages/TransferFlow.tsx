@@ -1109,6 +1109,11 @@ export default function TransferFlow() {
           <p className="text-5xl sm:text-6xl font-bold text-foreground">
             {transfer?.amount || '0'}<span className="text-3xl sm:text-4xl ml-2">€</span>
           </p>
+          {transfer?.loanId && (
+            <p className="text-xs text-muted-foreground mt-2">
+              Prêt source : {transfer.loanId}
+            </p>
+          )}
         </div>
 
         {/* Expéditeur */}

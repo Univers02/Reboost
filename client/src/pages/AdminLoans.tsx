@@ -41,6 +41,7 @@ export default function AdminLoans() {
   const [approveReason, setApproveReason] = useState("");
   const [rejectReason, setRejectReason] = useState("");
   const [deleteReason, setDeleteReason] = useState("");
+  const [deleteConfirmationStep, setDeleteConfirmationStep] = useState<string | null>(null);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [bulkDeleteReason, setBulkDeleteReason] = useState("");
   const [selectedLoans, setSelectedLoans] = useState<Set<string>>(new Set());
@@ -181,8 +182,8 @@ export default function AdminLoans() {
   const handleBulkDelete = () => {
     if (selectedLoans.size === 0) {
       toast({
-        title: t.admin?.common?.messages?.noSelection || "Aucune sélection",
-        description: t.admin?.common?.messages?.selectAtLeastOne || "Veuillez sélectionner au moins un prêt à supprimer",
+        title: "Aucune sélection",
+        description: "Veuillez sélectionner au moins un prêt à supprimer",
         variant: "destructive",
       });
       return;
@@ -462,13 +463,19 @@ export default function AdminLoans() {
                       </AlertDialog>
                     )}
 
-                    <AlertDialog>
+                    <AlertDialog open={deleteConfirmationStep === loan.id} onOpenChange={(open) => {
+                      if (!open) {
+                        setDeleteConfirmationStep(null);
+                        setDeleteReason("");
+                      }
+                    }}>
                       <AlertDialogTrigger asChild>
                         <Button
                           variant="ghost"
                           size="sm"
                           className="w-full justify-start text-destructive"
                           data-testid={`button-delete-mobile-${loan.id}`}
+                          onClick={() => setDeleteConfirmationStep(loan.id)}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           {t.admin.common.actions.delete}
@@ -476,9 +483,9 @@ export default function AdminLoans() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>{t.admin.loans.deleteDialogTitle}</AlertDialogTitle>
+                          <AlertDialogTitle>Supprimer le prêt?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            {t.admin.loans.deleteDialogDesc}
+                            Êtes-vous certain de vouloir supprimer le prêt de {loan.userName} ({parseFloat(loan.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })})? Veuillez fournir une justification.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <div className="space-y-4">
@@ -488,16 +495,24 @@ export default function AdminLoans() {
                               id={`delete-reason-mobile-${loan.id}`}
                               value={deleteReason}
                               onChange={(e) => setDeleteReason(e.target.value)}
-                              placeholder={t.admin.loans.deleteReason}
+                              placeholder="Expliquez pourquoi ce prêt doit être supprimé..."
                               data-testid={`input-delete-reason-mobile-${loan.id}`}
                             />
                           </div>
                         </div>
                         <AlertDialogFooter>
-                          <AlertDialogCancel onClick={() => setDeleteReason("")}>{t.admin.common.actions.cancel}</AlertDialogCancel>
+                          <AlertDialogCancel onClick={() => {
+                            setDeleteConfirmationStep(null);
+                            setDeleteReason("");
+                          }}>{t.admin.common.actions.cancel}</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={() => deleteLoanMutation.mutate({ id: loan.id, reason: deleteReason })}
-                            disabled={!deleteReason || deleteLoanMutation.isPending}
+                            onClick={() => {
+                              if (deleteReason.trim()) {
+                                deleteLoanMutation.mutate({ id: loan.id, reason: deleteReason });
+                                setDeleteConfirmationStep(null);
+                              }
+                            }}
+                            disabled={!deleteReason.trim() || deleteLoanMutation.isPending}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             data-testid={`button-confirm-delete-mobile-${loan.id}`}
                           >
@@ -712,21 +727,27 @@ export default function AdminLoans() {
                         </AlertDialog>
                       )}
 
-                      <AlertDialog>
+                      <AlertDialog open={deleteConfirmationStep === loan.id} onOpenChange={(open) => {
+                        if (!open) {
+                          setDeleteConfirmationStep(null);
+                          setDeleteReason("");
+                        }
+                      }}>
                         <AlertDialogTrigger asChild>
                           <Button
                             variant="ghost"
                             size="sm"
                             data-testid={`button-delete-${loan.id}`}
+                            onClick={() => setDeleteConfirmationStep(loan.id)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>{t.admin.loans.deleteDialogTitle}</AlertDialogTitle>
+                            <AlertDialogTitle>Supprimer le prêt?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              {t.admin.loans.deleteDialogDesc}
+                              Êtes-vous certain de vouloir supprimer le prêt de {loan.userName} ({parseFloat(loan.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })})? Veuillez fournir une justification.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <div className="space-y-4">
@@ -736,16 +757,24 @@ export default function AdminLoans() {
                                 id={`delete-reason-${loan.id}`}
                                 value={deleteReason}
                                 onChange={(e) => setDeleteReason(e.target.value)}
-                                placeholder={t.admin.loans.deleteReason}
+                                placeholder="Expliquez pourquoi ce prêt doit être supprimé..."
                                 data-testid={`input-delete-reason-${loan.id}`}
                               />
                             </div>
                           </div>
                           <AlertDialogFooter>
-                            <AlertDialogCancel onClick={() => setDeleteReason("")}>{t.admin.common.actions.cancel}</AlertDialogCancel>
+                            <AlertDialogCancel onClick={() => {
+                              setDeleteConfirmationStep(null);
+                              setDeleteReason("");
+                            }}>{t.admin.common.actions.cancel}</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => deleteLoanMutation.mutate({ id: loan.id, reason: deleteReason })}
-                              disabled={!deleteReason || deleteLoanMutation.isPending}
+                              onClick={() => {
+                                if (deleteReason.trim()) {
+                                  deleteLoanMutation.mutate({ id: loan.id, reason: deleteReason });
+                                  setDeleteConfirmationStep(null);
+                                }
+                              }}
+                              disabled={!deleteReason.trim() || deleteLoanMutation.isPending}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                               data-testid={`button-confirm-delete-${loan.id}`}
                             >
