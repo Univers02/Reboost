@@ -320,6 +320,14 @@ type TranslationKeys = {
     monthApr: string;
     monthJun: string;
     monthMay: string;
+    tierLabel: string;
+    tierGold: string;
+    tierSilver: string;
+    tierBronze: string;
+    completedLoansSingular: string;
+    completedLoansPlural: string;
+    activeLoansLabel: string;
+    availableLoans: string;
   };
   loan: {
     pageTitle: string;
@@ -1687,6 +1695,9 @@ type TranslationKeys = {
     advantagesLabel: string;
     requestButton: string;
     loginToRequest: string;
+    maxLoansMessage: string;
+    progressToSilver: string;
+    progressToGold: string;
     types: {
       personalLoan: { title: string; description: string; features: string[] };
       mortgageLoan: { title: string; description: string; features: string[] };
@@ -2613,6 +2624,14 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mar',
       monthApr: 'Avr',
       monthMay: 'Mai',
+      tierLabel: 'Niveau de confiance',
+      tierGold: 'Gold',
+      tierSilver: 'Silver',
+      tierBronze: 'Bronze',
+      completedLoansSingular: 'prêt complété',
+      completedLoansPlural: 'prêts complétés',
+      activeLoansLabel: 'Prêts actifs',
+      availableLoans: 'disponible(s)',
       monthJun: 'Juin',
       serverError: 'Impossible de se connecter au serveur. Veuillez vérifier votre connexion et réessayer.',
       diagnosticInfo: 'Informations de diagnostic (développement)',
@@ -4231,6 +4250,9 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Avantages',
       requestButton: 'Demander ce prêt',
       loginToRequest: 'Se connecter pour demander',
+      maxLoansMessage: 'Vous avez atteint le nombre maximum de prêts actifs pour votre niveau {tier} ({current}/{max}). Complétez un prêt pour en demander un nouveau.',
+      progressToSilver: 'Complétez {remaining} prêt(s) supplémentaire(s) pour débloquer le niveau Silver et augmenter votre limite à 2 prêts actifs.',
+      progressToGold: 'Complétez {remaining} prêt(s) supplémentaire(s) pour débloquer le niveau Gold et augmenter votre limite à 3 prêts actifs.',
       types: {
         personalLoan: {
           title: 'Prêt Personnel',
@@ -5306,6 +5328,14 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mar',
       monthApr: 'Apr',
       monthMay: 'May',
+      tierLabel: 'Trust Tier',
+      tierGold: 'Gold',
+      tierSilver: 'Silver',
+      tierBronze: 'Bronze',
+      completedLoansSingular: 'completed loan',
+      completedLoansPlural: 'completed loans',
+      activeLoansLabel: 'Active Loans',
+      availableLoans: 'available',
       monthJun: 'Jun',
       serverError: 'Unable to connect to the server. Please check your connection and try again.',
       diagnosticInfo: 'Diagnostic information (development)',
@@ -6924,6 +6954,9 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Advantages',
       requestButton: 'Request this Loan',
       loginToRequest: 'Login to Request',
+      maxLoansMessage: 'You have reached the maximum number of active loans for your {tier} tier ({current}/{max}). Complete a loan to request a new one.',
+      progressToSilver: 'Complete {remaining} more loan(s) to unlock Silver tier and increase your limit to 2 active loans.',
+      progressToGold: 'Complete {remaining} more loan(s) to unlock Gold tier and increase your limit to 3 active loans.',
       types: {
         personalLoan: {
           title: 'Personal Loan',
@@ -7990,6 +8023,14 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mar',
       monthApr: 'Abr',
       monthMay: 'May',
+      tierLabel: 'Trust Tier',
+      tierGold: 'Gold',
+      tierSilver: 'Silver',
+      tierBronze: 'Bronze',
+      completedLoansSingular: 'completed loan',
+      completedLoansPlural: 'completed loans',
+      activeLoansLabel: 'Active Loans',
+      availableLoans: 'available',
       monthJun: 'Jun',
       serverError: 'No se puede conectar al servidor. Por favor verifique su conexión e intente de nuevo.',
       diagnosticInfo: 'Información de diagnóstico (desarrollo)',
@@ -9510,6 +9551,9 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Ventajas',
       requestButton: 'Solicitar este Préstamo',
       loginToRequest: 'Iniciar Sesión para Solicitar',
+      maxLoansMessage: 'Ha alcanzado el número máximo de préstamos activos para su nivel {tier} ({current}/{max}). Complete un préstamo para solicitar uno nuevo.',
+      progressToSilver: 'Complete {remaining} préstamo(s) más para desbloquear el nivel Silver y aumentar su límite a 2 préstamos activos.',
+      progressToGold: 'Complete {remaining} préstamo(s) más para desbloquear el nivel Gold y aumentar su límite a 3 préstamos activos.',
       types: {
         personalLoan: {
           title: 'Préstamo Personal',
@@ -10655,6 +10699,14 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mar',
       monthApr: 'Abr',
       monthMay: 'Mai',
+      tierLabel: 'Niveau de confiance',
+      tierGold: 'Gold',
+      tierSilver: 'Silver',
+      tierBronze: 'Bronze',
+      completedLoansSingular: 'prêt complété',
+      completedLoansPlural: 'prêts complétés',
+      activeLoansLabel: 'Prêts actifs',
+      availableLoans: 'disponible(s)',
       monthJun: 'Jun',
       serverError: 'Não foi possível conectar ao servidor. Por favor, verifique sua conexão e tente novamente.',
       diagnosticInfo: 'Informações de diagnóstico (desenvolvimento)',
@@ -12183,6 +12235,9 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Vantagens',
       requestButton: 'Solicitar este Empréstimo',
       loginToRequest: 'Entrar para Solicitar',
+      maxLoansMessage: 'Você atingiu o número máximo de empréstimos ativos para seu nível {tier} ({current}/{max}). Complete um empréstimo para solicitar um novo.',
+      progressToSilver: 'Complete mais {remaining} empréstimo(s) para desbloquear o nível Silver e aumentar seu limite para 2 empréstimos ativos.',
+      progressToGold: 'Complete mais {remaining} empréstimo(s) para desbloquear o nível Gold e aumentar seu limite para 3 empréstimos ativos.',
       types: {
         personalLoan: {
           title: 'Empréstimo Pessoal',
@@ -14676,6 +14731,9 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Vantaggi',
       requestButton: 'Richiedi questo prestito',
       loginToRequest: 'Accedi per richiedere',
+      maxLoansMessage: 'Hai raggiunto il numero massimo di prestiti attivi per il tuo livello {tier} ({current}/{max}). Completa un prestito per richiederne uno nuovo.',
+      progressToSilver: 'Completa altri {remaining} prestito/i per sbloccare il livello Silver e aumentare il limite a 2 prestiti attivi.',
+      progressToGold: 'Completa altri {remaining} prestito/i per sbloccare il livello Gold e aumentare il limite a 3 prestiti attivi.',
       types: {
         personalLoan: {
           title: 'Prestito Personale',
@@ -15716,6 +15774,14 @@ export const translations: Record<Language, TranslationKeys> = {
       monthMar: 'Mär',
       monthApr: 'Apr',
       monthMay: 'Mai',
+      tierLabel: 'Niveau de confiance',
+      tierGold: 'Gold',
+      tierSilver: 'Silver',
+      tierBronze: 'Bronze',
+      completedLoansSingular: 'prêt complété',
+      completedLoansPlural: 'prêts complétés',
+      activeLoansLabel: 'Prêts actifs',
+      availableLoans: 'disponible(s)',
       monthJun: 'Jun',
       kycStatusApproved: "Verifiziert",
       kycStatusPending: "Ausstehend",
@@ -17270,6 +17336,9 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Vorteile',
       requestButton: 'Diesen Kredit beantragen',
       loginToRequest: 'Anmelden zum Beantragen',
+      maxLoansMessage: 'Sie haben die maximale Anzahl aktiver Kredite für Ihre Stufe {tier} ({current}/{max}) erreicht. Schließen Sie einen Kredit ab, um einen neuen zu beantragen.',
+      progressToSilver: 'Schließen Sie {remaining} weitere(n) Kredit(e) ab, um die Stufe Silver freizuschalten und Ihr Limit auf 2 aktive Kredite zu erhöhen.',
+      progressToGold: 'Schließen Sie {remaining} weitere(n) Kredit(e) ab, um die Stufe Gold freizuschalten und Ihr Limit auf 3 aktive Kredite zu erhöhen.',
       types: {
         personalLoan: {
           title: 'Privatkredit',
@@ -19834,6 +19903,9 @@ export const translations: Record<Language, TranslationKeys> = {
       advantagesLabel: 'Voordelen',
       requestButton: 'Deze lening aanvragen',
       loginToRequest: 'Inloggen om aan te vragen',
+      maxLoansMessage: 'U heeft het maximale aantal actieve leningen voor uw niveau {tier} ({current}/{max}) bereikt. Rond een lening af om een nieuwe aan te vragen.',
+      progressToSilver: 'Rond nog {remaining} lening(en) af om het Silver niveau te ontgrendelen en uw limiet te verhogen naar 2 actieve leningen.',
+      progressToGold: 'Rond nog {remaining} lening(en) af om het Gold niveau te ontgrendelen en uw limiet te verhogen naar 3 actieve leningen.',
       types: {
         personalLoan: {
           title: 'Persoonlijke Lening',
