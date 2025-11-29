@@ -863,7 +863,7 @@ export default function TransferFlow() {
                       {t.nav.loans}
                     </Label>
                     <Select value={selectedLoanId} onValueChange={setSelectedLoanId}>
-                      <SelectTrigger data-testid="select-loan" className="h-12">
+                      <SelectTrigger data-testid="select-loan" className="h-12 [&>span]:text-foreground/60 [&>span]:font-normal">
                         <SelectValue placeholder={t.amortization.chooseLoan} />
                       </SelectTrigger>
                       <SelectContent>
@@ -910,7 +910,7 @@ export default function TransferFlow() {
                       </div>
                     </>
                   ) : (
-                    <div className="h-14 w-full rounded-md border border-dashed border-input bg-background/50 px-3 py-2 flex items-center text-muted-foreground">
+                    <div className="h-14 w-full rounded-md border border-dashed border-input bg-background/50 px-3 py-2 flex items-center text-foreground/60">
                       {t.amortization.chooseLoan}
                     </div>
                   )}
@@ -921,10 +921,10 @@ export default function TransferFlow() {
                     {t.transferFlow.form.beneficiaryAccountLabel}
                   </Label>
                   <Select value={externalAccountId} onValueChange={setExternalAccountId}>
-                    <SelectTrigger data-testid="select-account" className="h-12 overflow-visible [&>span]:line-clamp-none [&>span]:flex [&>span]:flex-col [&>span]:gap-0">
+                    <SelectTrigger data-testid="select-account" className="h-12 overflow-visible [&>span]:line-clamp-none [&>span]:flex [&>span]:flex-col [&>span]:gap-0 [&>span]:text-foreground/60 [&>span]:font-normal">
                       {externalAccountId && externalAccounts ? (
                         <div className="flex flex-col items-start gap-0 pointer-events-none select-none w-full">
-                          <span className="font-medium text-sm leading-none line-clamp-none">{externalAccounts.find(a => a.id === externalAccountId)?.accountLabel}</span>
+                          <span className="font-medium text-sm leading-none line-clamp-none text-foreground">{externalAccounts.find(a => a.id === externalAccountId)?.accountLabel}</span>
                           <span className="text-xs text-muted-foreground font-mono leading-none line-clamp-none">{externalAccounts.find(a => a.id === externalAccountId)?.iban}</span>
                         </div>
                       ) : (
