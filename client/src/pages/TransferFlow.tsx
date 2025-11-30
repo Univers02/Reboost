@@ -774,6 +774,7 @@ export default function TransferFlow() {
       return;
     }
 
+    const networkInfo = transferNetworkInfo ? getTranslatedNetworkInfo(transferNetworkInfo.network, t) : null;
     initiateMutation.mutate({
       amount: parseFloat(amount),
       recipient,
@@ -781,7 +782,7 @@ export default function TransferFlow() {
       externalAccountId,
       transferNetwork: transferNetworkInfo?.network || 'SEPA',
       networkFees: transferNetworkInfo?.fees || 0,
-      processingTime: transferNetworkInfo?.typeInfo.processingTime || '1-2 jours ouvrables',
+      processingTime: networkInfo?.processingTime || t.transferFlow.form.sepaProcessingTime || '1-2 business days',
     });
   };
 
@@ -1320,7 +1321,7 @@ export default function TransferFlow() {
                 <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
-                    {transfer.processingTime}
+                    {translatedNetwork.processingTime}
                   </span>
                   <span className="flex items-center gap-1">
                     <Banknote className="w-3 h-3" />
