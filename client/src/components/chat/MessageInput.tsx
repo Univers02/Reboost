@@ -169,6 +169,7 @@ export function MessageInput({
                 <input
                   ref={fileInputRef}
                   type="file"
+                  accept=".pdf,application/pdf"
                   onChange={handleFileSelect}
                   className="hidden"
                   data-testid="input-file"
@@ -176,7 +177,7 @@ export function MessageInput({
                 <input
                   ref={imageInputRef}
                   type="file"
-                  accept="image/*"
+                  accept=".jpg,.jpeg,image/jpeg"
                   onChange={handleImageSelect}
                   className="hidden"
                   data-testid="input-image"

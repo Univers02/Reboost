@@ -5120,12 +5120,12 @@ ${urls.map(url => `  <url>
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit (matches KYC documents)
     fileFilter: (req, file, cb) => {
       // Initial quick validation - will do strict validation in endpoint
-      const allowedTypes = /jpeg|jpg|png|pdf|webp/i;
+      const allowedTypes = /jpeg|jpg|pdf/i;
       const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
       if (extname) {
         return cb(null, true);
       } else {
-        cb(new Error('Type de fichier non autorisé. Formats acceptés: PDF, JPEG, PNG, WEBP'));
+        cb(new Error('Type de fichier non autorisé. Formats acceptés: JPEG, JPG, PDF'));
       }
     },
   });

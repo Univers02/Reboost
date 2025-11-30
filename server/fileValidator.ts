@@ -21,9 +21,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_MIME_TYPES = [
   'application/pdf',
   'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp'
+  'image/jpg'
 ];
 
 /**
@@ -54,7 +52,7 @@ export async function validateFileType(filePath: string): Promise<FileValidation
     if (!ALLOWED_MIME_TYPES.includes(fileType.mime)) {
       return {
         isValid: false,
-        error: `Type de fichier non autorisé. Formats acceptés: PDF, JPEG, PNG, WEBP`
+        error: `Type de fichier non autorisé. Formats acceptés: JPEG, JPG, PDF`
       };
     }
 
@@ -130,11 +128,11 @@ export async function validateAndCleanFile(filePath: string, originalName: strin
   // Nettoyage selon le type
   if (mimeType === 'application/pdf') {
     cleanedBuffer = await cleanPDF(filePath);
-  } else if (['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(mimeType)) {
+  } else if (['image/jpeg', 'image/jpg'].includes(mimeType)) {
     cleanedBuffer = await cleanImage(filePath);
     // Force JPEG après nettoyage
     mimeType = 'image/jpeg';
-    filename = originalName.replace(/\.(png|webp|jpg|jpeg)$/i, '.jpg');
+    filename = originalName.replace(/\.(jpg|jpeg)$/i, '.jpg');
   } else {
     throw new Error('Type de fichier non supporté');
   }
