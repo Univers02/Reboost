@@ -64,7 +64,7 @@ export function MessageList({
     getScrollElement: () => containerRef.current,
     estimateSize: (index) => {
       const item = flattenedItems[index];
-      if (item.type === "date") return 60;
+      if (item.type === "date") return 80;
       // Estimate larger size to account for images/PDFs
       // Images can be up to 384px (max-h-96) + padding/margins
       const message = item.message;
@@ -73,15 +73,16 @@ export function MessageList({
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
         const isPdf = fileName.endsWith('.pdf');
         if (imageExtensions.some(ext => fileName.endsWith(ext))) {
-          return 450; // Image (up to 384px) + text + spacing
+          return 500; // Image (up to 384px) + text + spacing + margins
         }
         if (isPdf) {
-          return 450; // PDF preview (up to 384px) + spacing
+          return 500; // PDF preview (up to 384px) + spacing + margins
         }
       }
-      return 100; // Text-only message
+      // Text-only message: increased from 100 to account for all spacing/padding
+      return 150;
     },
-    overscan: 10,
+    overscan: 20,
   });
 
   const scrollToBottom = (smooth = true) => {
