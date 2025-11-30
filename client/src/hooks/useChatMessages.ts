@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSocket } from "./useSocket";
 import { useUser } from "./use-user";
+import { getApiUrl } from "@/lib/queryClient";
 import type { ChatMessage } from "@shared/schema";
 
 interface UseChatMessagesOptions {
@@ -139,12 +140,7 @@ export function useChatMessages({
   }, [socket, connected, conversationId, queryClient, currentUser]);
 
   const sendMessage = useCallback(
-    (content: string, fileUrlOrFile?: string | File, fileName?: string) => {
-      if (!socket || !connected) {
-        console.error("Socket not connected");
-        return;
-      }
-
+    async (content: string, fileUrlOrFile?: string | File, fileName?: string) => {
       // Handle File object or string URL
       const fileUrl = typeof fileUrlOrFile === 'string' ? fileUrlOrFile : null;
 
@@ -172,13 +168,58 @@ export function useChatMessages({
         }
       );
 
-      // Envoyer le message via socket
-      socket.emit("chat:send-message", {
-        conversationId,
-        content,
-        fileUrl,
-        fileName,
-      });
+      // Try WebSocket first, fallback to HTTP if not connected
+      if (socket && connected) {
+        // Envoyer le message via socket
+        socket.emit("chat:send-message", {
+          conversationId,
+          content,
+          fileUrl,
+          fileName,
+        });
+      } else {
+        // Fallback: Envoyer via HTTP API
+        try {
+          const csrfResponse = await fetch(getApiUrl('/api/csrf-token'), {
+            credentials: 'include',
+          });
+          const { csrfToken } = await csrfResponse.json();
+
+          const response = await fetch(getApiUrl('/api/chat/messages'), {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken,
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              conversationId,
+              content,
+              fileUrl,
+              fileName,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to send message via HTTP');
+          }
+
+          // Refetch messages to get the real message with server-generated ID
+          queryClient.invalidateQueries({
+            queryKey: ['chat', 'messages', conversationId],
+          });
+        } catch (error) {
+          console.error('Failed to send message via HTTP:', error);
+          // Remove optimistic message on failure
+          queryClient.setQueryData(
+            ['chat', 'messages', conversationId],
+            (oldData: ChatMessage[] | undefined) => {
+              if (!oldData) return [];
+              return oldData.filter(msg => msg.id !== optimisticMessage.id);
+            }
+          );
+        }
+      }
     },
     [socket, connected, conversationId, queryClient, currentUser]
   );

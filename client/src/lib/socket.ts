@@ -1,10 +1,15 @@
 import { io, Socket } from "socket.io-client";
 
-// In production: use the API subdomain URL
-// In development: use window origin (localhost, same port via Vite)
+// Detect if we're in development (localhost OR Replit dev environment)
 const isDevelopment = typeof window !== 'undefined' && 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  (window.location.hostname === 'localhost' || 
+   window.location.hostname === '127.0.0.1' ||
+   window.location.hostname.includes('.replit.dev') ||
+   window.location.hostname.includes('.replit.app') ||
+   window.location.hostname.includes('.riker.replit.dev'));
 
+// In development: always use same origin (Vite proxy handles it)
+// In production: use the API subdomain URL
 const SOCKET_URL = typeof window !== 'undefined'
   ? (isDevelopment 
       ? window.location.origin

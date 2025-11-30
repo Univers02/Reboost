@@ -163,11 +163,11 @@ export function ChatWindow({
                 <Circle
                   className={cn(
                     "h-2 w-2",
-                    connected ? "fill-green-500 text-green-500" : "fill-muted-foreground text-muted-foreground"
+                    connected ? "fill-green-500 text-green-500" : "fill-yellow-500 text-yellow-500"
                   )}
                 />
                 <span className="text-xs text-muted-foreground" data-testid="text-connection-status">
-                  {connected ? 'Online' : 'Offline'}
+                  {connected ? 'Online' : 'Available'}
                 </span>
               </div>
             )}
@@ -207,7 +207,7 @@ export function ChatWindow({
         <MessageInput
           onSend={handleSendMessage}
           onTyping={startTyping}
-          disabled={!connected}
+          disabled={false}
           allowFileUpload={true}
           placeholder="Type your message..."
           sendHint="Press Enter to send"
