@@ -68,26 +68,26 @@ function translateCodeContext(codeContext: string | null | undefined, t: ReturnT
 }
 
 // English fallback translations for transfer networks
-const englishNetworkFallbacks: Record<TransferNetwork, { name: string; description: string }> = {
-  'SEPA': { name: 'SEPA Credit Transfer', description: 'Transfer within the SEPA zone (Europe)' },
-  'SWIFT': { name: 'SWIFT International Transfer', description: 'International transfer via the SWIFT network' },
-  'ACH': { name: 'ACH Transfer', description: 'US domestic transfer (Automated Clearing House)' },
-  'WIRE': { name: 'Wire Transfer', description: 'Instant electronic transfer (Fedwire)' },
-  'FASTER_PAYMENTS': { name: 'Faster Payments', description: 'Instant transfer in the United Kingdom' },
-  'INTERAC': { name: 'Interac e-Transfer', description: 'Canadian electronic transfer' },
-  'LOCAL': { name: 'Local Transfer', description: 'Domestic transfer according to country' },
+const englishNetworkFallbacks: Record<TransferNetwork, { name: string; description: string; processingTime: string }> = {
+  'SEPA': { name: 'SEPA Credit Transfer', description: 'Transfer within the SEPA zone (Europe)', processingTime: '1-2 business days' },
+  'SWIFT': { name: 'SWIFT International Transfer', description: 'International transfer via the SWIFT network', processingTime: '2-5 business days' },
+  'ACH': { name: 'ACH Transfer', description: 'US domestic transfer (Automated Clearing House)', processingTime: '2-3 business days' },
+  'WIRE': { name: 'Wire Transfer', description: 'Instant electronic transfer (Fedwire)', processingTime: 'Same day' },
+  'FASTER_PAYMENTS': { name: 'Faster Payments', description: 'Instant transfer in the United Kingdom', processingTime: 'A few seconds' },
+  'INTERAC': { name: 'Interac e-Transfer', description: 'Canadian electronic transfer', processingTime: 'A few minutes' },
+  'LOCAL': { name: 'Local Transfer', description: 'Domestic transfer according to country', processingTime: 'Variable by country' },
 };
 
-// Helper function to get translated network name and description
-function getTranslatedNetworkInfo(network: TransferNetwork, t: ReturnType<typeof useTranslations>): { name: string; description: string } {
-  const networkTranslations: Record<TransferNetwork, { nameKey: string; descKey: string }> = {
-    'SEPA': { nameKey: 'sepaTransferName', descKey: 'sepaTransferDesc' },
-    'SWIFT': { nameKey: 'swiftTransferName', descKey: 'swiftTransferDesc' },
-    'ACH': { nameKey: 'achTransferName', descKey: 'achTransferDesc' },
-    'WIRE': { nameKey: 'wireTransferName', descKey: 'wireTransferDesc' },
-    'FASTER_PAYMENTS': { nameKey: 'fasterPaymentsName', descKey: 'fasterPaymentsDesc' },
-    'INTERAC': { nameKey: 'interacTransferName', descKey: 'interacTransferDesc' },
-    'LOCAL': { nameKey: 'localTransferName', descKey: 'localTransferDesc' },
+// Helper function to get translated network name, description and processing time
+function getTranslatedNetworkInfo(network: TransferNetwork, t: ReturnType<typeof useTranslations>): { name: string; description: string; processingTime: string } {
+  const networkTranslations: Record<TransferNetwork, { nameKey: string; descKey: string; processingTimeKey: string }> = {
+    'SEPA': { nameKey: 'sepaTransferName', descKey: 'sepaTransferDesc', processingTimeKey: 'sepaProcessingTime' },
+    'SWIFT': { nameKey: 'swiftTransferName', descKey: 'swiftTransferDesc', processingTimeKey: 'swiftProcessingTime' },
+    'ACH': { nameKey: 'achTransferName', descKey: 'achTransferDesc', processingTimeKey: 'achProcessingTime' },
+    'WIRE': { nameKey: 'wireTransferName', descKey: 'wireTransferDesc', processingTimeKey: 'wireProcessingTime' },
+    'FASTER_PAYMENTS': { nameKey: 'fasterPaymentsName', descKey: 'fasterPaymentsDesc', processingTimeKey: 'fasterPaymentsProcessingTime' },
+    'INTERAC': { nameKey: 'interacTransferName', descKey: 'interacTransferDesc', processingTimeKey: 'interacProcessingTime' },
+    'LOCAL': { nameKey: 'localTransferName', descKey: 'localTransferDesc', processingTimeKey: 'localProcessingTime' },
   };
   
   const keys = networkTranslations[network];
@@ -96,6 +96,7 @@ function getTranslatedNetworkInfo(network: TransferNetwork, t: ReturnType<typeof
   return {
     name: (t.transferFlow.form as any)[keys.nameKey] || fallback.name,
     description: (t.transferFlow.form as any)[keys.descKey] || fallback.description,
+    processingTime: (t.transferFlow.form as any)[keys.processingTimeKey] || fallback.processingTime,
   };
 }
 
@@ -983,7 +984,7 @@ export default function TransferFlow() {
                         <Clock className="w-4 h-4 text-muted-foreground" />
                         <div>
                           <p className="text-xs text-muted-foreground">{t.transferFlow.form.processingTime}</p>
-                          <p className="font-semibold text-sm">{transferNetworkInfo.typeInfo.processingTime}</p>
+                          <p className="font-semibold text-sm">{translatedNetwork.processingTime}</p>
                         </div>
                       </div>
                     </div>

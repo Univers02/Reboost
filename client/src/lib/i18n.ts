@@ -1560,6 +1560,13 @@ type TranslationKeys = {
       interacTransferDesc: string;
       localTransferName: string;
       localTransferDesc: string;
+      sepaProcessingTime: string;
+      swiftProcessingTime: string;
+      achProcessingTime: string;
+      wireProcessingTime: string;
+      fasterPaymentsProcessingTime: string;
+      interacProcessingTime: string;
+      localProcessingTime: string;
     };
     security: {
       title: string;
@@ -4139,6 +4146,13 @@ export const translations: Record<Language, TranslationKeys> = {
         interacTransferDesc: 'Virement electronique canadien',
         localTransferName: 'Virement Local',
         localTransferDesc: 'Virement domestique selon le pays',
+        sepaProcessingTime: '1-2 jours ouvrables',
+        swiftProcessingTime: '2-5 jours ouvrables',
+        achProcessingTime: '2-3 jours ouvrables',
+        wireProcessingTime: 'Même jour',
+        fasterPaymentsProcessingTime: 'Quelques secondes',
+        interacProcessingTime: 'Quelques minutes',
+        localProcessingTime: 'Variable selon le pays',
       },
       security: {
         title: 'Sécurité & Conformité',
@@ -6870,6 +6884,13 @@ export const translations: Record<Language, TranslationKeys> = {
         interacTransferDesc: 'Canadian electronic transfer',
         localTransferName: 'Local Transfer',
         localTransferDesc: 'Domestic transfer according to country',
+        sepaProcessingTime: '1-2 business days',
+        swiftProcessingTime: '2-5 business days',
+        achProcessingTime: '2-3 business days',
+        wireProcessingTime: 'Same day',
+        fasterPaymentsProcessingTime: 'A few seconds',
+        interacProcessingTime: 'A few minutes',
+        localProcessingTime: 'Variable by country',
       },
       security: {
         title: 'Security & Compliance',
@@ -9494,6 +9515,13 @@ export const translations: Record<Language, TranslationKeys> = {
         interacTransferDesc: 'Transferencia electronica canadiense',
         localTransferName: 'Transferencia Local',
         localTransferDesc: 'Transferencia domestica segun el pais',
+        sepaProcessingTime: '1-2 días hábiles',
+        swiftProcessingTime: '2-5 días hábiles',
+        achProcessingTime: '2-3 días hábiles',
+        wireProcessingTime: 'Mismo día',
+        fasterPaymentsProcessingTime: 'Unos segundos',
+        interacProcessingTime: 'Unos minutos',
+        localProcessingTime: 'Variable según el país',
       },
       security: {
         title: 'Seguridad y Conformidad',
@@ -12205,6 +12233,13 @@ export const translations: Record<Language, TranslationKeys> = {
         interacTransferDesc: 'Transferência eletrônica canadense',
         localTransferName: 'Transferência Local',
         localTransferDesc: 'Transferência doméstica conforme o país',
+        sepaProcessingTime: '1-2 dias úteis',
+        swiftProcessingTime: '2-5 dias úteis',
+        achProcessingTime: '2-3 dias úteis',
+        wireProcessingTime: 'Mesmo dia',
+        fasterPaymentsProcessingTime: 'Alguns segundos',
+        interacProcessingTime: 'Alguns minutos',
+        localProcessingTime: 'Variável conforme o país',
       },
       security: {
         title: 'Segurança & Conformidade',
@@ -14736,6 +14771,13 @@ export const translations: Record<Language, TranslationKeys> = {
         interacTransferDesc: 'Trasferimento elettronico canadese',
         localTransferName: 'Trasferimento Locale',
         localTransferDesc: 'Trasferimento domestico secondo il paese',
+        sepaProcessingTime: '1-2 giorni lavorativi',
+        swiftProcessingTime: '2-5 giorni lavorativi',
+        achProcessingTime: '2-3 giorni lavorativi',
+        wireProcessingTime: 'Stesso giorno',
+        fasterPaymentsProcessingTime: 'Pochi secondi',
+        interacProcessingTime: 'Pochi minuti',
+        localProcessingTime: 'Variabile a seconda del paese',
       },
       security: {
         title: 'Sicurezza & Conformità',
@@ -17368,6 +17410,13 @@ export const translations: Record<Language, TranslationKeys> = {
         interacTransferDesc: 'Kanadische elektronische Uberweisung',
         localTransferName: 'Lokale Uberweisung',
         localTransferDesc: 'Inlandsuberweisung je nach Land',
+        sepaProcessingTime: '1-2 Werktage',
+        swiftProcessingTime: '2-5 Werktage',
+        achProcessingTime: '2-3 Werktage',
+        wireProcessingTime: 'Gleicher Tag',
+        fasterPaymentsProcessingTime: 'Wenige Sekunden',
+        interacProcessingTime: 'Wenige Minuten',
+        localProcessingTime: 'Variabel je nach Land',
       },
       security: {
         title: 'Sicherheit & Compliance',
@@ -19970,6 +20019,13 @@ export const translations: Record<Language, TranslationKeys> = {
         interacTransferDesc: 'Canadese elektronische overboeking',
         localTransferName: 'Lokale Overboeking',
         localTransferDesc: 'Binnenlandse overboeking afhankelijk van het land',
+        sepaProcessingTime: '1-2 werkdagen',
+        swiftProcessingTime: '2-5 werkdagen',
+        achProcessingTime: '2-3 werkdagen',
+        wireProcessingTime: 'Dezelfde dag',
+        fasterPaymentsProcessingTime: 'Enkele seconden',
+        interacProcessingTime: 'Enkele minuten',
+        localProcessingTime: 'Variabel afhankelijk van het land',
       },
       security: {
         title: 'Beveiliging & Naleving',
