@@ -18,7 +18,7 @@ export function MessageInput({
   onSend,
   onTyping,
   disabled = false,
-  maxLength = 2000,
+  maxLength = 300,
   placeholder = "Type your message...",
   sendHint = "Press Ctrl+Enter to send",
   allowFileUpload = false,

@@ -348,7 +348,9 @@ export const insertAmortizationScheduleSchema = createInsertSchema(amortizationS
 
 // Chat System Schemas
 export const insertChatConversationSchema = createInsertSchema(chatConversations).omit({ id: true, createdAt: true, updatedAt: true });
-export const insertChatMessageSchema = createInsertSchema(chatMessages).omit({ id: true, createdAt: true });
+export const insertChatMessageSchema = createInsertSchema(chatMessages).omit({ id: true, createdAt: true }).extend({
+  content: z.string().min(1, 'Le message ne peut pas être vide').max(300, 'Le message dépasse la limite de 300 caractères'),
+});
 export const insertChatPresenceSchema = createInsertSchema(chatPresence).omit({ updatedAt: true });
 
 export type User = typeof users.$inferSelect;

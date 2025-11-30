@@ -5091,7 +5091,7 @@ ${urls.map(url => `  <url>
 
   // Schéma de validation pour envoyer un message
   const sendMessageSchema = insertChatMessageSchema.extend({
-    content: z.string().min(1, 'Le message ne peut pas être vide').max(5000, 'Message trop long'),
+    content: z.string().min(1, 'Le message ne peut pas être vide').max(300, 'Le message dépasse la limite de 300 caractères'),
   });
 
   // Configure multer for chat file uploads with strict validation
