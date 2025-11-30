@@ -25,6 +25,8 @@ export function MessageList({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  // Cache measured heights to avoid re-estimation
+  const measuredHeights = useRef<Map<string, number>>(new Map());
 
   const groupedMessages = messages.reduce((groups, message) => {
     const messageDate = new Date(message.createdAt);
@@ -79,25 +81,27 @@ export function MessageList({
           return 500; // PDF preview (up to 384px) + spacing + margins
         }
       }
-      // Text-only message: estimate based on content length
-      // AGGRESSIVE estimation to prevent virtualizer overlap issues
-      // - Bubble: py-2.5 (10px) + px-4 (16px) = 26px total padding
+      // Text-only message: ULTRA-CONSERVATIVE estimate to prevent virtualizer overlap
+      // Account for both wide admin window AND narrow user chat modal:
+      // - On narrow windows: ~30-40 chars per line (vs 50 on wider)
+      // - Bubble padding: py-2.5 (10px) + px-4 (16px) = 26px
       // - Timestamp + icon: 20px
-      // - Avatar spacing (when needed): 8px
-      // - Gap between messages: 12px
-      // - Total base spacing: ~66px
-      // - With max-width 75%, realistic ~50 chars per line
+      // - Message gaps: 12px
+      // - Total base: ~70px
+      // 
+      // For 300 chars on narrow window: ~8-10 lines instead of 6
       const contentLength = message?.content?.length || 0;
-      const estimatedLines = Math.max(1, Math.ceil(contentLength / 50));
-      // VERY conservative base to ensure no overlap
-      const baseHeight = 75;
-      // More generous line height estimate (text 14px + spacing 12px + extra buffer 6px)
-      const lineHeight = 32;
+      // Use 35 chars/line to account for narrow user chat modal
+      const estimatedLines = Math.max(1, Math.ceil(contentLength / 35));
+      // Ultra-conservative base for maximum safety
+      const baseHeight = 85;
+      // Very generous line height (text 14px + spacing + buffer = 36px)
+      const lineHeight = 36;
       const textEstimate = baseHeight + (estimatedLines * lineHeight);
-      // Aggressive bounds: min 120px, max 450px
-      return Math.min(450, Math.max(120, textEstimate));
+      // Ultra-aggressive bounds: min 130px, max 520px
+      return Math.min(520, Math.max(130, textEstimate));
     },
-    overscan: 20,
+    overscan: 50, // Aggressive overscan to prevent virtualizer overlap issues
   });
 
   const scrollToBottom = (smooth = true) => {
