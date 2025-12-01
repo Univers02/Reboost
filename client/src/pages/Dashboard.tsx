@@ -113,6 +113,7 @@ const getMockCashflowData = (t: ReturnType<typeof useTranslations>) => [
 ];
 
 export default function Dashboard() {
+  const { toast } = useToast();
   const t = useTranslations();
   const { language } = useLanguage();
   const { data: dashboardData, isLoading: isDashboardLoading, error: dashboardError } = useDashboard();
