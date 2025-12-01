@@ -1518,8 +1518,8 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
       }
 
       // Calculate the total amount from active loans and pending loan requests
-      // Includes 'pending' so the dashboard shows borrowed amount immediately when a loan request is made
-      const activeLoans = data.loans.filter(l => l.status === 'active' || l.status === 'pending');
+      // Includes 'signed' and 'pending' so the dashboard shows borrowed amount immediately when a loan request is made
+      const activeLoans = data.loans.filter(l => l.status === 'active' || l.status === 'pending' || l.status === 'signed');
       const totalActiveLoansAmount = activeLoans.reduce((sum, loan) => sum + parseFloat(loan.amount), 0);
       const maxCapacity = data.user.accountType === 'business' || data.user.accountType === 'professional' ? 2000000 : 500000;
 
