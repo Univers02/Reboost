@@ -1900,7 +1900,7 @@ export class DatabaseStorage implements IStorage {
     const userFees = await this.getUserFees(userId);
     const userTransactions = await this.getUserTransactions(userId);
 
-    const activeLoans = userLoans.filter(loan => loan.status === 'active');
+    const activeLoans = userLoans.filter(loan => loan.status === 'active' || loan.status === 'pending' || loan.status === 'signed');
     const totalBorrowed = activeLoans.reduce((sum, loan) => sum + parseFloat(loan.amount), 0);
     const totalRepaid = activeLoans.reduce((sum, loan) => sum + parseFloat(loan.totalRepaid), 0);
     
