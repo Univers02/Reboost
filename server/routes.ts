@@ -5807,6 +5807,16 @@ ${urls.map(url => `  <url>
       const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
       const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
       
+      // Helper function to clean text for PDF (remove Unicode characters Helvetica can't encode)
+      const sanitizePdfText = (text: string): string => {
+        return text
+          .replace(/\u202f/g, ' ')    // narrow no-break space → space
+          .replace(/\u00a0/g, ' ')    // non-breaking space → space
+          .replace(/[\u2010-\u2015]/g, '-')  // various dashes → hyphen
+          .replace(/[\u2018\u2019]/g, "'")   // curly quotes → straight quote
+          .replace(/[\u201c\u201d]/g, '"');  // curly double quotes → straight quote
+      };
+      
       const page = pdfDoc.addPage([595, 842]);
       const { height } = page.getSize();
       
@@ -5822,7 +5832,7 @@ ${urls.map(url => `  <url>
       });
       
       yPosition -= 30;
-      page.drawText(`Prêt: ${loanReference}`, {
+      page.drawText(sanitizePdfText(`Prêt: ${loanReference}`), {
         x: 50,
         y: yPosition,
         size: 12,
@@ -5831,7 +5841,7 @@ ${urls.map(url => `  <url>
       });
       
       yPosition -= 18;
-      page.drawText(`Montant: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount)}`, {
+      page.drawText(sanitizePdfText(`Montant: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount)}`), {
         x: 50,
         y: yPosition,
         size: 11,
@@ -5840,7 +5850,7 @@ ${urls.map(url => `  <url>
       });
       
       yPosition -= 18;
-      page.drawText(`Taux: ${interestRate}% | Durée: ${duration} mois`, {
+      page.drawText(sanitizePdfText(`Taux: ${interestRate}% | Durée: ${duration} mois`), {
         x: 50,
         y: yPosition,
         size: 11,
@@ -5929,10 +5939,10 @@ ${urls.map(url => `  <url>
         }
         
         const rowText = `${i}`;
-        const paymentText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(monthlyPayment);
-        const interestText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(interestPayment);
-        const principalText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(principalPayment);
-        const balanceText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(remainingBalance);
+        const paymentText = sanitizePdfText(new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(monthlyPayment));
+        const interestText = sanitizePdfText(new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(interestPayment));
+        const principalText = sanitizePdfText(new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(principalPayment));
+        const balanceText = sanitizePdfText(new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(remainingBalance));
         
         currentPage.drawText(rowText, { x: 55, y: yPosition, size: 9, font: helvetica, color: rgb(0.2, 0.2, 0.2) });
         currentPage.drawText(paymentText, { x: 130, y: yPosition, size: 9, font: helvetica, color: rgb(0.2, 0.2, 0.2) });
@@ -5963,10 +5973,10 @@ ${urls.map(url => `  <url>
         borderWidth: 1,
       });
       
-      currentPage.drawText('RÉSUMÉ', { x: 55, y: yPosition - 5, size: 12, font: helveticaBold, color: rgb(0.2, 0.3, 0.6) });
-      currentPage.drawText(`Total des intérêts: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totalInterest)}`, { x: 55, y: yPosition - 22, size: 10, font: helvetica, color: rgb(0.3, 0.3, 0.3) });
-      currentPage.drawText(`Coût total du crédit: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totalPayment)}`, { x: 55, y: yPosition - 38, size: 10, font: helvetica, color: rgb(0.3, 0.3, 0.3) });
-      currentPage.drawText(`Mensualité: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(monthlyPayment)}`, { x: 300, y: yPosition - 22, size: 10, font: helvetica, color: rgb(0.3, 0.3, 0.3) });
+      currentPage.drawText(sanitizePdfText('RÉSUMÉ'), { x: 55, y: yPosition - 5, size: 12, font: helveticaBold, color: rgb(0.2, 0.3, 0.6) });
+      currentPage.drawText(sanitizePdfText(`Total des intérêts: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totalInterest)}`), { x: 55, y: yPosition - 22, size: 10, font: helvetica, color: rgb(0.3, 0.3, 0.3) });
+      currentPage.drawText(sanitizePdfText(`Coût total du crédit: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totalPayment)}`), { x: 55, y: yPosition - 38, size: 10, font: helvetica, color: rgb(0.3, 0.3, 0.3) });
+      currentPage.drawText(sanitizePdfText(`Mensualité: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(monthlyPayment)}`), { x: 300, y: yPosition - 22, size: 10, font: helvetica, color: rgb(0.3, 0.3, 0.3) });
       
       const pdfBytes = await pdfDoc.save();
       res.contentType('application/pdf');
