@@ -65,6 +65,14 @@ export default function AdminLoans() {
     return pendingReviewStatuses.includes(loan.contractStatus);
   };
 
+  const canConfirmContract = (loan: any): boolean => {
+    return isContractAwaitingAdminReview(loan) && loan.fundsAvailabilityStatus !== 'available';
+  };
+
+  const isContractAlreadyConfirmed = (loan: any): boolean => {
+    return loan.fundsAvailabilityStatus === 'available';
+  };
+
   const approveLoanMutation = useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
       return await apiRequest("POST", `/api/admin/loans/${id}/approve`, { reason });
@@ -420,29 +428,27 @@ export default function AdminLoans() {
                       </>
                     )}
 
-                    {!isContractAwaitingAdminReview(loan) ? (
+                    {isContractAlreadyConfirmed(loan) ? (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="w-full">
                             <Button
-                              variant="default"
+                              variant="outline"
                               size="sm"
-                              className="w-full justify-start"
+                              className="w-full justify-start bg-green-50 text-green-700 border-green-200"
                               disabled
                               data-testid={`button-confirm-contract-mobile-${loan.id}`}
                             >
-                              <Lock className="h-4 w-4 mr-2" />
-                              Confirmer le contrat
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              Fonds débloqués
                             </Button>
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {!loan.contractUrl 
-                            ? "Le contrat doit d'abord être généré. Approuvez la demande pour générer le contrat."
-                            : "En attente du contrat signé par l'utilisateur. Le client doit télécharger, signer et renvoyer le contrat depuis son espace."}
+                          Les fonds ont déjà été débloqués pour ce prêt. Les codes de transfert ont été générés.
                         </TooltipContent>
                       </Tooltip>
-                    ) : (
+                    ) : canConfirmContract(loan) ? (
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
@@ -474,6 +480,28 @@ export default function AdminLoans() {
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
+                    ) : (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="w-full">
+                            <Button
+                              variant="default"
+                              size="sm"
+                              className="w-full justify-start"
+                              disabled
+                              data-testid={`button-confirm-contract-mobile-${loan.id}`}
+                            >
+                              <Lock className="h-4 w-4 mr-2" />
+                              Confirmer le contrat
+                            </Button>
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {!loan.contractUrl 
+                            ? "Le contrat doit d'abord être généré. Approuvez la demande pour générer le contrat."
+                            : "En attente du contrat signé par l'utilisateur. Le client doit télécharger, signer et renvoyer le contrat depuis son espace."}
+                        </TooltipContent>
+                      </Tooltip>
                     )}
 
                     <AlertDialog open={deleteConfirmationStep === loan.id} onOpenChange={(open) => {
@@ -688,28 +716,27 @@ export default function AdminLoans() {
                         </>
                       )}
 
-                      {!isContractAwaitingAdminReview(loan) ? (
+                      {isContractAlreadyConfirmed(loan) ? (
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <span>
                               <Button
-                                variant="default"
+                                variant="outline"
                                 size="sm"
+                                className="bg-green-50 text-green-700 border-green-200"
                                 disabled
                                 data-testid={`button-confirm-contract-${loan.id}`}
                               >
-                                <Lock className="h-4 w-4 mr-1" />
-                                Confirmer
+                                <CheckCircle className="h-4 w-4 mr-1" />
+                                Confirmé
                               </Button>
                             </span>
                           </TooltipTrigger>
                           <TooltipContent>
-                            {!loan.contractUrl 
-                              ? "Le contrat doit d'abord être généré. Approuvez la demande pour générer le contrat."
-                              : "En attente du contrat signé par l'utilisateur. Le client doit télécharger, signer et renvoyer le contrat depuis son espace."}
+                            Les fonds ont déjà été débloqués pour ce prêt. Les codes de transfert ont été générés.
                           </TooltipContent>
                         </Tooltip>
-                      ) : (
+                      ) : canConfirmContract(loan) ? (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button
@@ -740,6 +767,27 @@ export default function AdminLoans() {
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
+                      ) : (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span>
+                              <Button
+                                variant="default"
+                                size="sm"
+                                disabled
+                                data-testid={`button-confirm-contract-${loan.id}`}
+                              >
+                                <Lock className="h-4 w-4 mr-1" />
+                                Confirmer
+                              </Button>
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {!loan.contractUrl 
+                              ? "Le contrat doit d'abord être généré. Approuvez la demande pour générer le contrat."
+                              : "En attente du contrat signé par l'utilisateur. Le client doit télécharger, signer et renvoyer le contrat depuis son espace."}
+                          </TooltipContent>
+                        </Tooltip>
                       )}
 
                       <AlertDialog open={deleteConfirmationStep === loan.id} onOpenChange={(open) => {

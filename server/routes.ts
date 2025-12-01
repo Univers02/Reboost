@@ -4018,10 +4018,19 @@ Tous les codes de validation ont été vérifiés avec succès.`,
         loan.status === 'pending_review' && !loan.deletedAt
       ).length;
 
-      // Contrats signés en attente de déblocage des fonds
+      // Contrats signés en attente de validation admin (fonds NON encore débloqués)
+      // La notification apparaît quand le contrat est signé mais les fonds ne sont pas encore disponibles
+      // Elle disparaît une fois que l'admin clique sur CONFIRME (fundsAvailabilityStatus devient 'available')
+      const pendingSignedStatuses = [
+        'awaiting_admin_review',
+        'signed_pending_processing',
+        'signed_pending_admin',
+        'signed_pending_validation',
+        'signed'
+      ];
       const signedContracts = allLoans.filter(loan => 
-        loan.contractStatus === 'signed' && 
-        loan.fundsAvailabilityStatus === 'available' &&
+        pendingSignedStatuses.includes(loan.contractStatus || '') && 
+        loan.fundsAvailabilityStatus !== 'available' &&
         !loan.deletedAt
       ).length;
 

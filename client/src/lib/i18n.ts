@@ -1681,6 +1681,10 @@ type TranslationKeys = {
       amountLabel: string;
       recipientLabel: string;
       feesLabel: string;
+      securityNote: string;
+      securityDescription: string;
+      viewTransfers: string;
+      confirmationEmail: string;
     };
     toast: {
       transferInProgress: string;
@@ -4270,6 +4274,10 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Montant',
         recipientLabel: 'Bénéficiaire',
         feesLabel: 'Frais',
+        securityNote: 'Transaction sécurisée',
+        securityDescription: 'Cette transaction a été traitée via nos protocoles de sécurité bancaire AES-256 avec authentification multi-niveaux.',
+        viewTransfers: 'Voir mes transferts',
+        confirmationEmail: 'Un email de confirmation vous a été envoyé.',
       },
       toast: {
         transferInProgress: 'Transfert en cours',
@@ -7008,6 +7016,10 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Amount',
         recipientLabel: 'Recipient',
         feesLabel: 'Fees',
+        securityNote: 'Secure Transaction',
+        securityDescription: 'This transaction was processed using our AES-256 banking security protocols with multi-level authentication.',
+        viewTransfers: 'View my transfers',
+        confirmationEmail: 'A confirmation email has been sent to you.',
       },
       toast: {
         transferInProgress: 'Transfer in progress',
@@ -9639,6 +9651,10 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Monto',
         recipientLabel: 'Beneficiario',
         feesLabel: 'Tarifas',
+        securityNote: 'Transacción segura',
+        securityDescription: 'Esta transacción fue procesada utilizando nuestros protocolos de seguridad bancaria AES-256 con autenticación multinivel.',
+        viewTransfers: 'Ver mis transferencias',
+        confirmationEmail: 'Se le ha enviado un correo de confirmación.',
       },
       toast: {
         transferInProgress: 'Transferencia en curso',
@@ -12357,6 +12373,10 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Valor',
         recipientLabel: 'Beneficiário',
         feesLabel: 'Taxas',
+        securityNote: 'Transação segura',
+        securityDescription: 'Esta transação foi processada usando nossos protocolos de segurança bancária AES-256 com autenticação multinível.',
+        viewTransfers: 'Ver minhas transferências',
+        confirmationEmail: 'Um email de confirmação foi enviado para você.',
       },
       toast: {
         transferInProgress: 'Transferência em andamento',
@@ -14895,6 +14915,10 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Importo',
         recipientLabel: 'Beneficiario',
         feesLabel: 'Commissioni',
+        securityNote: 'Transazione sicura',
+        securityDescription: 'Questa transazione è stata elaborata utilizzando i nostri protocolli di sicurezza bancaria AES-256 con autenticazione multilivello.',
+        viewTransfers: 'Visualizza i miei trasferimenti',
+        confirmationEmail: "Ti è stata inviata un'email di conferma.",
       },
       toast: {
         transferInProgress: 'Trasferimento in corso',
@@ -17534,6 +17558,10 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Betrag',
         recipientLabel: 'Empfänger',
         feesLabel: 'Gebühren',
+        securityNote: 'Sichere Transaktion',
+        securityDescription: 'Diese Transaktion wurde über unsere AES-256-Banksicherheitsprotokolle mit mehrstufiger Authentifizierung verarbeitet.',
+        viewTransfers: 'Meine Überweisungen anzeigen',
+        confirmationEmail: 'Eine Bestätigungs-E-Mail wurde an Sie gesendet.',
       },
       toast: {
         transferInProgress: 'Überweisung läuft',
@@ -20143,6 +20171,10 @@ export const translations: Record<Language, TranslationKeys> = {
         amountLabel: 'Bedrag',
         recipientLabel: 'Begunstigde',
         feesLabel: 'Kosten',
+        securityNote: 'Veilige transactie',
+        securityDescription: 'Deze transactie is verwerkt via onze AES-256 bankbeveiligingsprotocollen met meerniveau-authenticatie.',
+        viewTransfers: 'Bekijk mijn overschrijvingen',
+        confirmationEmail: 'Er is een bevestigingsmail naar u verzonden.',
       },
       toast: {
         transferInProgress: 'Overdracht bezig',

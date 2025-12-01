@@ -72,6 +72,7 @@
     "helmet": "^8.1.0",
     "isomorphic-dompurify": "^2.30.0",
     "jsonwebtoken": "^9.0.2",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.453.0",
     "multer": "^2.0.2",
     "nanoid": "^5.0.9",

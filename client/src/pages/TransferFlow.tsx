@@ -8,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, getApiUrl } from '@/lib/queryClient';
-import { ArrowLeft, CheckCircle2, Clock, Send, Shield, AlertCircle, Loader2, AlertTriangle, Building, ArrowRight, Lock, Circle, TrendingUp, Globe, CreditCard, Banknote } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Clock, Send, Shield, AlertCircle, Loader2, AlertTriangle, Building, ArrowRight, Lock, Circle, TrendingUp, Globe, CreditCard, Banknote, Download, FileText, ArrowUpRight } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import SuccessAnimation from '@/components/SuccessAnimation';
 import type { TransferDetailsResponse, ExternalAccount, TransferCodeMetadata } from '@shared/schema';
 import { useTranslations, useLanguage } from '@/lib/i18n';
 import { DashboardCard, SectionTitle } from '@/components/fintech';
@@ -1484,50 +1485,148 @@ export default function TransferFlow() {
   }
 
   if (step === 'complete') {
+    const transfer = transferData?.transfer;
+    const formattedAmount = transfer?.amount 
+      ? parseFloat(transfer.amount).toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      : '0.00';
+    const formattedDate = transfer?.completedAt 
+      ? new Date(transfer.completedAt).toLocaleDateString(locale, { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      : new Date().toLocaleDateString(locale, { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
     return (
-      <div className="p-6 md:p-8 max-w-3xl mx-auto space-y-6">
-        <SectionTitle
-          title={t.transferFlow.complete.title}
-        />
-        <DashboardCard 
-          icon={CheckCircle2}
-          iconColor="text-green-600 dark:text-green-400"
-          testId="card-complete"
-        >
-          <div className="space-y-6">
-            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-4 rounded-lg">
-              <p className="text-sm text-green-900 dark:text-green-100">
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white dark:from-green-950/20 dark:to-background flex items-center justify-center p-4">
+        <div className="max-w-lg w-full" data-testid="card-complete">
+          <div className="bg-white dark:bg-card rounded-2xl shadow-xl border border-green-100 dark:border-green-900/30 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-8 text-center">
+              <div className="flex justify-center mb-4">
+                <SuccessAnimation size={120} />
+              </div>
+              <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                {t.transferFlow.complete.title}
+              </h1>
+              <p className="text-green-100 text-sm md:text-base">
                 {t.transferFlow.complete.successMessageLong}
               </p>
             </div>
 
-            {transferData?.transfer && (
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t.transferFlow.complete.recipientLabel}</span>
-                  <span className="font-medium" data-testid="text-recipient">{transferData.transfer.recipient}</span>
+            <div className="p-6 space-y-6">
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground mb-1 uppercase tracking-wide">
+                  {t.transferFlow.complete.amountLabel}
+                </p>
+                <p className="text-4xl md:text-5xl font-bold text-foreground" data-testid="text-amount">
+                  {formattedAmount} <span className="text-2xl md:text-3xl text-muted-foreground">EUR</span>
+                </p>
+              </div>
+
+              <div className="bg-muted/30 rounded-xl p-4 space-y-4">
+                <div className="flex items-center justify-between py-2 border-b border-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Building className="w-4 h-4 text-primary" />
+                    </div>
+                    <span className="text-sm text-muted-foreground">{t.transferFlow.complete.recipientLabel}</span>
+                  </div>
+                  <span className="font-semibold text-sm text-foreground" data-testid="text-recipient">
+                    {transfer?.recipient || '-'}
+                  </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t.transferFlow.complete.amountLabel}</span>
-                  <span className="font-medium" data-testid="text-amount">{transferData.transfer.amount} EUR</span>
+
+                <div className="flex items-center justify-between py-2 border-b border-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+                      <FileText className="w-4 h-4 text-accent" />
+                    </div>
+                    <span className="text-sm text-muted-foreground">{t.transferFlow.complete.reference}</span>
+                  </div>
+                  <span className="font-mono text-xs text-foreground" data-testid="text-reference">
+                    {transfer?.id || '-'}
+                  </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t.transferFlow.complete.reference}</span>
-                  <span className="font-mono text-xs" data-testid="text-reference">{transferData.transfer.id}</span>
+
+                <div className="flex items-center justify-between py-2 border-b border-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+                    </div>
+                    <span className="text-sm text-muted-foreground">Statut</span>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                    {t.transfer.completed || 'Terminé'}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                      <Clock className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <span className="text-sm text-muted-foreground">Date</span>
+                  </div>
+                  <span className="text-sm text-foreground capitalize">
+                    {formattedDate}
+                  </span>
                 </div>
               </div>
-            )}
 
-            <Button 
-              onClick={() => setLocation('/dashboard')}
-              className="w-full"
-              size="lg"
-              data-testid="button-return-dashboard"
-            >
-              {t.transferFlow.complete.returnButton}
-            </Button>
+              <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-4 border border-blue-100 dark:border-blue-900/30">
+                <div className="flex items-start gap-3">
+                  <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-1">
+                      {t.transferFlow.complete.securityNote || 'Transaction sécurisée'}
+                    </p>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">
+                      {t.transferFlow.complete.securityDescription || 'Cette transaction a été traitée via nos protocoles de sécurité bancaire AES-256 avec authentification multi-niveaux.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <Button 
+                  onClick={() => setLocation('/dashboard')}
+                  className="w-full"
+                  size="lg"
+                  data-testid="button-return-dashboard"
+                >
+                  <ArrowUpRight className="w-4 h-4 mr-2" />
+                  {t.transferFlow.complete.returnButton}
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  onClick={() => setLocation('/transfers')}
+                  className="w-full"
+                  size="lg"
+                  data-testid="button-view-transfers"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  {t.transferFlow.complete.viewTransfers || 'Voir mes transferts'}
+                </Button>
+              </div>
+            </div>
           </div>
-        </DashboardCard>
+
+          <p className="text-center text-xs text-muted-foreground mt-6">
+            {t.transferFlow.complete.confirmationEmail || 'Un email de confirmation vous a été envoyé.'}
+          </p>
+        </div>
       </div>
     );
   }
