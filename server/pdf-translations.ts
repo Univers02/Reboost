@@ -2,6 +2,7 @@
 export const pdfTranslations = {
   fr: {
     title: 'TABLEAU D\'AMORTISSEMENT',
+    filename: 'tableau-amortissement',
     loanLabel: 'Prêt:',
     amountLabel: 'Montant:',
     rateLabel: 'Taux:',
@@ -20,6 +21,7 @@ export const pdfTranslations = {
   },
   en: {
     title: 'AMORTIZATION SCHEDULE',
+    filename: 'amortization-schedule',
     loanLabel: 'Loan:',
     amountLabel: 'Amount:',
     rateLabel: 'Rate:',
@@ -38,6 +40,7 @@ export const pdfTranslations = {
   },
   es: {
     title: 'TABLA DE AMORTIZACIÓN',
+    filename: 'tabla-amortizacion',
     loanLabel: 'Préstamo:',
     amountLabel: 'Cantidad:',
     rateLabel: 'Tasa:',
@@ -56,6 +59,7 @@ export const pdfTranslations = {
   },
   pt: {
     title: 'TABELA DE AMORTIZAÇÃO',
+    filename: 'tabela-amortizacao',
     loanLabel: 'Empréstimo:',
     amountLabel: 'Valor:',
     rateLabel: 'Taxa:',
@@ -74,6 +78,7 @@ export const pdfTranslations = {
   },
   it: {
     title: 'TABELLA DI AMMORTAMENTO',
+    filename: 'tabella-ammortamento',
     loanLabel: 'Prestito:',
     amountLabel: 'Importo:',
     rateLabel: 'Tasso:',
@@ -92,6 +97,7 @@ export const pdfTranslations = {
   },
   de: {
     title: 'TILGUNGSPLAN',
+    filename: 'tilgungsplan',
     loanLabel: 'Darlehen:',
     amountLabel: 'Betrag:',
     rateLabel: 'Zinssatz:',
@@ -110,6 +116,7 @@ export const pdfTranslations = {
   },
   nl: {
     title: 'AFLOSSINGSSCHEMA',
+    filename: 'aflossingsschema',
     loanLabel: 'Lening:',
     amountLabel: 'Bedrag:',
     rateLabel: 'Tarief:',

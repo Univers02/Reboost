@@ -5985,7 +5985,7 @@ ${urls.map(url => `  <url>
       
       const pdfBytes = await pdfDoc.save();
       res.contentType('application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="tableau-amortissement-${loanReference}.pdf"`);
+      res.setHeader('Content-Disposition', `attachment; filename="${t.filename}-${loanReference}.pdf"`);
       res.send(Buffer.from(pdfBytes));
     } catch (error: any) {
       console.error('Amortization PDF generation error:', error);
