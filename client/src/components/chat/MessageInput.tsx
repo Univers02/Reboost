@@ -118,9 +118,9 @@ export function MessageInput({
     <div className="border-t bg-background p-4">
       <div className="max-w-3xl mx-auto">
         {selectedFile && (
-          <div className="mb-3 flex items-center gap-2 bg-muted rounded-md p-3">
-            <Paperclip className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm flex-1 truncate" data-testid="text-selected-file">
+          <div className="mb-3 flex items-center gap-2 bg-muted rounded-md p-3 overflow-hidden">
+            <Paperclip className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-sm flex-1 truncate max-w-[300px]" title={selectedFile.name} data-testid="text-selected-file">
               {selectedFile.name}
             </span>
             <Button

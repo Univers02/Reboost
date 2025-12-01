@@ -470,9 +470,9 @@ export function LoanRequestModal({ open, onOpenChange, user }: LoanRequestModalP
                           {!doc.required && <Badge variant="secondary" className="h-4 sm:h-5 text-xs flex-shrink-0">{t.optional}</Badge>}
                         </div>
                         {uploadedDocuments[doc.id] && (
-                          <div className="flex items-center gap-1 sm:gap-2 text-xs text-muted-foreground mt-1 sm:mt-2 min-w-0">
+                          <div className="flex items-center gap-1 sm:gap-2 text-xs text-muted-foreground mt-1 sm:mt-2 min-w-0 overflow-hidden max-w-full">
                             <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
-                            <span className="truncate">{uploadedDocuments[doc.id].name}</span>
+                            <span className="truncate block max-w-[180px] sm:max-w-[280px]" title={uploadedDocuments[doc.id].name}>{uploadedDocuments[doc.id].name}</span>
                           </div>
                         )}
                       </div>

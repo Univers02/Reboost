@@ -131,7 +131,7 @@ export function SignedContractUpload({ loanId, loanAmount }: SignedContractUploa
 
               {selectedFile && (
                 <>
-                  <span className="text-xs text-muted-foreground truncate max-w-[150px]">
+                  <span className="text-xs text-muted-foreground truncate max-w-[150px]" title={selectedFile.name}>
                     {selectedFile.name}
                   </span>
                   <Button
