@@ -31,6 +31,7 @@ import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
 import { LoanRequestModal } from '@/components/LoanRequestModal';
 import { SignedContractUpload } from '@/components/SignedContractUpload';
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import { DashboardCard, SectionTitle, UserStat, PremiumIcon } from '@/components/fintech';
 
 function getContractsNotificationText(language: string) {
@@ -662,32 +663,41 @@ export default function Dashboard() {
                               title="Télécharger tableau d'amortissement"
                               onClick={async (e) => {
                                 e.preventDefault();
+                                e.stopPropagation();
                                 try {
                                   const response = await fetch(`/api/loans/${loan.id}/download-amortization`, { 
-                                    credentials: 'include' 
+                                    method: 'GET',
+                                    credentials: 'include',
+                                    headers: {
+                                      'Accept': 'application/pdf'
+                                    }
                                   });
-                                  if (!response.ok) throw new Error('Download failed');
                                   
-                                  const contentType = response.headers.get('content-type');
-                                  if (!contentType || !contentType.includes('application/pdf')) {
-                                    throw new Error('Invalid response type');
+                                  if (!response.ok) {
+                                    const text = await response.text();
+                                    throw new Error(`Erreur ${response.status}: ${text}`);
                                   }
                                   
-                                  const arrayBuffer = await response.arrayBuffer();
-                                  const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+                                  const blob = await response.blob();
+                                  if (blob.size === 0) {
+                                    throw new Error('Le PDF généré est vide');
+                                  }
+                                  
                                   const url = window.URL.createObjectURL(blob);
                                   const a = document.createElement('a');
                                   a.href = url;
                                   a.download = `tableau-amortissement-${loan.loanReference || loan.id}.pdf`;
-                                  a.style.display = 'none';
                                   document.body.appendChild(a);
                                   a.click();
-                                  setTimeout(() => {
-                                    document.body.removeChild(a);
-                                    window.URL.revokeObjectURL(url);
-                                  }, 100);
+                                  document.body.removeChild(a);
+                                  window.URL.revokeObjectURL(url);
                                 } catch (error) {
-                                  console.error('Error downloading amortization:', error);
+                                  console.error('Erreur téléchargement amortissement:', error);
+                                  toast({
+                                    title: 'Erreur',
+                                    description: `Impossible de télécharger le tableau d'amortissement: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
+                                    variant: 'destructive'
+                                  });
                                 }
                               }}
                             >
