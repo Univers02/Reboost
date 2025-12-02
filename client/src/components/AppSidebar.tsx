@@ -58,7 +58,10 @@ export default function AppSidebar() {
     enabled: !isAdminPath,
   });
 
-  const pendingLoansCount = loans?.filter(l => l.status === 'pending').length || 0;
+  // Prêts en attente = tous les prêts en cours de traitement (pas encore actifs)
+  // Exclut tous les statuts terminaux
+  const excludedStatuses = ['active', 'rejected', 'cancelled', 'completed', 'closed', 'repaid', 'defaulted', 'written_off'];
+  const pendingLoansCount = loans?.filter(l => l.status && !excludedStatuses.includes(l.status)).length || 0;
   const inProgressTransfersCount = transfers?.filter(t => t.status === 'in-progress' || t.status === 'in_progress').length || 0;
 
   const loanMenuItems = [

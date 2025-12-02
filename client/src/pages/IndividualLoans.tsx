@@ -34,14 +34,17 @@ export default function IndividualLoans() {
   });
 
   const activeLoans = useMemo(() => {
-    return loans?.filter(loan => {
-      const isActive = loan.status === 'active' || loan.status === 'approved';
-      return isActive && (loan.fundsAvailabilityStatus === 'available' || loan.status === 'active');
-    }) || [];
+    // Prêts actifs = prêts avec status 'active' (les fonds sont débloqués)
+    // Note: Dans le backend, status 'active' est toujours défini avec fundsAvailabilityStatus 'available'
+    return loans?.filter(loan => loan.status === 'active') || [];
   }, [loans]);
 
   const pendingLoans = useMemo(() => {
-    return loans?.filter(loan => loan.status === 'pending_review') || [];
+    // Prêts en attente = tous les prêts en cours de traitement (pas encore actifs)
+    // Inclut: pending_review, approved, documents_pending, contract_pending, etc.
+    // Exclut tous les statuts terminaux
+    const excludedStatuses = ['active', 'rejected', 'cancelled', 'completed', 'closed', 'repaid', 'defaulted', 'written_off'];
+    return loans?.filter(loan => loan.status && !excludedStatuses.includes(loan.status)) || [];
   }, [loans]);
 
   const formatCurrency = (amount: string) => {

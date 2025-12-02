@@ -2,10 +2,8 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
 import { useTranslations } from '@/lib/i18n';
 import { useLocation } from 'wouter';
-import { FileSignature } from 'lucide-react';
 import LoanDetailsDialog from './LoanDetailsDialog';
 
 interface Loan {
@@ -44,9 +42,10 @@ export default function ActiveLoans({ loans }: ActiveLoansProps) {
     setDetailsOpen(true);
   };
 
-  const activeAndApprovedLoans = loans.filter(l => l.status === 'active' || l.status === 'approved');
-  const activeLoansCount = activeAndApprovedLoans.length;
-  const displayedLoans = activeAndApprovedLoans.slice(0, 2);
+  // Prêts actifs = uniquement les prêts avec fonds disponibles (status active signifie fonds débloqués)
+  const activeLoans = loans.filter(l => l.status === 'active');
+  const activeLoansCount = activeLoans.length;
+  const displayedLoans = activeLoans.slice(0, 2);
 
   return (
     <>
@@ -73,26 +72,13 @@ export default function ActiveLoans({ loans }: ActiveLoansProps) {
           ) : (
             displayedLoans.map((loan) => {
               const progress = (loan.totalRepaid / loan.amount) * 100;
-              const needsSignature = loan.status === 'approved' && loan.contractUrl && !loan.signedContractUrl;
               return (
                 <div
                   key={loan.id}
-                  className={`p-2 rounded-md border cursor-pointer transition-all space-y-1 ${
-                    needsSignature 
-                      ? 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-300 dark:border-yellow-700 hover:bg-yellow-100 dark:hover:bg-yellow-950/50 ring-2 ring-yellow-400/50 dark:ring-yellow-600/50' 
-                      : 'bg-muted/30 hover:bg-muted/50'
-                  }`}
+                  className="p-2 rounded-md border cursor-pointer transition-all space-y-1 bg-muted/30 hover:bg-muted/50"
                   data-testid={`card-loan-${loan.id}`}
                   onClick={() => handleLoanClick(loan)}
                 >
-                  {needsSignature && (
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white text-[10px] px-1.5 py-0 h-5 animate-pulse">
-                        <FileSignature className="h-3 w-3 mr-1" />
-                        {t.dashboard.contractToSign}
-                      </Badge>
-                    </div>
-                  )}
                   <div className="flex justify-between items-start gap-2">
                     <div>
                       <p className="text-sm font-medium">{loan.loanReference || `#${loan.id.substring(0, 8)}`}</p>
