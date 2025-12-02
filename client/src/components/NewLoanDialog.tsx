@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AlertCircle, Upload, FileText, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { apiRequest, getApiUrl } from '@/lib/queryClient';
+import { apiRequest, getApiUrl, ApiError } from '@/lib/queryClient';
 import type { User } from '@shared/schema';
 
 interface NewLoanDialogProps {
@@ -132,7 +132,15 @@ export default function NewLoanDialog({ open, onOpenChange }: NewLoanDialogProps
       resetForm();
     },
     onError: (error: any) => {
-      const errorMessage = error?.message || t.dialogs.newLoan.error.loanErrorDesc;
+      let errorMessage = error?.message || t.dialogs.newLoan.error.loanErrorDesc;
+      
+      if (error instanceof ApiError && error.code === 'MAX_ACTIVE_LOANS_REACHED' && error.details) {
+        const { tier, currentActive, maxAllowed } = error.details;
+        errorMessage = t.loanOffers?.maxLoansMessage
+          ?.replace('{tier}', tier || 'bronze')
+          .replace('{current}', String(currentActive || 0))
+          .replace('{max}', String(maxAllowed || 1)) || errorMessage;
+      }
       
       toast({
         title: t.dialogs.newLoan.error.loanError,

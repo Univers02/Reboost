@@ -106,7 +106,7 @@ export default function LoanOffersCatalog({ onRequestLoan }: LoanOffersCatalogPr
                     handleOfferClick(offer);
                   }}
                   data-testid={`button-request-${offer.id}`}
-                  title={isMaxLoansReached ? `Limite atteinte: ${stats?.activeLoans}/${stats?.maxActiveLoans} prêts actifs` : undefined}
+                  title={isMaxLoansReached && stats ? t.loanOffers.maxLoansMessage?.replace('{tier}', stats.tier).replace('{current}', String(stats.activeLoans)).replace('{max}', String(stats.maxActiveLoans)) : undefined}
                 >
                   {t.loanOffers.requestButton}
                 </Button>

@@ -1,6 +1,18 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { useLanguage } from "./i18n";
 
+export class ApiError extends Error {
+  code?: string;
+  details?: Record<string, any>;
+  
+  constructor(message: string, code?: string, details?: Record<string, any>) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = code;
+    this.details = details;
+  }
+}
+
 function getErrorMessage(status: number): string {
   const lang = useLanguage.getState?.().language || 'fr';
   const messages: Record<string, Record<number, string>> = {
@@ -144,22 +156,25 @@ async function throwIfResNotOk(res: Response) {
       
       const errorMessage = errorData?.error || '';
       handleAuthError(res, errorMessage);
-      throw new Error(errorMessage || getErrorMessage(res.status));
+      throw new ApiError(errorMessage || getErrorMessage(res.status), errorData?.code, errorData?.details);
     }
     
     let errorData;
     try {
       errorData = await res.json();
       if (errorData?.error) {
-        throw new Error(errorData.error);
+        throw new ApiError(errorData.error, errorData?.code, errorData?.details);
       }
     } catch (e) {
+      if (e instanceof ApiError) {
+        throw e;
+      }
       if (e instanceof Error && e.message !== '') {
         throw e;
       }
     }
     
-    throw new Error(getErrorMessage(res.status));
+    throw new ApiError(getErrorMessage(res.status));
   }
 }
 
