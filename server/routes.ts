@@ -1541,6 +1541,7 @@ export async function registerRoutes(app: Express, sessionMiddleware: any): Prom
         loans: data.loans.map(loan => ({
           id: loan.id,
           amount: parseFloat(loan.amount),
+          duration: loan.duration,
           interestRate: parseFloat(loan.interestRate),
           nextPaymentDate: formatDate(loan.nextPaymentDate),
           totalRepaid: parseFloat(loan.totalRepaid),
