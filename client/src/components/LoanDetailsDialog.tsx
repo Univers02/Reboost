@@ -65,7 +65,7 @@ export default function LoanDetailsDialog({ open, onOpenChange, loan }: LoanDeta
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] sm:max-w-[500px] md:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[calc(100vw-1rem)] sm:max-w-[500px] md:max-w-[600px] max-h-[90vh] overflow-y-auto overflow-x-hidden p-3 sm:p-6 box-border">
         <DialogHeader>
           <DialogTitle className="text-xl sm:text-2xl">{t.dashboard.viewDetails}</DialogTitle>
         </DialogHeader>

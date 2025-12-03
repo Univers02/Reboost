@@ -53,7 +53,7 @@ export default function WelcomeMessage() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-4 sm:p-6 gap-0" data-testid="dialog-welcome-message">
+      <DialogContent className="w-[calc(100vw-1rem)] sm:max-w-[600px] max-h-[90vh] flex flex-col p-3 sm:p-6 gap-0 box-border overflow-x-hidden" data-testid="dialog-welcome-message">
         <DialogHeader className="flex-shrink-0">
           <div className="flex items-center gap-2 sm:gap-3 mb-2">
             <div className="p-2 sm:p-3 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500">

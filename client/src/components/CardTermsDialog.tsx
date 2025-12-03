@@ -13,7 +13,7 @@ export default function CardTermsDialog({ open, onOpenChange }: CardTermsDialogP
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh]" data-testid="modal-card-terms">
+      <DialogContent className="w-[calc(100vw-1rem)] max-w-4xl max-h-[90vh] p-3 sm:p-6 box-border overflow-y-auto overflow-x-hidden" data-testid="modal-card-terms">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">{t.cardTermsContent.title}</DialogTitle>
           <DialogDescription>

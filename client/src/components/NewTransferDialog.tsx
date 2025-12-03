@@ -126,7 +126,7 @@ export default function NewTransferDialog({ open, onOpenChange }: NewTransferDia
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-[500px] max-h-[90vh] overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+      <DialogContent className="w-[calc(100vw-1rem)] max-w-[500px] max-h-[90vh] overflow-y-auto overflow-x-hidden p-3 sm:p-6 box-border">
         <DialogHeader>
           <DialogTitle className="text-xl sm:text-2xl">{t.dashboard.transferFunds}</DialogTitle>
         </DialogHeader>

@@ -304,7 +304,7 @@ export function LoanRequestModal({ open, onOpenChange, user }: LoanRequestModalP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden p-4 sm:p-6" data-testid="dialog-loan-request">
+      <DialogContent className="w-[calc(100vw-1rem)] max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden p-3 sm:p-6 box-border" data-testid="dialog-loan-request">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">{t.title}</DialogTitle>
           <DialogDescription className="text-sm">
@@ -354,11 +354,11 @@ export function LoanRequestModal({ open, onOpenChange, user }: LoanRequestModalP
                   control={form.control}
                   name="amount"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="w-full">
                       <FormLabel className="text-sm">{t.loanAmount}</FormLabel>
                       <FormControl>
-                        <div className="space-y-3 w-full">
-                          <div className="flex items-center gap-2">
+                        <div className="space-y-3 w-full overflow-hidden">
+                          <div className="w-full">
                             <Input
                               type="number"
                               {...field}
@@ -366,23 +366,23 @@ export function LoanRequestModal({ open, onOpenChange, user }: LoanRequestModalP
                               min={limits.minAmount}
                               max={limits.maxAmount}
                               step={1000}
-                              className="flex-1 min-w-0"
+                              className="w-full"
                               data-testid="input-loan-amount"
                             />
                           </div>
-                          <div className="px-1">
+                          <div className="w-full px-2 box-border">
                             <Slider
                               value={[field.value]}
                               onValueChange={(values: number[]) => field.onChange(values[0])}
                               min={limits.minAmount}
                               max={limits.maxAmount}
                               step={1000}
-                              className="w-full"
+                              className="w-full touch-pan-y"
                             />
                           </div>
-                          <div className="flex justify-between text-xs text-muted-foreground px-1">
-                            <span>{limits.minAmount.toLocaleString()}€</span>
-                            <span>{limits.maxAmount.toLocaleString()}€</span>
+                          <div className="flex justify-between text-xs text-muted-foreground px-1 gap-2">
+                            <span className="flex-shrink-0">{limits.minAmount.toLocaleString()}€</span>
+                            <span className="flex-shrink-0">{limits.maxAmount.toLocaleString()}€</span>
                           </div>
                         </div>
                       </FormControl>
@@ -395,11 +395,11 @@ export function LoanRequestModal({ open, onOpenChange, user }: LoanRequestModalP
                   control={form.control}
                   name="duration"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="w-full">
                       <FormLabel className="text-sm">{useYears ? t.durationYears || 'Durée (années)' : t.durationMonths}</FormLabel>
                       <FormControl>
-                        <div className="space-y-3 w-full">
-                          <div className="flex items-center gap-2">
+                        <div className="space-y-3 w-full overflow-hidden">
+                          <div className="flex items-center gap-2 w-full">
                             <Input
                               type="number"
                               value={displayDuration}
@@ -416,7 +416,7 @@ export function LoanRequestModal({ open, onOpenChange, user }: LoanRequestModalP
                               {useYears ? (t.years || 'ans') : t.months}
                             </span>
                           </div>
-                          <div className="px-1">
+                          <div className="w-full px-2 box-border">
                             <Slider
                               value={[displayDuration]}
                               onValueChange={(values: number[]) => {
@@ -425,12 +425,12 @@ export function LoanRequestModal({ open, onOpenChange, user }: LoanRequestModalP
                               min={displayMinDuration}
                               max={displayMaxDuration}
                               step={1}
-                              className="w-full"
+                              className="w-full touch-pan-y"
                             />
                           </div>
-                          <div className="flex justify-between text-xs text-muted-foreground px-1">
-                            <span>{displayMinDuration} {useYears ? (t.years || 'ans') : t.months}</span>
-                            <span>{displayMaxDuration} {useYears ? (t.years || 'ans') : t.months}</span>
+                          <div className="flex justify-between text-xs text-muted-foreground px-1 gap-2">
+                            <span className="flex-shrink-0">{displayMinDuration} {useYears ? (t.years || 'ans') : t.months}</span>
+                            <span className="flex-shrink-0">{displayMaxDuration} {useYears ? (t.years || 'ans') : t.months}</span>
                           </div>
                         </div>
                       </FormControl>
