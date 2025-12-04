@@ -106,7 +106,7 @@ export default function Header() {
               </div>
               <div className="hidden lg:block">
                 <span className="font-bold text-xl bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white bg-clip-text text-transparent group-hover:from-primary group-hover:via-primary/80 group-hover:to-primary transition-all duration-300">
-                  Altus Finances Group
+                  Solventus Group
                 </span>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground/70 font-medium">
                   <Sparkles className="w-3 h-3" />

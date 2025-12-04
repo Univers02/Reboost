@@ -1,16 +1,16 @@
 export const seoConfig = {
   siteUrl: import.meta.env.VITE_SITE_URL || 'http://localhost:5000',
-  siteName: 'Altus Finances Group',
-  defaultTitle: 'Altus Finances Group - Professional Loan Solutions | Business Financing',
-  defaultDescription: 'Altus Finances Group offers professional loan solutions tailored to your business. Quickly access funds with competitive rates and a transparent approval process.',
+  siteName: 'Solventus Group',
+  defaultTitle: 'Solventus Group - Professional Loan Solutions | Business Financing',
+  defaultDescription: 'Solventus Group offers professional loan solutions tailored to your business. Quickly access funds with competitive rates and a transparent approval process.',
   defaultKeywords: 'business loan, enterprise financing, professional loan, quick loan, competitive rate, SME financing, business credit, financing solution, personal loan, car loan, mortgage, student loan, consumer credit, renovation loan, revolving credit, no doc loan, professional financing, enterprise funding',
   defaultImage: '/og-image.jpg',
-  twitterHandle: '@altusfinancegroup',
+  twitterHandle: '@solventusgroup',
   themeColor: '#0066cc',
   locale: 'en_US',
   alternateLangs: ['fr', 'es', 'pt', 'it', 'de'],
   organization: {
-    name: 'Altus Finances Group',
+    name: 'Solventus Group',
     logo: '/logo.png',
     telephone: '+352-40-63-48',
     address: {
@@ -24,9 +24,9 @@ export const seoConfig = {
       longitude: 6.1319
     },
     sameAs: [
-      'https://www.facebook.com/altusfinancegroup',
-      'https://www.linkedin.com/company/altusfinancegroup',
-      'https://twitter.com/altusfinancegroup'
+      'https://www.facebook.com/solventusgroup',
+      'https://www.linkedin.com/company/solventusgroup',
+      'https://twitter.com/solventusgroup'
     ]
   }
 } as const;

@@ -1,6 +1,6 @@
-# Composants UI Premium Altus 2025
+# Composants UI Premium Solventus 2025
 
-Bibliothèque de composants UI premium pour Altus Finances Group, conçue avec un design niveau banque privée 2025.
+Bibliothèque de composants UI premium pour Solventus Group, conçue avec un design niveau banque privée 2025.
 
 ## Installation
 

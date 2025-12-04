@@ -3,10 +3,10 @@ import { CreditCard, Shield, FileText, Briefcase } from "lucide-react";
 
 export default function InfoBarPremium() {
   const messages = [
-    { icon: CreditCard, text: "Les virements Altus sont désormais traités sous 24h ouvrées." },
+    { icon: CreditCard, text: "Les virements Solventus sont désormais traités sous 24h ouvrées." },
     { icon: Shield, text: "Vos opérations sont protégées par une authentification renforcée." },
     { icon: FileText, text: "Votre contrat numérique est disponible dans votre espace sécurisé." },
-    { icon: Briefcase, text: "Altus Finances Group – Solutions professionnelles haut de gamme." }
+    { icon: Briefcase, text: "Solventus Group – Solutions professionnelles haut de gamme." }
   ];
 
   const [index, setIndex] = useState(0);
