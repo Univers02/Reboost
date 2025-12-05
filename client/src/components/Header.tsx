@@ -100,7 +100,7 @@ export default function Header() {
             }`}>
               <div className="relative">
                 <img src="/logo.png" alt="Solventus" className={`transition-all duration-300 ${
-                  scrolled ? 'h-9' : 'h-11'
+                  scrolled ? 'w-32' : 'w-40'
                 }`} />
                 <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-transparent rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
               </div>

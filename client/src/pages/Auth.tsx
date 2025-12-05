@@ -273,7 +273,7 @@ export default function Auth() {
             <img 
               src="/logo.png" 
               alt="SOLVENTUS GROUP" 
-              className="mx-auto h-20 w-auto mb-3"
+              className="mx-auto w-64 h-auto mb-5"
               data-testid="img-logo-auth"
             />
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">SOLVENTUS GROUP</h2>
