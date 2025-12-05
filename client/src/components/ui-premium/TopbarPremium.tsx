@@ -27,7 +27,7 @@ export default function TopbarPremium({ onMenuClick, rightNode }: Props) {
           )}
 
           <div className="flex items-center gap-3">
-            <img src="/logo-solventis.svg" className="h-8" alt="Solventis Group" data-testid="img-logo" />
+            <img src="/logo-cropped.png" className="h-8" alt="Solventis Group" data-testid="img-logo" />
             <span className="font-semibold text-lg text-solventis-ink hidden md:inline" data-testid="text-brand-name">
               Solventis Group
             </span>
