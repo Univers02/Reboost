@@ -273,7 +273,7 @@ export default function Auth() {
             <img 
               src="/logo.png" 
               alt="SOLVENTIS GROUP" 
-              className="mx-auto h-20 w-auto mb-3"
+              className="mx-auto h-32 w-auto mb-3"
               data-testid="img-logo-auth"
             />
             <p className="text-gray-600 dark:text-gray-400 text-sm">{t.auth.subtitle}</p>
