@@ -1,12 +1,13 @@
 :root {
-  --altus-indigo: #5b21b6;
+  --altus-indigo: #1e40af;
   --altus-royal: #3b82f6;
+  --altus-slate: #1e293b;
   --altus-ink: #0f172a;
-  --altus-muted: #6b7280;
+  --altus-muted: #64748b;
   --altus-bg: #ffffff;
-  --glass-bg: rgba(255,255,255,0.6);
-  --glass-border: rgba(255,255,255,0.6);
-  --soft-shadow: 0 6px 30px rgba(11, 15, 30, 0.06);
+  --glass-bg: rgba(255,255,255,0.7);
+  --glass-border: rgba(255,255,255,0.5);
+  --soft-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
 }
 
 body {
